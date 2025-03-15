@@ -18,7 +18,8 @@ class AttackCalculator: EffectCalculator {
         var damage = (sourceStats.attack * skill.basePower / 100) - (targetStats.defense / 4)
 
         // Element effectiveness
-        let elementMultiplier = elementEffectivenessSystem.getEffectiveness(of: sourceStats.elementType, against: targetStats.elementType)
+        let elementMultiplier = elementEffectivenessSystem.getEffectiveness(of: sourceStats.elementType,
+                                                                            against: targetStats.elementType)
         damage = Int(Double(damage) * elementMultiplier)
 
         // Critical hit (10% chance)

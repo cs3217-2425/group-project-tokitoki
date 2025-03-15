@@ -18,6 +18,7 @@ class HealCalculator: EffectCalculator {
         target.heal(amount: healAmount)
 
         return EffectResult(entity: target, type: .heal, value: healAmount,
-                            description: "\(source.getName()) used \(skill.name) to heal \(target.getName()) for \(healAmount) HP")
+                            description: "\(source.getName()) used \(skill.name) "
+                            + "to heal \(target.getName()) for \(healAmount) HP")
     }
 }

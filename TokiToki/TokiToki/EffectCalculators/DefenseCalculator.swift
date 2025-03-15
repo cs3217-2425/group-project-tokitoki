@@ -13,6 +13,7 @@ class DefenseCalculator: EffectCalculator {
         target.modifyDefense(by: defenseBoost)
 
         return EffectResult(entity: target, type: .defense, value: defenseBoost,
-                            description: "\(source.getName()) used \(skill.name) to boost \(target.getName())'s defense by \(defenseBoost)")
+                            description: "\(source.getName()) used \(skill.name) "
+                            + "to boost \(target.getName())'s defense by \(defenseBoost)")
     }
 }

@@ -17,10 +17,8 @@ class AIComponent: BaseComponent {
     }
 
     func determineAction(gameState: GameState) -> Action {
-        for rule in rules {
-            if rule.condition(gameState) {
-                return rule.action
-            }
+        for rule in rules where rule.condition(gameState) {
+            return rule.action
         }
 
         // Default action if no rules match

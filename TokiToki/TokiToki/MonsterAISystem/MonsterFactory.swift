@@ -12,7 +12,8 @@ class MonsterFactory {
         self.skillFactory = skillFactory
     }
 
-    func createBasicMonster(name: String, health: Int, attack: Int, defense: Int, speed: Int, elementType: ElementType) -> MonsterEntity {
+    func createBasicMonster(name: String, health: Int, attack: Int, defense: Int, speed: Int,
+                            elementType: ElementType) -> MonsterEntity {
         let monster = MonsterEntity(name: name)
 
         // Create basic stats
@@ -44,7 +45,8 @@ class MonsterFactory {
         let aiRules: [AIRule] = [
             HealthBelowPercentageRule(
                 priority: 1,
-                action: UseSkillAction(sourceId: monster.id, skillId: basicAttack.id, targetIds: []), // Target IDs will be filled at runtime
+                action: UseSkillAction(sourceId: monster.id,
+                                       skillId: basicAttack.id, targetIds: []), // Target IDs will be filled at runtime
                 percentage: 30
             )
         ]
@@ -60,7 +62,8 @@ class MonsterFactory {
         return monster
     }
 
-    func createBossMonster(name: String, health: Int, attack: Int, defense: Int, speed: Int, elementType: ElementType) -> MonsterEntity {
+    func createBossMonster(name: String, health: Int, attack: Int, defense: Int,
+                           speed: Int, elementType: ElementType) -> MonsterEntity {
         let boss = MonsterEntity(name: name)
 
         // Create boss stats
@@ -112,13 +115,15 @@ class MonsterFactory {
             // Use AOE attack when it's available
             HealthBelowPercentageRule(
                 priority: 1,
-                action: UseSkillAction(sourceId: boss.id, skillId: aoeAttack.id, targetIds: []), // Target IDs will be filled at runtime
+                action: UseSkillAction(sourceId: boss.id,
+                                       skillId: aoeAttack.id, targetIds: []), // Target IDs will be filled at runtime
                 percentage: 50
             ),
             // Use debuff when health is high
             HealthBelowPercentageRule(
                 priority: 2,
-                action: UseSkillAction(sourceId: boss.id, skillId: debuffSkill.id, targetIds: []), // Target IDs will be filled at runtime
+                action: UseSkillAction(sourceId: boss.id,
+                                       skillId: debuffSkill.id, targetIds: []), // Target IDs will be filled at runtime
                 percentage: 80
             )
         ]

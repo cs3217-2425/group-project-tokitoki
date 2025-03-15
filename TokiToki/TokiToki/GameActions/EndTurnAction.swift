@@ -19,6 +19,7 @@ class EndTurnAction: Action {
             return [EffectResult(entity: BaseEntity(), type: .none, value: 0, description: "Invalid entity")]
         }
 
-        return [EffectResult(entity: entity, type: .none, value: 0, description: "\(entity.getName()) ended their turn")]
+        return [EffectResult(entity: entity, type: .none, value: 0,
+                             description: "\(entity.getName()) ended their turn")]
     }
 }
