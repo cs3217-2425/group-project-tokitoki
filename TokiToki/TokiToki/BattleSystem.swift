@@ -14,14 +14,18 @@ class BattleSystem {
     private var pendingActions: [Action] = []
     private var battleLog: [String] = []
     private var effectCalculatorFactory: EffectCalculatorFactory
+    private var elementEffectivenessSystem = ElementEffectivenessSystem()
 
-    init(playerTeam: [PlayerEntity], monsterTeam: [MonsterEntity]) {
-        self.gameState = GameState()
+    init(playerTeam: [PlayerEntity], monsterTeam: [MonsterEntity], effectCalculatorFactory: EffectCalculatorFactory) {
+        self.gameState = GameState(
+            elementEffectivenessSystem: self.elementEffectivenessSystem,
+            statusEffectStrategyFactory: StatusEffectStrategyFactory()
+        )
         self.playerTeam = playerTeam
         self.monsterTeam = monsterTeam
         self.currentTurn = .playerTurn
         self.activeEntityIndex = 0
-        self.effectCalculatorFactory = EffectCalculatorFactory()
+        self.effectCalculatorFactory = effectCalculatorFactory
 
         // Add all entities to the game state
         for entity in playerTeam {

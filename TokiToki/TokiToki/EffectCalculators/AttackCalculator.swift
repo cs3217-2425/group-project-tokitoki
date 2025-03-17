@@ -6,7 +6,11 @@
 //
 
 class AttackCalculator: EffectCalculator {
-    private let elementEffectivenessSystem = ElementEffectivenessSystem()
+    private let elementEffectivenessSystem: ElementEffectivenessSystem
+
+    init(elementEffectivenessSystem: ElementEffectivenessSystem) {
+        self.elementEffectivenessSystem = elementEffectivenessSystem
+    }
 
     func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self),

@@ -6,15 +6,21 @@
 //
 
 class EffectCalculatorFactory {
-    private let calculators: [SkillType: EffectCalculator] = [
-        .attack: AttackCalculator(),
-        .heal: HealCalculator(),
-        .defend: DefenseCalculator(),
-        .buff: BuffCalculator(),
-        .debuff: DebuffCalculator()
-    ]
+    private let elementEffectivenessSystem: ElementEffectivenessSystem
+    private let calculators: [SkillType: EffectCalculator]
+
+    init(elementEffectivenessSystem: ElementEffectivenessSystem) {
+        self.elementEffectivenessSystem = elementEffectivenessSystem
+        self.calculators = [
+           .attack: AttackCalculator(elementEffectivenessSystem: elementEffectivenessSystem),
+           .heal: HealCalculator(),
+           .defend: DefenseCalculator(),
+           .buff: BuffCalculator(),
+           .debuff: DebuffCalculator()
+       ]
+    }
 
     func getCalculator(for skillType: SkillType) -> EffectCalculator {
-        calculators[skillType] ?? AttackCalculator() // Default to attack if not found
+        calculators[skillType] ?? AttackCalculator(elementEffectivenessSystem: self.elementEffectivenessSystem) // Default to attack if not found
     }
 }
