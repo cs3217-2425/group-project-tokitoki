@@ -32,7 +32,7 @@ struct Player {
     }
 
     mutating func updateLevel() {
-        let newLevel = 1 + experience / 1000
+        let newLevel = 1 + experience / 1_000
         if newLevel > level {
             level = newLevel
         }
@@ -43,7 +43,7 @@ struct Player {
     }
 
     func canSpendCurrency(_ amount: Int) -> Bool {
-        return currency >= amount
+        currency >= amount
     }
 
     mutating func spendCurrency(_ amount: Int) -> Bool {
