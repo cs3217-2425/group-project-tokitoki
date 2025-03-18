@@ -15,10 +15,10 @@ class GameState {
     private var elementEffectivenessSystem: ElementEffectivenessSystem
     private var statusEffectStrategyFactory: StatusEffectStrategyFactory
 
-    init() {
+    init(elementEffectivenessSystem: ElementEffectivenessSystem, statusEffectStrategyFactory: StatusEffectStrategyFactory) {
         self.currentTurn = .playerTurn
-        self.elementEffectivenessSystem = ElementEffectivenessSystem()
-        self.statusEffectStrategyFactory = StatusEffectStrategyFactory()
+        self.elementEffectivenessSystem = elementEffectivenessSystem
+        self.statusEffectStrategyFactory = statusEffectStrategyFactory
     }
 
     func addEntity(_ entity: Entity) {

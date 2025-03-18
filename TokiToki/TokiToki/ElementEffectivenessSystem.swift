@@ -113,13 +113,3 @@ class ElementEffectivenessSystem {
         effectivenessMap[element] = effectiveness
     }
 }
-
-enum ElementType {
-    case fire
-    case water
-    case earth
-    case air
-    case light
-    case dark
-    case neutral
-}
