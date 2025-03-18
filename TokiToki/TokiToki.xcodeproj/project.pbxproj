@@ -58,17 +58,29 @@
 		E6D48C482D846D8D00301EA7 /* Exceptions for "TokiToki" folder in "TokiToki" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				.swift,
 				Info.plist,
 			);
 			target = E6D48C1B2D846D8C00301EA7 /* TokiToki */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		BD28697B2D898EC3002BFB53 /* Exceptions for "TokiToki" folder in "Compile Sources" phase from "TokiToki" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = E6D48C182D846D8C00301EA7 /* Sources */;
+			membershipExceptions = (
+				.swift,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E6D48C1E2D846D8C00301EA7 /* TokiToki */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				E6D48C482D846D8D00301EA7 /* Exceptions for "TokiToki" folder in "TokiToki" target */,
+				BD28697B2D898EC3002BFB53 /* Exceptions for "TokiToki" folder in "Compile Sources" phase from "TokiToki" target */,
 			);
 			path = TokiToki;
 			sourceTree = "<group>";

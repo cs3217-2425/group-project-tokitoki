@@ -1,24 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="2nn-sO-cwo">
+    <device id="iPad13_0rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--MainMenuViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" userLabel="MainMenuViewController" customClass="MainMenuViewController" customModule="TokiToki" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1032" height="1376"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="7ev-oM-ucI">
+                                <rect key="frame" x="455.5" y="602.5" width="121" height="171.5"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0EI-8H-Fn5">
+                                        <rect key="frame" x="0.0" y="0.0" width="121" height="50.5"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Play Game" buttonSize="large"/>
+                                        <connections>
+                                            <action selector="playGameButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rkB-Nw-7MO"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cJ1-oq-HeZ">
+                                        <rect key="frame" x="0.0" y="60.5" width="121" height="50.5"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Gacha" buttonSize="large"/>
+                                        <connections>
+                                            <action selector="gachaButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Kqu-ta-oE2"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u45-ZZ-mQj">
+                                        <rect key="frame" x="0.0" y="121" width="121" height="50.5"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Profile" buttonSize="large"/>
+                                        <connections>
+                                            <action selector="profileButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y0G-RJ-acg"/>
+                                            <segue destination="rDs-22-ZKb" kind="push" identifier="" id="R1p-4w-HEt"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="7ev-oM-ucI" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="OAw-oB-aB1"/>
+                            <constraint firstItem="7ev-oM-ucI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tDq-f6-YLS"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="1NE-XY-ISt"/>
+                    <connections>
+                        <outlet property="gachaButton" destination="cJ1-oq-HeZ" id="NGX-kT-bmo"/>
+                        <outlet property="playGameButton" destination="0EI-8H-Fn5" id="Ikk-fx-oqL"/>
+                        <outlet property="profileButton" destination="u45-ZZ-mQj" id="tIm-YM-QZY"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="754.06976744186045" y="-34.011627906976742"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Azt-ih-2x9">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="2nn-sO-cwo" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="4JA-SK-GFk">
+                        <rect key="frame" x="0.0" y="24" width="1032" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="68N-E7-p1c"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yZq-oo-mDp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="29.651162790697676" y="-34.011627906976742"/>
+        </scene>
+        <!--Profile View Controller-->
+        <scene sceneID="rKa-0w-CVd">
+            <objects>
+                <viewController id="rDs-22-ZKb" customClass="ProfileViewController" customModule="TokiToki" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="R7s-ie-IYa">
+                        <rect key="frame" x="0.0" y="0.0" width="1032" height="1376"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Pym-aQ-U6M"/>
+                        <color key="backgroundColor" systemColor="systemIndigoColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" prompt=" " style="editor" id="tmH-i5-GYr"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3nX-ZK-WKq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="754" y="651"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemIndigoColor">
+            <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
