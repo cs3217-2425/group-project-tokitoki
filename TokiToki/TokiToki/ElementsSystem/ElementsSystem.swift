@@ -7,40 +7,40 @@
 
 import Foundation
 
-class DataDrivenElementSystem {
+class ElementsSystem {
     private var effectivenessMap: [ElementType: [ElementType: Double]] = [:]
-    
+
     private var elementDataMap: [ElementType: ElementData] = [:]
-    
+
     init() {
         loadElementData()
     }
-    
+
     private func loadElementData() {
         do {
             // Make sure the JSON file is named correctly as "Elements.json"
             let elementsData: ElementsData = try ResourceLoader.loadJSON(fromFile: "Elements")
-            
+
             // Build the effectiveness map
             for elementData in elementsData.elements {
                 guard let elementType = ElementType.fromString(elementData.id) else {
                     print("Warning: Unknown element type \(elementData.id)")
                     continue
                 }
-                
+
                 // Store the element data
                 elementDataMap[elementType] = elementData
-                
+
                 // Create effectiveness dictionary for this element
                 var effectivenessDict: [ElementType: Double] = [:]
-                
+
                 // Map the effectiveness values
                 for (targetId, value) in elementData.effectiveness {
                     if let targetType = ElementType.fromString(targetId) {
                         effectivenessDict[targetType] = value
                     }
                 }
-                
+
                 effectivenessMap[elementType] = effectivenessDict
             }
         } catch {
@@ -49,7 +49,7 @@ class DataDrivenElementSystem {
             setupDefaultEffectiveness()
         }
     }
-    
+
     // Fallback to default values if loading fails
     private func setupDefaultEffectiveness() {
         // Fire effectiveness
@@ -129,24 +129,24 @@ class DataDrivenElementSystem {
             .neutral: 1.0
         ]
     }
-    
+
     func getEffectiveness(of attackElement: ElementType, against defenseElement: ElementType) -> Double {
         if let elementMatchups = effectivenessMap[attackElement],
            let effectiveness = elementMatchups[defenseElement] {
             return effectiveness
         }
-        
+
         return 1.0
     }
-    
+
     func getElementName(_ elementType: ElementType) -> String {
-        return elementDataMap[elementType]?.name ?? elementType.rawValue.capitalized
+        elementDataMap[elementType]?.name ?? elementType.rawValue.capitalized
     }
-    
+
     func getElementDescription(_ elementType: ElementType) -> String {
-        return elementDataMap[elementType]?.description ?? ""
+        elementDataMap[elementType]?.description ?? ""
     }
-    
+
     func reloadData() {
         effectivenessMap.removeAll()
         elementDataMap.removeAll()

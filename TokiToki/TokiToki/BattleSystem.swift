@@ -14,11 +14,11 @@ class BattleSystem {
     private var pendingActions: [Action] = []
     private var battleLog: [String] = []
     private var effectCalculatorFactory: EffectCalculatorFactory
-    private var elementEffectivenessSystem = ElementEffectivenessSystem()
+    private var elementsSystem = ElementsSystem()
 
     init(playerTeam: [PlayerEntity], monsterTeam: [MonsterEntity], effectCalculatorFactory: EffectCalculatorFactory) {
         self.gameState = GameState(
-            elementEffectivenessSystem: self.elementEffectivenessSystem,
+            elementsSystem: self.elementsSystem,
             statusEffectStrategyFactory: StatusEffectStrategyFactory()
         )
         self.playerTeam = playerTeam

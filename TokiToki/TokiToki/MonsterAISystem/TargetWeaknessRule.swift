@@ -8,9 +8,9 @@
 class TargetWeaknessRule: AIRule {
     let priority: Int
     let action: Action
-    let effectivenessSystem: ElementEffectivenessSystem
+    let effectivenessSystem: ElementsSystem
 
-    init(priority: Int, action: Action, effectivenessSystem: ElementEffectivenessSystem) {
+    init(priority: Int, action: Action, effectivenessSystem: ElementsSystem) {
         self.priority = priority
         self.action = action
         self.effectivenessSystem = effectivenessSystem

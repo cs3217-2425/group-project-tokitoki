@@ -12,12 +12,12 @@ class GameState {
     private var currentTurn: TurnState
     private var turnOrder: [UUID] = []
     private var activeEntityIndex: Int = 0
-    private var elementEffectivenessSystem: ElementEffectivenessSystem
+    private var elementsSystem: ElementsSystem
     private var statusEffectStrategyFactory: StatusEffectStrategyFactory
 
-    init(elementEffectivenessSystem: ElementEffectivenessSystem, statusEffectStrategyFactory: StatusEffectStrategyFactory) {
+    init(elementsSystem: ElementsSystem, statusEffectStrategyFactory: StatusEffectStrategyFactory) {
         self.currentTurn = .playerTurn
-        self.elementEffectivenessSystem = elementEffectivenessSystem
+        self.elementsSystem = elementsSystem
         self.statusEffectStrategyFactory = statusEffectStrategyFactory
     }
 
@@ -113,8 +113,8 @@ class GameState {
         return playerEntities.isEmpty || monsterEntities.isEmpty
     }
 
-    func getElementEffectivenessSystem() -> ElementEffectivenessSystem {
-        elementEffectivenessSystem
+    func getelementsSystem() -> ElementsSystem {
+        elementsSystem
     }
 
     func getStatusEffectStrategyFactory() -> StatusEffectStrategyFactory {
