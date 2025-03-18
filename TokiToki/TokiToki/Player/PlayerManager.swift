@@ -9,63 +9,63 @@ import Foundation
 
 class PlayerManager {
     static let shared = PlayerManager()
-    
+
     private let playerRepository: PlayerRepository
     private var currentPlayer: Player?
-    
+
     private init() {
         // Use CoreData context in DataManager since its the single access point
         let context = DataManager.shared.viewContext
         self.playerRepository = CoreDataPlayerRepository(context: context)
     }
-    
+
     // MARK: Player Access
-    
+
     func getPlayer() -> Player? {
         if let player = currentPlayer {
             return player
         }
-        
+
         if let storedPlayer = playerRepository.getPlayer() {
             currentPlayer = storedPlayer
             return storedPlayer
         }
-        
+
         return nil
     }
-    
+
     func getOrCreatePlayer(name: String = "Player") -> Player {
         if let player = getPlayer() {
             return player
         }
-        
+
         let newPlayer = playerRepository.createDefaultPlayer(name: name)
         currentPlayer = newPlayer
         return newPlayer
     }
-    
+
     private func savePlayer() {
         if let player = currentPlayer {
             playerRepository.savePlayer(player)
         }
     }
-    
+
     // MARK: Player Operations
-    
+
     func addExperience(_ amount: Int) {
         var player = getOrCreatePlayer()
         player.addExperience(amount)
         currentPlayer = player
         savePlayer()
     }
-    
+
     func addCurrency(_ amount: Int) {
         var player = getOrCreatePlayer()
         player.addCurrency(amount)
         currentPlayer = player
         savePlayer()
     }
-    
+
     func spendCurrency(_ amount: Int) -> Bool {
         var player = getOrCreatePlayer()
         if player.spendCurrency(amount) {

@@ -69,7 +69,7 @@ class CoreDataPlayerRepository: PlayerRepository {
             name: name,
             level: 1,
             experience: 0,
-            currency: 1000,
+            currency: 1_000,
             statistics: Player.PlayerStatistics(totalBattles: 0, battlesWon: 0),
             lastLoginDate: Date()
         )
@@ -80,7 +80,7 @@ class CoreDataPlayerRepository: PlayerRepository {
 
     // MARK: - Helper Methods
     private func convertToPlayer(_ entity: PlayerCD) -> Player {
-        return Player(
+        Player(
             id: entity.id ?? UUID(),
             name: entity.name ?? "Player",
             level: Int(entity.level),
