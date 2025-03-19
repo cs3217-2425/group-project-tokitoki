@@ -16,14 +16,14 @@ class TargetWeaknessRule: AIRule {
         self.effectivenessSystem = effectivenessSystem
     }
 
-    func condition(_ gameState: GameState) -> Bool {
+    func condition(_ gameState: TurnManager) -> Bool {
         if let skillAction = action as? UseSkillAction,
-           let source = gameState.getEntity(id: skillAction.sourceId),
+           let source = gameState.getEntity(id: skillAction.user),
            let skillsComponent = source.getComponent(ofType: SkillsComponent.self),
            let skill = skillsComponent.skills.first(where: { $0.id == skillAction.skillId }) {
 
             // Check if at least one target is weak to this skill's element
-            for targetId in skillAction.targetIds {
+            for targetId in skillAction.targets {
                 if let target = gameState.getEntity(id: targetId),
                    let targetStats = target.getComponent(ofType: StatsComponent.self) {
 

@@ -1,11 +1,11 @@
 //
-//  PlayerEntity.swift
+//  MonsterEntity.swift
 //  TokiToki
 //
 //  Created by proglab on 15/3/25.
 //
 
-class PlayerEntity: BaseEntity {
+class OpponentGameStateEntity: GameStateEntity {
     var name: String
 
     init(name: String) {

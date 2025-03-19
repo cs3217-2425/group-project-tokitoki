@@ -16,7 +16,7 @@ class AIComponent: BaseComponent {
         super.init(entityId: entityId)
     }
 
-    func determineAction(gameState: GameState) -> Action {
+    func determineAction(gameState: TurnManager) -> Action {
         for rule in rules where rule.condition(gameState) {
             return rule.action
         }

@@ -6,7 +6,7 @@
 //
 
 class NoAction: Action {
-    func execute(gameState: GameState) -> [EffectResult] {
-        [EffectResult(entity: BaseEntity(), type: .none, value: 0, description: "No action taken")]
+    func execute() -> [EffectResult] {
+        [EffectResult(entity: GameStateEntity("doesnt matter"), type: .none, value: 0, description: "No action taken")]
     }
 }

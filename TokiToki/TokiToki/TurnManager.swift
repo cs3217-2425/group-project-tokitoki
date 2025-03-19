@@ -7,7 +7,7 @@
 
 import Foundation
 
-class GameState {
+class TurnManager {
     private var entities: [UUID: Entity] = [:]
     private var currentTurn: TurnState
     private var turnOrder: [UUID] = []
@@ -15,8 +15,9 @@ class GameState {
     private var elementEffectivenessSystem: ElementEffectivenessSystem
     private var statusEffectStrategyFactory: StatusEffectStrategyFactory
 
-    init(elementEffectivenessSystem: ElementEffectivenessSystem, statusEffectStrategyFactory: StatusEffectStrategyFactory) {
-        self.currentTurn = .playerTurn
+    init(elementEffectivenessSystem: ElementEffectivenessSystem,
+         statusEffectStrategyFactory: StatusEffectStrategyFactory, startTurn: TurnState) {
+        self.currentTurn = startTurn
         self.elementEffectivenessSystem = elementEffectivenessSystem
         self.statusEffectStrategyFactory = statusEffectStrategyFactory
     }
@@ -34,11 +35,11 @@ class GameState {
     }
 
     func getPlayerEntities() -> [Entity] {
-        entities.values.filter { $0 is PlayerEntity }
+        entities.values.filter { $0 is TokiGameStateEntity }
     }
 
     func getMonsterEntities() -> [Entity] {
-        entities.values.filter { $0 is MonsterEntity }
+        entities.values.filter { $0 is OpponentGameStateEntity }
     }
 
     func calculateTurnOrder() {
@@ -122,7 +123,5 @@ class GameState {
     }
 }
 
-enum TurnState {
-    case playerTurn
-    case monsterTurn
-}
+
+

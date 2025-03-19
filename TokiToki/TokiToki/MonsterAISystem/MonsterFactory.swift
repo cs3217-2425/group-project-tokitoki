@@ -13,8 +13,8 @@ class MonsterFactory {
     }
 
     func createBasicMonster(name: String, health: Int, attack: Int, defense: Int, speed: Int,
-                            elementType: ElementType) -> MonsterEntity {
-        let monster = MonsterEntity(name: name)
+                            elementType: ElementType) -> OpponentGameStateEntity {
+        let monster = OpponentGameStateEntity(name: name)
 
         // Create basic stats
         let statsComponent = StatsComponent(
@@ -63,8 +63,8 @@ class MonsterFactory {
     }
 
     func createBossMonster(name: String, health: Int, attack: Int, defense: Int,
-                           speed: Int, elementType: ElementType) -> MonsterEntity {
-        let boss = MonsterEntity(name: name)
+                           speed: Int, elementType: ElementType) -> OpponentGameStateEntity {
+        let boss = OpponentGameStateEntity(name: name)
 
         // Create boss stats
         let statsComponent = StatsComponent(

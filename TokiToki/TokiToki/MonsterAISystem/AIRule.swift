@@ -8,5 +8,5 @@
 protocol AIRule {
     var priority: Int { get }
     var action: Action { get }
-    func condition(_ gameState: GameState) -> Bool
+    func condition(_ gameState: TurnManager) -> Bool
 }

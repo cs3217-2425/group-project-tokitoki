@@ -18,9 +18,9 @@ class StatusEffectRule: AIRule {
         self.shouldApply = shouldApply
     }
 
-    func condition(_ gameState: GameState) -> Bool {
+    func condition(_ gameState: TurnManager) -> Bool {
         if let skillAction = action as? UseSkillAction {
-            for targetId in skillAction.targetIds {
+            for targetId in skillAction.targets {
                 if let target = gameState.getEntity(id: targetId),
                    let statusComponent = target.getComponent(ofType: StatusEffectsComponent.self) {
 

@@ -25,8 +25,8 @@ class Toki {
         self.elementType = elementType
     }
 
-    func createBattleEntity() -> PlayerEntity {
-        let entity = PlayerEntity(name: name)
+    func createBattleEntity() -> TokiGameStateEntity {
+        let entity = TokiGameStateEntity(name: name)
 
         // Add components
         let statsComponent = StatsComponent(
