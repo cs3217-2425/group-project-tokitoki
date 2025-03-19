@@ -6,13 +6,13 @@
 //
 
 class EffectCalculatorFactory {
-    private let elementEffectivenessSystem: ElementEffectivenessSystem
+    private let elementsSystem: ElementsSystem
     private let calculators: [SkillType: EffectCalculator]
 
-    init(elementEffectivenessSystem: ElementEffectivenessSystem) {
-        self.elementEffectivenessSystem = elementEffectivenessSystem
+    init(elementsSystem: ElementsSystem) {
+        self.elementsSystem = elementsSystem
         self.calculators = [
-           .attack: AttackCalculator(elementEffectivenessSystem: elementEffectivenessSystem),
+           .attack: AttackCalculator(elementsSystem: elementsSystem),
            .heal: HealCalculator(),
            .defend: DefenseCalculator(),
            .buff: BuffCalculator(),
@@ -21,6 +21,6 @@ class EffectCalculatorFactory {
     }
 
     func getCalculator(for skillType: SkillType) -> EffectCalculator {
-        calculators[skillType] ?? AttackCalculator(elementEffectivenessSystem: self.elementEffectivenessSystem) // Default to attack if not found
+        calculators[skillType] ?? AttackCalculator(elementsSystem: self.elementsSystem) // Default to attack if not found
     }
 }

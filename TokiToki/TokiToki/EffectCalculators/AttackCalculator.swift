@@ -6,10 +6,10 @@
 //
 
 class AttackCalculator: EffectCalculator {
-    private let elementEffectivenessSystem: ElementEffectivenessSystem
+    private let elementsSystem: ElementsSystem
 
-    init(elementEffectivenessSystem: ElementEffectivenessSystem) {
-        self.elementEffectivenessSystem = elementEffectivenessSystem
+    init(elementsSystem: ElementsSystem) {
+        self.elementsSystem = elementsSystem
     }
 
     func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult {
@@ -22,7 +22,7 @@ class AttackCalculator: EffectCalculator {
         var damage = (sourceStats.attack * skill.basePower / 100) - (targetStats.defense / 4)
 
         // Element effectiveness
-        let elementMultiplier = elementEffectivenessSystem.getEffectiveness(of: sourceStats.elementType,
+        let elementMultiplier = elementsSystem.getEffectiveness(of: sourceStats.elementType,
                                                                             against: targetStats.elementType)
         damage = Int(Double(damage) * elementMultiplier)
 

@@ -12,7 +12,7 @@ class TurnManager {
     private var currentTurn: TurnState
     private var turnOrder: [UUID] = []
     private var activeEntityIndex: Int = 0
-    private var elementEffectivenessSystem: ElementEffectivenessSystem
+    private var elementsSystem: ElementsSystem
     private var statusEffectStrategyFactory: StatusEffectStrategyFactory
 
     init(elementEffectivenessSystem: ElementEffectivenessSystem,
@@ -114,8 +114,8 @@ class TurnManager {
         return playerEntities.isEmpty || monsterEntities.isEmpty
     }
 
-    func getElementEffectivenessSystem() -> ElementEffectivenessSystem {
-        elementEffectivenessSystem
+    func getelementsSystem() -> ElementsSystem {
+        elementsSystem
     }
 
     func getStatusEffectStrategyFactory() -> StatusEffectStrategyFactory {
