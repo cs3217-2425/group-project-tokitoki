@@ -13,8 +13,8 @@ class MonsterFactory {
     }
 
     func createBasicMonster(name: String, health: Int, attack: Int, defense: Int, speed: Int,
-                            elementType: ElementType) -> OpponentGameStateEntity {
-        let monster = OpponentGameStateEntity(name: name)
+                            elementType: ElementType) -> GameStateEntity {
+        let monster = GameStateEntity(name)
 
         // Create basic stats
         let statsComponent = StatsComponent(
@@ -33,7 +33,7 @@ class MonsterFactory {
             elementType: elementType,
             basePower: 100,
             cooldown: 0,
-            targetType: .single
+            targetType: .singleEnemy
         )
 
         let skillsComponent = SkillsComponent(entityId: monster.id, skills: [basicAttack])
@@ -45,13 +45,13 @@ class MonsterFactory {
         let aiRules: [AIRule] = [
             HealthBelowPercentageRule(
                 priority: 1,
-                action: UseSkillAction(sourceId: monster.id,
-                                       skillId: basicAttack.id, targetIds: []), // Target IDs will be filled at runtime
+                action: UseSkillAction(user: monster,
+                                       skill: basicAttack, targets: []), // Target IDs will be filled at runtime
                 percentage: 30
             )
         ]
 
-        let aiComponent = AIComponent(entityId: monster.id, rules: aiRules)
+        let aiComponent = AIComponent(entityId: monster.id, rules: aiRules, skills: [basicAttack])
 
         // Add components to the monster
         monster.addComponent(statsComponent)
@@ -63,8 +63,8 @@ class MonsterFactory {
     }
 
     func createBossMonster(name: String, health: Int, attack: Int, defense: Int,
-                           speed: Int, elementType: ElementType) -> OpponentGameStateEntity {
-        let boss = OpponentGameStateEntity(name: name)
+                           speed: Int, elementType: ElementType) -> GameStateEntity {
+        let boss = GameStateEntity(name)
 
         // Create boss stats
         let statsComponent = StatsComponent(
@@ -83,7 +83,7 @@ class MonsterFactory {
             elementType: elementType,
             basePower: 120,
             cooldown: 0,
-            targetType: .single
+            targetType: .singleEnemy
         )
 
         let aoeAttack = skillFactory.createAttackSkill(
@@ -100,7 +100,7 @@ class MonsterFactory {
             description: "Weakens the target, reducing their attack",
             basePower: 50,
             cooldown: 4,
-            targetType: .single,
+            targetType: .singleEnemy,
             statusEffect: .attackDebuff,
             duration: 3
         )
@@ -115,20 +115,20 @@ class MonsterFactory {
             // Use AOE attack when it's available
             HealthBelowPercentageRule(
                 priority: 1,
-                action: UseSkillAction(sourceId: boss.id,
-                                       skillId: aoeAttack.id, targetIds: []), // Target IDs will be filled at runtime
+                action: UseSkillAction(user: boss,
+                                       skill: aoeAttack, targets: []), // Target IDs will be filled at runtime
                 percentage: 50
             ),
             // Use debuff when health is high
             HealthBelowPercentageRule(
                 priority: 2,
-                action: UseSkillAction(sourceId: boss.id,
-                                       skillId: debuffSkill.id, targetIds: []), // Target IDs will be filled at runtime
+                action: UseSkillAction(user: boss,
+                                       skill: debuffSkill, targets: []), // Target IDs will be filled at runtime
                 percentage: 80
             )
         ]
 
-        let aiComponent = AIComponent(entityId: boss.id, rules: aiRules)
+        let aiComponent = AIComponent(entityId: boss.id, rules: aiRules, skills: [basicAttack, aoeAttack, debuffSkill])
 
         // Add components to the boss
         boss.addComponent(statsComponent)

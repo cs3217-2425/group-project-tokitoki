@@ -16,7 +16,7 @@ struct StatusEffect {
     let sourceId: UUID
 
     // Function to apply effect using strategy pattern
-    func apply(to entity: Entity, strategyFactory: StatusEffectStrategyFactory) -> EffectResult {
+    func apply(to entity: GameStateEntity, strategyFactory: StatusEffectStrategyFactory) -> EffectResult {
         if let strategy = strategyFactory.getStrategy(for: type) {
             return strategy.apply(to: entity, effect: self)
         }

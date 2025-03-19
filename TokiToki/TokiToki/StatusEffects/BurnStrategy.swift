@@ -6,7 +6,7 @@
 //
 
 class BurnStrategy: StatusEffectStrategy {
-    func apply(to entity: Entity, effect: StatusEffect) -> EffectResult {
+    func apply(to entity: GameStateEntity, effect: StatusEffect) -> EffectResult {
         let damage = Int(Double(entity.getMaxHealth()) * 0.07 * effect.strength)
         entity.takeDamage(amount: damage)
         return EffectResult(

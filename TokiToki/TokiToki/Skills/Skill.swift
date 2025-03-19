@@ -22,7 +22,7 @@ protocol Skill {
     var statusEffectDuration: Int { get }
 
     func canUse() -> Bool
-    func use(from source: Entity, on targets: [Entity]) -> [EffectResult]
+    func use(from source: GameStateEntity, on targets: [GameStateEntity]) -> [EffectResult]
     func startCooldown()
     func reduceCooldown()
 }
@@ -36,7 +36,7 @@ enum SkillType {
 }
 
 enum TargetType {
-    case single
+    case singleEnemy
     case all
     case ownself
     case allAllies

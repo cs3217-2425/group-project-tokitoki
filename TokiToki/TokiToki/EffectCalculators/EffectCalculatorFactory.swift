@@ -9,7 +9,7 @@ class EffectCalculatorFactory {
     private let elementsSystem: ElementsSystem
     private let calculators: [SkillType: EffectCalculator]
 
-    init(elementsSystem: ElementsSystem) {
+    init(_ elementsSystem: ElementsSystem) {
         self.elementsSystem = elementsSystem
         self.calculators = [
            .attack: AttackCalculator(elementsSystem: elementsSystem),

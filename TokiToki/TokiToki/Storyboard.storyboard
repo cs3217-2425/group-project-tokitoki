@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="qIe-sq-0d4">
+    <device id="iPad13_0rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Battle View Controller-->
+        <scene sceneID="0Wf-k1-6bU">
+            <objects>
+                <viewController storyboardIdentifier="BattleVC" id="qIe-sq-0d4" customClass="BattleViewController" customModule="TokiToki" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5LV-xp-0fa">
+                        <rect key="frame" x="0.0" y="0.0" width="1032" height="1376"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="6a5d5ce52271708a21eaa4aa68525fc7.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="hwF-Sd-6ca">
+                                <rect key="frame" x="0.0" y="24" width="1032" height="1157"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-purple copy.png" translatesAutoresizingMaskIntoConstraints="NO" id="uud-rd-YtX">
+                                <rect key="frame" x="835" y="986" width="144" height="129"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tet-TL-gr2">
+                                <rect key="frame" x="0.0" y="1179" width="1032" height="177"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="8996200.png" translatesAutoresizingMaskIntoConstraints="NO" id="fjW-Hl-Uhj">
+                                        <rect key="frame" x="851" y="26" width="136" height="107"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="2784769.png" translatesAutoresizingMaskIntoConstraints="NO" id="UhK-aY-kIN">
+                                        <rect key="frame" x="464" y="26" width="135" height="107"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="4334081.png" translatesAutoresizingMaskIntoConstraints="NO" id="RaY-Gd-jCE">
+                                        <rect key="frame" x="48" y="26" width="191" height="107"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemMintColor"/>
+                            </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-blue copy.png" translatesAutoresizingMaskIntoConstraints="NO" id="f8d-ov-Bzh">
+                                <rect key="frame" x="101" y="986" width="145" height="129"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-green copy.png" translatesAutoresizingMaskIntoConstraints="NO" id="kTU-Xr-Ggd">
+                                <rect key="frame" x="432" y="986" width="168" height="129"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-red copy.png" translatesAutoresizingMaskIntoConstraints="NO" id="rym-qe-u7j">
+                                <rect key="frame" x="374" y="291" width="284" height="271"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kli-EZ-FWY">
+                                <rect key="frame" x="345" y="711" width="342" height="179"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" name="AccentColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="oqs-eX-Rj4"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <outlet property="battleLogDisplay" destination="Kli-EZ-FWY" id="28b-S7-PcF"/>
+                        <outlet property="skill1" destination="RaY-Gd-jCE" id="R6O-Yz-JVu"/>
+                        <outlet property="skill2" destination="UhK-aY-kIN" id="Iuk-uS-0Y3"/>
+                        <outlet property="skill3" destination="fjW-Hl-Uhj" id="aNn-k9-kRz"/>
+                        <outlet property="toki1" destination="f8d-ov-Bzh" id="HyE-Dj-OiN"/>
+                        <outlet property="toki2" destination="kTU-Xr-Ggd" id="zGa-qH-1eu"/>
+                        <outlet property="toki3" destination="uud-rd-YtX" id="soQ-6W-RpE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4Ul-Yg-aLW" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="596" y="52"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="2784769.png" width="512" height="512"/>
+        <image name="4334081.png" width="384" height="384"/>
+        <image name="6a5d5ce52271708a21eaa4aa68525fc7.jpg" width="236" height="419"/>
+        <image name="8996200.png" width="384" height="384"/>
+        <image name="peg-blue copy.png" width="128" height="128"/>
+        <image name="peg-green copy.png" width="128" height="128"/>
+        <image name="peg-purple copy.png" width="128" height="128"/>
+        <image name="peg-red copy.png" width="128" height="128"/>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemMintColor">
+            <color red="0.0" green="0.78039215689999997" blue="0.74509803919999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

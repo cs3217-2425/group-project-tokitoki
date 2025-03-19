@@ -8,15 +8,15 @@
 class StatModifierStrategy: StatusEffectStrategy {
     let statType: String
     let isPositive: Bool
-    let statModifier: (Entity, Double) -> Int
+    let statModifier: (GameStateEntity, Double) -> Int
 
-    init(statType: String, isPositive: Bool, statModifier: @escaping (Entity, Double) -> Int) {
+    init(statType: String, isPositive: Bool, statModifier: @escaping (GameStateEntity, Double) -> Int) {
         self.statType = statType
         self.isPositive = isPositive
         self.statModifier = statModifier
     }
 
-    func apply(to entity: Entity, effect: StatusEffect) -> EffectResult {
+    func apply(to entity: GameStateEntity, effect: StatusEffect) -> EffectResult {
         let value = statModifier(entity, effect.strength)
         let direction = isPositive ? "increased" : "decreased"
         let absValue = abs(value)

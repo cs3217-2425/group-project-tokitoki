@@ -6,7 +6,7 @@
 //
 
 class BuffCalculator: EffectCalculator {
-    func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult {
+    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
         let buffAmount = skill.basePower
 
         // Apply buff based on the status effect type

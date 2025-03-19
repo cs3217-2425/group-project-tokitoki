@@ -5,15 +5,15 @@
 //  Created by proglab on 15/3/25.
 //
 
-class OpponentGameStateEntity: GameStateEntity {
-    var name: String
-
-    init(name: String) {
-        self.name = name
-        super.init()
-    }
-
-    override func getName() -> String {
-        name
-    }
-}
+//class OpponentGameStateEntity: GameStateEntity {
+//    var name: String
+//
+//    init(name: String) {
+//        self.name = name
+//        super.init()
+//    }
+//
+//    override func getName() -> String {
+//        name
+//    }
+//}

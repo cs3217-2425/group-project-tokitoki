@@ -7,6 +7,6 @@
 
 protocol AIRule {
     var priority: Int { get }
-    var action: Action { get }
-    func condition(_ gameState: TurnManager) -> Bool
+    var skillAction: UseSkillAction { get }
+    func condition(_ entity: GameStateEntity) -> Bool
 }

@@ -113,4 +113,26 @@ class GameStateEntity: BaseEntity {
     func isDead() -> Bool {
         getCurrentHealth() <= 0
     }
+    
+    func incrementActionBar(by multiplier: Float) {
+        guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
+            return
+        }
+        if statsComponent.actionMeter > 100 {
+            statsComponent.actionMeter -= 100
+        }
+        statsComponent.actionMeter += multiplier * Float(statsComponent.speed)
+    }
+    
+    func getActionBar() -> Float {
+        guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
+            return 0
+        }
+        return statsComponent.actionMeter
+    }
 }
+
+//struct ActionBarResult {
+//    var actionMeter: Float
+//    var speed: Int
+//}

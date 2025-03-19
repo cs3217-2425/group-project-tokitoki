@@ -6,7 +6,7 @@
 //
 
 class ParalysisStrategy: StatusEffectStrategy {
-    func apply(to entity: Entity, effect: StatusEffect) -> EffectResult {
+    func apply(to entity: GameStateEntity, effect: StatusEffect) -> EffectResult {
         if Double.random(in: 0...1) < 0.5 {
             return EffectResult(
                 entity: entity,
