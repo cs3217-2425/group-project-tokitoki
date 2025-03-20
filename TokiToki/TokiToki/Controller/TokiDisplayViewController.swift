@@ -47,6 +47,8 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         equipmentTableView.dataSource = self
         skillsTableView.delegate = self
         skillsTableView.dataSource = self
+        equipmentTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        skillsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         // Load Toki Data
         updateUI()
