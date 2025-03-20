@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ElementEffectivenessSystem {
+class OutdatedelementsSystem {
     private var effectivenessMap: [ElementType: [ElementType: Double]] = [:]
 
     init() {
