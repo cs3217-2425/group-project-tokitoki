@@ -1,0 +1,12 @@
+{
+  "packs": [
+      {
+        "packName": "Starter Pack",
+        "tokiNames": ["FireFox", "WaterSerpent"]
+      },
+      {
+        "packName": "Legendary Pack",
+        "tokiNames": ["EarthDragon", "SkyPhoenix"]
+      }
+    ]
+}

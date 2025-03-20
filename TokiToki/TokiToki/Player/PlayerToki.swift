@@ -6,15 +6,25 @@
 //
 import Foundation
 
+/// Represents a player's owned Toki instance, which references a base Toki from gacha.
 struct PlayerToki {
     let id: UUID
-    let baseTokiId: UUID
+    let baseTokiId: UUID  // Links to the base TokiCD
     let dateAcquired: Date
-    
-    init(id: UUID = UUID(), baseTokiId: UUID, dateAcquired: Date = Date()) {
+    var currentHealth: Int
+    var currentAttack: Int
+    var currentDefense: Int
+    var currentSpeed: Int
+
+    init(id: UUID = UUID(), baseTokiId: UUID, dateAcquired: Date = Date(),
+         currentHealth: Int, currentAttack: Int, currentDefense: Int, currentSpeed: Int) {
         self.id = id
-        self.baseTokiId = id
+        self.baseTokiId = baseTokiId
         self.dateAcquired = dateAcquired
+        self.currentHealth = currentHealth
+        self.currentAttack = currentAttack
+        self.currentDefense = currentDefense
+        self.currentSpeed = currentSpeed
     }
 }
 

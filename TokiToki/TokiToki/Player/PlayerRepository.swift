@@ -119,6 +119,10 @@ class CoreDataPlayerRepository: PlayerRepository {
             tokiEntity.id = domainToki.id
             tokiEntity.dateAcquired = domainToki.dateAcquired
             tokiEntity.baseTokiId = domainToki.baseTokiId
+            tokiEntity.currentHealth = Int16(domainToki.currentHealth)
+            tokiEntity.currentAttack = Int16(domainToki.currentAttack)
+            tokiEntity.currentDefense = Int16(domainToki.currentDefense)
+            tokiEntity.currentSpeed = Int16(domainToki.currentSpeed)
             tokiEntity.player = entity
         }
     }
@@ -126,11 +130,15 @@ class CoreDataPlayerRepository: PlayerRepository {
     // MARK: - PlayerToki <-> PlayerTokiCD
 
     private func convertPlayerTokiToDomain(_ playerTokiCD: PlayerTokiCD) -> PlayerToki {
-            PlayerToki(
-                id: playerTokiCD.id ?? UUID(),
-                baseTokiId: playerTokiCD.baseTokiId ?? UUID(),
-                dateAcquired: playerTokiCD.dateAcquired ?? Date()
-            )
-        }
+        PlayerToki(
+            id: playerTokiCD.id ?? UUID(),
+            baseTokiId: playerTokiCD.baseTokiId ?? UUID(), // Ensure correct linking
+            dateAcquired: playerTokiCD.dateAcquired ?? Date(),
+            currentHealth: Int(playerTokiCD.currentHealth),
+            currentAttack: Int(playerTokiCD.currentAttack),
+            currentDefense: Int(playerTokiCD.currentDefense),
+            currentSpeed: Int(playerTokiCD.currentSpeed)
+        )
+    }
     
 }

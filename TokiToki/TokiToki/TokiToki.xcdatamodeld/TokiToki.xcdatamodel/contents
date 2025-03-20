@@ -21,6 +21,10 @@
     </entity>
     <entity name="PlayerTokiCD" representedClassName="PlayerTokiCD" syncable="YES" codeGenerationType="class">
         <attribute name="baseTokiId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="currentAttack" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="currentDefense" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="currentHealth" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="currentSpeed" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="dateAcquired" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="player" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerCD" inverseName="tokis" inverseEntity="PlayerCD"/>

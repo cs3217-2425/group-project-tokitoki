@@ -83,12 +83,11 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Draw"/>
                                 <connections>
-                                    <action selector="gachaDrawButton:" destination="bx0-6u-sXI" eventType="touchUpInside" id="36S-1M-9AW"/>
                                     <action selector="gachaDrawButtonTapped:" destination="bx0-6u-sXI" eventType="touchUpInside" id="Nh4-D9-YQm"/>
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nqh-sj-Mgm">
-                                <rect key="frame" x="334" y="369" width="365" height="427"/>
+                                <rect key="frame" x="333.5" y="369" width="365" height="427"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="365" id="rrp-NP-SCk"/>
                                     <constraint firstAttribute="height" constant="427" id="xBk-ub-Sih"/>
@@ -97,10 +96,18 @@
                                     <segue destination="PcR-kb-E4g" kind="embed" id="FwF-Mg-Y3W"/>
                                 </connections>
                             </containerView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEK-zM-Hiy">
+                                <rect key="frame" x="516" y="332" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="xTc-1U-ouG"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="qEK-zM-Hiy" firstAttribute="centerX" secondItem="UKm-Nn-x9R" secondAttribute="centerX" id="G8a-Tv-CKX"/>
+                            <constraint firstItem="nqh-sj-Mgm" firstAttribute="top" secondItem="qEK-zM-Hiy" secondAttribute="bottom" constant="37" id="K7w-ah-ybK"/>
                             <constraint firstItem="nqh-sj-Mgm" firstAttribute="centerX" secondItem="UKm-Nn-x9R" secondAttribute="centerX" id="KLb-hR-tkB"/>
                             <constraint firstItem="xTc-1U-ouG" firstAttribute="bottom" secondItem="RDJ-q8-2zr" secondAttribute="bottom" constant="331" id="NE1-1O-k0h"/>
                             <constraint firstItem="RDJ-q8-2zr" firstAttribute="centerX" secondItem="UKm-Nn-x9R" secondAttribute="centerX" id="Vuh-vz-PES"/>
@@ -110,6 +117,7 @@
                     <navigationItem key="navigationItem" id="o5l-2i-49g"/>
                     <connections>
                         <outlet property="gachaDrawButton" destination="RDJ-q8-2zr" id="E6M-uE-0nc"/>
+                        <outlet property="gachaPackLabel" destination="qEK-zM-Hiy" id="ZjP-CB-a3E"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KaK-12-gRD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
