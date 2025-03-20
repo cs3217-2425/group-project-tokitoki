@@ -74,7 +74,6 @@ class CoreDataPlayerRepository: PlayerRepository {
             lastLoginDate: Date(),
             ownedTokis: []
         )
-        
         savePlayer(player)
         return player
     }
@@ -83,7 +82,6 @@ class CoreDataPlayerRepository: PlayerRepository {
     private func convertToPlayer(_ entity: PlayerCD) -> Player {
         let playerTokiEntities = entity.tokis as? Set<PlayerTokiCD> ?? []
         let domainPlayerTokis = playerTokiEntities.map { convertPlayerTokiToDomain($0) }
-        
         
         return Player(
             id: entity.id ?? UUID(),
