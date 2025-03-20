@@ -9,7 +9,7 @@ import Foundation
 // MARK: - Toki Class for Gacha and Display
 
 class Toki {
-    let id: UUID = UUID()
+    let id = UUID()
     let name: String
     let rarity: TokiRarity
     let baseStats: TokiBaseStats

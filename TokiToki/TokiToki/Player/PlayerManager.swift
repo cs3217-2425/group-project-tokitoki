@@ -77,7 +77,7 @@ class PlayerManager {
     }
 
     func getCurrentCurrency() -> Int {
-        return getOrCreatePlayer().currency
+        getOrCreatePlayer().currency
     }
 
     func getBattleStatistics() -> (total: Int, won: Int, winRate: Double) {

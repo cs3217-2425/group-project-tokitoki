@@ -6,11 +6,7 @@
 //
 
 class MonsterFactory {
-    private let skillFactory: SkillFactory
-
-    init(skillFactory: SkillFactory) {
-        self.skillFactory = skillFactory
-    }
+    private let skillFactory = SkillFactory()
 
     func createBasicMonster(name: String, health: Int, attack: Int, defense: Int, speed: Int,
                             elementType: ElementType) -> GameStateEntity {

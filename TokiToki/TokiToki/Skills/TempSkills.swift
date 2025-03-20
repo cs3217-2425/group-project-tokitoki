@@ -7,6 +7,20 @@
 
 let attackCalculator = AttackCalculator(elementsSystem: ElementsSystem())
 
+let basicSpell = BaseSkill(
+    name: "Basic Spell",
+    description: "A basic ball of magic that deals damage to a single enemy.",
+    type: .attack,
+    targetType: .singleEnemy,
+    elementType: .neutral,
+    basePower: 20,
+    cooldown: 0,
+    statusEffectChance: 0,
+    statusEffect: nil,
+    statusEffectDuration: 0,   
+    effectCalculator: attackCalculator
+)
+
 let fireball = BaseSkill(
     name: "Fireball",
     description: "A powerful ball of fire that deals damage to a single enemy and has a chance to burn.",
@@ -48,5 +62,3 @@ let lightningBolt = BaseSkill(
     statusEffectDuration: 2,   // The paralysis effect lasts for 2 turns.
     effectCalculator: attackCalculator
 )
-
-

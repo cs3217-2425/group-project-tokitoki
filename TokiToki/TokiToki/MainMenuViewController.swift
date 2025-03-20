@@ -18,12 +18,8 @@ class MainMenuViewController: UIViewController {
     }
 
     @IBAction private func playGameButtonTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "Storyboard", bundle: nil)
-        if let battleVC = storyboard.instantiateViewController(withIdentifier: "BattleVC") as? BattleViewController {
-            battleVC.modalPresentationStyle = .fullScreen // Optional: Set presentation style
-            present(battleVC, animated: true, completion: nil)
-        }
-        
+    
+
     }
 
     @IBAction private func gachaButtonTapped(_ sender: UIButton) {

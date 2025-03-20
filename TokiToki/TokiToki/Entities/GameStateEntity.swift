@@ -9,6 +9,7 @@ import Foundation
 
 // Base Entity Implementation
 class GameStateEntity: BaseEntity {
+    let MAX_ACTION_BAR: Float = 100
 //    let id = UUID()
 //    var components: [String: Component] = [:]
 //
@@ -27,7 +28,7 @@ class GameStateEntity: BaseEntity {
 //        components.removeValue(forKey: componentName)
 //    }
     var name: String
-    
+
     init(_ name: String) {
         self.name = name
         super.init()
@@ -85,7 +86,7 @@ class GameStateEntity: BaseEntity {
         }
         return statsComponent.speed
     }
-    
+
     func modifyAttack(by amount: Int) {
         guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
             return
@@ -113,26 +114,37 @@ class GameStateEntity: BaseEntity {
     func isDead() -> Bool {
         getCurrentHealth() <= 0
     }
-    
+
     func incrementActionBar(by multiplier: Float) {
         guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
             return
         }
-        if statsComponent.actionMeter > 100 {
-            statsComponent.actionMeter -= 100
-        }
+        
+        
+        
+//        if statsComponent.actionMeter >= 100 {
+//            statsComponent.actionMeter -= 100
+//        }
         statsComponent.actionMeter += multiplier * Float(statsComponent.speed)
+        statsComponent.actionMeter = min(statsComponent.actionMeter, MAX_ACTION_BAR)
     }
-    
+
     func getActionBar() -> Float {
         guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
             return 0
         }
         return statsComponent.actionMeter
     }
+    
+    func resetActionBar() {
+        guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
+            return 
+        }
+        statsComponent.actionMeter -= MAX_ACTION_BAR
+    }
 }
 
-//struct ActionBarResult {
+// struct ActionBarResult {
 //    var actionMeter: Float
 //    var speed: Int
-//}
+// }

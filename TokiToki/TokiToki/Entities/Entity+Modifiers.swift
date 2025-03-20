@@ -5,7 +5,7 @@
 //  Created by proglab on 15/3/25.
 //
 
-//extension Entity {
+// extension Entity {
 //    func modifyAttack(by amount: Int) {
 //        guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
 //            return
@@ -33,4 +33,4 @@
 //    func isDead() -> Bool {
 //        getCurrentHealth() <= 0
 //    }
-//}
+// }

@@ -6,11 +6,8 @@
 //
 
 class SkillFactory {
-    private let effectCalculatorFactory: EffectCalculatorFactory
+    private let effectCalculatorFactory = EffectCalculatorFactory()
 
-    init(effectCalculatorFactory: EffectCalculatorFactory) {
-        self.effectCalculatorFactory = effectCalculatorFactory
-    }
 
     func createAttackSkill(name: String, description: String, elementType: ElementType, basePower: Int,
                            cooldown: Int, targetType: TargetType, statusEffect: StatusEffectType? = nil,

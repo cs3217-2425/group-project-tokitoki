@@ -10,16 +10,16 @@ class StatusEffectRule: AIRule {
     let skillAction: UseSkillAction
     let statusEffect: StatusEffectType
     let shouldApply: Bool
-    
+
     init(priority: Int, action: UseSkillAction, statusEffect: StatusEffectType, shouldApply: Bool) {
         self.priority = priority
         self.skillAction = action
         self.statusEffect = statusEffect
         self.shouldApply = shouldApply
     }
-    
+
     func condition(_ entity: GameStateEntity) -> Bool {
-        
+
         for target in skillAction.targets {
             let statusComponent = target.getComponent(ofType: StatusEffectsComponent.self)
             guard let statusComponent = statusComponent else {
@@ -28,8 +28,8 @@ class StatusEffectRule: AIRule {
             let hasEffect = statusComponent.hasEffect(ofType: statusEffect)
             return shouldApply ? !hasEffect : hasEffect
         }
-    
+
         return false
     }
-    
+
 }

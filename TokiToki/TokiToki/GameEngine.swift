@@ -8,9 +8,9 @@
 import Foundation
 
 class GameEngine {
-    private var playerTeam: [UUID: GameStateEntity]
-    private var opponentTeam: [UUID: GameStateEntity]
-    private var playersPlusOpponents: [UUID: GameStateEntity] = [:]
+    private var playerTeam: [GameStateEntity]
+    private var opponentTeam: [GameStateEntity]
+    private var playersPlusOpponents: [GameStateEntity] = []
     private var currentTurn: TurnState
     private var currentGameStateEntity: GameStateEntity?
     private var isWaitingForSkillSelect: Bool = true
@@ -25,78 +25,102 @@ class GameEngine {
     private var statusEffectStrategyFactory = StatusEffectStrategyFactory()
     private var useSpeedBasedTurnOrder: Bool = true
     private var battleLogObserver: BattleLogObserver?
+    private var battleEffectsDelegate: BattleEffectsDelegate?
 
-    init(playerTeam: [UUID: GameStateEntity], opponentTeam: [UUID: GameStateEntity]) {
+    init(playerTeam: [GameStateEntity], opponentTeam: [GameStateEntity]) {
         self.playerTeam = playerTeam
         self.opponentTeam = opponentTeam
         self.currentTurn = .playerTurn
-        self.effectCalculatorFactory = EffectCalculatorFactory(elementsSystem)
+        self.effectCalculatorFactory = EffectCalculatorFactory()
+        self.playersPlusOpponents = playerTeam + opponentTeam
     }
 
     func startBattle() {
+        logMessage("Battle started!")
         if useSpeedBasedTurnOrder {
+            
             startGameLoop()
         } else {
             // Default to player turn first
             currentTurn = .playerTurn
         }
-        logMessage("Battle started!")
     }
-    
+
     func addObserver(_ battleLogObserver: BattleLogObserver) {
         self.battleLogObserver = battleLogObserver
     }
     
+    func addDelegate(_ battleEffectsDelegate: BattleEffectsDelegate) {
+        self.battleEffectsDelegate = battleEffectsDelegate
+    }
+
     func startGameLoop() {
-        while (!isBattleOver()) {
-            for entity in playersPlusOpponents.values {
-                entity.incrementActionBar(by: 0.5)
-            }
-            let readyEntities = playersPlusOpponents.values.filter { $0.getActionBar() >= 100 }
-
-            if readyEntities.isEmpty {
-                continue
-            } else if readyEntities.count == 1 {
-                currentGameStateEntity = readyEntities[0]
-            } else {
-                let sortedEntities = readyEntities.sorted {
-                    if $0.getActionBar() == $1.getActionBar() {
-                        return $0.getSpeed() > $1.getSpeed()
-                    }
-                    return $0.getActionBar() > $1.getActionBar()
-                }
-
-                currentGameStateEntity = sortedEntities.first
-            }
+        while !isBattleOver() {
+            currentGameStateEntity = getNextReadyCharacter()
+            
             guard let currentGameStateEntity = currentGameStateEntity else {
+                updateAllActionMeters()
+                continue
+            }
+
+            guard let statusComponent = currentGameStateEntity.getComponent(ofType: StatusEffectsComponent.self) else {
                 return
             }
-            let statusComponent = currentGameStateEntity.getComponent(ofType: StatusEffectsComponent.self)
-            
-            guard let statusComponent = statusComponent else {
-                return
-            }
-            
+
             if statusComponent.hasEffect(ofType: .stun) || statusComponent.hasEffect(ofType: .frozen) {
                 updateEntityForNewTurn(currentGameStateEntity)
                 continue
             }
-            
-            if opponentTeam.keys.contains(currentGameStateEntity.id) {
+
+            if (opponentTeam.contains{ $0.id == currentGameStateEntity.id } ) {
                 executeOpponentTurn(currentGameStateEntity)
                 updateEntityForNewTurn(currentGameStateEntity)
                 continue
             }
-            
-            isWaitingForSkillSelect = true
-            // update observer
-            while (isWaitingForSkillSelect) {} // busy waiting
-            
-            updateEntityForNewTurn(currentGameStateEntity)
+
+            updateSkillIconsForCurrentEntity(currentGameStateEntity)
+            return
         }
     }
     
-    func useTokiSkill(_ skillIndex: Int)  {
+    private func updateAllActionMeters() {
+        for entity in playersPlusOpponents {
+            entity.incrementActionBar(by: 0.1)
+        }
+    }
+    
+    private func getNextReadyCharacter() -> GameStateEntity? {
+        let readyEntities = playersPlusOpponents.filter { $0.getActionBar() >= 100 }
+        
+        if readyEntities.isEmpty {
+            return nil
+        } else if readyEntities.count == 1 {
+            return readyEntities[0]
+        } else {
+            let sortedEntities = readyEntities.sorted {
+                if $0.getActionBar() == $1.getActionBar() {
+                    return $0.getSpeed() > $1.getSpeed()
+                }
+                return $0.getActionBar() > $1.getActionBar()
+            }
+
+            return sortedEntities.first
+        }
+    }
+    
+    private func updateSkillIconsForCurrentEntity(_ currentGameStateEntity: GameStateEntity) {
+        let skillsAvailable = currentGameStateEntity.getComponent(ofType: SkillsComponent.self)?.skills
+        let skillIcons = skillsAvailable?.map { skill in
+            let skillIcon = skillsToIconImage[skill.name]
+            guard let skillIcon = skillIcon else {
+                return ""
+            }
+            return skillIcon
+        }
+        battleEffectsDelegate?.updateSkillIcons(skillIcons)
+    }
+
+    func useTokiSkill(_ skillIndex: Int) {
         guard let currentGameStateEntity = currentGameStateEntity else {
             return
         }
@@ -104,68 +128,29 @@ class GameEngine {
         guard let skillSelected = skillSelected else {
             return
         }
-        
+
         // TODO: account for target selection instead of passing in the whole opponentTeam to targets
-        let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected, targets: Array(opponentTeam.values))
-        
+        let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected, targets: opponentTeam)
+
         queueAction(action)
         let results = executeNextAction()
+        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id) { [weak self] in
+            self?.updateLogAfterSkillUse(results, currentGameStateEntity)
+        }
+    }
+    
+    fileprivate func updateLogAfterSkillUse(_ results: [EffectResult], _ currentGameStateEntity: GameStateEntity) {
         for result in results {
             logMessage(result.description)
         }
-        isWaitingForSkillSelect = false
+        updateEntityForNewTurn(currentGameStateEntity)
+        startGameLoop()
     }
 
     func queueAction(_ action: Action) {
         pendingActions.append(action)
     }
-    
-//    func calculateTurnOrder() {
-//        var entitiesWithSpeed: [(GameStateEntity, Int)] = []
-//
-//        for entity in entities.values {
-//            if let statsComponent = entity.getComponent(ofType: StatsComponent.self) {
-//                entitiesWithSpeed.append((entity, statsComponent.speed))
-//            }
-//        }
-//
-//        // Sort by speed in descending order
-//        entitiesWithSpeed.sort { $0.1 > $1.1 }
-//
-//        // Extract just the entity IDs
-//        turnOrder = entitiesWithSpeed.map { $0.0 }
-//        activeEntityIndex = 0
-//    }
 
-//    func getActiveEntity() -> Entity? {
-//        guard !turnOrder.isEmpty && activeEntityIndex < turnOrder.count else {
-//            return nil
-//        }
-//
-//        let activeEntityId = turnOrder[activeEntityIndex]
-//        return entities[activeEntityId]
-//    }
-    
-//    func nextTurn() {
-//        activeEntityIndex += 1
-//
-//        if activeEntityIndex >= turnOrder.count {
-//            activeEntityIndex = 0
-//
-//            // Update all entities for the new turn
-//            for entity in playersPlusOpponents.values {
-//                updateEntityForNewTurn(entity)
-//            }
-//        }
-//
-//        // Check if the current entity can act
-//        if let activeEntity = getActiveEntity(),
-//           let statusComponent = activeEntity.getComponent(ofType: StatusEffectsComponent.self),
-//           statusComponent.hasEffect(ofType: .stun) || statusComponent.hasEffect(ofType: .frozen) {
-//            // Skip stunned or frozen entities
-//            nextTurn()
-//        }
-//    }
 
     func executeNextAction() -> [EffectResult] {
         guard !pendingActions.isEmpty else {
@@ -198,50 +183,21 @@ class GameEngine {
 
     private func executeOpponentTurn(_ entity: GameStateEntity) {
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
-            let action = aiComponent.determineAction(entity, Array(opponentTeam.values))
+            let action = aiComponent.determineAction(entity, playerTeam)
             let results = action.execute()
-
+            battleEffectsDelegate?.showUseSkill(entity.id) {}
+            
             for result in results {
                 logMessage(result.description)
             }
         }
     }
 
-//    private func updateEntitiesForNewTurn() {
-//        let allEntities = playerTeam + opponentTeam
-//
-//        for entity in allEntities {
-//            // Skip defeated entities
-//            if entity.isDead() {
-//                continue
-//            }
-//
-//            // Update skill cooldowns
-//            if let skillsComponent = entity.getComponent(ofType: SkillsComponent.self) {
-//                for skill in skillsComponent.skills {
-//                    skill.reduceCooldown()
-//                }
-//            }
-//
-//            // Process status effects
-//            if let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) {
-//                let strategyFactory = statusEffectStrategyFactory
-//
-//                for effect in statusComponent.activeEffects {
-//                    let result = effect.apply(to: entity, strategyFactory: strategyFactory)
-//                    logMessage(result.description)
-//                }
-//
-//                statusComponent.updateEffects()
-//            }
-//        }
-//    }
-    
     func updateEntityForNewTurn(_ entity: GameStateEntity) {
         if entity.isDead() {
-            playersPlusOpponents.removeValue(forKey: entity.id)
-            playerTeam.removeValue(forKey: entity.id)
-            opponentTeam.removeValue(forKey: entity.id)
+            playersPlusOpponents.removeAll { $0.id == entity.id }
+            playerTeam.removeAll { $0.id == entity.id }
+            opponentTeam.removeAll { $0.id == entity.id }
         }
 
         // Update skill cooldowns
@@ -262,30 +218,24 @@ class GameEngine {
 
             statusComponent.updateEffects()
         }
+        
+        entity.resetActionBar()
     }
-
-//    private func removeDefeatedEntities() {
-//        playerTeam = playerTeam.filter { !$0.isDead() }
-//        opponentTeam = opponentTeam.filter { !$0.isDead() }
-//    }
 
     private func isBattleOver() -> Bool {
         if playerTeam.isEmpty {
             logMessage("Battle ended! The monsters won!")
-        } else {
+        } else if opponentTeam.isEmpty {
             logMessage("Battle ended! The player won!")
         }
         return playerTeam.isEmpty || opponentTeam.isEmpty
     }
 
-
     private func logMessage(_ message: String) {
-        battleLog.append(message)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.battleLog.append(message)
+        }
     }
-
-//    func getGameState() -> TurnManager {
-//        turnManager
-//    }
 
     func getCurrentTurn() -> TurnState {
         currentTurn

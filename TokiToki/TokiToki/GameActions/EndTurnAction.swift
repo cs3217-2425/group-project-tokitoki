@@ -15,7 +15,7 @@ class EndTurnAction: Action {
 //    }
 
     func execute() -> [EffectResult] {
-        return [EffectResult(entity: GameStateEntity("doesnt matter"), type: .none, value: 0,
+        [EffectResult(entity: GameStateEntity("doesnt matter"), type: .none, value: 0,
                              description: "Player ended their turn")]
     }
 }

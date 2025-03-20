@@ -22,12 +22,12 @@ class TargetWeaknessRule: AIRule {
 
         // Check if at least one target is weak to this skill's element
         for target in skillAction.targets {
-            
+
             let targetStats = target.getComponent(ofType: StatsComponent.self)
            guard let targetStats = targetStats, let skill = skill else {
                return false
            }
-               
+
             let effectiveness = effectivenessSystem.getEffectiveness(
                 of: skill.elementType,
                 against: targetStats.elementType
@@ -36,9 +36,9 @@ class TargetWeaknessRule: AIRule {
             if effectiveness > 1.0 {
                 return true
             }
-            
+
         }
-        
+
         return false
     }
 }

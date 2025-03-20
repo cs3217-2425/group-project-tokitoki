@@ -5,7 +5,7 @@
 //  Created by proglab on 15/3/25.
 //
 
-//class OpponentGameStateEntity: GameStateEntity {
+// class OpponentGameStateEntity: GameStateEntity {
 //    var name: String
 //
 //    init(name: String) {
@@ -16,4 +16,4 @@
 //    override func getName() -> String {
 //        name
 //    }
-//}
+// }

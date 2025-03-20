@@ -7,7 +7,7 @@
 
 import Foundation
 
-//class TurnManager {
+// class TurnManager {
 //    private var entities: [UUID: Entity] = [:]
 //    private var currentTurn: TurnState
 //    private var turnOrder: [UUID] = []
@@ -121,7 +121,4 @@ import Foundation
 //    func getStatusEffectStrategyFactory() -> StatusEffectStrategyFactory {
 //        statusEffectStrategyFactory
 //    }
-//}
-
-
-
+// }
