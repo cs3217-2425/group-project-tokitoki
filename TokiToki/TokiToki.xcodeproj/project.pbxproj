@@ -350,7 +350,7 @@
 				CODE_SIGN_ENTITLEMENTS = TokiToki/TokiToki.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6897Q445D5;
+				DEVELOPMENT_TEAM = 88S383VVPT;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TokiToki/Info.plist;
@@ -364,7 +364,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.cshao02.TokiToki;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pawan.TokiToki;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -380,7 +380,7 @@
 				CODE_SIGN_ENTITLEMENTS = TokiToki/TokiToki.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6897Q445D5;
+				DEVELOPMENT_TEAM = 88S383VVPT;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TokiToki/Info.plist;
@@ -394,7 +394,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.cshao02.TokiToki;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pawan.TokiToki;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

@@ -16,14 +16,14 @@ protocol PlayerRepository {
 
 class CoreDataPlayerRepository: PlayerRepository {
     private let context: NSManagedObjectContext
-
+    
     init(context: NSManagedObjectContext) {
         self.context = context
     }
-
+    
     func getPlayer() -> Player? {
         let fetchRequest: NSFetchRequest<PlayerCD> = PlayerCD.fetchRequest()
-
+        
         do {
             let results = try context.fetch(fetchRequest)
             if let playerEntity = results.first {
@@ -35,16 +35,16 @@ class CoreDataPlayerRepository: PlayerRepository {
             return nil
         }
     }
-
+    
     func savePlayer(_ player: Player) {
         // Check if player exists first
         let fetchRequest: NSFetchRequest<PlayerCD> = PlayerCD.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", player.id as CVarArg)
-
+        
         do {
             let results = try context.fetch(fetchRequest)
             let playerEntity: PlayerCD
-
+            
             if let existingPlayer = results.first {
                 // Update existing player
                 playerEntity = existingPlayer
@@ -53,16 +53,16 @@ class CoreDataPlayerRepository: PlayerRepository {
                 playerEntity = PlayerCD(context: context)
                 playerEntity.id = player.id
             }
-
+            
             // Update fields
             updateEntityFromPlayer(playerEntity, player)
-
+            
             try context.save()
         } catch {
             print("Error saving player: \(error)")
         }
     }
-
+    
     func createDefaultPlayer(name: String) -> Player {
         let player = Player(
             id: UUID(),
@@ -71,16 +71,21 @@ class CoreDataPlayerRepository: PlayerRepository {
             experience: 0,
             currency: 1_000,
             statistics: Player.PlayerStatistics(totalBattles: 0, battlesWon: 0),
-            lastLoginDate: Date()
+            lastLoginDate: Date(),
+            ownedTokis: []
         )
-
+        
         savePlayer(player)
         return player
     }
-
+    
     // MARK: - Helper Methods
     private func convertToPlayer(_ entity: PlayerCD) -> Player {
-        Player(
+        let playerTokiEntities = entity.tokis as? Set<PlayerTokiCD> ?? []
+        let domainPlayerTokis = playerTokiEntities.map { convertPlayerTokiToDomain($0) }
+        
+        
+        return Player(
             id: entity.id ?? UUID(),
             name: entity.name ?? "Player",
             level: Int(entity.level),
@@ -90,10 +95,11 @@ class CoreDataPlayerRepository: PlayerRepository {
                 totalBattles: Int(entity.totalBattles),
                 battlesWon: Int(entity.battlesWon)
             ),
-            lastLoginDate: entity.lastLoginDate ?? Date()
+            lastLoginDate: entity.lastLoginDate ?? Date(),
+            ownedTokis: Array(domainPlayerTokis)
         )
     }
-
+    
     private func updateEntityFromPlayer(_ entity: PlayerCD, _ player: Player) {
         entity.id = player.id
         entity.name = player.name
@@ -103,5 +109,30 @@ class CoreDataPlayerRepository: PlayerRepository {
         entity.totalBattles = Int32(player.statistics.totalBattles)
         entity.battlesWon = Int32(player.statistics.battlesWon)
         entity.lastLoginDate = player.lastLoginDate
+        
+        if let oldTokis = entity.tokis as? Set<PlayerTokiCD> {
+            for oldToki in oldTokis {
+                context.delete(oldToki)
+            }
+        }
+        
+        for domainToki in player.ownedTokis {
+            let tokiEntity = PlayerTokiCD(context: context)
+            tokiEntity.id = domainToki.id
+            tokiEntity.dateAcquired = domainToki.dateAcquired
+            tokiEntity.baseTokiId = domainToki.baseTokiId
+            tokiEntity.player = entity
+        }
     }
+    
+    // MARK: - PlayerToki <-> PlayerTokiCD
+
+    private func convertPlayerTokiToDomain(_ playerTokiCD: PlayerTokiCD) -> PlayerToki {
+            PlayerToki(
+                id: playerTokiCD.id ?? UUID(),
+                baseTokiId: playerTokiCD.baseTokiId ?? UUID(),
+                dateAcquired: playerTokiCD.dateAcquired ?? Date()
+            )
+        }
+    
 }

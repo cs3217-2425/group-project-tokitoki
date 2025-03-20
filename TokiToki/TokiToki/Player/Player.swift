@@ -15,13 +15,16 @@ struct Player {
     var currency: Int
     var statistics: PlayerStatistics
     var lastLoginDate: Date
-
+    var ownedTokis: [PlayerToki]
+    
     struct PlayerStatistics {
         var totalBattles: Int
         var battlesWon: Int
 
         var winRate: Double {
-            totalBattles > 0 ? Double(battlesWon) / Double(totalBattles) * 100.0 : 0.0
+            totalBattles > 0
+                ? Double(battlesWon) / Double(totalBattles) * 100.0
+                : 0.0
         }
     }
 
@@ -61,3 +64,4 @@ struct Player {
         }
     }
 }
+
