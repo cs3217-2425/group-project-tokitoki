@@ -26,6 +26,10 @@ class GameEngine {
     private var useSpeedBasedTurnOrder: Bool = true
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
+    
+//    private var savedPlayerTeam: [GameStateEntity]
+//    private var savedOpponentTeam: [GameStateEntity]
+//    private var savedPlayersPlusOpponents: [GameStateEntity] = []
 
     init(playerTeam: [GameStateEntity], opponentTeam: [GameStateEntity]) {
         self.playerTeam = playerTeam
@@ -33,6 +37,9 @@ class GameEngine {
         self.currentTurn = .playerTurn
         self.effectCalculatorFactory = EffectCalculatorFactory()
         self.playersPlusOpponents = playerTeam + opponentTeam
+//        self.savedPlayerTeam = playerTeam.map{ $0.copy() }
+//        self.savedOpponentTeam = opponentTeam.map{ $0.copy() }
+//        self.savedPlayersPlusOpponents = savedPlayerTeam + savedOpponentTeam
     }
 
     func startBattle() {
@@ -74,8 +81,7 @@ class GameEngine {
 
             if (opponentTeam.contains{ $0.id == currentGameStateEntity.id } ) {
                 executeOpponentTurn(currentGameStateEntity)
-                updateEntityForNewTurn(currentGameStateEntity)
-                continue
+                return
             }
 
             updateSkillIconsForCurrentEntity(currentGameStateEntity)
@@ -134,12 +140,12 @@ class GameEngine {
 
         queueAction(action)
         let results = executeNextAction()
-        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id) { [weak self] in
-            self?.updateLogAfterSkillUse(results, currentGameStateEntity)
+        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
+            self?.updateLogAndEntityAfterSkillUse(results, currentGameStateEntity)
         }
     }
     
-    fileprivate func updateLogAfterSkillUse(_ results: [EffectResult], _ currentGameStateEntity: GameStateEntity) {
+    fileprivate func updateLogAndEntityAfterSkillUse(_ results: [EffectResult], _ currentGameStateEntity: GameStateEntity) {
         for result in results {
             logMessage(result.description)
         }
@@ -185,21 +191,21 @@ class GameEngine {
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
             let action = aiComponent.determineAction(entity, playerTeam)
             let results = action.execute()
-            battleEffectsDelegate?.showUseSkill(entity.id) {}
-            
-            for result in results {
-                logMessage(result.description)
+            battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
+                self?.updateLogAfterMove(results)
+                self?.updateEntityForNewTurn(entity)
+                self?.startGameLoop()
             }
+        }
+    }
+    
+    private func updateLogAfterMove(_ results: [EffectResult]) {
+        for result in results {
+            logMessage(result.description)
         }
     }
 
     func updateEntityForNewTurn(_ entity: GameStateEntity) {
-        if entity.isDead() {
-            playersPlusOpponents.removeAll { $0.id == entity.id }
-            playerTeam.removeAll { $0.id == entity.id }
-            opponentTeam.removeAll { $0.id == entity.id }
-        }
-
         // Update skill cooldowns
         if let skillsComponent = entity.getComponent(ofType: SkillsComponent.self) {
             for skill in skillsComponent.skills {
@@ -220,21 +226,29 @@ class GameEngine {
         }
         
         entity.resetActionBar()
+        checkIfEntitiesAreDead()
+    }
+    
+    func checkIfEntitiesAreDead() {
+        for entity in playersPlusOpponents where entity.isDead() {
+            playersPlusOpponents.removeAll { $0.id == entity.id }
+            playerTeam.removeAll { $0.id == entity.id }
+            opponentTeam.removeAll { $0.id == entity.id }
+        }
     }
 
     private func isBattleOver() -> Bool {
+        
         if playerTeam.isEmpty {
-            logMessage("Battle ended! The monsters won!")
+            logMessage("Battle ended! You lost!")
         } else if opponentTeam.isEmpty {
-            logMessage("Battle ended! The player won!")
+            logMessage("Battle ended! You won!")
         }
         return playerTeam.isEmpty || opponentTeam.isEmpty
     }
 
     private func logMessage(_ message: String) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.battleLog.append(message)
-        }
+        self.battleLog.append(message)
     }
 
     func getCurrentTurn() -> TurnState {
@@ -244,6 +258,21 @@ class GameEngine {
     func getBattleLog() -> [String] {
         battleLog
     }
+    
+//    fileprivate func saveCharactersForRestart() {
+//        self.savedPlayerTeam = self.playerTeam.map{ $0.copy() }
+//        self.savedOpponentTeam = self.opponentTeam.map{ $0.copy() }
+//        self.savedPlayersPlusOpponents = self.savedPlayerTeam + self.savedOpponentTeam
+//    }
+    
+//    func restart() {
+//        battleLog = []
+//        playerTeam = savedPlayerTeam
+//        opponentTeam = savedOpponentTeam
+//        playersPlusOpponents = savedPlayersPlusOpponents
+//        saveCharactersForRestart()
+//        startGameLoop()
+//    }
 }
 
 enum TurnState {

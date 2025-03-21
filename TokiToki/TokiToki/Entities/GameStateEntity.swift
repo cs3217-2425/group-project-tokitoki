@@ -10,29 +10,17 @@ import Foundation
 // Base Entity Implementation
 class GameStateEntity: BaseEntity {
     let MAX_ACTION_BAR: Float = 100
-//    let id = UUID()
-//    var components: [String: Component] = [:]
-//
-//    func addComponent(_ component: Component) {
-//        let componentName = String(describing: type(of: component))
-//        components[componentName] = component
-//    }
-//
-//    func getComponent<T: Component>(ofType type: T.Type) -> T? {
-//        let componentName = String(describing: type)
-//        return components[componentName] as? T
-//    }
-//
-//    func removeComponent<T: Component>(ofType type: T.Type) {
-//        let componentName = String(describing: type)
-//        components.removeValue(forKey: componentName)
-//    }
+
     var name: String
 
     init(_ name: String) {
         self.name = name
         super.init()
     }
+    
+//    func copy() -> GameStateEntity {
+//        GameStateEntity(name)
+//    }
 
     func getName() -> String {
         name

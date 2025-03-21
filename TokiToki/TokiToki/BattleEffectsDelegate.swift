@@ -8,6 +8,6 @@
 import Foundation
 
 protocol BattleEffectsDelegate {
-    func showUseSkill(_ id: UUID, completion: @escaping () -> Void)
+    func showUseSkill(_ id: UUID, _ isLeft: Bool, completion: @escaping () -> Void)
     func updateSkillIcons(_ icons: [String]?)
 }
