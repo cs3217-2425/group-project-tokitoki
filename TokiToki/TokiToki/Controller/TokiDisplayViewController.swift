@@ -61,8 +61,8 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         toki = loadTest()
         updateUI()
     }
-
-    func loadTest() -> Toki {
+    
+    func createTestSkill(name: String = "Thunder Strike") -> Skill {
         let elementsSystem = ElementsSystem()
         
         let effectCalculatorFactory = EffectCalculatorFactory(elementsSystem: elementsSystem)
@@ -70,7 +70,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         let skillsFactory = SkillFactory(effectCalculatorFactory: effectCalculatorFactory)
         
         let skill = skillsFactory.createAttackSkill(
-            name: "Thunder Strike",
+            name: name,
             description: "Strikes with thunder power",
             elementType: .light,
             basePower: 50,
@@ -81,14 +81,27 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
             statusEffectDuration: 2
         )
         
+        return skill
+    }
+    
+    func createTestEquipment(name: String = "Magic Staff") -> Equipment {
         let equipmentFactory = EquipmentFactory()
         
         let equipment = equipmentFactory.createEquipment(
-            name: "Magic Staff",
+            name: name,
             description: "A magical staff",
             elementType: .fire,
             buff: Buff(attack: 10, defense: 10, speed: 10)
         )
+        
+        return equipment
+    }
+
+
+    func loadTest() -> Toki {
+        let skill = createTestSkill()
+        
+        let equipment = createTestEquipment()
         
         let toki = Toki(name: "Tokimon Omicron 1",
                         rarity: .common,
@@ -167,6 +180,8 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
             cell.nameLabel.text = equipmentName
             cell.itemImageView.image = UIImage(named: equipmentName) // if your asset name matches equipmentName
             
+            // TODO: Add the equipment's buff to Toki's stats
+            
             // Add long press gesture recognizer for equipment cells
             let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleEquipmentLongPress(_:)))
             cell.addGestureRecognizer(longPress)
@@ -174,6 +189,8 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
             let skillName = toki.skills[indexPath.row].name
             cell.nameLabel.text = skillName
             cell.itemImageView.image = UIImage(named: skillName) // if you have an image for the skill
+            
+            // TODO: Add the skill's buff to Toki's stats
             
             // Add long press gesture recognizer for skill cells
             let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleSkillLongPress(_:)))
@@ -185,24 +202,79 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
     
     // Example Action to Change Equipment
     @IBAction func changeEquipmentTapped(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Magic Staff", style: .default, handler: { _ in
-//            self.toki.equipment[0] = "Magic Staff"
-            self.updateUI()
-        }))
+        guard let indexPath = equipmentTableView?.indexPathForSelectedRow else {
+            let noSelectionAlert = UIAlertController(title: "No Selection", message: "Please select an equipment cell to change.", preferredStyle: .alert)
+            noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(noSelectionAlert, animated: true)
+            return
+        }
+        
+        // List of candidate equipment names
+        let candidateNames = ["Magic Staff 2", "Ice Sword", "Wind Dagger"]
+        
+        let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment", preferredStyle: .actionSheet)
+        
+        for candidate in candidateNames {
+            alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
+                let newEquipment = self.createTestEquipment(name: candidate)
+                if self.toki.equipment.contains(where: { $0.name == newEquipment.name }) {
+                    let existsAlert = UIAlertController(title: "Already Exists", message: "Equipment \(newEquipment.name) already exists.", preferredStyle: .alert)
+                    existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(existsAlert, animated: true)
+                } else {
+                    self.toki.equipment[indexPath.row] = newEquipment
+                    self.updateUI()
+                }
+            }))
+        }
+        
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(alert, animated: true, completion: nil)
+        
+        // For iPad, configure the popover.
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+        }
+        
+        present(alert, animated: true)
     }
 
     // Example Action to Change Skills
     @IBAction func changeSkillsTapped(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Change Skills", message: "Select a new skill", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Thunder Strike", style: .default, handler: { _ in
-//            self.toki.skills[0] = "Thunder Strike"
-            self.updateUI()
-        }))
+        guard let indexPath = skillsTableView?.indexPathForSelectedRow else {
+            let noSelectionAlert = UIAlertController(title: "No Selection", message: "Please select a skill cell to change.", preferredStyle: .alert)
+            noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(noSelectionAlert, animated: true)
+            return
+        }
+        
+        // List of candidate skill names
+        let candidateNames = ["Thunder Strike 2", "Blaze Kick", "Aqua Jet"]
+        
+        let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
+        
+        for candidate in candidateNames {
+            alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
+                let newSkill = self.createTestSkill(name: candidate)
+                if self.toki.skills.contains(where: { $0.name == newSkill.name }) {
+                    let existsAlert = UIAlertController(title: "Already Exists", message: "Skill \(newSkill.name) already exists.", preferredStyle: .alert)
+                    existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(existsAlert, animated: true)
+                } else {
+                    self.toki.skills[indexPath.row] = newSkill
+                    self.updateUI()
+                }
+            }))
+        }
+        
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(alert, animated: true, completion: nil)
+        
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+        }
+        
+        present(alert, animated: true)
     }
     
     /// level up button - when exp is full, enable the button and level up (pop up a UIAlertAction so the player can interact and add +1 to any stats of their liking)

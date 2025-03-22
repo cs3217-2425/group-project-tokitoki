@@ -14,8 +14,8 @@ class Toki {
     var level: Int
     let rarity: TokiRarity
     var baseStats: TokiBaseStats
-    let skills: [Skill]
-    let equipment: [Equipment]
+    var skills: [Skill]
+    var equipment: [Equipment]
     let elementType: ElementType
 
     init(id: UUID = UUID(), name: String, rarity: TokiRarity, baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment], elementType: ElementType, level: Int) {
