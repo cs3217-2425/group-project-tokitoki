@@ -67,31 +67,6 @@
                                     <action selector="onRestart:" destination="0pq-cq-bdk" eventType="touchUpInside" id="fln-be-g0R"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oLe-BL-bNx">
-                                <rect key="frame" x="116" y="608" width="320" height="282"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cwc-gl-h36">
-                                        <rect key="frame" x="17" y="0.0" width="295" height="21"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5sn-vA-AFb">
-                                                <rect key="frame" x="0.0" y="0.0" width="295" height="21"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <color key="backgroundColor" systemColor="systemGreenColor"/>
-                                                <color key="tintColor" systemColor="systemRedColor"/>
-                                            </view>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
-                                        <color key="tintColor" systemColor="systemRedColor"/>
-                                    </view>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-red.png" translatesAutoresizingMaskIntoConstraints="NO" id="qM6-73-32T">
-                                        <rect key="frame" x="8" y="52" width="300" height="222"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jwg-dt-ZbB">
                                 <rect key="frame" x="465" y="492" width="265" height="169"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -110,8 +85,8 @@
                                         <color key="backgroundColor" systemColor="tableBackgroundColor"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                     </view>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-green.png" translatesAutoresizingMaskIntoConstraints="NO" id="i8G-qt-7ZZ">
-                                        <rect key="frame" x="48" y="40" width="168" height="129"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="wizard.png" translatesAutoresizingMaskIntoConstraints="NO" id="i8G-qt-7ZZ">
+                                        <rect key="frame" x="48" y="40" width="183" height="154"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                 </subviews>
@@ -160,15 +135,16 @@
                                         <color key="backgroundColor" systemColor="tableBackgroundColor"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                     </view>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-blue.png" translatesAutoresizingMaskIntoConstraints="NO" id="x3a-UH-7J9">
-                                        <rect key="frame" x="70" y="39" width="145" height="129"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="knightt.png" translatesAutoresizingMaskIntoConstraints="NO" id="x3a-UH-7J9">
+                                        <rect key="frame" x="4" y="27" width="276" height="238"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aCJ-EJ-oag">
-                                <rect key="frame" x="28" y="387" width="261" height="188"/>
+                                <rect key="frame" x="48" y="325" width="261" height="188"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="peg-blue.png" translatesAutoresizingMaskIntoConstraints="NO" id="QNx-OJ-9ua">
@@ -214,6 +190,31 @@
                                         <color key="backgroundColor" systemColor="tableBackgroundColor"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                     </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oLe-BL-bNx">
+                                <rect key="frame" x="94" y="547" width="320" height="282"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cwc-gl-h36">
+                                        <rect key="frame" x="17" y="0.0" width="295" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5sn-vA-AFb">
+                                                <rect key="frame" x="0.0" y="0.0" width="295" height="21"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" systemColor="systemGreenColor"/>
+                                                <color key="tintColor" systemColor="systemRedColor"/>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
+                                        <color key="tintColor" systemColor="systemRedColor"/>
+                                    </view>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="boss-removebg-preview.png" translatesAutoresizingMaskIntoConstraints="NO" id="qM6-73-32T">
+                                        <rect key="frame" x="-384" y="-110" width="949" height="761"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
@@ -263,10 +264,11 @@
         <image name="4334081.png" width="384" height="384"/>
         <image name="6a5d5ce52271708a21eaa4aa68525fc7.jpg" width="236" height="419"/>
         <image name="8996200.png" width="384" height="384"/>
+        <image name="boss-removebg-preview.png" width="727" height="343"/>
+        <image name="knightt.png" width="2500" height="2500"/>
         <image name="peg-blue.png" width="128" height="128"/>
-        <image name="peg-green.png" width="128" height="128"/>
         <image name="peg-purple.png" width="128" height="128"/>
-        <image name="peg-red.png" width="128" height="128"/>
+        <image name="wizard.png" width="2500" height="2500"/>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

@@ -97,7 +97,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
 
         addGestureRecognisers()
 
-        configure([wizardToki, knightToki], [basicMonster])
+        configure([knightToki, wizardToki], [basicMonster])
     }
 
     fileprivate func configureSkillIcons() {
