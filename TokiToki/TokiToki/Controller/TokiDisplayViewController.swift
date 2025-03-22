@@ -31,6 +31,8 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var healProgressView: UIProgressView?
     @IBOutlet weak var speedProgressView: UIProgressView?
     
+    @IBOutlet weak var levelUpButton: UIButton?
+    
     var toki: Toki
     
     required init?(coder aDecoder: NSCoder) {
@@ -97,7 +99,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
                                 defense: 50,
                                 speed: 50,
                                 heal: 100,
-                                exp: 42),
+                                exp: 492),
                         skills: [skill],
                         equipments: [equipment],
                         elementType: .fire,
@@ -127,6 +129,12 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         // Progress views: rawValue / maxValue (0.0 to 1.0)
         hpProgressView?.progress = Float(toki.baseStats.hp) / 420.0
         expProgressView?.progress = Float(toki.baseStats.exp) / 100.0
+        
+        if expProgressView?.progress == 1.0 {
+            levelUpButton?.isEnabled = true
+        } else {
+            levelUpButton?.isEnabled = false
+        }
         
         // If Attack/Defense/Heal/Speed are out of 100, just divide by 100:
         attackProgressView?.progress = Float(toki.baseStats.attack) / 100.0
@@ -188,4 +196,40 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
+    
+    /// level up button - when exp is full, enable the button and level up (pop up a UIAlertAction so the player can interact and add +1 to any stats of their liking)
+    @IBAction func levelUp(_ sender: UIButton) {
+        if toki.baseStats.exp >= 100 {
+            let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "Attack", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 1, defense: 0, speed: 0, heal: 0, exp: 0))
+                self.updateUI()
+            }))
+            alert.addAction(UIAlertAction(title: "Defense", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 1, speed: 0, heal: 0, exp: 0))
+                self.updateUI()
+            }))
+            alert.addAction(UIAlertAction(title: "Speed", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 1, heal: 0, exp: 0))
+                self.updateUI()
+            }))
+            alert.addAction(UIAlertAction(title: "Heal", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 0, heal: 1, exp: 0))
+                self.updateUI()
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            
+            if let popoverController = alert.popoverPresentationController {
+                popoverController.sourceView = sender
+                popoverController.sourceRect = sender.bounds
+            }
+            
+            present(alert, animated: true, completion: nil)
+        }
+    }
 }
+
+
+// TODO: Link to CoreData
+
+// TODO: Enable the buttons to change the equipment and skills

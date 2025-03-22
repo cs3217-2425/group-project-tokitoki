@@ -11,9 +11,9 @@ import Foundation
 class Toki {
     let id: UUID
     let name: String
-    let level: Int
+    var level: Int
     let rarity: TokiRarity
-    let baseStats: TokiBaseStats
+    var baseStats: TokiBaseStats
     let skills: [Skill]
     let equipment: [Equipment]
     let elementType: ElementType
@@ -54,6 +54,18 @@ class Toki {
         entity.addComponent(statusEffectsComponent)
 
         return entity
+    }
+    
+    func levelUp(stat: TokiBaseStats) {
+        self.baseStats = TokiBaseStats(
+            hp: self.baseStats.hp + stat.hp,
+            attack: self.baseStats.attack + stat.attack,
+            defense: self.baseStats.defense + stat.defense,
+            speed: self.baseStats.speed + stat.speed,
+            heal: self.baseStats.heal + stat.heal,
+            exp: self.baseStats.exp - 100
+            )
+        self.level += 1
     }
 }
 
