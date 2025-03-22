@@ -10,15 +10,24 @@ import UIKit
 class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // UI Outlets
-    @IBOutlet weak var tokiImageView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var levelLabel: UILabel!
-    @IBOutlet weak var hpProgressView: UIProgressView!
-    @IBOutlet weak var attackLabel: UILabel!
-    @IBOutlet weak var defenseLabel: UILabel!
-    @IBOutlet weak var speedLabel: UILabel!
-    @IBOutlet weak var equipmentTableView: UITableView!
-    @IBOutlet weak var skillsTableView: UITableView!
+    @IBOutlet weak var tokiImageView: UIImageView?
+    @IBOutlet weak var nameLabel: UILabel?
+    @IBOutlet weak var hpLabel: UILabel?
+    @IBOutlet weak var expLabel: UILabel?
+    @IBOutlet weak var levelLabel: UILabel?
+    @IBOutlet weak var attackLabel: UILabel?
+    @IBOutlet weak var defenseLabel: UILabel?
+    @IBOutlet weak var healLabel: UILabel?
+    @IBOutlet weak var speedLabel: UILabel?
+    @IBOutlet weak var equipmentTableView: UITableView?
+    @IBOutlet weak var skillsTableView: UITableView?
+    
+    @IBOutlet weak var hpProgressView: UIProgressView?
+    @IBOutlet weak var expProgressView: UIProgressView?
+    @IBOutlet weak var attackProgressView: UIProgressView?
+    @IBOutlet weak var defenseProgressView: UIProgressView?
+    @IBOutlet weak var healProgressView: UIProgressView?
+    @IBOutlet weak var speedProgressView: UIProgressView?
     
     // Data Models
     struct Toki {

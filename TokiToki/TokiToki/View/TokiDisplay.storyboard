@@ -250,13 +250,21 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="attackLabel" destination="AN3-Ct-Aul" id="rtu-Fy-1FF"/>
+                        <outlet property="attackProgressView" destination="aYf-lB-ybe" id="OC7-LA-cYL"/>
                         <outlet property="defenseLabel" destination="gyV-fj-wfI" id="CNA-wV-TRD"/>
+                        <outlet property="defenseProgressView" destination="Zgo-Ch-eAg" id="LY3-5Y-1JF"/>
                         <outlet property="equipmentTableView" destination="bPV-SC-UsJ" id="iVu-e8-L5r"/>
+                        <outlet property="expLabel" destination="OdX-yR-TuC" id="shC-Aw-dAz"/>
+                        <outlet property="expProgressView" destination="s3b-Zo-nh2" id="EPL-uQ-7ga"/>
+                        <outlet property="healLabel" destination="i4q-Ss-RYe" id="RUP-CJ-GgO"/>
+                        <outlet property="healProgressView" destination="rAV-8z-Xoc" id="b7h-Gj-Eey"/>
+                        <outlet property="hpLabel" destination="NOv-u2-GnX" id="me4-SW-G0r"/>
                         <outlet property="hpProgressView" destination="g4s-75-Pcd" id="8SA-hb-i2d"/>
                         <outlet property="levelLabel" destination="lGu-B1-hbI" id="tTT-ex-9s7"/>
                         <outlet property="nameLabel" destination="8cY-ch-cI9" id="J4Z-yF-uuu"/>
                         <outlet property="skillsTableView" destination="Erb-fS-ylm" id="CLa-u9-KaT"/>
                         <outlet property="speedLabel" destination="L02-xN-wYt" id="ol8-Si-MlW"/>
+                        <outlet property="speedProgressView" destination="6sV-D7-t8E" id="Zge-ib-bEf"/>
                         <outlet property="tokiImageView" destination="M65-4w-wP5" id="1rR-No-kGY"/>
                     </connections>
                 </viewController>
