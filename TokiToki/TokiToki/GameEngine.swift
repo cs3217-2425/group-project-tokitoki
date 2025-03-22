@@ -141,7 +141,7 @@ class GameEngine {
 //        }
 
         let targets = targetsSelected ?? opponentTeam
-        
+
         // Create battle event and publish to event bus
         let skillEvent = eventFactory.createSkillUsedEvent(
             user: currentGameStateEntity,
@@ -188,7 +188,8 @@ class GameEngine {
         // Convert results to events and post them
         for result in results {
             for battleResultEvent in result.toBattleEvents(sourceId: sourceId) {
-                EventBus.shared.post(battleResultEvent) // Post-action damage taken, status effects, etc events are emitted
+                // Post-action damage taken, status effects, etc events are emitted
+                EventBus.shared.post(battleResultEvent)
             }
         }
 
@@ -228,6 +229,12 @@ class GameEngine {
             for effect in statusComponent.activeEffects {
                 let result = effect.apply(to: entity, strategyFactory: strategyFactory)
                 logMessage(result.description)
+
+                // Publish StatusEffectApplied result
+                for event in result.toBattleEvents(sourceId: effect.sourceId) {
+                    print(event)
+                    EventBus.shared.post(event)
+                }
             }
 
             statusComponent.updateEffects()

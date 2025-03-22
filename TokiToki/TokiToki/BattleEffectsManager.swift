@@ -23,11 +23,11 @@ class BattleEffectsManager {
             // Main skill effect component using registry
             SkillVisualFXComponent(viewProvider: viewProvider),
 
-            // Element-specific components
+            // Status effect component
+            StatusEffectVisualFXComponent(viewProvider: viewProvider),
 
             // Other effect components
             CriticalHitEffectComponent(viewProvider: viewProvider)
-//            StatusEffectComponent(viewProvider: viewProvider)
         ]
     }
 

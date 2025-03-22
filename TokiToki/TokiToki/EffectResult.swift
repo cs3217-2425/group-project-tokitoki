@@ -62,3 +62,22 @@ class DamageEffectResult: EffectResult {
         )]
     }
 }
+
+class StatusEffectResult: EffectResult {
+    let effectType: StatusEffectType
+    let duration: Int
+
+    init(entity: Entity, effectType: StatusEffectType, duration: Int, description: String) {
+        self.effectType = effectType
+        self.duration = duration
+        super.init(entity: entity, type: .statusApplied, value: 0, description: description)
+    }
+
+    override func toBattleEvents(sourceId: UUID) -> [BattleEvent] {
+        [StatusEffectAppliedEvent(
+            targetId: entity.id,
+            effectType: effectType,
+            duration: duration
+        )]
+    }
+}

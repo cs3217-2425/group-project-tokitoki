@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FireslashEffect: SkillVisualFX {
+class FireslashVisualFX: SkillVisualFX {
     private let sourceView: UIView
     private let targetView: UIView
 

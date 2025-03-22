@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FireballEffect: SkillVisualFX {
+class FireballVisualFX: SkillVisualFX {
     private let sourceView: UIView
     private let targetView: UIView
 

@@ -21,10 +21,11 @@ struct StatusEffect {
             return strategy.apply(to: entity, effect: self)
         }
 
-        return EffectResult(
+        // Default fallback
+        return StatusEffectResult(
             entity: entity,
-            type: .none,
-            value: 0,
+            effectType: type,
+            duration: remainingDuration,
             description: "No effect applied (no strategy found)"
         )
     }

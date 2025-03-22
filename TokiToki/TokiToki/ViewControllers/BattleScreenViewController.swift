@@ -264,9 +264,9 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     func removeDeadBody(_ id: UUID) {
         gameStateIdToViews[id]?.overallView.isHidden = true
     }
-    
+
     func getViewForEntity(id: UUID) -> UIView? {
-        return gameStateIdToViews[id]?.overallView
+        gameStateIdToViews[id]?.overallView
     }
 
     // TODO: Implement restart
