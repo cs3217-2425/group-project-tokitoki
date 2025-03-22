@@ -17,15 +17,14 @@ struct StatusEffect {
 
     // Function to apply effect using strategy pattern
     func apply(to entity: GameStateEntity, strategyFactory: StatusEffectStrategyFactory) -> EffectResult {
-        if let strategy = strategyFactory.getStrategy(for: type) {
-            return strategy.apply(to: entity, effect: self)
+        guard let strategy = strategyFactory.getStrategy(for: type) else {
+            return EffectResult(
+                entity: entity,
+                type: .none,
+                value: 0,
+                description: "No effect applied (no strategy found)"
+            )
         }
-
-        return EffectResult(
-            entity: entity,
-            type: .none,
-            value: 0,
-            description: "No effect applied (no strategy found)"
-        )
+        return strategy.apply(to: entity, effect: self)
     }
 }
