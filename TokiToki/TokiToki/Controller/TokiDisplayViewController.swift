@@ -90,7 +90,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
             buff: Buff(attack: 10, defense: 10, speed: 10)
         )
         
-        var toki = Toki(name: "Tokimon Omicron 1",
+        let toki = Toki(name: "Tokimon Omicron 1",
                         rarity: .common,
                         baseStats:
                             TokiBaseStats(
@@ -166,10 +166,18 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
             let equipmentName = toki.equipment[indexPath.row].name
             cell.nameLabel.text = equipmentName
             cell.itemImageView.image = UIImage(named: equipmentName) // if your asset name matches equipmentName
+            
+            // Add long press gesture recognizer for equipment cells
+            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleEquipmentLongPress(_:)))
+            cell.addGestureRecognizer(longPress)
         } else { // for skillsTableView
             let skillName = toki.skills[indexPath.row].name
             cell.nameLabel.text = skillName
             cell.itemImageView.image = UIImage(named: skillName) // if you have an image for the skill
+            
+            // Add long press gesture recognizer for skill cells
+            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleSkillLongPress(_:)))
+            cell.addGestureRecognizer(longPress)
         }
         
         return cell
@@ -227,9 +235,39 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
             present(alert, animated: true, completion: nil)
         }
     }
+    
+    @objc func handleEquipmentLongPress(_ gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            guard let cell = gesture.view as? UITableViewCell,
+                  let indexPath = equipmentTableView?.indexPath(for: cell) else { return }
+            let equipment = toki.equipment[indexPath.row]
+            
+            // Assume the equipment's first component is a CombinedBuffComponent
+            var message = "No buff details available."
+            if let buffComponent = equipment.components.first as? CombinedBuffComponent {
+                message = "Attack Buff: \(buffComponent.buff.attack)\nDefense Buff: \(buffComponent.buff.defense)\nSpeed Buff: \(buffComponent.buff.speed)"
+            }
+            
+            let alert = UIAlertController(title: equipment.name, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    }
+
+    @objc func handleSkillLongPress(_ gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            guard let cell = gesture.view as? UITableViewCell,
+                  let indexPath = skillsTableView?.indexPath(for: cell) else { return }
+            let skill = toki.skills[indexPath.row]
+            
+            // Construct a message with skill details. Adjust properties as needed.
+            let message = "Description: \(skill.description)\nBase Power: \(skill.basePower)\nCooldown: \(skill.cooldown)"
+            
+            let alert = UIAlertController(title: skill.name, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    }
 }
-
-
-// TODO: Link to CoreData
 
 // TODO: Enable the buttons to change the equipment and skills
