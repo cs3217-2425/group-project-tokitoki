@@ -120,16 +120,59 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         
         return toki
     }
-    
+
+    func totalEquipmentBuff(for stat: String) -> Float {
+        var total: Float = 0
+        for equip in toki.equipment {
+            if let buffComponent = equip.components.first as? CombinedBuffComponent {
+                switch stat {
+                case "attack":
+                    total += Float(buffComponent.buff.attack)
+                case "defense":
+                    total += Float(buffComponent.buff.defense)
+                case "speed":
+                    total += Float(buffComponent.buff.speed)
+                default:
+                    break
+                }
+            }
+        }
+        return total
+    }
+
+    func updateProgressBar(_ progressView: UIProgressView, baseValue: Float, buffValue: Float, maxValue: Float, baseColor: UIColor, buffColor: UIColor) {
+        // Remove any existing subviews from the progress view's track area.
+        progressView.subviews.forEach { $0.removeFromSuperview() }
+        
+        // Calculate ratios.
+        let totalValue = baseValue + buffValue
+        // Avoid division by zero.
+        let baseRatio = totalValue > 0 ? baseValue / maxValue : 0
+        let buffRatio = totalValue > 0 ? buffValue / maxValue : 0
+        
+        // The width of the progress view.
+        let totalWidth = progressView.bounds.width
+        let height = progressView.bounds.height
+        
+        // Create the base stat view.
+        let baseWidth = totalWidth * CGFloat(baseRatio)
+        let baseView = UIView(frame: CGRect(x: 0, y: 0, width: baseWidth, height: height))
+        baseView.backgroundColor = baseColor
+        progressView.addSubview(baseView)
+        
+        // Create the equipment buff view, positioned immediately after the base portion.
+        let buffWidth = totalWidth * CGFloat(buffRatio)
+        let buffView = UIView(frame: CGRect(x: baseWidth, y: 0, width: buffWidth, height: height))
+        buffView.backgroundColor = buffColor
+        progressView.addSubview(buffView)
+    }
+
     func updateUI() {
         tokiImageView?.image = UIImage(named: toki.name)
         nameLabel?.text = toki.name
         levelLabel?.text = "Level: \(toki.level)"
-        hpProgressView?.progress = Float(toki.baseStats.hp / 420)
-        attackLabel?.text = "Attack: \(toki.baseStats.attack)"
-        defenseLabel?.text = "Defense: \(toki.baseStats.defense)"
-        speedLabel?.text = "Speed: \(toki.baseStats.speed)"
-
+        
+        // For stats without equipment buffs, use the regular progress view setting.
         hpLabel?.text = "HP: \(toki.baseStats.hp)"
         expLabel?.text = "Experience: \(toki.baseStats.exp)"
         attackLabel?.text = "Attack: \(toki.baseStats.attack)"
@@ -139,22 +182,38 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         rarityLabel?.text = "Rarity: \(toki.rarity)"
         elementLabel?.text = "Element: \(toki.elementType)"
         
-        // Progress views: rawValue / maxValue (0.0 to 1.0)
-        hpProgressView?.progress = Float(toki.baseStats.hp) / 420.0
-        expProgressView?.progress = Float(toki.baseStats.exp) / 100.0
+        // Example max values; adjust these as needed.
+        let hpMax: Float = 420.0
+        let expMax: Float = 100.0
+        let statMax: Float = 100.0  // For attack, defense, speed
         
-        if expProgressView?.progress == 1.0 {
-            levelUpButton?.isEnabled = true
-        } else {
-            levelUpButton?.isEnabled = false
+        // Update hp and exp progress normally (no equipment buffs assumed)
+        hpProgressView?.progress = Float(toki.baseStats.hp) / hpMax
+        expProgressView?.progress = Float(toki.baseStats.exp) / expMax
+        
+        // For attack, defense, and speed, use the custom two-color progress bars.
+        if let attackPV = attackProgressView {
+            let baseAttack = Float(toki.baseStats.attack)
+            let buffAttack = totalEquipmentBuff(for: "attack")
+            updateProgressBar(attackPV, baseValue: baseAttack, buffValue: buffAttack, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
         
-        // If Attack/Defense/Heal/Speed are out of 100, just divide by 100:
-        attackProgressView?.progress = Float(toki.baseStats.attack) / 100.0
-        defenseProgressView?.progress = Float(toki.baseStats.defense) / 100.0
-        healProgressView?.progress = Float(toki.baseStats.heal) / 100.0
-        speedProgressView?.progress = Float(toki.baseStats.speed) / 100.0
+        if let defensePV = defenseProgressView {
+            let baseDefense = Float(toki.baseStats.defense)
+            let buffDefense = totalEquipmentBuff(for: "defense")
+            updateProgressBar(defensePV, baseValue: baseDefense, buffValue: buffDefense, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
+        }
         
+        if let speedPV = speedProgressView {
+            let baseSpeed = Float(toki.baseStats.speed)
+            let buffSpeed = totalEquipmentBuff(for: "speed")
+            updateProgressBar(speedPV, baseValue: baseSpeed, buffValue: buffSpeed, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
+        }
+        
+        // For heal, if no equipment buffs apply, simply set progress:
+        healProgressView?.progress = Float(toki.baseStats.heal) / statMax
+        
+        // Set a tint color for hp if desired.
         hpProgressView?.progressTintColor = .systemRed
         
         equipmentTableView?.reloadData()
@@ -368,5 +427,3 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         }
     }
 }
-
-// TODO: Enable the buttons to change the equipment and skills
