@@ -47,8 +47,6 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         equipmentTableView.dataSource = self
         skillsTableView.delegate = self
         skillsTableView.dataSource = self
-        equipmentTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        skillsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         // Load Toki Data
         updateUI()
@@ -77,12 +75,18 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TokiTableCell", for: indexPath) as? TokiTableCell else {
+            return UITableViewCell()
+        }
         
         if tableView == equipmentTableView {
-            cell.textLabel?.text = toki.equipment[indexPath.row]
-        } else {
-            cell.textLabel?.text = toki.skills[indexPath.row]
+            let equipmentName = toki.equipment[indexPath.row]
+            cell.nameLabel.text = equipmentName
+            cell.itemImageView.image = UIImage(named: equipmentName) // if your asset name matches equipmentName
+        } else { // for skillsTableView
+            let skillName = toki.skills[indexPath.row]
+            cell.nameLabel.text = skillName
+            cell.itemImageView.image = UIImage(named: skillName) // if you have an image for the skill
         }
         
         return cell
