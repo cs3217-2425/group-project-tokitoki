@@ -13,35 +13,26 @@ class GachaRepository {
     var allTokis: [Toki] = []
     var gachaPacks: [GachaPack] = []
     
-    // Public method for the rest of the app
-    // 1) Seeds JSON if needed
-    // 2) Loads from Core Data into domain arrays
     func initializeData(context: NSManagedObjectContext) {
         seedIfNeeded(context: context)
         loadFromCoreData(context: context)
     }
     
-    // Check if TokiCD or GachaPackCD are empty; if so, load from JSON
     private func seedIfNeeded(context: NSManagedObjectContext) {
         do {
-            // 1) Check TokiCD
             let tokiFetch: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
             let tokiCount = try context.count(for: tokiFetch)
             
-            // 2) Check GachaPackCD
             let packFetch: NSFetchRequest<GachaPackCD> = GachaPackCD.fetchRequest()
             let packCount = try context.count(for: packFetch)
             
             if tokiCount == 0 || packCount == 0 {
-                print("No Toki or GachaPack data found in Core Data. Seeding from JSON...")
 
-                // Use your TokiLoader and GachaPackLoader to load from JSON
                 let tokiLoader = TokiLoader(context: context)
-                try? tokiLoader.loadTokis(from: "Tokis")     // e.g. "Tokis.json"
-                print("Loaded Tokis")
+                try? tokiLoader.loadTokis(from: "Tokis")
                 
                 let packLoader = GachaPackLoader(context: context)
-                try? packLoader.loadGachaPacks(from: "GachaPacks") // e.g. "GachaPacks.json"
+                try? packLoader.loadGachaPacks(from: "GachaPacks")
             } else {
                 print("Toki and GachaPack data already exist. No seeding needed.")
             }
@@ -50,9 +41,7 @@ class GachaRepository {
         }
     }
     
-    // Fetch TokiCD/GachaPackCD from Core Data and convert to domain objects
     private func loadFromCoreData(context: NSManagedObjectContext) {
-        // 1) Fetch TokiCD -> domain Toki
         do {
             let fetchRequest: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
             let results = try context.fetch(fetchRequest)
@@ -77,7 +66,6 @@ class GachaRepository {
             print("Error fetching TokiCD: \(error)")
         }
         
-        // 2) Fetch GachaPackCD -> domain GachaPack
         do {
             let packFetch: NSFetchRequest<GachaPackCD> = GachaPackCD.fetchRequest()
             let packResults = try context.fetch(packFetch)
@@ -102,7 +90,6 @@ class GachaRepository {
         }
     }
     
-    // A simple method to find a pack by ID if you need it
     func findPack(by id: UUID) -> GachaPack? {
         return gachaPacks.first { $0.id == id }
     }

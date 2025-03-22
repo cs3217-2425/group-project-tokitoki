@@ -16,23 +16,16 @@ class TokiLoader {
     }
 
     func loadTokis(from filename: String) throws {
-        print("Loading Tokis from \(filename).json")
         
-        // 1) Parse the JSON into the TokisData structure
         let tokisData: TokisData = try ResourceLoader.loadJSON(fromFile: filename)
-        
-        // 2) Iterate over each TokiData entry
-        print("Number of Tokis in JSON: \(tokisData.tokis.count)")
+
         for tokiData in tokisData.tokis {
-            // Check if a TokiCD with the same name already exists
             let existing = fetchTokiByName(tokiData.name)
             if existing != nil {
-                // Skip creation to ensure uniqueness
                 print("Skipping creation: Toki '\(tokiData.name)' already exists in Core Data.")
                 continue
             }
             
-            // Otherwise, create a new TokiCD record
             let tokiCD = TokiCD(context: context)
             tokiCD.id = UUID()
             tokiCD.name = tokiData.name
@@ -44,7 +37,6 @@ class TokiLoader {
             tokiCD.elementType = tokiData.elementType
         }
 
-        // 3) Save once at the end
         if context.hasChanges {
             do {
                 try context.save()
@@ -55,9 +47,6 @@ class TokiLoader {
         }
     }
     
-    // MARK: - Private Helper
-    
-    /// Fetches a TokiCD record by name. Returns nil if not found.
     private func fetchTokiByName(_ name: String) -> TokiCD? {
         let fetchRequest: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
         fetchRequest.fetchLimit = 1

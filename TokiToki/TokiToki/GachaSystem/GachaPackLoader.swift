@@ -16,32 +16,23 @@ class GachaPackLoader {
     }
     
     func loadGachaPacks(from filename: String) throws {
-        print("Loading Gacha Packs from \(filename).json")
-        
-        // 1) Decode the entire GachaPacksData structure
         let gachaPacksData: GachaPacksData = try ResourceLoader.loadJSON(fromFile: filename)
-        
-        // 2) Iterate over each GachaPackData in the 'gachaPacks' array
-        print("Number of Gacha Packs in JSON: \(gachaPacksData.packs.count)")
+    
         for packData in gachaPacksData.packs {
-            // Check if a GachaPackCD with the same name already exists
             let existing = fetchPackByName(packData.packName)
             if existing != nil {
                 print("Skipping creation: GachaPack '\(packData.packName)' already exists in Core Data.")
                 continue
             }
             
-            // Create a new GachaPackCD record
             let gachaPackCD = GachaPackCD(context: context)
             gachaPackCD.id = UUID()
             gachaPackCD.name = packData.packName
             
-            // Find Tokis by name
             let tokiCDs = fetchTokiCDsByNames(packData.tokiNames)
             gachaPackCD.tokis = NSSet(array: tokiCDs)
         }
         
-        // 3) Save changes if we inserted/updated anything
         if context.hasChanges {
             do {
                 try context.save()
@@ -51,8 +42,6 @@ class GachaPackLoader {
             }
         }
     }
-    
-    // MARK: - Private Helpers
     
     private func fetchPackByName(_ name: String) -> GachaPackCD? {
         let fetchRequest: NSFetchRequest<GachaPackCD> = GachaPackCD.fetchRequest()

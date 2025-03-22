@@ -24,7 +24,6 @@ class GachaService {
         }
 
         let newPlayerTokis: [PlayerToki] = pack.containedTokis.compactMap { baseToki in
-            // Fetch TokiCD from Core Data by baseTokiID
             let fetchRequest: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", baseToki.id as CVarArg)
 
@@ -33,13 +32,11 @@ class GachaService {
                 return nil
             }
 
-            // Create a new PlayerTokiCD with only a baseTokiID (no relationship)
             let playerTokiCD = PlayerTokiCD(context: context)
             playerTokiCD.id = UUID()
             playerTokiCD.baseTokiId = baseTokiCD.id  // Store only the UUID reference
             playerTokiCD.dateAcquired = Date()
 
-            // Initialize stats from the base TokiCD
             playerTokiCD.currentHealth = baseTokiCD.baseHealth
             playerTokiCD.currentAttack = baseTokiCD.baseAttack
             playerTokiCD.currentDefense = baseTokiCD.baseDefense
@@ -56,7 +53,6 @@ class GachaService {
             )
         }
 
-        // Save the new PlayerTokiCD instances
         if context.hasChanges {
             do {
                 try context.save()
@@ -65,7 +61,6 @@ class GachaService {
             }
         }
 
-        // Append the newly acquired Tokis to the player
         player.ownedTokis.append(contentsOf: newPlayerTokis)
         return newPlayerTokis
     }
@@ -74,13 +69,12 @@ class GachaService {
         let roll = Double.random(in: 0.0...1.0)
         var cumulative = 0.0
         
-        // Sort by key or just iterate. Make sure the sum is ~1.0
         for (rarity, rate) in distribution {
             cumulative += rate
             if roll <= cumulative {
                 return rarity
             }
         }
-        return .common // fallback if floating-point rounding
+        return .common
     }
 }
