@@ -14,3 +14,13 @@ let wizardToki = Toki(
     skills: [basicSpell, fireball],
     elementType: .fire
 )
+
+let knightBaseStats = TokiBaseStats(health: 150, attack: 40, defense: 50, speed: 95)
+
+let knightToki = Toki(
+    name: "Knight",
+    rarity: .rare,
+    baseStats: knightBaseStats,
+    skills: [basicAttack, excalibur],
+    elementType: .light
+)

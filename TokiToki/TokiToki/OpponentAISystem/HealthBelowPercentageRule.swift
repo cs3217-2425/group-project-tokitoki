@@ -8,12 +8,12 @@
 // Opponent will use a certain skill when hp drop below a certain percentage
 class HealthBelowPercentageRule: AIRule {
     let priority: Int
-    let skillAction: UseSkillAction
+    let skill: Skill
     let percentage: Double
 
-    init(priority: Int, action: UseSkillAction, percentage: Double) {
+    init(priority: Int, action: Skill, percentage: Double) {
         self.priority = priority
-        self.skillAction = action
+        self.skill = action
         self.percentage = percentage
     }
 

@@ -41,8 +41,7 @@ class MonsterFactory {
         let aiRules: [AIRule] = [
             HealthBelowPercentageRule(
                 priority: 1,
-                action: UseSkillAction(user: monster,
-                                       skill: basicAttack, targets: []), // Target IDs will be filled at runtime
+                action: basicAttack,
                 percentage: 30
             )
         ]
@@ -111,15 +110,13 @@ class MonsterFactory {
             // Use AOE attack when it's available
             HealthBelowPercentageRule(
                 priority: 1,
-                action: UseSkillAction(user: boss,
-                                       skill: aoeAttack, targets: []), // Target IDs will be filled at runtime
+                action: aoeAttack,
                 percentage: 50
             ),
             // Use debuff when health is high
             HealthBelowPercentageRule(
                 priority: 2,
-                action: UseSkillAction(user: boss,
-                                       skill: debuffSkill, targets: []), // Target IDs will be filled at runtime
+                action: debuffSkill,
                 percentage: 80
             )
         ]

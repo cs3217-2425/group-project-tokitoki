@@ -6,7 +6,7 @@
 //
 
 class EffectCalculatorFactory {
-    private let elementsSystem: ElementsSystem = ElementsSystem()
+    private let elementsSystem = ElementsSystem()
     private let calculators: [SkillType: EffectCalculator]
 
     init() {

@@ -18,15 +18,22 @@ class AIComponent: BaseComponent {
         super.init(entityId: entityId)
     }
 
-    func determineAction(_ userEntity: GameStateEntity, _ targets: [GameStateEntity]) -> Action {
+    func determineAction(_ userEntity: GameStateEntity, _ playerEntities: [GameStateEntity],
+                         _ opponentEntities: [GameStateEntity]) -> Action {
+        var skillToUse: Skill?
         for rule in rules where rule.condition(userEntity) {
-            return rule.skillAction
+            skillToUse = rule.skill
         }
 
-        let skillToUse = skills.filter { $0.canUse() }.randomElement()
+        if skillToUse == nil {
+            skillToUse = skills.filter { $0.canUse() }.randomElement()
+        }
+
         guard let skillToUse = skillToUse else {
             return NoAction()
         }
+
+        let targets = TargetSelectionFactory().generateTargets(opponentEntities, playerEntities, skillToUse.targetType)
         return UseSkillAction(user: userEntity, skill: skillToUse, targets: targets) // todo: targets
     }
 }

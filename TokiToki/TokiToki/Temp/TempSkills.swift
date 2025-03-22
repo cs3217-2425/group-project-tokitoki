@@ -17,7 +17,7 @@ let basicSpell = BaseSkill(
     cooldown: 0,
     statusEffectChance: 0,
     statusEffect: nil,
-    statusEffectDuration: 0,   
+    statusEffectDuration: 0,
     effectCalculator: attackCalculator
 )
 
@@ -60,5 +60,33 @@ let lightningBolt = BaseSkill(
     statusEffectChance: 0.25,   // 25% chance to apply the paralysis status effect.
     statusEffect: .paralysis,       // The lightning bolt applies a paralysis status effect.
     statusEffectDuration: 2,   // The paralysis effect lasts for 2 turns.
+    effectCalculator: attackCalculator
+)
+
+let basicAttack = BaseSkill(
+    name: "Basic Attack",
+    description: "A basic attack that deals damage to a single enemy.",
+    type: .attack,
+    targetType: .singleEnemy,
+    elementType: .neutral,
+    basePower: 40,
+    cooldown: 0,
+    statusEffectChance: 0,
+    statusEffect: nil,
+    statusEffectDuration: 0,
+    effectCalculator: attackCalculator
+)
+
+let excalibur = BaseSkill(
+    name: "Excalibur",
+    description: "A strong attack that deals damage to a single enemy.",
+    type: .attack,
+    targetType: .singleEnemy,
+    elementType: .light,
+    basePower: 60,
+    cooldown: 4,
+    statusEffectChance: 0,
+    statusEffect: nil,
+    statusEffectDuration: 0,
     effectCalculator: attackCalculator
 )

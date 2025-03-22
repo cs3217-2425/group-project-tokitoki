@@ -8,6 +8,7 @@
 let skillsToIconImage: [String: String] = [
     "Fireball": "fireball.png",
     "Basic Attack": "basicAttack.png",
-    "Basic Spell": "basicSpell.png"
+    "Basic Spell": "basicSpell.png",
+    "Excalibur": "excalibur.jpg"
 ]
-    
+

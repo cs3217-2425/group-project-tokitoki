@@ -41,6 +41,7 @@ enum TargetType {
     case ownself
     case allAllies
     case allEnemies
+    case singleAlly
 }
 
 enum StatusEffectType {

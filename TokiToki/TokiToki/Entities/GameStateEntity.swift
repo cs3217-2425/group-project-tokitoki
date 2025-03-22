@@ -17,7 +17,7 @@ class GameStateEntity: BaseEntity {
         self.name = name
         super.init()
     }
-    
+
 //    func copy() -> GameStateEntity {
 //        GameStateEntity(name)
 //    }
@@ -107,9 +107,7 @@ class GameStateEntity: BaseEntity {
         guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
             return
         }
-        
-        
-        
+
 //        if statsComponent.actionMeter >= 100 {
 //            statsComponent.actionMeter -= 100
 //        }
@@ -123,10 +121,10 @@ class GameStateEntity: BaseEntity {
         }
         return statsComponent.actionMeter
     }
-    
+
     func resetActionBar() {
         guard let statsComponent = getComponent(ofType: StatsComponent.self) else {
-            return 
+            return
         }
         statsComponent.actionMeter -= MAX_ACTION_BAR
     }
