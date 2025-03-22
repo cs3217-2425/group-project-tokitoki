@@ -163,38 +163,56 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
     
     // TableView DataSource Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Calculate total slots: base slot (1) + extra slot per 5 levels
+        let baseSlots = 1
+        let extraSlots = toki.level / 5  // integer division
+        let totalSlots = baseSlots + extraSlots
+        
         if tableView == equipmentTableView {
-            return toki.equipment.count
+            // Return the greater of totalSlots or the number of equipments already added
+            return max(totalSlots, toki.equipment.count)
         } else {
-            return toki.skills.count
+            return max(totalSlots, toki.skills.count)
         }
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TokiTableCell", for: indexPath) as? TokiTableCell else {
             return UITableViewCell()
         }
         
         if tableView == equipmentTableView {
-            let equipmentName = toki.equipment[indexPath.row].name
-            cell.nameLabel.text = equipmentName
-            cell.itemImageView.image = UIImage(named: equipmentName) // if your asset name matches equipmentName
-            
-            // TODO: Add the equipment's buff to Toki's stats
-            
-            // Add long press gesture recognizer for equipment cells
-            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleEquipmentLongPress(_:)))
-            cell.addGestureRecognizer(longPress)
-        } else { // for skillsTableView
-            let skillName = toki.skills[indexPath.row].name
-            cell.nameLabel.text = skillName
-            cell.itemImageView.image = UIImage(named: skillName) // if you have an image for the skill
-            
-            // TODO: Add the skill's buff to Toki's stats
-            
-            // Add long press gesture recognizer for skill cells
-            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleSkillLongPress(_:)))
-            cell.addGestureRecognizer(longPress)
+            if indexPath.row < toki.equipment.count {
+                // Configure cell with existing equipment
+                let equipmentItem = toki.equipment[indexPath.row]
+                cell.nameLabel.text = equipmentItem.name
+                cell.itemImageView.image = UIImage(named: equipmentItem.name) // if asset name matches
+                // Add long press gesture recognizer for filled equipment cell
+                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleEquipmentLongPress(_:)))
+                cell.addGestureRecognizer(longPress)
+            } else {
+                // Empty slot
+                cell.nameLabel.text = "Empty Slot"
+                cell.itemImageView.image = UIImage(named: "empty") // use an appropriate placeholder image if available
+                // Add long press gesture recognizer for empty equipment slot
+                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleEquipmentLongPress(_:)))
+                cell.addGestureRecognizer(longPress)
+            }
+        } else { // skillsTableView
+            if indexPath.row < toki.skills.count {
+                let skillItem = toki.skills[indexPath.row]
+                cell.nameLabel.text = skillItem.name
+                cell.itemImageView.image = UIImage(named: skillItem.name)
+                // Add long press gesture recognizer for filled skill cell
+                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleSkillLongPress(_:)))
+                cell.addGestureRecognizer(longPress)
+            } else {
+                // Empty slot for skills
+                cell.nameLabel.text = "Empty Slot"
+                cell.itemImageView.image = UIImage(named: "empty")
+                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleSkillLongPress(_:)))
+                cell.addGestureRecognizer(longPress)
+            }
         }
         
         return cell
@@ -217,12 +235,19 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         for candidate in candidateNames {
             alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
                 let newEquipment = self.createTestEquipment(name: candidate)
+                // Check if the candidate already exists
                 if self.toki.equipment.contains(where: { $0.name == newEquipment.name }) {
                     let existsAlert = UIAlertController(title: "Already Exists", message: "Equipment \(newEquipment.name) already exists.", preferredStyle: .alert)
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     self.present(existsAlert, animated: true)
                 } else {
-                    self.toki.equipment[indexPath.row] = newEquipment
+                    if indexPath.row < self.toki.equipment.count {
+                        // Replace existing equipment
+                        self.toki.equipment[indexPath.row] = newEquipment
+                    } else {
+                        // Insert at empty slot (append)
+                        self.toki.equipment.append(newEquipment)
+                    }
                     self.updateUI()
                 }
             }))
@@ -230,7 +255,6 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         
-        // For iPad, configure the popover.
         if let popoverController = alert.popoverPresentationController {
             popoverController.sourceView = sender
             popoverController.sourceRect = sender.bounds
@@ -239,7 +263,6 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         present(alert, animated: true)
     }
 
-    // Example Action to Change Skills
     @IBAction func changeSkillsTapped(_ sender: UIButton) {
         guard let indexPath = skillsTableView?.indexPathForSelectedRow else {
             let noSelectionAlert = UIAlertController(title: "No Selection", message: "Please select a skill cell to change.", preferredStyle: .alert)
@@ -261,7 +284,11 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     self.present(existsAlert, animated: true)
                 } else {
-                    self.toki.skills[indexPath.row] = newSkill
+                    if indexPath.row < self.toki.skills.count {
+                        self.toki.skills[indexPath.row] = newSkill
+                    } else {
+                        self.toki.skills.append(newSkill)
+                    }
                     self.updateUI()
                 }
             }))
