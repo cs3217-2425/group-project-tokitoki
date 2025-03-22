@@ -57,6 +57,13 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         skillsTableView?.delegate = self
         skillsTableView?.dataSource = self
         
+        hpProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        expProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        healProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        attackProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        defenseProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        speedProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        
         // Load Toki Data
         toki = loadTest()
         updateUI()
