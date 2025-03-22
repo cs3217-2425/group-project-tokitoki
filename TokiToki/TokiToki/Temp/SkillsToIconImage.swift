@@ -11,4 +11,3 @@ let skillsToIconImage: [String: String] = [
     "Basic Spell": "basicSpell.png",
     "Excalibur": "excalibur.jpg"
 ]
-
