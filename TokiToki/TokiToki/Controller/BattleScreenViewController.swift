@@ -101,7 +101,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         
         effectsManager = BattleEffectsManager(viewController: self)
 
-        configure([wizardToki, knightToki], [basicMonster])
+        configure([knightToki, wizardToki], [basicMonster])
     }
 
     override func viewDidDisappear(_ animated: Bool) {

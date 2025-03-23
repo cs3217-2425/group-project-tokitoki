@@ -92,4 +92,28 @@ class PlayerManager {
         currentPlayer = player
         savePlayer()
     }
+    
+    // MARK: - PlayerTokis
+
+    /// Adds a single PlayerToki to the player's owned list.
+    func addPlayerToki(_ playerToki: PlayerToki) {
+        var player = getOrCreatePlayer()
+        player.ownedTokis.append(playerToki)
+        currentPlayer = player
+        savePlayer()
+    }
+
+    /// Adds multiple PlayerToki at once.
+    func addPlayerTokis(_ tokis: [PlayerToki]) {
+        var player = getOrCreatePlayer()
+        player.ownedTokis.append(contentsOf: tokis)
+        currentPlayer = player
+        savePlayer()
+    }
+
+    /// Retrieve the player's entire Toki collection.
+    func getOwnedPlayerTokis() -> [PlayerToki] {
+        let player = getOrCreatePlayer()
+        return player.ownedTokis
+    }
 }

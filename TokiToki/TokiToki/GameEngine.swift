@@ -13,7 +13,6 @@ class GameEngine {
     private var playersPlusOpponents: [GameStateEntity] = []
     private var currentTurn: TurnState
     private var currentGameStateEntity: GameStateEntity?
-    private var isWaitingForSkillSelect: Bool = true
     private var pendingActions: [Action] = []
     private var battleLog: [String] = [] {
         didSet {
