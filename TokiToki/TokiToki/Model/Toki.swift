@@ -18,7 +18,9 @@ class Toki {
     var equipment: [Equipment]
     let elementType: ElementType
 
-    init(id: UUID = UUID(), name: String, rarity: TokiRarity, baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment], elementType: ElementType, level: Int) {
+    init(id: UUID = UUID(), name: String, rarity: TokiRarity,
+         baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment],
+         elementType: ElementType, level: Int) {
         self.id = id
         self.name = name
         self.rarity = rarity
@@ -29,8 +31,8 @@ class Toki {
         self.level = level
     }
 
-    func createBattleEntity() -> PlayerEntity {
-        let entity = PlayerEntity(name: name)
+    func createBattleEntity() -> GameStateEntity {
+        let entity = GameStateEntity(name)
 
         // Add components
         var statsComponent = StatsComponent(

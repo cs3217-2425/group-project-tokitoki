@@ -6,5 +6,5 @@
 //
 
 protocol EffectCalculator {
-    func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult
+    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult
 }

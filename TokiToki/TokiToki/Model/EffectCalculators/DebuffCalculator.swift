@@ -6,7 +6,7 @@
 //
 
 class DebuffCalculator: EffectCalculator {
-    func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult {
+    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
         let debuffAmount = skill.basePower
 
         // Apply debuff based on the status effect type

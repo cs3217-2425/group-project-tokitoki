@@ -15,8 +15,8 @@ enum ElementType: String, CaseIterable {
     case light
     case dark
     case neutral
-    
+
     static func fromString(_ string: String) -> ElementType? {
-        return ElementType.allCases.first { $0.rawValue == string.lowercased() }
+        ElementType.allCases.first { $0.rawValue == string.lowercased() }
     }
 }

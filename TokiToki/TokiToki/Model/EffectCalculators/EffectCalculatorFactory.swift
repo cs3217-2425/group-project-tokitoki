@@ -6,11 +6,10 @@
 //
 
 class EffectCalculatorFactory {
-    private let elementsSystem: ElementsSystem
+    private let elementsSystem = ElementsSystem()
     private let calculators: [SkillType: EffectCalculator]
 
-    init(elementsSystem: ElementsSystem) {
-        self.elementsSystem = elementsSystem
+    init() {
         self.calculators = [
            .attack: AttackCalculator(elementsSystem: elementsSystem),
            .heal: HealCalculator(),

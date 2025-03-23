@@ -6,7 +6,7 @@
 //
 
 class StunStrategy: StatusEffectStrategy {
-    func apply(to entity: Entity, effect: StatusEffect) -> EffectResult {
+    func apply(to entity: GameStateEntity, effect: StatusEffect) -> EffectResult {
         EffectResult(
             entity: entity,
             type: .statusApplied,

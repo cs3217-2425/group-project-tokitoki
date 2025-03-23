@@ -15,12 +15,4 @@ protocol Entity {
     func addComponent(_ component: Component)
     func getComponent<T: Component>(ofType type: T.Type) -> T?
     func removeComponent<T: Component>(ofType type: T.Type)
-    func getName() -> String
-    func getCurrentHealth() -> Int
-    func getMaxHealth() -> Int
-    func takeDamage(amount: Int)
-    func heal(amount: Int)
-    func getAttack() -> Int
-    func getDefense() -> Int
-    func getSpeed() -> Int
 }

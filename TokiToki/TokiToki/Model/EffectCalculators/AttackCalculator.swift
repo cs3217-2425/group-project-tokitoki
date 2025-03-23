@@ -12,7 +12,7 @@ class AttackCalculator: EffectCalculator {
         self.elementsSystem = elementsSystem
     }
 
-    func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult {
+    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self),
               let targetStats = target.getComponent(ofType: StatsComponent.self) else {
             return EffectResult(entity: target, type: .none, value: 0, description: "Failed to get stats")
@@ -23,7 +23,7 @@ class AttackCalculator: EffectCalculator {
 
         // Element effectiveness
         let elementMultiplier = elementsSystem.getEffectiveness(of: sourceStats.elementType,
-                                                                            against: targetStats.elementType)
+                                                                against: targetStats.elementType)
         damage = Int(Double(damage) * elementMultiplier)
 
         // Critical hit (10% chance)
@@ -52,6 +52,12 @@ class AttackCalculator: EffectCalculator {
             description += " (critical hit!)"
         }
 
-        return EffectResult(entity: target, type: .damage, value: damage, description: description)
+        return DamageEffectResult(
+            entity: target,
+            value: damage,
+            description: description,
+            isCritical: isCritical,
+            elementType: sourceStats.elementType
+        )
     }
 }

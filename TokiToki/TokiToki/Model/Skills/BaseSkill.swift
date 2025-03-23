@@ -24,8 +24,8 @@ class BaseSkill: Skill {
     private let effectCalculator: EffectCalculator
 
     init(name: String, description: String, type: SkillType, targetType: TargetType,
-         elementType: ElementType, basePower: Int, cooldown: Int, statusEffectChance: Double = 0,
-         statusEffect: StatusEffectType? = nil, statusEffectDuration: Int = 0, effectCalculator: EffectCalculator) {
+         elementType: ElementType, basePower: Int, cooldown: Int, statusEffectChance: Double,
+         statusEffect: StatusEffectType?, statusEffectDuration: Int = 0, effectCalculator: EffectCalculator) {
         self.name = name
         self.description = description
         self.type = type
@@ -43,7 +43,7 @@ class BaseSkill: Skill {
         currentCooldown == 0
     }
 
-    func use(from source: Entity, on targets: [Entity]) -> [EffectResult] {
+    func use(from source: GameStateEntity, on targets: [GameStateEntity]) -> [EffectResult] {
         var results: [EffectResult] = []
 
         for target in targets {
@@ -57,7 +57,7 @@ class BaseSkill: Skill {
                 if let statusComponent = target.getComponent(ofType: StatusEffectsComponent.self) {
                     statusComponent.addEffect(effect)
                     results.append(EffectResult(entity: target, type: .statusApplied, value: 0,
-                                                description: "\(target.getName()) is affected by \(effectType)!"))
+                                                description: "\(target.name) is affected by \(effectType)!"))
                 }
             }
         }
