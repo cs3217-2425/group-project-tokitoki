@@ -17,7 +17,7 @@ class MainMenuViewController: UIViewController {
     @IBAction func tokiCustomizerButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "TokiDisplay", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "TokiDisplayVC")
-        
+        viewController.modalPresentationStyle = .fullScreen
         //navigationController?.pushViewController(viewController, animated: true)
         present(viewController, animated: true, completion: nil)
     }
@@ -25,7 +25,7 @@ class MainMenuViewController: UIViewController {
     @IBAction private func profileButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "ProfileScreen", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "ProfileVC")
-
+        viewController.modalPresentationStyle = .fullScreen
         //navigationController?.pushViewController(viewController, animated: true)
         present(viewController, animated: true, completion: nil)
     }
