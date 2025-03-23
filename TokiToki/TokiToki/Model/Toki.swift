@@ -78,10 +78,10 @@ struct TokiBaseStats {
     let exp: Int
 }
 
-enum TokiRarity {
-    case common
-    case uncommon
-    case rare
-    case epic
-    case legendary
+enum TokiRarity: String {
+    case common = "common"
+    case uncommon = "uncommon"
+    case rare = "rare"
+    case epic = "epic"
+    case legendary = "legendary"
 }

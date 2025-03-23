@@ -1,0 +1,26 @@
+{
+  "packs": [
+    {
+      "packName": "Starter Pack",
+      "tokiNames": ["FireFox", "WaterSerpent"],
+      "rarityDropRates": {
+        "common": 0.60,
+        "uncommon": 0.25,
+        "rare": 0.10,
+        "epic": 0.04,
+        "legendary": 0.01
+      }
+    },
+    {
+      "packName": "Legendary Pack",
+      "tokiNames": ["EarthDragon", "SkyPhoenix"],
+      "rarityDropRates": {
+        "common": 0.20,
+        "rare": 0.50,
+        "epic": 0.20,
+        "legendary": 0.10
+      }
+    }
+  ]
+}
+
