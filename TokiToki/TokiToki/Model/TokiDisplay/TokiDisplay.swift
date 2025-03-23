@@ -30,9 +30,9 @@ class TokiDisplay {
     private func createTestSkill(name: String = "Thunder Strike") -> Skill {
         let elementsSystem = ElementsSystem()
         
-        let effectCalculatorFactory = EffectCalculatorFactory(elementsSystem: elementsSystem)
+        let effectCalculatorFactory = EffectCalculatorFactory()
         
-        let skillsFactory = SkillFactory(effectCalculatorFactory: effectCalculatorFactory)
+        let skillsFactory = SkillFactory()
         
         let skill = skillsFactory.createAttackSkill(
             name: name,
@@ -40,7 +40,7 @@ class TokiDisplay {
             elementType: .light,
             basePower: 50,
             cooldown: 3,
-            targetType: .single,
+            targetType: .singleEnemy,
             statusEffect: .paralysis,
             statusEffectChance: 0.3,
             statusEffectDuration: 2
@@ -103,7 +103,8 @@ class TokiDisplay {
         return total
     }
 
-    private func updateProgressBar(_ progressView: UIProgressView, baseValue: Float, buffValue: Float, maxValue: Float, baseColor: UIColor, buffColor: UIColor) {
+    private func updateProgressBar(_ progressView: UIProgressView, baseValue: Float,
+                                   buffValue: Float, maxValue: Float, baseColor: UIColor, buffColor: UIColor) {
         // Remove any existing subviews from the progress view's track area.
         progressView.subviews.forEach { $0.removeFromSuperview() }
         
@@ -158,13 +159,15 @@ class TokiDisplay {
         if let attackPV = control.attackProgressView {
             let baseAttack = Float(toki.baseStats.attack)
             let buffAttack = totalEquipmentBuff(for: "attack")
-            updateProgressBar(attackPV, baseValue: baseAttack, buffValue: buffAttack, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
+            updateProgressBar(attackPV, baseValue: baseAttack, buffValue: buffAttack,
+                              maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
         
         if let defensePV = control.defenseProgressView {
             let baseDefense = Float(toki.baseStats.defense)
             let buffDefense = totalEquipmentBuff(for: "defense")
-            updateProgressBar(defensePV, baseValue: baseDefense, buffValue: buffDefense, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
+            updateProgressBar(defensePV, baseValue: baseDefense, buffValue: buffDefense,
+                              maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
         
         if let speedPV = control.speedProgressView {
@@ -242,7 +245,8 @@ class TokiDisplay {
     
     func changeEquipmentTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.equipmentTableView?.indexPathForSelectedRow else {
-            let noSelectionAlert = UIAlertController(title: "No Selection", message: "Please select an equipment cell to change.", preferredStyle: .alert)
+            let noSelectionAlert = UIAlertController(title: "No Selection",
+                                                     message: "Please select an equipment cell to change.", preferredStyle: .alert)
             noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
             control.present(noSelectionAlert, animated: true)
             return
@@ -251,14 +255,17 @@ class TokiDisplay {
         // List of candidate equipment names
         let candidateNames = ["Magic Staff 2", "Ice Sword", "Wind Dagger"]
         
-        let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment",
+                                      preferredStyle: .actionSheet)
         
         for candidate in candidateNames {
             alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
                 let newEquipment = self.createTestEquipment(name: candidate)
                 // Check if the candidate already exists
                 if self.toki.equipment.contains(where: { $0.name == newEquipment.name }) {
-                    let existsAlert = UIAlertController(title: "Already Exists", message: "Equipment \(newEquipment.name) already exists.", preferredStyle: .alert)
+                    let existsAlert = UIAlertController(title: "Already Exists",
+                                                        message: "Equipment \(newEquipment.name) already exists.",
+                                                        preferredStyle: .alert)
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
@@ -301,7 +308,9 @@ class TokiDisplay {
             alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
                 let newSkill = self.createTestSkill(name: candidate)
                 if self.toki.skills.contains(where: { $0.name == newSkill.name }) {
-                    let existsAlert = UIAlertController(title: "Already Exists", message: "Skill \(newSkill.name) already exists.", preferredStyle: .alert)
+                    let existsAlert = UIAlertController(title: "Already Exists",
+                                                        message: "Skill \(newSkill.name) already exists.",
+                                                        preferredStyle: .alert)
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
@@ -364,7 +373,8 @@ class TokiDisplay {
             // Assume the equipment's first component is a CombinedBuffComponent
             var message = "No buff details available."
             if let buffComponent = equipment.components.first as? CombinedBuffComponent {
-                message = "Attack Buff: \(buffComponent.buff.attack)\nDefense Buff: \(buffComponent.buff.defense)\nSpeed Buff: \(buffComponent.buff.speed)"
+                message = "Attack Buff: \(buffComponent.buff.attack)\nDefense Buff:" +
+                "\(buffComponent.buff.defense)\nSpeed Buff: \(buffComponent.buff.speed)"
             }
             
             let alert = UIAlertController(title: equipment.name, message: message, preferredStyle: .alert)
