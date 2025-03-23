@@ -6,7 +6,7 @@
 //
 
 class HealCalculator: EffectCalculator {
-    func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult {
+    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self) else {
             return EffectResult(entity: target, type: .none, value: 0, description: "Failed to get stats")
         }

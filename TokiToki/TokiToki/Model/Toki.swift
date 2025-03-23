@@ -9,7 +9,7 @@ import Foundation
 // MARK: - Toki Class for Gacha and Display
 
 class Toki {
-    let id: UUID
+    let id = UUID()
     let name: String
     var level: Int
     let rarity: TokiRarity
@@ -18,8 +18,12 @@ class Toki {
     var equipment: [Equipment]
     let elementType: ElementType
 
+<<<<<<< HEAD:TokiToki/TokiToki/Toki.swift
+    init(name: String, rarity: TokiRarity, baseStats: TokiBaseStats, skills: [Skill], elementType: ElementType) {
+=======
     init(id: UUID = UUID(), name: String, rarity: TokiRarity, baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment], elementType: ElementType, level: Int) {
         self.id = id
+>>>>>>> origin/dev:TokiToki/TokiToki/Model/Toki.swift
         self.name = name
         self.rarity = rarity
         self.baseStats = baseStats
@@ -29,8 +33,8 @@ class Toki {
         self.level = level
     }
 
-    func createBattleEntity() -> PlayerEntity {
-        let entity = PlayerEntity(name: name)
+    func createBattleEntity() -> GameStateEntity {
+        let entity = GameStateEntity(name)
 
         // Add components
         var statsComponent = StatsComponent(

@@ -8,5 +8,5 @@
 // MARK: - Status Effect System (Using Strategy Pattern instead of Switch)
 
 protocol StatusEffectStrategy {
-    func apply(to entity: Entity, effect: StatusEffect) -> EffectResult
+    func apply(to entity: GameStateEntity, effect: StatusEffect) -> EffectResult
 }

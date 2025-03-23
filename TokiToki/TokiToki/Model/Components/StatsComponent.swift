@@ -14,6 +14,7 @@ class StatsComponent: BaseComponent {
     var defense: Int
     var speed: Int
     var elementType: ElementType
+    var actionMeter: Float = 0
 
     init(entityId: UUID, maxHealth: Int, attack: Int, defense: Int, speed: Int, elementType: ElementType) {
         self.maxHealth = maxHealth

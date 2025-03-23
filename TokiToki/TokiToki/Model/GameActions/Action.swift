@@ -7,5 +7,5 @@
 
 // Action Protocol - Command Pattern
 protocol Action {
-    func execute(gameState: GameState) -> [EffectResult]
+    func execute() -> [EffectResult]
 }

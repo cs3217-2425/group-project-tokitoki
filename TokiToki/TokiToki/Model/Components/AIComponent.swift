@@ -7,21 +7,33 @@
 
 import Foundation
 
-// AI Component for monsters
+// AI Component for opponents to determine which skill to use
 class AIComponent: BaseComponent {
     var rules: [AIRule]
+    var skills: [Skill]
 
-    init(entityId: UUID, rules: [AIRule]) {
+    init(entityId: UUID, rules: [AIRule], skills: [Skill]) {
         self.rules = rules
+        self.skills = skills
         super.init(entityId: entityId)
     }
 
-    func determineAction(gameState: GameState) -> Action {
-        for rule in rules where rule.condition(gameState) {
-            return rule.action
+    func determineAction(_ userEntity: GameStateEntity, _ playerEntities: [GameStateEntity],
+                         _ opponentEntities: [GameStateEntity]) -> Action {
+        var skillToUse: Skill?
+        for rule in rules where rule.condition(userEntity) {
+            skillToUse = rule.skill
         }
 
-        // Default action if no rules match
-        return rules.first?.action ?? NoAction()
+        if skillToUse == nil {
+            skillToUse = skills.filter { $0.canUse() }.randomElement()
+        }
+
+        guard let skillToUse = skillToUse else {
+            return NoAction()
+        }
+
+        let targets = TargetSelectionFactory().generateTargets(opponentEntities, playerEntities, skillToUse.targetType)
+        return UseSkillAction(user: userEntity, skill: skillToUse, targets: targets) // todo: targets
     }
 }

@@ -6,7 +6,7 @@
 //
 
 class DefenseCalculator: EffectCalculator {
-    func calculate(skill: Skill, source: Entity, target: Entity) -> EffectResult {
+    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
         let defenseBoost = skill.basePower
 
         // Apply defense boost

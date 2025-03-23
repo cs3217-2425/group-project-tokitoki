@@ -17,12 +17,12 @@ class ResourceLoader {
         guard let url = Bundle.main.url(forResource: filename, withExtension: fileExtension) else {
             throw ResourceError.fileNotFound
         }
-        
+
         do {
             let data = try Data(contentsOf: url)
             let decoder = JSONDecoder()
             return try decoder.decode(T.self, from: data)
-        } catch let error {
+        } catch {
             throw ResourceError.parseError(error.localizedDescription)
         }
     }

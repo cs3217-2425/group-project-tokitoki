@@ -9,36 +9,25 @@ import Foundation
 
 // Concrete Actions
 class UseSkillAction: Action {
-    let sourceId: UUID
-    let skillId: UUID
-    let targetIds: [UUID]
+    let user: GameStateEntity
+    let skill: Skill
+    let targets: [GameStateEntity]
 
-    init(sourceId: UUID, skillId: UUID, targetIds: [UUID]) {
-        self.sourceId = sourceId
-        self.skillId = skillId
-        self.targetIds = targetIds
+    init(user: GameStateEntity, skill: Skill, targets: [GameStateEntity]) {
+        self.user = user
+        self.skill = skill
+        self.targets = targets
     }
 
-    func execute(gameState: GameState) -> [EffectResult] {
-        guard let source = gameState.getEntity(id: sourceId),
-              let skillsComponent = source.getComponent(ofType: SkillsComponent.self) else {
-            return [EffectResult(entity: BaseEntity(), type: .none, value: 0, description: "Invalid source or skill")]
-        }
-
-        guard let skill = skillsComponent.skills.first(where: { $0.id == skillId }) else {
-            return [EffectResult(entity: source, type: .none, value: 0, description: "Skill not found")]
-        }
-
-        let targets = targetIds.compactMap { gameState.getEntity(id: $0) }
-
+    func execute() -> [EffectResult] {
         if targets.isEmpty {
-            return [EffectResult(entity: source, type: .none, value: 0, description: "No valid targets")]
+            return [EffectResult(entity: user, type: .none, value: 0, description: "No valid targets")]
         }
 
         if !skill.canUse() {
-            return [EffectResult(entity: source, type: .none, value: 0, description: "\(skill.name) is on cooldown")]
+            return [EffectResult(entity: user, type: .none, value: 0, description: "\(skill.name) is on cooldown")]
         }
 
-        return skill.use(from: source, on: targets)
+        return skill.use(from: user, on: targets)
     }
 }
