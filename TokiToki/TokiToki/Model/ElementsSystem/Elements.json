@@ -1,0 +1,102 @@
+{
+  "elements": [
+    {
+      "id": "fire",
+      "name": "Fire",
+      "description": "Burns with intense heat. Strong against Earth, weak against Water.",
+      "effectiveness": {
+        "earth": 1.5,
+        "water": 0.5,
+        "fire": 0.5,
+        "air": 1.0,
+        "light": 1.0,
+        "dark": 1.0,
+        "neutral": 1.0
+      }
+    },
+    {
+      "id": "water",
+      "name": "Water",
+      "description": "Flows with adaptable power. Strong against Water, weak against Earth.",
+      "effectiveness": {
+        "fire": 1.5,
+        "earth": 0.5,
+        "water": 0.5,
+        "air": 1.0,
+        "light": 1.0,
+        "dark": 1.0,
+        "neutral": 1.0
+      }
+    },
+    {
+      "id": "earth",
+      "name": "Earth",
+      "description": "Solid and powerful. Strong against Air and Water, weak against Fire.",
+      "effectiveness": {
+        "air": 1.5,
+        "water": 1.5,
+        "fire": 0.5,
+        "earth": 0.5,
+        "light": 1.0,
+        "dark": 1.0,
+        "neutral": 1.0
+      }
+    },
+    {
+      "id": "air",
+      "name": "Air",
+      "description": "Swift and unpredictable. Strong against Fire, weak against Earth.",
+      "effectiveness": {
+        "earth": 0.5,
+        "fire": 1.5,
+        "water": 1.0,
+        "air": 0.5,
+        "light": 1.0,
+        "dark": 1.0,
+        "neutral": 1.0
+      }
+    },
+    {
+      "id": "light",
+      "name": "Light",
+      "description": "Bright and purifying. Strong against Dark.",
+      "effectiveness": {
+        "dark": 1.5,
+        "light": 0.5,
+        "fire": 1.0,
+        "water": 1.0,
+        "earth": 1.0,
+        "air": 1.0,
+        "neutral": 1.0
+      }
+    },
+    {
+      "id": "dark",
+      "name": "Dark",
+      "description": "Mysterious and corrupting. Strong against Light.",
+      "effectiveness": {
+        "light": 1.5,
+        "dark": 0.5,
+        "fire": 1.0,
+        "water": 1.0,
+        "earth": 1.0,
+        "air": 1.0,
+        "neutral": 1.0
+      }
+    },
+    {
+      "id": "neutral",
+      "name": "Neutral",
+      "description": "Balanced and adaptable.",
+      "effectiveness": {
+        "fire": 1.0,
+        "water": 1.0,
+        "earth": 1.0,
+        "air": 1.0,
+        "light": 1.0,
+        "dark": 1.0,
+        "neutral": 1.0
+      }
+    }
+  ]
+}
