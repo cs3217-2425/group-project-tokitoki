@@ -52,13 +52,17 @@ class GachaRepository {
                     name: cd.name ?? "Unknown",
                     rarity: convertIntToRarity(cd.rarity),
                     baseStats: TokiBaseStats(
-                        health: Int(cd.baseHealth),
+                        hp: Int(cd.baseHealth),
                         attack: Int(cd.baseAttack),
                         defense: Int(cd.baseDefense),
-                        speed: Int(cd.baseSpeed)
+                        speed: Int(cd.baseSpeed),
+                        heal: Int(cd.baseHeal),
+                        exp: Int(cd.baseExp)
                     ),
                     skills: [],
-                    elementType: convertStringToElement(cd.elementType ?? "fire")
+                    equipments: [],
+                    elementType: convertStringToElement(cd.elementType ?? "fire"),
+                    level: 0
                 )
             }
             self.allTokis = domainTokis
