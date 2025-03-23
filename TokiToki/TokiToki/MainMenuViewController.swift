@@ -15,6 +15,10 @@ class MainMenuViewController: UIViewController {
 
     // Navigation actions (connect to storyboard)
     @IBAction private func profileButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "ProfileScreen", bundle: nil)
+        let viewController = storyboard.instantiateViewController(withIdentifier: "ProfileVC")
+
+        navigationController?.pushViewController(viewController, animated: true)
     }
 
     @IBAction private func playGameButtonTapped(_ sender: UIButton) {
