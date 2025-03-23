@@ -1,0 +1,40 @@
+{
+  "tokis": [
+      {
+        "name": "FireFox",
+        "rarity": 0,
+        "baseHealth": 80,
+        "baseAttack": 10,
+        "baseDefense": 5,
+        "baseSpeed": 12,
+        "elementType": "fire"
+      },
+      {
+        "name": "WaterSerpent",
+        "rarity": 0,
+        "baseHealth": 100,
+        "baseAttack": 15,
+        "baseDefense": 10,
+        "baseSpeed": 12,
+        "elementType": "water"
+      },
+      {
+        "name": "EarthDragon",
+        "rarity": 4,
+        "baseHealth": 200,
+        "baseAttack": 40,
+        "baseDefense": 30,
+        "baseSpeed": 15,
+        "elementType": "earth"
+      },
+      {
+        "name": "SkyPhoenix",
+        "rarity": 3,
+        "baseHealth": 180,
+        "baseAttack": 35,
+        "baseDefense": 25,
+        "baseSpeed": 20,
+        "elementType": "air"
+      }
+    ]
+}
