@@ -18,15 +18,16 @@ class MainMenuViewController: UIViewController {
         let storyboard = UIStoryboard(name: "TokiDisplay", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "TokiDisplayVC")
         
-        navigationController?.pushViewController(viewController, animated: true)
-
+        //navigationController?.pushViewController(viewController, animated: true)
+        present(viewController, animated: true, completion: nil)
     }
     // Navigation actions (connect to storyboard)
     @IBAction private func profileButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "ProfileScreen", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "ProfileVC")
 
-        navigationController?.pushViewController(viewController, animated: true)
+        //navigationController?.pushViewController(viewController, animated: true)
+        present(viewController, animated: true, completion: nil)
     }
 
     @IBAction private func playGameButtonTapped(_ sender: UIButton) {
