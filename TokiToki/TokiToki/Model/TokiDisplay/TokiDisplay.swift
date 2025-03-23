@@ -133,10 +133,10 @@ class TokiDisplay {
         // For stats without equipment buffs, use the regular progress view setting.
         control.hpLabel?.text = "HP: \(toki.baseStats.hp)"
         control.expLabel?.text = "Experience: \(toki.baseStats.exp)"
-        control.attackLabel?.text = "Attack: \(toki.baseStats.attack)"
-        control.defenseLabel?.text = "Defense: \(toki.baseStats.defense)"
+        control.attackLabel?.text = "Attack: \(toki.baseStats.attack + Int(totalEquipmentBuff(for: "attack")))"
+        control.defenseLabel?.text = "Defense: \(toki.baseStats.defense + Int(totalEquipmentBuff(for: "defense")))"
         control.healLabel?.text = "Heal: \(toki.baseStats.heal)"
-        control.speedLabel?.text = "Speed: \(toki.baseStats.speed)"
+        control.speedLabel?.text = "Speed: \(toki.baseStats.speed + Int(totalEquipmentBuff(for: "speed")))"
         control.rarityLabel?.text = "Rarity: \(toki.rarity)"
         control.elementLabel?.text = "Element: \(toki.elementType)"
         
