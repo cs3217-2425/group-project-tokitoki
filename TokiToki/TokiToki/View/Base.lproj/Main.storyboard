@@ -18,10 +18,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="7ev-oM-ucI">
-                                <rect key="frame" x="455.5" y="602.5" width="121" height="171.5"/>
+                                <rect key="frame" x="443" y="572" width="146" height="232"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0EI-8H-Fn5">
-                                        <rect key="frame" x="0.0" y="0.0" width="121" height="50.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="146" height="50.5"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Play Game" buttonSize="large"/>
                                         <connections>
@@ -29,7 +29,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cJ1-oq-HeZ">
-                                        <rect key="frame" x="0.0" y="60.5" width="121" height="50.5"/>
+                                        <rect key="frame" x="0.0" y="60.5" width="146" height="50.5"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Gacha" buttonSize="large"/>
                                         <connections>
@@ -38,11 +38,22 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u45-ZZ-mQj">
-                                        <rect key="frame" x="0.0" y="121" width="121" height="50.5"/>
+                                        <rect key="frame" x="0.0" y="121" width="146" height="50.5"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Profile" buttonSize="large"/>
                                         <connections>
                                             <action selector="profileButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y0G-RJ-acg"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Js2-5V-Nxb">
+                                        <rect key="frame" x="0.0" y="181.5" width="146" height="50.5"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50.5" id="PPF-l1-cai"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Toki Customizer"/>
+                                        <connections>
+                                            <action selector="tokiCustomizerButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="f3i-wh-65I"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -60,6 +71,7 @@
                         <outlet property="gachaButton" destination="cJ1-oq-HeZ" id="NGX-kT-bmo"/>
                         <outlet property="playGameButton" destination="0EI-8H-Fn5" id="Ikk-fx-oqL"/>
                         <outlet property="profileButton" destination="u45-ZZ-mQj" id="tIm-YM-QZY"/>
+                        <outlet property="tokiCustomizerButton" destination="Js2-5V-Nxb" id="tAA-o7-NbH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
