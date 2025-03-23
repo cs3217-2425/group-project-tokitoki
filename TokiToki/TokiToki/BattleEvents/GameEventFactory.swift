@@ -18,7 +18,7 @@ class GameEventFactory {
     }
 
     func createDamageEvent(source: GameStateEntity, target: GameStateEntity, amount: Int,
-                          isCritical: Bool, elementType: ElementType) -> BattleEvent {
+                           isCritical: Bool, elementType: ElementType) -> BattleEvent {
         DamageDealtEvent(
             sourceId: source.id,
             targetId: target.id,
@@ -29,4 +29,6 @@ class GameEventFactory {
     }
 
     // TODO: Other factory methods for other events
+
+    // TODO: EffectResult convert to BattleEvents handled here instead
 }
