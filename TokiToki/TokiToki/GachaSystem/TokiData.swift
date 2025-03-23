@@ -14,6 +14,8 @@ struct TokiData: Codable {
     let baseAttack: Int
     let baseDefense: Int
     let baseSpeed: Int
+    let baseHeal: Int
+    let baseExp: Int
     let elementType: String
 }
 

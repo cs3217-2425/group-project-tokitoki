@@ -34,6 +34,8 @@ class TokiLoader {
             tokiCD.baseAttack = Int16(tokiData.baseAttack)
             tokiCD.baseDefense = Int16(tokiData.baseDefense)
             tokiCD.baseSpeed = Int16(tokiData.baseSpeed)
+            tokiCD.baseHealth = Int16(tokiData.baseHeal)
+            tokiCD.baseExp = Int16(tokiData.baseExp)
             tokiCD.elementType = tokiData.elementType
         }
 
