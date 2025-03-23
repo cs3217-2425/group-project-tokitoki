@@ -25,6 +25,7 @@ class GameEngine {
     private var useSpeedBasedTurnOrder: Bool = true
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
+    private let eventFactory = GameEventFactory()
 
 //    private var savedPlayerTeam: [GameStateEntity]
 //    private var savedOpponentTeam: [GameStateEntity]
@@ -138,6 +139,16 @@ class GameEngine {
 //            
 //        }
 
+        let targets = targetsSelected ?? opponentTeam
+
+        // Create battle event and publish to event bus
+        let skillEvent = eventFactory.createSkillUsedEvent(
+            user: currentGameStateEntity,
+            skill: skillSelected,
+            targets: targets
+        )
+        EventBus.shared.post(skillEvent)
+
         // TODO: account for target selection instead of passing in the whole opponentTeam to targets
         let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected, targets: opponentTeam)
 
@@ -166,7 +177,22 @@ class GameEngine {
         }
 
         let action = pendingActions.removeFirst()
-        return action.execute()
+        let results = action.execute()
+
+        var sourceId = UUID()
+        if let skillAction = action as? UseSkillAction {
+            sourceId = skillAction.user.id
+        }
+
+        // Convert results to events and post them
+        for result in results {
+            for battleResultEvent in result.toBattleEvents(sourceId: sourceId) {
+                // Post-action damage taken, status effects, etc events are emitted
+                EventBus.shared.post(battleResultEvent)
+            }
+        }
+
+        return results
     }
 
     private func executeOpponentTurn(_ entity: GameStateEntity) {
@@ -202,6 +228,12 @@ class GameEngine {
             for effect in statusComponent.activeEffects {
                 let result = effect.apply(to: entity, strategyFactory: strategyFactory)
                 logMessage(result.description)
+
+                // Publish StatusEffectApplied result
+                for event in result.toBattleEvents(sourceId: effect.sourceId) {
+                    print(event)
+                    EventBus.shared.post(event)
+                }
             }
 
             statusComponent.updateEffects()

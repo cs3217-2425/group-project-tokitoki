@@ -52,6 +52,8 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     @IBOutlet var battleLogDisplay: UILabel!
     @IBOutlet var logBackground: UIView!
 
+    private var effectsManager: BattleEffectsManager?
+
     func configure(_ playerTokis: [Toki], _ opponentEntities: [GameStateEntity]) {
         let playerEntities = createPlayerEntitiesAndAddMappingToView(playerTokis)
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
@@ -96,8 +98,15 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         configureLogBackground()
 
         addGestureRecognisers()
+        
+        effectsManager = BattleEffectsManager(viewController: self)
 
         configure([knightToki, wizardToki], [basicMonster])
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        effectsManager?.cleanUp()
     }
 
     fileprivate func configureSkillIcons() {
@@ -254,6 +263,10 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
 
     func removeDeadBody(_ id: UUID) {
         gameStateIdToViews[id]?.overallView.isHidden = true
+    }
+
+    func getViewForEntity(id: UUID) -> UIView? {
+        gameStateIdToViews[id]?.overallView
     }
 
     // TODO: Implement restart

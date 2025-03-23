@@ -23,7 +23,7 @@ class AttackCalculator: EffectCalculator {
 
         // Element effectiveness
         let elementMultiplier = elementsSystem.getEffectiveness(of: sourceStats.elementType,
-                                                                            against: targetStats.elementType)
+                                                                against: targetStats.elementType)
         damage = Int(Double(damage) * elementMultiplier)
 
         // Critical hit (10% chance)
@@ -52,6 +52,12 @@ class AttackCalculator: EffectCalculator {
             description += " (critical hit!)"
         }
 
-        return EffectResult(entity: target, type: .damage, value: damage, description: description)
+        return DamageEffectResult(
+            entity: target,
+            value: damage,
+            description: description,
+            isCritical: isCritical,
+            elementType: sourceStats.elementType
+        )
     }
 }

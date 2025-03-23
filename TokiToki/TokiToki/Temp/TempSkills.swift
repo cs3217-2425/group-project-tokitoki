@@ -29,7 +29,7 @@ let fireball = BaseSkill(
     elementType: .fire,
     basePower: 50,
     cooldown: 3,
-    statusEffectChance: 0.2,   // 20% chance to apply the burn status effect.
+    statusEffectChance: 1.0,   // 20% chance to apply the burn status effect.
     statusEffect: .burn,       // The fireball applies a burn status effect.
     statusEffectDuration: 2,   // The burn effect lasts for 2 turns.
     effectCalculator: attackCalculator
