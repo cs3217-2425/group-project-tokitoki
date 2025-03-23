@@ -30,6 +30,16 @@ class MainMenuViewController: UIViewController {
     }
 
     @IBAction private func playGameButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "BattleScreen", bundle: nil)
+
+         // Instantiate the view controller (replace "OtherViewControllerID" with the actual storyboard ID)
+         let viewController = storyboard.instantiateViewController(withIdentifier: "BattleVC")
+
+         // Present the view controller
+         viewController.modalPresentationStyle = .fullScreen // Optional, use if needed
+
+
+         present(viewController, animated: true, completion: nil)
     }
 
     @IBAction private func gachaButtonTapped(_ sender: UIButton) {

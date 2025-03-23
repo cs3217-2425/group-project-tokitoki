@@ -73,7 +73,8 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         TokiDisplay.shared.changeSkillsTapped(sender, self)
     }
     
-    /// level up button - when exp is full, enable the button and level up (pop up a UIAlertAction so the player can interact and add +1 to any stats of their liking)
+    /// level up button - when exp is full, enable the button and level up
+    /// (pop up a UIAlertAction so the player can interact and add +1 to any stats of their liking)
     @IBAction func levelUp(_ sender: UIButton) {
         TokiDisplay.shared.levelUp(sender, self)
     }

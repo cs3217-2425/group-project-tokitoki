@@ -181,11 +181,8 @@
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
-<<<<<<< HEAD:TokiToki/TokiToki/Base.lproj/Main.storyboard
         <systemColor name="systemIndigoColor">
             <color red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
-=======
->>>>>>> origin/dev:TokiToki/TokiToki/View/Base.lproj/Main.storyboard
     </resources>
 </document>
