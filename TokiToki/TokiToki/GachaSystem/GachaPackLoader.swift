@@ -17,10 +17,9 @@ class GachaPackLoader {
     
     func loadGachaPacks(from filename: String) throws {
         let gachaPacksData: GachaPacksData = try ResourceLoader.loadJSON(fromFile: filename)
-    
+        
         for packData in gachaPacksData.packs {
-            let existing = fetchPackByName(packData.packName)
-            if existing != nil {
+            if let existing = fetchPackByName(packData.packName) {
                 print("Skipping creation: GachaPack '\(packData.packName)' already exists in Core Data.")
                 continue
             }
@@ -31,6 +30,12 @@ class GachaPackLoader {
             
             let tokiCDs = fetchTokiCDsByNames(packData.tokiNames)
             gachaPackCD.tokis = NSSet(array: tokiCDs)
+            
+            if let rates = packData.rarityDropRates {
+                gachaPackCD.rarityDropRates = rates as NSDictionary
+            } else {
+                gachaPackCD.rarityDropRates = NSDictionary()
+            }
         }
         
         if context.hasChanges {
@@ -47,12 +52,11 @@ class GachaPackLoader {
         let fetchRequest: NSFetchRequest<GachaPackCD> = GachaPackCD.fetchRequest()
         fetchRequest.fetchLimit = 1
         fetchRequest.predicate = NSPredicate(format: "name == %@", name)
-        
         do {
             let results = try context.fetch(fetchRequest)
             return results.first
         } catch {
-            print("Error fetching GachaPack by name \(name): \(error)")
+            print("Error fetching GachaPackCD by name \(name): \(error)")
             return nil
         }
     }
@@ -64,12 +68,10 @@ class GachaPackLoader {
         fetchRequest.predicate = NSPredicate(format: "name IN %@", names)
         
         do {
-            let results = try context.fetch(fetchRequest)
-            return results
+            return try context.fetch(fetchRequest)
         } catch {
             print("Error fetching TokiCD by names \(names): \(error)")
             return []
         }
     }
 }
-

@@ -9,6 +9,7 @@ import Foundation
 struct GachaPackData: Codable {
     let packName: String
     let tokiNames: [String]
+    let rarityDropRates: [String: Double]?
 }
 
 struct GachaPacksData: Codable {

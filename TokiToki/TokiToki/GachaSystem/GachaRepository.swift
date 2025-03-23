@@ -76,11 +76,21 @@ class GachaRepository {
                 let domainTokis = tokisSet.compactMap { tokiCD in
                     self.allTokis.first(where: { $0.id == tokiCD.id })
                 }
+              
+                var rarityRates: [TokiRarity: Double] = [:]
+                if let storedDict = packCD.rarityDropRates as? [String: Double] {
+                    for (rarityStr, probability) in storedDict {
+                        if let rarity = TokiRarity(rawValue: rarityStr) {
+                            rarityRates[rarity] = probability
+                        }
+                    }
+                }
                 
                 return GachaPack(
                     id: packCD.id ?? UUID(),
                     name: packCD.name ?? "Unnamed Pack",
-                    containedTokis: domainTokis
+                    containedTokis: domainTokis,
+                    rarityDropRates: rarityRates
                 )
             }
             

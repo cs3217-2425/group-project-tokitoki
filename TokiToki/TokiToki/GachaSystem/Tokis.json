@@ -11,7 +11,7 @@
       },
       {
         "name": "WaterSerpent",
-        "rarity": 2,
+        "rarity": 0,
         "baseHealth": 100,
         "baseAttack": 15,
         "baseDefense": 10,

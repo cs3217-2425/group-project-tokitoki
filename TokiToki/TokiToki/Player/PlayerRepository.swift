@@ -72,7 +72,8 @@ class CoreDataPlayerRepository: PlayerRepository {
             currency: 1_000,
             statistics: Player.PlayerStatistics(totalBattles: 0, battlesWon: 0),
             lastLoginDate: Date(),
-            ownedTokis: []
+            ownedTokis: [],
+            pullsSinceRare: 0
         )
         savePlayer(player)
         return player
@@ -94,7 +95,8 @@ class CoreDataPlayerRepository: PlayerRepository {
                 battlesWon: Int(entity.battlesWon)
             ),
             lastLoginDate: entity.lastLoginDate ?? Date(),
-            ownedTokis: Array(domainPlayerTokis)
+            ownedTokis: Array(domainPlayerTokis),
+            pullsSinceRare: Int(entity.pullsSinceRare)
         )
     }
     
@@ -107,6 +109,7 @@ class CoreDataPlayerRepository: PlayerRepository {
         entity.totalBattles = Int32(player.statistics.totalBattles)
         entity.battlesWon = Int32(player.statistics.battlesWon)
         entity.lastLoginDate = player.lastLoginDate
+        entity.pullsSinceRare = Int32(player.pullsSinceRare)
         
         if let oldTokis = entity.tokis as? Set<PlayerTokiCD> {
             for oldToki in oldTokis {
