@@ -10,10 +10,15 @@ import UIKit
 
 class TokiDisplay {
     static let shared = TokiDisplay()
-    var toki: Toki
+    private var _toki: Toki
+
+    var toki: Toki {
+        get { return _toki }
+        set { _toki = newValue }
+    }
     
     required init() {
-        self.toki = Toki(name: "Default Toki",
+        self._toki = Toki(name: "Default Toki",
                          rarity: .common,
                          baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 42),
                          skills: [],
