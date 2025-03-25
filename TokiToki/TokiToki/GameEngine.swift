@@ -26,6 +26,7 @@ class GameEngine {
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
     private let eventFactory = GameEventFactory()
+    private var systems: [System] = []
 
 //    private var savedPlayerTeam: [GameStateEntity]
 //    private var savedOpponentTeam: [GameStateEntity]
