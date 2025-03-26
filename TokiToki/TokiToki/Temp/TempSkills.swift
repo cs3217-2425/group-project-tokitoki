@@ -90,3 +90,45 @@ let excalibur = BaseSkill(
     statusEffectDuration: 0,
     effectCalculator: attackCalculator
 )
+
+let basicArrow = BaseSkill(
+    name: "Basic Arrow",
+    description: "A basic arrow attack that deals damage to a single enemy.",
+    type: .attack,
+    targetType: .singleEnemy,
+    elementType: .earth,
+    basePower: 30,
+    cooldown: 0,
+    statusEffectChance: 0,
+    statusEffect: nil,
+    statusEffectDuration: 0,
+    effectCalculator: attackCalculator
+)
+
+let iceShot = BaseSkill(
+    name: "Ice Shot",
+    description: "A magic arrow that deals damage to a single enemy with a chance to freeze.",
+    type: .attack,
+    targetType: .singleEnemy,
+    elementType: .ice,
+    basePower: 40,
+    cooldown: 3,
+    statusEffectChance: 0.3,
+    statusEffect: .frozen,
+    statusEffectDuration: 2,
+    effectCalculator: attackCalculator
+)
+
+let arrowRain = BaseSkill(
+    name: "Arrow Rain",
+    description: "A shower of arrows that deals damage to all enemies.",
+    type: .attack,
+    targetType: .allEnemies,
+    elementType: .earth,
+    basePower: 40,
+    cooldown: 3,
+    statusEffectChance: 0,
+    statusEffect: nil,
+    statusEffectDuration: 0,
+    effectCalculator: attackCalculator
+)

@@ -25,6 +25,7 @@ protocol Skill {
     func use(from source: GameStateEntity, on targets: [GameStateEntity]) -> [EffectResult]
     func startCooldown()
     func reduceCooldown()
+    func resetCooldown()
 }
 
 enum SkillType {

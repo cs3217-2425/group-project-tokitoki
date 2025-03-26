@@ -5,7 +5,7 @@
 //  Created by proglab on 25/3/25.
 //
 
-class TurnSystem: System {
+class TurnSystem {
     var priority: Int = 0
     let MAX_ACTION_BAR: Float = 100
     let multiplierForActionMeter: Float = 0.1

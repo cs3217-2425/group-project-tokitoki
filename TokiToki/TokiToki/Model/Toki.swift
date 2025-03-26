@@ -15,7 +15,7 @@ class Toki {
     let rarity: TokiRarity
     var baseStats: TokiBaseStats
     var skills: [Skill]
-    var equipment: [Equipment]
+    var equipments: [Equipment]
     let elementType: ElementType
 
     init(id: UUID = UUID(), name: String, rarity: TokiRarity,
@@ -26,7 +26,7 @@ class Toki {
         self.rarity = rarity
         self.baseStats = baseStats
         self.skills = skills
-        self.equipment = equipments
+        self.equipments = equipments
         self.elementType = elementType
         self.level = level
     }
@@ -47,8 +47,8 @@ class Toki {
         let skillsComponent = SkillsComponent(entityId: entity.id, skills: skills)
         let statusEffectsComponent = StatusEffectsComponent(entityId: entity.id)
 
-        for e in equipment {
-            e.applyBuffs(to: &statsComponent)
+        for equipment in equipments {
+            equipment.applyBuffs(to: &statsComponent)
         }
 
         entity.addComponent(statsComponent)

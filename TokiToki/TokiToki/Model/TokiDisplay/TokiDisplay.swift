@@ -85,7 +85,7 @@ class TokiDisplay {
 
     private func totalEquipmentBuff(for stat: String) -> Float {
         var total: Float = 0
-        for equip in toki.equipment {
+        for equip in toki.equipments {
             if let buffComponent = equip.components.first as? CombinedBuffComponent {
                 switch stat {
                 case "attack":
@@ -194,7 +194,7 @@ class TokiDisplay {
 
         if tableView == control.equipmentTableView {
             // Return the greater of totalSlots or the number of equipments already added
-            return max(totalSlots, toki.equipment.count)
+            return max(totalSlots, toki.equipments.count)
         } else {
             return max(totalSlots, toki.skills.count)
         }
@@ -206,9 +206,9 @@ class TokiDisplay {
         }
 
         if tableView == control.equipmentTableView {
-            if indexPath.row < toki.equipment.count {
+            if indexPath.row < toki.equipments.count {
                 // Configure cell with existing equipment
-                let equipmentItem = toki.equipment[indexPath.row]
+                let equipmentItem = toki.equipments[indexPath.row]
                 cell.nameLabel.text = equipmentItem.name
                 cell.itemImageView.image = UIImage(named: equipmentItem.name) // if asset name matches
                 // Add long press gesture recognizer for filled equipment cell
@@ -261,19 +261,19 @@ class TokiDisplay {
             alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
                 let newEquipment = self.createTestEquipment(name: candidate)
                 // Check if the candidate already exists
-                if self.toki.equipment.contains(where: { $0.name == newEquipment.name }) {
+                if self.toki.equipments.contains(where: { $0.name == newEquipment.name }) {
                     let existsAlert = UIAlertController(title: "Already Exists",
                                                         message: "Equipment \(newEquipment.name) already exists.",
                                                         preferredStyle: .alert)
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
-                    if indexPath.row < self.toki.equipment.count {
+                    if indexPath.row < self.toki.equipments.count {
                         // Replace existing equipment
-                        self.toki.equipment[indexPath.row] = newEquipment
+                        self.toki.equipments[indexPath.row] = newEquipment
                     } else {
                         // Insert at empty slot (append)
-                        self.toki.equipment.append(newEquipment)
+                        self.toki.equipments.append(newEquipment)
                     }
                     self.updateUI(control)
                 }
@@ -367,7 +367,7 @@ class TokiDisplay {
         if gesture.state == .began {
             guard let cell = gesture.view as? UITableViewCell,
                   let indexPath = control.equipmentTableView?.indexPath(for: cell) else { return }
-            let equipment = toki.equipment[indexPath.row]
+            let equipment = toki.equipments[indexPath.row]
 
             // Assume the equipment's first component is a CombinedBuffComponent
             var message = "No buff details available."

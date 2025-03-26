@@ -87,7 +87,7 @@ class TokiDisplayCustomizationTests: XCTestCase {
         let toki = display.toki
 
         // Record initial equipment count
-        let initialEquipmentCount = toki.equipment.count
+        let initialEquipmentCount = toki.equipments.count
 
         // Create dummy equipment for testing
         let newEquipment = Equipment(
@@ -98,8 +98,8 @@ class TokiDisplayCustomizationTests: XCTestCase {
         )
 
         // Simulate adding equipment
-        toki.equipment.append(newEquipment)
-        XCTAssertEqual(toki.equipment.count, initialEquipmentCount + 1, "Equipment count should increase by one after adding new equipment.")
+        toki.equipments.append(newEquipment)
+        XCTAssertEqual(toki.equipments.count, initialEquipmentCount + 1, "Equipment count should increase by one after adding new equipment.")
     }
 
     // MARK: - Edge Case Tests
@@ -107,22 +107,22 @@ class TokiDisplayCustomizationTests: XCTestCase {
     func testRemovingNonExistentEquipment() {
         let display = TokiDisplay.shared
         let toki = display.toki
-        let initialCount = toki.equipment.count
+        let initialCount = toki.equipments.count
 
         // Try to remove equipment with a name that doesn't exist
         let nonExistentName = "Non Existent Equipment"
-        if let index = toki.equipment.firstIndex(where: { $0.name == nonExistentName }) {
-            toki.equipment.remove(at: index)
+        if let index = toki.equipments.firstIndex(where: { $0.name == nonExistentName }) {
+            toki.equipments.remove(at: index)
         }
 
         // The equipment count should remain unchanged
-        XCTAssertEqual(toki.equipment.count, initialCount, "Removing non-existent equipment should not change the equipment count.")
+        XCTAssertEqual(toki.equipments.count, initialCount, "Removing non-existent equipment should not change the equipment count.")
     }
 
     func testAddingDuplicateEquipment() {
         let display = TokiDisplay.shared
         let toki = display.toki
-        let initialCount = toki.equipment.count
+        let initialCount = toki.equipments.count
 
         let duplicateEquipment = Equipment(
             name: "Duplicate Staff",
@@ -131,18 +131,18 @@ class TokiDisplayCustomizationTests: XCTestCase {
             components: []
         )
         // Add duplicate equipment twice
-        toki.equipment.append(duplicateEquipment)
-        toki.equipment.append(duplicateEquipment)
+        toki.equipments.append(duplicateEquipment)
+        toki.equipments.append(duplicateEquipment)
 
-        let duplicateCount = toki.equipment.filter { $0.name == "Duplicate Staff" }.count
+        let duplicateCount = toki.equipments.filter { $0.name == "Duplicate Staff" }.count
         XCTAssertEqual(duplicateCount, 2, "Duplicate equipment should be added twice if allowed.")
-        XCTAssertEqual(toki.equipment.count, initialCount + 2, "Equipment count should increase by 2 after adding duplicate equipment.")
+        XCTAssertEqual(toki.equipments.count, initialCount + 2, "Equipment count should increase by 2 after adding duplicate equipment.")
     }
 
     func testAddingEquipmentWithEmptyName() {
         let display = TokiDisplay.shared
         let toki = display.toki
-        let initialCount = toki.equipment.count
+        let initialCount = toki.equipments.count
 
         let emptyNameEquipment = Equipment(
             name: "",
@@ -151,9 +151,9 @@ class TokiDisplayCustomizationTests: XCTestCase {
             components: []
         )
 
-        toki.equipment.append(emptyNameEquipment)
-        XCTAssertEqual(toki.equipment.count, initialCount + 1, "Equipment count should increase even when equipment name is empty.")
-        XCTAssertEqual(toki.equipment.last?.name, "", "The name of the last equipment should be an empty string.")
+        toki.equipments.append(emptyNameEquipment)
+        XCTAssertEqual(toki.equipments.count, initialCount + 1, "Equipment count should increase even when equipment name is empty.")
+        XCTAssertEqual(toki.equipments.last?.name, "", "The name of the last equipment should be an empty string.")
     }
 
     func testEdgeCaseStatUpdateNegativeValue() {
@@ -221,7 +221,7 @@ class TokiDisplayCustomizationTests: XCTestCase {
                     elementType: .fire,
                     components: []
                 )
-                toki.equipment.append(equipment)
+                toki.equipments.append(equipment)
             }
         }
     }

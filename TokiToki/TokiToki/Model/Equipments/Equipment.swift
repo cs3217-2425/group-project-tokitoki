@@ -25,7 +25,7 @@ class Equipment {
     /// Applies all buff components to the provided StatsComponent.
     func applyBuffs(to stats: inout StatsComponent) {
         components.forEach { $0.apply(to: &stats) }
-    }
+    } // Should use system to update stats components
 
     /// Removes all buff components from the provided StatsComponent.
     func removeBuffs(from stats: inout StatsComponent) {

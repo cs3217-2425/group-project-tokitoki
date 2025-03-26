@@ -5,7 +5,9 @@
 //  Created by proglab on 25/3/25.
 //
 
-class StatsSystem {
+class StatsSystem: System {
+    var priority = 1
+    
     func modifyAttack(by amount: Int, on entities: [GameStateEntity]) {
         entities.forEach { modifyAttack(for: $0, by: amount) }
     }
@@ -49,6 +51,16 @@ class StatsSystem {
             }
             statsComponent.currentHealth = min(statsComponent.maxHealth, statsComponent.currentHealth + amount)
 
+        }
+    }
+    
+    func reset(_ entities: [GameStateEntity]) {
+        for entity in entities {
+            guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
+                return
+            }
+            statsComponent.currentHealth = statsComponent.maxHealth
+            statsComponent.actionMeter = 0
         }
     }
 }

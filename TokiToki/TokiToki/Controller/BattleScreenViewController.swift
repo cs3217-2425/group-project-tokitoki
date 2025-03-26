@@ -101,7 +101,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
 
         effectsManager = BattleEffectsManager(viewController: self)
 
-        configure([knightToki, wizardToki], [basicMonster])
+        configure([knightToki, wizardToki, archerToki], [basicMonster, basicMonster2, basicMonster3])
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -155,13 +155,33 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     @objc func skillTapped(_ sender: UITapGestureRecognizer) {
         guard let tappedImageView = sender.view as? UIImageView else { return }
         skillImageViews.forEach { $0.isHidden = true }
-        gameEngine?.useTokiSkill(tappedImageView.tag, nil)
+        gameEngine?.useTokiSkill(tappedImageView.tag)
     }
 
     @objc func opponentTapped(_ sender: UITapGestureRecognizer) {
         guard let tappedImageView = sender.view as? UIImageView else { return }
-        // opponentTokisViews[tappedImageView] TODO: allow tapping of opp for selection
+        let targetId = opponentImageViewsToId[tappedImageView]
+        guard let targetId = targetId else {
+            return
+        }
+        gameEngine?.useSingleTargetTokiSkill(targetId)
+        
+        for imageView in opponentImageViews {
+            imageView.layer.removeAllAnimations()
+            imageView.alpha = 1.0
+            imageView.isUserInteractionEnabled = false
+        }
     }
+    
+    func allowTargetSelection() {
+        opponentImageViews.forEach { imageView in
+            UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat, .allowUserInteraction]) {
+                imageView.alpha = 0.5
+            }
+            imageView.isUserInteractionEnabled = true
+        }
+    }
+
 
     func update(log: [String]) {
         let numberOfLinesToDisplay = 3
@@ -200,6 +220,10 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         animateMovement(tokiView.overallView, completion, isLeft)
     }
 
+    fileprivate func removeCooldownOverlay(_ skillImageView: UIImageView) {
+        skillImageView.subviews.forEach { $0.removeFromSuperview() }
+    }
+    
     func updateSkillIcons(_ icons: [SkillUiInfo]?) {
         guard let icons = icons else {
             return
@@ -217,24 +241,19 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             skillImageView.isUserInteractionEnabled = icons[i].cooldown == 0
 
             if icons[i].cooldown > 0 {
-                // Darken the image
+                removeCooldownOverlay(skillImageView)
                 let overlay = UIView(frame: skillImageView.bounds)
-                overlay.backgroundColor = UIColor.black.withAlphaComponent(0.5) // 50% dark overlay
-                overlay.tag = 99 // Tag it for removal later
+                overlay.backgroundColor = UIColor.black.withAlphaComponent(0.5)
                 skillImageView.addSubview(overlay)
 
-                // Add a cooldown label
                 let cooldownLabel = UILabel(frame: skillImageView.bounds)
                 cooldownLabel.text = "\(icons[i].cooldown)"
                 cooldownLabel.textAlignment = .center
                 cooldownLabel.textColor = .white
                 cooldownLabel.font = UIFont.boldSystemFont(ofSize: 20)
-                cooldownLabel.tag = 100 // Tag it for removal later
                 skillImageView.addSubview(cooldownLabel)
             } else {
-                // Remove any existing cooldown overlay if cooldown is 0
-                skillImageView.viewWithTag(99)?.removeFromSuperview()
-                skillImageView.viewWithTag(100)?.removeFromSuperview()
+                removeCooldownOverlay(skillImageView)
             }
         }
     }
@@ -269,11 +288,15 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         gameStateIdToViews[id]?.overallView
     }
 
-    // TODO: Implement restart
-//    @IBAction func onRestart(_ sender: Any) {
-//        print("restart")
-//        self.gameEngine?.restart()
-//    }
+    @IBAction func onRestart(_ sender: Any) {
+        self.gameEngine?.restart()
+        for imageView in skillImageViews {
+            removeCooldownOverlay(imageView)
+        }
+        for view in gameStateIdToViews.values {
+            view.overallView.isHidden = false
+        }
+    }
 }
 
 struct Views {

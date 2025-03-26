@@ -5,7 +5,7 @@
 //  Created by proglab on 26/3/25.
 //
 
-class StatusEffectsSystem {
+class StatusEffectsSystem: System {
     var priority = 1
     private let strategyFactory = StatusEffectStrategyFactory()
 
@@ -36,5 +36,14 @@ class StatusEffectsSystem {
             updatedEffect.remainingDuration -= 1
             return updatedEffect
         }.filter { $0.remainingDuration > 0 }
+    }
+    
+    func reset(_ entities: [GameStateEntity]) {
+        for entity in entities {
+            guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
+                return
+            }
+            statusComponent.activeEffects = []
+        }
     }
 }
