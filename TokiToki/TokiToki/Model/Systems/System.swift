@@ -9,5 +9,5 @@ import Foundation
 
 protocol System {
     var priority: Int { get }
-    func update(deltaTime: TimeInterval)
+    func update(_ entities: [GameStateEntity])
 }

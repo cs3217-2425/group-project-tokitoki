@@ -26,7 +26,10 @@ class GameEngine {
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
     private let eventFactory = GameEventFactory()
-    private var systems: [System] = []
+    
+    private let turnSystem = TurnSystem()
+    private let skillsSystem = SkillsSystem()
+    private let statusEffectsSystem = StatusEffectsSystem()
 
 //    private var savedPlayerTeam: [GameStateEntity]
 //    private var savedOpponentTeam: [GameStateEntity]
@@ -91,28 +94,11 @@ class GameEngine {
     }
 
     private func updateAllActionMeters() {
-        for entity in playersPlusOpponents {
-            entity.incrementActionBar(by: 0.1)
-        }
+        turnSystem.update(playersPlusOpponents)
     }
 
     private func getNextReadyCharacter() -> GameStateEntity? {
-        let readyEntities = playersPlusOpponents.filter { $0.getActionBar() >= 100 }
-
-        if readyEntities.isEmpty {
-            return nil
-        } else if readyEntities.count == 1 {
-            return readyEntities[0]
-        } else {
-            let sortedEntities = readyEntities.sorted {
-                if $0.getActionBar() == $1.getActionBar() {
-                    return $0.getSpeed() > $1.getSpeed()
-                }
-                return $0.getActionBar() > $1.getActionBar()
-            }
-
-            return sortedEntities.first
-        }
+        turnSystem.getNextEntityToAct(playersPlusOpponents)
     }
 
     private func updateSkillIconsForCurrentEntity(_ currentGameStateEntity: GameStateEntity) {
@@ -152,7 +138,6 @@ class GameEngine {
 
         // TODO: account for target selection instead of passing in the whole opponentTeam to targets
         let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected, targets: opponentTeam)
-
         queueAction(action)
         let results = executeNextAction()
         battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
@@ -213,37 +198,20 @@ class GameEngine {
             logMessage(result.description)
         }
     }
-
+    
     func updateEntityForNewTurnAndAllEntities(_ entity: GameStateEntity) {
-        // Update skill cooldowns
-        if let skillsComponent = entity.getComponent(ofType: SkillsComponent.self) {
-            for skill in skillsComponent.skills {
-                skill.reduceCooldown()
-            }
-        }
+        updateSkillCooldowns(entity)
 
-        // Process status effects
-        if let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) {
-            let strategyFactory = statusEffectStrategyFactory
+        statusEffectsSystem.update([entity], logMessage)
 
-            for effect in statusComponent.activeEffects {
-                let result = effect.apply(to: entity, strategyFactory: strategyFactory)
-                logMessage(result.description)
-
-                // Publish StatusEffectApplied result
-                for event in result.toBattleEvents(sourceId: effect.sourceId) {
-                    print(event)
-                    EventBus.shared.post(event)
-                }
-            }
-
-            statusComponent.updateEffects()
-        }
-
-        entity.resetActionBar()
+        turnSystem.endTurn(for: entity)
 
         updateHealthBars()
         checkIfEntitiesAreDead()
+    }
+    
+    fileprivate func updateSkillCooldowns(_ entity: GameStateEntity) {
+        skillsSystem.update([entity])
     }
 
     private func updateHealthBars() {

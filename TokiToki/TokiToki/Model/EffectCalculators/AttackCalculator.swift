@@ -7,6 +7,7 @@
 
 class AttackCalculator: EffectCalculator {
     private let elementsSystem: ElementsSystem
+    private let statsSystem = StatsSystem()
 
     init(elementsSystem: ElementsSystem) {
         self.elementsSystem = elementsSystem
@@ -37,7 +38,7 @@ class AttackCalculator: EffectCalculator {
         damage = max(1, damage)
 
         // Apply damage
-        target.takeDamage(amount: damage)
+        statsSystem.inflictDamage(amount: damage, [target])
 
         // Create result
         var description = "\(source.getName()) used \(skill.name) on \(target.getName()) for \(damage) damage"

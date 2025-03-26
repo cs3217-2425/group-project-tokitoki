@@ -6,6 +6,8 @@
 //
 
 class HealCalculator: EffectCalculator {
+    private let statsSystem = StatsSystem()
+    
     func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self) else {
             return EffectResult(entity: target, type: .none, value: 0, description: "Failed to get stats")
@@ -15,7 +17,7 @@ class HealCalculator: EffectCalculator {
         let healAmount = (skill.basePower + sourceStats.attack / 2)
 
         // Apply healing
-        target.heal(amount: healAmount)
+        statsSystem.heal(amount: healAmount, [target])
 
         return EffectResult(entity: target, type: .heal, value: healAmount,
                             description: "\(source.getName()) used \(skill.name) "
