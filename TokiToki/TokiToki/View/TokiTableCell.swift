@@ -8,11 +8,7 @@
 import UIKit
 
 class TokiTableCell: UITableViewCell {
-    
-    @IBOutlet weak var itemImageView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
+    @IBOutlet var itemImageView: UIImageView!
+    @IBOutlet var nameLabel: UILabel!
 }

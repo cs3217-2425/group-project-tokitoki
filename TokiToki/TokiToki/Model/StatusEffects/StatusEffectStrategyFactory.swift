@@ -25,7 +25,7 @@ class StatusEffectStrategyFactory {
             isPositive: true,
             statModifier: { entity, strength in
                 let buff = Int(Double(entity.getAttack()) * 0.2 * strength)
-                entity.modifyAttack(by: buff)
+                StatsSystem().modifyAttack(by: buff, on: [entity])
                 return buff
             }
         )
@@ -35,7 +35,7 @@ class StatusEffectStrategyFactory {
             isPositive: true,
             statModifier: { entity, strength in
                 let buff = Int(Double(entity.getDefense()) * 0.2 * strength)
-                entity.modifyDefense(by: buff)
+                StatsSystem().modifyDefense(by: buff, on: [entity])
                 return buff
             }
         )
@@ -45,7 +45,7 @@ class StatusEffectStrategyFactory {
             isPositive: true,
             statModifier: { entity, strength in
                 let buff = Int(Double(entity.getSpeed()) * 0.2 * strength)
-                entity.modifySpeed(by: buff)
+                StatsSystem().modifySpeed(by: buff, on: [entity])
                 return buff
             }
         )
@@ -55,7 +55,7 @@ class StatusEffectStrategyFactory {
             isPositive: false,
             statModifier: { entity, strength in
                 let debuff = -Int(Double(entity.getAttack()) * 0.2 * strength)
-                entity.modifyAttack(by: debuff)
+                StatsSystem().modifyAttack(by: debuff, on: [entity])
                 return debuff
             }
         )
@@ -65,7 +65,7 @@ class StatusEffectStrategyFactory {
             isPositive: false,
             statModifier: { entity, strength in
                 let debuff = -Int(Double(entity.getDefense()) * 0.2 * strength)
-                entity.modifyDefense(by: debuff)
+                StatsSystem().modifyDefense(by: debuff, on: [entity])
                 return debuff
             }
         )
@@ -75,7 +75,7 @@ class StatusEffectStrategyFactory {
             isPositive: false,
             statModifier: { entity, strength in
                 let debuff = -Int(Double(entity.getSpeed()) * 0.2 * strength)
-                entity.modifySpeed(by: debuff)
+                StatsSystem().modifySpeed(by: debuff, on: [entity])
                 return debuff
             }
         )

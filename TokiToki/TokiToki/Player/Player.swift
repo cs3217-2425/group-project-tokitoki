@@ -17,7 +17,7 @@ struct Player {
     var lastLoginDate: Date
     var ownedTokis: [PlayerToki]
     var pullsSinceRare: Int
-    
+
     struct PlayerStatistics {
         var totalBattles: Int
         var battlesWon: Int
@@ -65,4 +65,3 @@ struct Player {
         }
     }
 }
-

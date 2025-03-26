@@ -5,32 +5,31 @@
 //  Created by Pawan Kishor Patil on 20/3/25.
 //
 
-
 import Foundation
 import CoreData
 
 class GachaService {
     private let gachaRepository: GachaRepository
     private let context: NSManagedObjectContext
-    
+
     init(gachaRepository: GachaRepository, context: NSManagedObjectContext) {
         self.gachaRepository = gachaRepository
         self.context = context
     }
-  
+
     func drawPack(packId: UUID, for player: inout Player) -> [PlayerToki] {
         guard let pack = gachaRepository.findPack(by: packId) else {
             print("No pack found with ID \(packId)")
             return []
         }
-        
+
         let chosenRarity = pickRarity(from: pack.rarityDropRates, for: &player)
-        
+
         var candidates = pack.containedTokis.filter { $0.rarity == chosenRarity }
         if candidates.isEmpty {
             print("No candidate Tokis in rarity \(chosenRarity) for pack \(pack.name). Fallback to .common.")
             candidates = pack.containedTokis.filter { $0.rarity == .common }
-            
+
             // If even .common has no candidates, return empty
             if candidates.isEmpty {
                 print("No .common Tokis either. Nothing to pull.")
@@ -46,8 +45,7 @@ class GachaService {
             return []
         }
 
-
-        if (baseToki.rarity == .rare || baseToki.rarity == .legendary) {
+        if baseToki.rarity == .rare || baseToki.rarity == .legendary {
             player.pullsSinceRare = 0
         } else {
             player.pullsSinceRare += 1
@@ -57,7 +55,6 @@ class GachaService {
         return [newPlayerToki]
     }
 
-    
     private func pickRarity(from distribution: [TokiRarity: Double], for player: inout Player) -> TokiRarity {
         // If pity triggered (e.g. 100 draws since Rare), force Rare
         if player.pullsSinceRare >= 100 {
@@ -75,10 +72,7 @@ class GachaService {
         }
         return .common
     }
-    
-    
-    
-    
+
     private func createPlayerToki(for baseToki: Toki) -> PlayerToki? {
         let fetchRequest: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", baseToki.id as CVarArg)
@@ -96,7 +90,7 @@ class GachaService {
         playerTokiCD.currentAttack = baseTokiCD.baseAttack
         playerTokiCD.currentDefense = baseTokiCD.baseDefense
         playerTokiCD.currentSpeed = baseTokiCD.baseSpeed
-        
+
         if context.hasChanges {
             do {
                 try context.save()

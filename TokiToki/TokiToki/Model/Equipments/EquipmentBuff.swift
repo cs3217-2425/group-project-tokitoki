@@ -23,21 +23,20 @@ protocol EquipmentComponent {
 /// CombinedBuffComponent wraps a Buff so it conforms to EquipmentComponent.
 class CombinedBuffComponent: EquipmentComponent {
     let buff: Buff
-    
+
     init(buff: Buff) {
         self.buff = buff
     }
-    
+
     func apply(to stats: inout StatsComponent) {
         stats.attack += buff.attack
         stats.defense += buff.defense
         stats.speed += buff.speed
     }
-    
+
     func remove(from stats: inout StatsComponent) {
         stats.attack -= buff.attack
         stats.defense -= buff.defense
         stats.speed -= buff.speed
     }
 }
-

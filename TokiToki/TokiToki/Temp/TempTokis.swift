@@ -28,3 +28,15 @@ let knightToki = Toki(
     elementType: .light,
     level: 0
 )
+
+let archerBaseStats = TokiBaseStats(hp: 80, attack: 60, defense: 30, speed: 120, heal: 0, exp: 0)
+
+let archerToki = Toki(
+    name: "Archer",
+    rarity: .rare,
+    baseStats: archerBaseStats,
+    skills: [basicArrow, iceShot, arrowRain],
+    equipments: [],
+    elementType: .earth,
+    level: 0
+)

@@ -75,4 +75,8 @@ class BaseSkill: Skill {
             currentCooldown -= 1
         }
     }
+    
+    func resetCooldown() {
+        currentCooldown = 0
+    }
 }

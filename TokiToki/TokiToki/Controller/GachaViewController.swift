@@ -13,15 +13,15 @@ class GachaViewController: UIViewController {
     @IBOutlet private var gachaPackLabel: UILabel!
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var gachaPackCollectionView: UICollectionView!
-    
+
     private var gachaRepository = GachaRepository()
     private var gachaService: GachaService?
-    
+
     private var selectedGachaPack: GachaPack?
-    
+
     private let colorData: [UIColor] = [.red, .purple]
-    
-    private var currentPlayer: Player = Player(
+
+    private var currentPlayer = Player(
         id: UUID(),
         name: "NewPlayer",
         level: 1,
@@ -32,20 +32,20 @@ class GachaViewController: UIViewController {
         ownedTokis: [],
         pullsSinceRare: 0
     )
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         gachaPackCollectionView.dataSource = self
         gachaPackCollectionView.delegate = self
         gachaPackCollectionView.allowsSelection = true
-        
+
         let context = DataManager.shared.viewContext
         gachaRepository.initializeData(context: context)
         gachaService = GachaService(gachaRepository: gachaRepository, context: context)
         selectedGachaPack = gachaRepository.gachaPacks.first
     }
-    
+
     @IBAction func gachaDrawButtonTapped(_ sender: UIButton) {
         guard let service = gachaService else {
             print("GachaService not initialized")
@@ -60,7 +60,7 @@ class GachaViewController: UIViewController {
         }
 
         let newlyAcquired = service.drawPack(packId: packToSelectFrom.id, for: &currentPlayer)
-        
+
         if newlyAcquired.isEmpty {
             gachaPackLabel?.text = "No new Tokis acquired."
             return
@@ -74,7 +74,7 @@ class GachaViewController: UIViewController {
                 resultText += " - Unknown Toki "
             }
         }
-        
+
         gachaPackLabel?.text = resultText
     }
 }
@@ -86,13 +86,13 @@ extension GachaViewController: UICollectionViewDataSource, UICollectionViewDeleg
         print("Number of packs: \(gachaRepository.gachaPacks.count)")
         return gachaRepository.gachaPacks.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         cell.backgroundColor = colorData[indexPath.item % colorData.count]
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedPack = gachaRepository.gachaPacks[indexPath.item]
         print("Selected pack: \(selectedPack.name)")
@@ -119,6 +119,3 @@ extension GachaViewController: UICollectionViewDataSource, UICollectionViewDeleg
         }, completion: nil)
     }
 }
-
-
-

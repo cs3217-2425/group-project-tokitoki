@@ -23,7 +23,7 @@ class VisualFXTests: XCTestCase {
             init(expectation: XCTestExpectation) {
                 self.expectation = expectation
 
-                EventBus.shared.register { [weak self] (event: SkillUsedEvent) in
+                EventBus.shared.register { [weak self] (_: SkillUsedEvent) in
                     self?.eventReceived = true
                     self?.expectation.fulfill()
                 }
