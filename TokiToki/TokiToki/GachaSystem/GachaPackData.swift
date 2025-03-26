@@ -15,4 +15,3 @@ struct GachaPackData: Codable {
 struct GachaPacksData: Codable {
     let packs: [GachaPackData]
 }
-

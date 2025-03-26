@@ -9,28 +9,28 @@ import Foundation
 import CoreData
 
 class GachaRepository {
-    
+
     var allTokis: [Toki] = []
     var gachaPacks: [GachaPack] = []
-    
+
     func initializeData(context: NSManagedObjectContext) {
         seedIfNeeded(context: context)
         loadFromCoreData(context: context)
     }
-    
+
     private func seedIfNeeded(context: NSManagedObjectContext) {
         do {
             let tokiFetch: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
             let tokiCount = try context.count(for: tokiFetch)
-            
+
             let packFetch: NSFetchRequest<GachaPackCD> = GachaPackCD.fetchRequest()
             let packCount = try context.count(for: packFetch)
-            
+
             if tokiCount == 0 || packCount == 0 {
 
                 let tokiLoader = TokiLoader(context: context)
                 try? tokiLoader.loadTokis(from: "Tokis")
-                
+
                 let packLoader = GachaPackLoader(context: context)
                 try? packLoader.loadGachaPacks(from: "GachaPacks")
             } else {
@@ -40,12 +40,12 @@ class GachaRepository {
             print("Error checking Toki/GachaPack data count: \(error)")
         }
     }
-    
+
     private func loadFromCoreData(context: NSManagedObjectContext) {
         do {
             let fetchRequest: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
             let results = try context.fetch(fetchRequest)
-            
+
             let domainTokis = results.map { cd -> Toki in
                 Toki(
                     id: cd.id ?? UUID(),
@@ -69,18 +69,18 @@ class GachaRepository {
         } catch {
             print("Error fetching TokiCD: \(error)")
         }
-        
+
         do {
             let packFetch: NSFetchRequest<GachaPackCD> = GachaPackCD.fetchRequest()
             let packResults = try context.fetch(packFetch)
-            
+
             let domainPacks = packResults.map { packCD -> GachaPack in
                 let tokisSet = (packCD.tokis as? Set<TokiCD>) ?? []
-                
+
                 let domainTokis = tokisSet.compactMap { tokiCD in
                     self.allTokis.first(where: { $0.id == tokiCD.id })
                 }
-              
+
                 var rarityRates: [TokiRarity: Double] = [:]
                 if let storedDict = packCD.rarityDropRates as? [String: Double] {
                     for (rarityStr, probability) in storedDict {
@@ -89,7 +89,7 @@ class GachaRepository {
                         }
                     }
                 }
-                
+
                 return GachaPack(
                     id: packCD.id ?? UUID(),
                     name: packCD.name ?? "Unnamed Pack",
@@ -97,17 +97,17 @@ class GachaRepository {
                     rarityDropRates: rarityRates
                 )
             }
-            
+
             self.gachaPacks = domainPacks
         } catch {
             print("Error fetching GachaPackCD: \(error)")
         }
     }
-    
+
     func findPack(by id: UUID) -> GachaPack? {
-        return gachaPacks.first { $0.id == id }
+        gachaPacks.first { $0.id == id }
     }
-    
+
     // MARK: - Helper Conversions
     private func convertIntToRarity(_ value: Int16) -> TokiRarity {
         switch value {
@@ -130,4 +130,3 @@ class GachaRepository {
         }
     }
 }
-

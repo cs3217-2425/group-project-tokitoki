@@ -98,7 +98,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         configureLogBackground()
 
         addGestureRecognisers()
-        
+
         effectsManager = BattleEffectsManager(viewController: self)
 
         configure([knightToki, wizardToki], [basicMonster])

@@ -8,7 +8,7 @@
 class StatusEffectsSystem {
     var priority = 1
     private let strategyFactory = StatusEffectStrategyFactory()
-    
+
     func update(_ entities: [GameStateEntity], _ logMessage: (String) -> Void) { // Check that this callback works
         for entity in entities {
             guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
@@ -29,7 +29,7 @@ class StatusEffectsSystem {
             updateEffects(statusComponent)
         }
     }
-    
+
     private func updateEffects(_ statusComponent: StatusEffectsComponent) {
         statusComponent.activeEffects = statusComponent.activeEffects.map { effect in
             var updatedEffect = effect

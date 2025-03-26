@@ -13,12 +13,12 @@ class MainMenuViewController: UIViewController {
     @IBOutlet private var playGameButton: UIButton!
     @IBOutlet private var gachaButton: UIButton!
     @IBOutlet private var tokiCustomizerButton: UIButton!
-    
+
     @IBAction func tokiCustomizerButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "TokiDisplay", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "TokiDisplayVC")
         viewController.modalPresentationStyle = .fullScreen
-        //navigationController?.pushViewController(viewController, animated: true)
+        // navigationController?.pushViewController(viewController, animated: true)
         present(viewController, animated: true, completion: nil)
     }
     // Navigation actions (connect to storyboard)
@@ -26,7 +26,7 @@ class MainMenuViewController: UIViewController {
         let storyboard = UIStoryboard(name: "ProfileScreen", bundle: nil)
         let viewController = storyboard.instantiateViewController(withIdentifier: "ProfileVC")
         viewController.modalPresentationStyle = .fullScreen
-        //navigationController?.pushViewController(viewController, animated: true)
+        // navigationController?.pushViewController(viewController, animated: true)
         present(viewController, animated: true, completion: nil)
     }
 
@@ -38,7 +38,6 @@ class MainMenuViewController: UIViewController {
 
          // Present the view controller
          viewController.modalPresentationStyle = .fullScreen // Optional, use if needed
-
 
          present(viewController, animated: true, completion: nil)
     }

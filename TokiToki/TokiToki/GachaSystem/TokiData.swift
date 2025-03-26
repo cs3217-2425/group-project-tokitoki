@@ -22,6 +22,3 @@ struct TokiData: Codable {
 struct TokisData: Codable {
     let tokis: [TokiData]
 }
-
-
-

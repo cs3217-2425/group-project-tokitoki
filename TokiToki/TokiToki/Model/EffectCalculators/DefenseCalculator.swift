@@ -7,7 +7,7 @@
 
 class DefenseCalculator: EffectCalculator {
     private let statsSystem = StatsSystem()
-    
+
     func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
         let defenseBoost = skill.basePower
 

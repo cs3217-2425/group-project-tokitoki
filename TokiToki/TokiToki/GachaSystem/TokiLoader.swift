@@ -16,7 +16,7 @@ class TokiLoader {
     }
 
     func loadTokis(from filename: String) throws {
-        
+
         let tokisData: TokisData = try ResourceLoader.loadJSON(fromFile: filename)
 
         for tokiData in tokisData.tokis {
@@ -25,7 +25,7 @@ class TokiLoader {
                 print("Skipping creation: Toki '\(tokiData.name)' already exists in Core Data.")
                 continue
             }
-            
+
             let tokiCD = TokiCD(context: context)
             tokiCD.id = UUID()
             tokiCD.name = tokiData.name
@@ -48,12 +48,12 @@ class TokiLoader {
             }
         }
     }
-    
+
     private func fetchTokiByName(_ name: String) -> TokiCD? {
         let fetchRequest: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
         fetchRequest.fetchLimit = 1
         fetchRequest.predicate = NSPredicate(format: "name == %@", name)
-        
+
         do {
             let results = try context.fetch(fetchRequest)
             return results.first
@@ -63,4 +63,3 @@ class TokiLoader {
         }
     }
 }
-

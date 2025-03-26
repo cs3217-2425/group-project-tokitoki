@@ -46,7 +46,7 @@ class Toki {
 
         let skillsComponent = SkillsComponent(entityId: entity.id, skills: skills)
         let statusEffectsComponent = StatusEffectsComponent(entityId: entity.id)
-        
+
         for e in equipment {
             e.applyBuffs(to: &statsComponent)
         }
@@ -57,7 +57,7 @@ class Toki {
 
         return entity
     }
-    
+
     func levelUp(stat: TokiBaseStats) {
         self.baseStats = TokiBaseStats(
             hp: self.baseStats.hp + stat.hp,

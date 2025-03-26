@@ -26,7 +26,7 @@ class GameEngine {
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
     private let eventFactory = GameEventFactory()
-    
+
     private let turnSystem = TurnSystem()
     private let skillsSystem = SkillsSystem()
     private let statusEffectsSystem = StatusEffectsSystem()
@@ -198,7 +198,7 @@ class GameEngine {
             logMessage(result.description)
         }
     }
-    
+
     func updateEntityForNewTurnAndAllEntities(_ entity: GameStateEntity) {
         updateSkillCooldowns(entity)
 
@@ -209,7 +209,7 @@ class GameEngine {
         updateHealthBars()
         checkIfEntitiesAreDead()
     }
-    
+
     fileprivate func updateSkillCooldowns(_ entity: GameStateEntity) {
         skillsSystem.update([entity])
     }

@@ -16,14 +16,14 @@ protocol PlayerRepository {
 
 class CoreDataPlayerRepository: PlayerRepository {
     private let context: NSManagedObjectContext
-    
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
-    
+
     func getPlayer() -> Player? {
         let fetchRequest: NSFetchRequest<PlayerCD> = PlayerCD.fetchRequest()
-        
+
         do {
             let results = try context.fetch(fetchRequest)
             if let playerEntity = results.first {
@@ -35,16 +35,16 @@ class CoreDataPlayerRepository: PlayerRepository {
             return nil
         }
     }
-    
+
     func savePlayer(_ player: Player) {
         // Check if player exists first
         let fetchRequest: NSFetchRequest<PlayerCD> = PlayerCD.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", player.id as CVarArg)
-        
+
         do {
             let results = try context.fetch(fetchRequest)
             let playerEntity: PlayerCD
-            
+
             if let existingPlayer = results.first {
                 // Update existing player
                 playerEntity = existingPlayer
@@ -53,16 +53,16 @@ class CoreDataPlayerRepository: PlayerRepository {
                 playerEntity = PlayerCD(context: context)
                 playerEntity.id = player.id
             }
-            
+
             // Update fields
             updateEntityFromPlayer(playerEntity, player)
-            
+
             try context.save()
         } catch {
             print("Error saving player: \(error)")
         }
     }
-    
+
     func createDefaultPlayer(name: String) -> Player {
         let player = Player(
             id: UUID(),
@@ -78,12 +78,12 @@ class CoreDataPlayerRepository: PlayerRepository {
         savePlayer(player)
         return player
     }
-    
+
     // MARK: - Helper Methods
     private func convertToPlayer(_ entity: PlayerCD) -> Player {
         let playerTokiEntities = entity.tokis as? Set<PlayerTokiCD> ?? []
         let domainPlayerTokis = playerTokiEntities.map { convertPlayerTokiToDomain($0) }
-        
+
         return Player(
             id: entity.id ?? UUID(),
             name: entity.name ?? "Player",
@@ -99,7 +99,7 @@ class CoreDataPlayerRepository: PlayerRepository {
             pullsSinceRare: Int(entity.pullsSinceRare)
         )
     }
-    
+
     private func updateEntityFromPlayer(_ entity: PlayerCD, _ player: Player) {
         entity.id = player.id
         entity.name = player.name
@@ -110,13 +110,13 @@ class CoreDataPlayerRepository: PlayerRepository {
         entity.battlesWon = Int32(player.statistics.battlesWon)
         entity.lastLoginDate = player.lastLoginDate
         entity.pullsSinceRare = Int32(player.pullsSinceRare)
-        
+
         if let oldTokis = entity.tokis as? Set<PlayerTokiCD> {
             for oldToki in oldTokis {
                 context.delete(oldToki)
             }
         }
-        
+
         for domainToki in player.ownedTokis {
             let tokiEntity = PlayerTokiCD(context: context)
             tokiEntity.id = domainToki.id
@@ -129,7 +129,7 @@ class CoreDataPlayerRepository: PlayerRepository {
             tokiEntity.player = entity
         }
     }
-    
+
     // MARK: - PlayerToki <-> PlayerTokiCD
 
     private func convertPlayerTokiToDomain(_ playerTokiCD: PlayerTokiCD) -> PlayerToki {
@@ -143,5 +143,5 @@ class CoreDataPlayerRepository: PlayerRepository {
             currentSpeed: Int(playerTokiCD.currentSpeed)
         )
     }
-    
+
 }

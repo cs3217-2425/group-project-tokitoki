@@ -9,7 +9,7 @@ import Foundation
 
 /// EquipmentFactory creates Equipment instances with a provided name, description, element type, and buff.
 class EquipmentFactory {
-    
+
     /// Creates an Equipment instance with the specified properties.
     func createEquipment(name: String, description: String, elementType: ElementType, buff: Buff) -> Equipment {
         // Wrap the provided Buff in a CombinedBuffComponent.

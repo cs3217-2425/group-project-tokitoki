@@ -27,4 +27,3 @@ struct PlayerToki {
         self.currentSpeed = currentSpeed
     }
 }
-

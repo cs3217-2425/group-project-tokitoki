@@ -92,7 +92,7 @@ class PlayerManager {
         currentPlayer = player
         savePlayer()
     }
-    
+
     // MARK: - PlayerTokis
 
     /// Adds a single PlayerToki to the player's owned list.
