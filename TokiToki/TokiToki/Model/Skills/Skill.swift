@@ -57,3 +57,17 @@ enum StatusEffectType {
     case defenseDebuff
     case speedDebuff
 }
+
+enum SkillVisual: String, CaseIterable {
+    case fireball = "fireball"
+    case fireSlash = "fireslash"
+    case iceSpear = "icespear"
+    case thunderBolt = "thunderbolt"
+    case heal = "heal"
+    case shield = "shield"
+
+    // Fallback for string-based lookup when needed
+    static func fromString(_ string: String) -> SkillVisual? {
+        SkillVisual(rawValue: string.lowercased())
+    }
+}

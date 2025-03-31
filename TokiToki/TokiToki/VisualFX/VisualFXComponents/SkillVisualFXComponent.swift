@@ -13,7 +13,8 @@ class SkillVisualFXComponent: VisualFXComponent<SkillUsedEvent> {
             return
         }
 
-        let registry = SkillVisualFXRegistry.shared
+//        let registry = SkillVisualFXRegistry.shared
+        let registry = ComponentBasedSkillVisualFXRegistry.shared
 
         for targetId in event.targetIds {
             guard let targetView = getView(for: targetId) else {
