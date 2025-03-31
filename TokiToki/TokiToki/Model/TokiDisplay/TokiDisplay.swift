@@ -213,14 +213,14 @@ class TokiDisplay {
                 cell.nameLabel.text = equipmentItem.name
                 cell.itemImageView.image = UIImage(named: equipmentItem.name) // if asset name matches
                 // Add long press gesture recognizer for filled equipment cell
-                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(control.handleEquipmentLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleEquipmentLongPress(_:)))
                 cell.addGestureRecognizer(longPress)
             } else {
                 // Empty slot
                 cell.nameLabel.text = "Empty Slot"
                 cell.itemImageView.image = UIImage(named: "empty") // use an appropriate placeholder image if available
                 // Add long press gesture recognizer for empty equipment slot
-                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(control.handleEquipmentLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleEquipmentLongPress(_:)))
                 cell.addGestureRecognizer(longPress)
             }
         } else { // skillsTableView
@@ -229,13 +229,13 @@ class TokiDisplay {
                 cell.nameLabel.text = skillItem.name
                 cell.itemImageView.image = UIImage(named: skillItem.name)
                 // Add long press gesture recognizer for filled skill cell
-                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(control.handleSkillLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleSkillLongPress(_:)))
                 cell.addGestureRecognizer(longPress)
             } else {
                 // Empty slot for skills
                 cell.nameLabel.text = "Empty Slot"
                 cell.itemImageView.image = UIImage(named: "empty")
-                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(control.handleSkillLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleSkillLongPress(_:)))
                 cell.addGestureRecognizer(longPress)
             }
         }
