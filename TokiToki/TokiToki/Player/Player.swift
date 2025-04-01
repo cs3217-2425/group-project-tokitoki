@@ -15,8 +15,37 @@ struct Player {
     var currency: Int
     var statistics: PlayerStatistics
     var lastLoginDate: Date
-    var ownedTokis: [PlayerToki]
+    var ownedTokis: [Toki]
+    var ownedSkills: [Skill]
+    var ownedEquipments: [Equipment]
     var pullsSinceRare: Int
+    
+    // MARK: Initialization
+    init(
+        id: UUID = UUID(),
+        name: String,
+        level: Int = 1,
+        experience: Int = 0,
+        currency: Int = 1000,
+        statistics: PlayerStatistics = PlayerStatistics(totalBattles: 0, battlesWon: 0),
+        lastLoginDate: Date = Date(),
+        ownedTokis: [Toki] = [],
+        ownedSkills: [Skill] = [],
+        ownedEquipments: [Equipment] = [],
+        pullsSinceRare: Int = 0
+    ) {
+        self.id = id
+        self.name = name
+        self.level = level
+        self.experience = experience
+        self.currency = currency
+        self.statistics = statistics
+        self.lastLoginDate = lastLoginDate
+        self.ownedTokis = ownedTokis
+        self.ownedSkills = ownedSkills
+        self.ownedEquipments = ownedEquipments
+        self.pullsSinceRare = pullsSinceRare
+    }
     
     struct PlayerStatistics {
         var totalBattles: Int
@@ -26,6 +55,20 @@ struct Player {
             totalBattles > 0
                 ? Double(battlesWon) / Double(totalBattles) * 100.0
                 : 0.0
+        }
+    }
+    
+    // MARK: - Item Management
+    mutating func addItem(_ item: any IGachaItem) {
+        switch item {
+        case let toki as Toki:
+            ownedTokis.append(toki)
+        case let skill as BaseSkill:
+            ownedSkills.append(skill)
+        case let equipment as Equipment:
+            ownedEquipments.append(equipment)
+        default:
+            print("Unknown item type: \(type(of: item))")
         }
     }
 

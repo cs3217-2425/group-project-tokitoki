@@ -4,16 +4,18 @@
 //
 //  Created by proglab on 15/3/25.
 //
+import Foundation
 
 class SkillFactory {
     private let effectCalculatorFactory = EffectCalculatorFactory()
 
     func createAttackSkill(name: String, description: String, elementType: ElementType, basePower: Int,
                            cooldown: Int, targetType: TargetType, statusEffect: StatusEffectType? = nil,
-                           statusEffectChance: Double = 0.0, statusEffectDuration: Int = 0) -> Skill {
+                           statusEffectChance: Double = 0.0, statusEffectDuration: Int = 0, rarity: ItemRarity = .common) -> Skill {
         let calculator = effectCalculatorFactory.getCalculator(for: .attack)
 
         return BaseSkill(
+            id: UUID(),
             name: name,
             description: description,
             type: .attack,
@@ -24,14 +26,16 @@ class SkillFactory {
             statusEffectChance: statusEffectChance,
             statusEffect: statusEffect,
             statusEffectDuration: statusEffectDuration,
-            effectCalculator: calculator
+            effectCalculator: calculator,
+            rarity: rarity
         )
     }
 
-    func createHealSkill(name: String, description: String, basePower: Int, cooldown: Int, targetType: TargetType) -> Skill {
+    func createHealSkill(name: String, description: String, basePower: Int, cooldown: Int, targetType: TargetType, rarity: ItemRarity = .common) -> Skill {
         let calculator = effectCalculatorFactory.getCalculator(for: .heal)
 
         return BaseSkill(
+            id: UUID(),
             name: name,
             description: description,
             type: .heal,
@@ -42,14 +46,16 @@ class SkillFactory {
             statusEffectChance: 0.0,
             statusEffect: nil,
             statusEffectDuration: 0,
-            effectCalculator: calculator
+            effectCalculator: calculator,
+            rarity: rarity
         )
     }
 
-    func createDefenseSkill(name: String, description: String, basePower: Int, cooldown: Int, targetType: TargetType) -> Skill {
+    func createDefenseSkill(name: String, description: String, basePower: Int, cooldown: Int, targetType: TargetType, rarity: ItemRarity = .common) -> Skill {
         let calculator = effectCalculatorFactory.getCalculator(for: .defend)
 
         return BaseSkill(
+            id: UUID(),
             name: name,
             description: description,
             type: .defend,
@@ -60,15 +66,17 @@ class SkillFactory {
             statusEffectChance: 0.0,
             statusEffect: nil,
             statusEffectDuration: 0,
-            effectCalculator: calculator
+            effectCalculator: calculator,
+            rarity: rarity
         )
     }
 
     func createBuffSkill(name: String, description: String, basePower: Int, cooldown: Int,
-                         targetType: TargetType, statusEffect: StatusEffectType, duration: Int) -> Skill {
+                         targetType: TargetType, statusEffect: StatusEffectType, duration: Int, rarity: ItemRarity = .common) -> Skill {
         let calculator = effectCalculatorFactory.getCalculator(for: .buff)
 
         return BaseSkill(
+            id: UUID(),
             name: name,
             description: description,
             type: .buff,
@@ -79,15 +87,17 @@ class SkillFactory {
             statusEffectChance: 1.0,
             statusEffect: statusEffect,
             statusEffectDuration: duration,
-            effectCalculator: calculator
+            effectCalculator: calculator,
+            rarity: rarity
         )
     }
 
     func createDebuffSkill(name: String, description: String, basePower: Int, cooldown: Int,
-                           targetType: TargetType, statusEffect: StatusEffectType, duration: Int) -> Skill {
+                           targetType: TargetType, statusEffect: StatusEffectType, duration: Int, rarity: ItemRarity = .common) -> Skill {
         let calculator = effectCalculatorFactory.getCalculator(for: .debuff)
 
         return BaseSkill(
+            id: UUID(),
             name: name,
             description: description,
             type: .debuff,
@@ -98,7 +108,8 @@ class SkillFactory {
             statusEffectChance: 1.0,
             statusEffect: statusEffect,
             statusEffectDuration: duration,
-            effectCalculator: calculator
+            effectCalculator: calculator,
+            rarity: rarity
         )
     }
 }

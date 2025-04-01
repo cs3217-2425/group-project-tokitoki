@@ -2,25 +2,62 @@
   "packs": [
     {
       "packName": "Starter Pack",
-      "tokiNames": ["FireFox", "WaterSerpent"],
-      "rarityDropRates": {
-        "common": 0.60,
-        "uncommon": 0.25,
-        "rare": 0.10,
-        "epic": 0.04,
-        "legendary": 0.01
-      }
+      "description": "A starter pack with a mix of common fire and water items",
+      "cost": 100,
+      "items": [
+        {
+          "itemId": "FireFox",
+          "itemType": "toki",
+          "baseRate": 0.30
+        },
+        {
+          "itemId": "WaterSerpent",
+          "itemType": "toki",
+          "baseRate": 0.30
+        },
+        {
+          "itemId": "FireballAttack",
+          "itemType": "skill",
+          "baseRate": 0.20
+        },
+        {
+          "itemId": "WoodenShield",
+          "itemType": "equipment",
+          "baseRate": 0.20
+        }
+      ]
     },
     {
       "packName": "Legendary Pack",
-      "tokiNames": ["EarthDragon", "SkyPhoenix"],
-      "rarityDropRates": {
-        "common": 0.20,
-        "rare": 0.50,
-        "epic": 0.20,
-        "legendary": 0.10
-      }
+      "description": "A premium pack with higher chances for rare items",
+      "cost": 300,
+      "items": [
+        {
+          "itemId": "EarthDragon",
+          "itemType": "toki",
+          "baseRate": 0.10
+        },
+        {
+          "itemId": "SkyPhoenix",
+          "itemType": "toki",
+          "baseRate": 0.10
+        },
+        {
+          "itemId": "ThunderBolt",
+          "itemType": "skill",
+          "baseRate": 0.30
+        },
+        {
+          "itemId": "HealingMist",
+          "itemType": "skill",
+          "baseRate": 0.20
+        },
+        {
+          "itemId": "DragonArmor",
+          "itemType": "equipment",
+          "baseRate": 0.30
+        }
+      ]
     }
   ]
 }
-

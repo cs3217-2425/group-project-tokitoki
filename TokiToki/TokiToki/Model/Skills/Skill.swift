@@ -20,7 +20,11 @@ protocol Skill {
     var statusEffectChance: Double { get }
     var statusEffect: StatusEffectType? { get }
     var statusEffectDuration: Int { get }
-
+    var rarity: ItemRarity { get }
+    var ownerId: UUID? { get set }
+    var dateAcquired: Date? { get set}
+    
+    
     func canUse() -> Bool
     func use(from source: GameStateEntity, on targets: [GameStateEntity]) -> [EffectResult]
     func startCooldown()

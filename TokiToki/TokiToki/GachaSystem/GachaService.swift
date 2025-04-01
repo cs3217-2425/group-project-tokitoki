@@ -10,110 +10,171 @@ import Foundation
 import CoreData
 
 class GachaService {
-    private let gachaRepository: GachaRepository
+    private let itemRepository: ItemRepository
+    private let eventService: EventService
     private let context: NSManagedObjectContext
+    private var gachaPacks: [String: GachaPack] = [:]  // Using name as key instead of UUID
     
-    init(gachaRepository: GachaRepository, context: NSManagedObjectContext) {
-        self.gachaRepository = gachaRepository
+    init(itemRepository: ItemRepository, eventService: EventService, context: NSManagedObjectContext) {
+        self.itemRepository = itemRepository
+        self.eventService = eventService
         self.context = context
+        
+        loadGachaPacks()
     }
-  
-    func drawPack(packId: UUID, for player: inout Player) -> [PlayerToki] {
-        guard let pack = gachaRepository.findPack(by: packId) else {
-            print("No pack found with ID \(packId)")
-            return []
-        }
-        
-        let chosenRarity = pickRarity(from: pack.rarityDropRates, for: &player)
-        
-        var candidates = pack.containedTokis.filter { $0.rarity == chosenRarity }
-        if candidates.isEmpty {
-            print("No candidate Tokis in rarity \(chosenRarity) for pack \(pack.name). Fallback to .common.")
-            candidates = pack.containedTokis.filter { $0.rarity == .common }
+    
+    // Load gacha packs directly from JSON
+    private func loadGachaPacks() {
+        do {
+            let packsData: GachaPacksData = try ResourceLoader.loadJSON(fromFile: "GachaPacks")
             
-            // If even .common has no candidates, return empty
-            if candidates.isEmpty {
-                print("No .common Tokis either. Nothing to pull.")
-                return []
+            for packData in packsData.packs {
+                var packItems: [GachaPackItem] = []
+                
+                // Process each item in the pack
+                for itemData in packData.items {
+                    let itemName = itemData.itemId
+                    let baseRate = itemData.baseRate
+                    
+                    // Find the template based on item type and name
+                    var item: (any IGachaItem)?
+                    
+                    switch itemData.itemType {
+                    case "toki":
+                        item = itemRepository.getTokiTemplate(name: itemName)
+                    case "skill":
+                        item = itemRepository.getSkillTemplate(name: itemName)
+                    case "equipment":
+                        item = itemRepository.getEquipmentTemplate(name: itemName)
+                    default:
+                        continue
+                    }
+                    
+                    if let item = item {
+                        let packItem = GachaPackItem(item: item, itemName: itemName, baseRate: baseRate)
+                        packItems.append(packItem)
+                    }
+                }
+                
+                // Create gacha pack with name as identifier
+                let gachaPack = GachaPack(
+                    name: packData.packName,
+                    description: packData.description,
+                    cost: packData.cost,
+                    items: packItems
+                )
+                
+                gachaPacks[packData.packName] = gachaPack
             }
+            
+            print("Loaded \(gachaPacks.count) gacha packs from JSON")
+        } catch {
+            print("Error loading gacha packs: \(error)")
         }
-
-        guard let baseToki = candidates.randomElement() else {
+    }
+    
+    // Find pack by name
+    func findPack(byName name: String) -> GachaPack? {
+        return gachaPacks[name]
+    }
+    
+    // Get all available packs
+    func getAllPacks() -> [GachaPack] {
+        return Array(gachaPacks.values)
+    }
+    
+    // Pull from a gacha pack
+    func drawFromPack(packName: String, count: Int, for player: inout Player) -> [any IGachaItem] {
+        guard let pack = findPack(byName: packName) else {
+            print("No pack found with name \(packName)")
             return []
         }
-
-        guard let newPlayerToki = createPlayerToki(for: baseToki) else {
-            return []
-        }
-
-
-        if (baseToki.rarity == .rare || baseToki.rarity == .legendary) {
-            player.pullsSinceRare = 0
-        } else {
-            player.pullsSinceRare += 1
-        }
-        player.ownedTokis.append(newPlayerToki)
-
-        return [newPlayerToki]
-    }
-
-    
-    private func pickRarity(from distribution: [TokiRarity: Double], for player: inout Player) -> TokiRarity {
-        // If pity triggered (e.g. 100 draws since Rare), force Rare
-        if player.pullsSinceRare >= 100 {
-            print("Pity triggered -> force Rare or above!")
-            return .rare
-        }
-
-        let roll = Double.random(in: 0.0...1.0)
-        var cumulative = 0.0
-        for (rarity, prob) in distribution {
-            cumulative += prob
-            if roll <= cumulative {
-                return rarity
-            }
-        }
-        return .common
-    }
-    
-    
-    
-    
-    private func createPlayerToki(for baseToki: Toki) -> PlayerToki? {
-        let fetchRequest: NSFetchRequest<TokiCD> = TokiCD.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", baseToki.id as CVarArg)
-
-        guard let baseTokiCD = try? context.fetch(fetchRequest).first else {
-            print("Could not find TokiCD for ID \(baseToki.id)")
-            return nil
-        }
-
-        let playerTokiCD = PlayerTokiCD(context: context)
-        playerTokiCD.id = UUID()
-        playerTokiCD.baseTokiId = baseTokiCD.id
-        playerTokiCD.dateAcquired = Date()
-        playerTokiCD.currentHealth = baseTokiCD.baseHealth
-        playerTokiCD.currentAttack = baseTokiCD.baseAttack
-        playerTokiCD.currentDefense = baseTokiCD.baseDefense
-        playerTokiCD.currentSpeed = baseTokiCD.baseSpeed
         
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                print("Error saving PlayerTokiCD: \(error)")
-                return nil
+        // Check if player has enough currency
+        let totalCost = pack.cost * count
+        guard player.canSpendCurrency(totalCost) else {
+            print("Player doesn't have enough currency to draw")
+            return []
+        }
+        
+        // Get event rate modifiers
+        let rateModifiers = eventService.getRateModifiers(packName: packName)
+        
+        // Draw items
+        var drawnItems: [any IGachaItem] = []
+        for _ in 0..<count {
+            if let template = drawSingleItem(from: pack, with: rateModifiers, for: &player) {
+                // Create player-specific instance from the template
+                if let tokiTemplate = template as? Toki {
+                    let playerToki = itemRepository.createPlayerItems(from: tokiTemplate, ownerId: player.id)
+                    player.ownedTokis.append(playerToki)
+                    drawnItems.append(playerToki)
+                }
+                // Note: We could also handle skill-only or equipment-only gacha draws here
             }
         }
-
-        return PlayerToki(
-            id: playerTokiCD.id ?? UUID(),
-            baseTokiId: baseTokiCD.id ?? UUID(),
-            dateAcquired: playerTokiCD.dateAcquired ?? Date(),
-            currentHealth: Int(playerTokiCD.currentHealth),
-            currentAttack: Int(playerTokiCD.currentAttack),
-            currentDefense: Int(playerTokiCD.currentDefense),
-            currentSpeed: Int(playerTokiCD.currentSpeed)
-        )
+        
+        // Deduct currency
+        _ = player.spendCurrency(totalCost)
+        
+        return drawnItems
+    }
+    
+    // Draw a single item template with rate modifiers applied
+    private func drawSingleItem(from pack: GachaPack, with rateModifiers: [String: Double], for player: inout Player) -> (any IGachaItem)? {
+        // Create a probability distribution with modified rates
+        var totalWeight: Double = 0
+        var weightedItems: [(item: any IGachaItem, weight: Double)] = []
+        
+        for packItem in pack.items {
+            let item = packItem.item
+            let itemName = packItem.itemName
+            var rate = packItem.baseRate
+            
+            // Apply rate modifier if there's one for this item by name
+            if let modifier = rateModifiers[itemName] {
+                rate *= modifier
+            }
+            
+            // Apply pity system for rare items
+            if isRare(item) && player.pullsSinceRare >= 100 {
+                rate *= 5.0 // Significant boost for pity
+            }
+            
+            weightedItems.append((item: item, weight: rate))
+            totalWeight += rate
+        }
+        
+        // Normalize weights if needed
+        if totalWeight > 1.0 {
+            weightedItems = weightedItems.map { (item: $0.item, weight: $0.weight / totalWeight) }
+            totalWeight = 1.0
+        }
+        
+        // Roll and select an item
+        let roll = Double.random(in: 0..<totalWeight)
+        var cumulativeWeight: Double = 0
+        
+        for (item, weight) in weightedItems {
+            cumulativeWeight += weight
+            if roll < cumulativeWeight {
+                // Update pity counter
+                if isRare(item) {
+                    player.pullsSinceRare = 0
+                } else {
+                    player.pullsSinceRare += 1
+                }
+                
+                return item
+            }
+        }
+        
+        // Fallback if distribution is empty or no item selected
+        return pack.items.first?.item
+    }
+    
+    // Check if item is considered "rare" for pity system
+    private func isRare(_ item: any IGachaItem) -> Bool {
+        return item.rarity == .rare || item.rarity == .legendary
     }
 }

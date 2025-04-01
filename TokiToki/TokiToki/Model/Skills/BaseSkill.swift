@@ -7,8 +7,8 @@
 
 import Foundation
 
-class BaseSkill: Skill {
-    let id = UUID()
+class BaseSkill: Skill, IGachaItem {
+    let id: UUID
     let name: String
     let description: String
     let type: SkillType
@@ -20,12 +20,18 @@ class BaseSkill: Skill {
     let statusEffectChance: Double
     let statusEffect: StatusEffectType?
     let statusEffectDuration: Int
+    let rarity: ItemRarity
+    
+    // Optional reference to owner
+    var ownerId: UUID?
+    var dateAcquired: Date?
 
-    private let effectCalculator: EffectCalculator
+    let effectCalculator: EffectCalculator
 
-    init(name: String, description: String, type: SkillType, targetType: TargetType,
+    init(id: UUID, name: String, description: String, type: SkillType, targetType: TargetType,
          elementType: ElementType, basePower: Int, cooldown: Int, statusEffectChance: Double,
-         statusEffect: StatusEffectType?, statusEffectDuration: Int = 0, effectCalculator: EffectCalculator) {
+         statusEffect: StatusEffectType?, statusEffectDuration: Int = 0, effectCalculator: EffectCalculator, rarity: ItemRarity, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
+        self.id = id
         self.name = name
         self.description = description
         self.type = type
@@ -37,6 +43,9 @@ class BaseSkill: Skill {
         self.statusEffect = statusEffect
         self.statusEffectDuration = statusEffectDuration
         self.effectCalculator = effectCalculator
+        self.rarity = rarity
+        self.ownerId = ownerId
+        self.dateAcquired = dateAcquired
     }
 
     func canUse() -> Bool {

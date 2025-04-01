@@ -8,19 +8,22 @@
 import Foundation
 // MARK: - Toki Class for Gacha and Display
 
-class Toki {
+class Toki: IGachaItem {
     let id: UUID
     let name: String
     var level: Int
-    let rarity: TokiRarity
+    let rarity: ItemRarity
     var baseStats: TokiBaseStats
-    var skills: [Skill]
+    var skills: [any Skill]
     var equipment: [Equipment]
     let elementType: ElementType
+    
+    var ownerId: UUID? = nil
+    var dateAcquired: Date? = nil
 
-    init(id: UUID = UUID(), name: String, rarity: TokiRarity,
+    init(id: UUID = UUID(), name: String, rarity: ItemRarity,
          baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment],
-         elementType: ElementType, level: Int) {
+         elementType: ElementType, level: Int, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
         self.id = id
         self.name = name
         self.rarity = rarity
@@ -29,6 +32,8 @@ class Toki {
         self.equipment = equipments
         self.elementType = elementType
         self.level = level
+        self.ownerId = ownerId
+        self.dateAcquired = dateAcquired
     }
 
     func createBattleEntity() -> GameStateEntity {
@@ -82,8 +87,6 @@ struct TokiBaseStats {
 
 enum TokiRarity: String {
     case common = "common"
-    case uncommon = "uncommon"
     case rare = "rare"
-    case epic = "epic"
     case legendary = "legendary"
 }

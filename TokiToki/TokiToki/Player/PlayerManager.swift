@@ -93,27 +93,41 @@ class PlayerManager {
         savePlayer()
     }
     
-    // MARK: - PlayerTokis
+    // MARK: - Item Management
 
-    /// Adds a single PlayerToki to the player's owned list.
-    func addPlayerToki(_ playerToki: PlayerToki) {
+    /// Adds a single item to the player's collection
+    func addItem(_ item: any IGachaItem) {
         var player = getOrCreatePlayer()
-        player.ownedTokis.append(playerToki)
+        player.addItem(item)
         currentPlayer = player
         savePlayer()
     }
 
-    /// Adds multiple PlayerToki at once.
-    func addPlayerTokis(_ tokis: [PlayerToki]) {
+    /// Adds multiple items at once to the player's collection
+    func addItems(_ items: [any IGachaItem]) {
         var player = getOrCreatePlayer()
-        player.ownedTokis.append(contentsOf: tokis)
+        for item in items {
+            player.addItem(item)
+        }
         currentPlayer = player
         savePlayer()
     }
 
-    /// Retrieve the player's entire Toki collection.
-    func getOwnedPlayerTokis() -> [PlayerToki] {
+    /// Retrieve all Tokis owned by the player
+    func getOwnedTokis() -> [Toki] {
         let player = getOrCreatePlayer()
         return player.ownedTokis
+    }
+    
+    /// Retrieve all Skills owned by the player
+    func getOwnedSkills() -> [Skill] {
+        let player = getOrCreatePlayer()
+        return player.ownedSkills
+    }
+    
+    /// Retrieve all Equipment owned by the player
+    func getOwnedEquipment() -> [Equipment] {
+        let player = getOrCreatePlayer()
+        return player.ownedEquipments
     }
 }
