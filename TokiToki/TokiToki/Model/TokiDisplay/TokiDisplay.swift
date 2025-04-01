@@ -136,7 +136,7 @@ class TokiDisplay {
                                                              buff: shieldBuff,
                                                              slot: .armor)
         
-        var component = equipmentFacade.equipmentComponent
+        let component = equipmentFacade.equipmentComponent
         
         let equipmentItems: [Equipment] = [healthPotion, upgradeCandy, sword, shield, healthPotion]
         component.inventory.append(contentsOf: equipmentItems)
