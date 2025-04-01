@@ -8,7 +8,7 @@
 import Foundation
 
 protocol Skill {
-    var id: UUID { get }
+    //var id: UUID { get }
     var name: String { get }
     var description: String { get }
     var type: SkillType { get }
@@ -51,10 +51,11 @@ enum StatusEffectType {
     case burn
     case frozen
     case paralysis
-    case attackBuff
-    case defenseBuff
-    case speedBuff
-    case attackDebuff
-    case defenseDebuff
-    case speedDebuff
+//    case attackBuff
+//    case defenseBuff
+//    case speedBuff
+//    case attackDebuff
+//    case defenseDebuff
+//    case speedDebuff
+    case statsModifier
 }

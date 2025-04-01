@@ -31,6 +31,8 @@ class GameEngine {
     private let skillsSystem = SkillsSystem()
     private let statusEffectsSystem = StatusEffectsSystem()
     private let resetSystem = ResetSystem()
+    private let statsSystem = StatsSystem()
+    private let statsModifiersSystem = StatsModifiersSystem()
     
     private var savedPlayersPlusOpponents: [GameStateEntity] = []
     private var savedPlayerTeam: [GameStateEntity] = []
@@ -67,12 +69,8 @@ class GameEngine {
                 continue
             }
 
-            guard let statusComponent = currentGameStateEntity.getComponent(ofType: StatusEffectsComponent.self) else {
-                return
-            }
-
-            if statusComponent.hasEffect(ofType: .stun) || statusComponent.hasEffect(ofType: .frozen) {
-                updateEntityForNewTurnAndAllEntities(currentGameStateEntity)
+            if statusEffectsSystem.checkHasEffect(ofType: .stun, currentGameStateEntity) ||
+                statusEffectsSystem.checkHasEffect(ofType: .frozen, currentGameStateEntity) {
                 continue
             }
 
@@ -217,11 +215,9 @@ class GameEngine {
 
     func updateEntityForNewTurnAndAllEntities(_ entity: GameStateEntity) {
         updateSkillCooldowns(entity)
-
         statusEffectsSystem.update([entity], logMessage)
-
+        statsModifiersSystem.update([entity])
         turnSystem.endTurn(for: entity)
-
         updateHealthBars()
         checkIfEntitiesAreDead()
     }
@@ -233,7 +229,7 @@ class GameEngine {
     private func updateHealthBars() {
         playersPlusOpponents.forEach {
             let currentHealth = $0.getComponent(ofType: StatsComponent.self)?.currentHealth
-            let maxHealth = $0.getComponent(ofType: StatsComponent.self)?.maxHealth
+            let maxHealth = $0.getComponent(ofType: StatsComponent.self)?.baseStats.hp
             guard let currentHealth = currentHealth, let maxHealth = maxHealth else { return }
             battleEffectsDelegate?.updateHealthBar($0.id, currentHealth, maxHealth)
         }
@@ -241,7 +237,7 @@ class GameEngine {
 
     func checkIfEntitiesAreDead() {
         for entity in playersPlusOpponents {
-            if entity.isDead() {
+            if statsSystem.checkIsEntityDead(entity) {
                 playersPlusOpponents.removeAll { $0.id == entity.id }
                 playerTeam.removeAll { $0.id == entity.id }
                 opponentTeam.removeAll { $0.id == entity.id }
@@ -261,6 +257,9 @@ class GameEngine {
     }
 
     private func logMessage(_ message: String) {
+        if message == "" {
+            return
+        }
         self.battleLog.append(message)
     }
 
@@ -270,7 +269,7 @@ class GameEngine {
 
     func restart() {
         battleLog = []
-        resetSystem.update(savedPlayersPlusOpponents)
+        resetSystem.reset(savedPlayersPlusOpponents)
         playersPlusOpponents = savedPlayersPlusOpponents
         playerTeam = savedPlayerTeam
         opponentTeam = savedOpponentTeam

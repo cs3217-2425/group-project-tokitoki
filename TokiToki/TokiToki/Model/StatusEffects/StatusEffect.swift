@@ -7,9 +7,7 @@
 
 import Foundation
 
-// StatusEffect uses Strategy Pattern
-struct StatusEffect {
-    let id = UUID()
+struct StatusEffect: Equatable {
     let type: StatusEffectType
     var remainingDuration: Int
     let strength: Double

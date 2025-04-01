@@ -36,16 +36,14 @@ class Toki {
 
         // Add components
         var statsComponent = StatsComponent(
-            entityId: entity.id,
-            maxHealth: baseStats.hp,
-            attack: baseStats.attack,
-            defense: baseStats.defense,
-            speed: baseStats.speed,
+            entity: entity,
+            baseStats: baseStats,
             elementType: elementType
         )
 
-        let skillsComponent = SkillsComponent(entityId: entity.id, skills: skills)
-        let statusEffectsComponent = StatusEffectsComponent(entityId: entity.id)
+        let skillsComponent = SkillsComponent(entity: entity, skills: skills)
+        let statusEffectsComponent = StatusEffectsComponent(entity: entity)
+        let statsModifiersComponent = StatsModifiersComponent(entity: entity)
 
         for equipment in equipments {
             equipment.applyBuffs(to: &statsComponent)
@@ -54,6 +52,7 @@ class Toki {
         entity.addComponent(statsComponent)
         entity.addComponent(skillsComponent)
         entity.addComponent(statusEffectsComponent)
+        entity.addComponent(statsModifiersComponent)
 
         return entity
     }
@@ -72,12 +71,12 @@ class Toki {
 }
 
 struct TokiBaseStats {
-    let hp: Int
-    let attack: Int
-    let defense: Int
-    let speed: Int
-    let heal: Int
-    let exp: Int
+    var hp: Int
+    var attack: Int
+    var defense: Int
+    var speed: Int
+    var heal: Int
+    var exp: Int
 }
 
 enum TokiRarity: String {

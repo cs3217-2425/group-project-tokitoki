@@ -7,33 +7,6 @@
 
 class StatsSystem: System {
     var priority = 1
-    
-    func modifyAttack(by amount: Int, on entities: [GameStateEntity]) {
-        entities.forEach { modifyAttack(for: $0, by: amount) }
-    }
-
-    private func modifyAttack(for entity: GameStateEntity, by amount: Int) {
-        guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else { return }
-        statsComponent.attack = max(1, statsComponent.attack + amount)
-    }
-
-    func modifyDefense(by amount: Int, on entities: [GameStateEntity]) {
-        entities.forEach { modifyDefense(for: $0, by: amount) }
-    }
-
-    private func modifyDefense(for entity: GameStateEntity, by amount: Int) {
-        guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else { return }
-        statsComponent.defense = max(1, statsComponent.defense + amount)
-    }
-
-    func modifySpeed(by amount: Int, on entities: [GameStateEntity]) {
-        entities.forEach { modifySpeed(for: $0, by: amount) }
-    }
-
-    private func modifySpeed(for entity: GameStateEntity, by amount: Int) {
-        guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else { return }
-        statsComponent.speed = max(1, statsComponent.speed + amount)
-    }
 
     func inflictDamage(amount: Int, _ entities: [GameStateEntity]) {
         for entity in entities {
@@ -49,9 +22,13 @@ class StatsSystem: System {
             guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
                 return
             }
-            statsComponent.currentHealth = min(statsComponent.maxHealth, statsComponent.currentHealth + amount)
+            statsComponent.currentHealth = min(statsComponent.baseStats.hp, statsComponent.currentHealth + amount)
 
         }
+    }
+    
+    func update(_ entities: [GameStateEntity]) {
+        // does nothing
     }
     
     func reset(_ entities: [GameStateEntity]) {
@@ -59,8 +36,62 @@ class StatsSystem: System {
             guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
                 return
             }
-            statsComponent.currentHealth = statsComponent.maxHealth
+            statsComponent.currentHealth = statsComponent.baseStats.hp
             statsComponent.actionMeter = 0
         }
+    }
+    
+    private func getStatValue(for keyPath: KeyPath<TokiBaseStats, Int>,
+                              modifierKeyPath: KeyPath<StatsModifier, Int>,
+                              _ entity: GameStateEntity) -> Int {
+        guard let statsComponent = entity.getComponent(ofType: StatsComponent.self),
+              let statsModifiersComponent = entity.getComponent(ofType: StatsModifiersComponent.self) else {
+            return 0
+        }
+        let modifiedStat = statsModifiersComponent.statsModifiers
+            .reduce(statsComponent.baseStats[keyPath: keyPath]) { $0 * $1[keyPath: modifierKeyPath] }
+        return modifiedStat
+    }
+    
+    func getAttack(_ entity: GameStateEntity) -> Int {
+        return getStatValue(for: \.attack, modifierKeyPath: \.attack, entity)
+    }
+
+    
+    func getDefense(_ entity: GameStateEntity) -> Int {
+        return getStatValue(for: \.defense, modifierKeyPath: \.defense, entity)
+    }
+
+    func getSpeed(_ entity: GameStateEntity) -> Int {
+        return getStatValue(for: \.speed, modifierKeyPath: \.speed, entity)
+    }
+    
+    func getHeal(_ entity: GameStateEntity) -> Int {
+        return getStatValue(for: \.heal, modifierKeyPath: \.heal, entity)
+    }
+    
+    func getCurrentHealth(_ entity: GameStateEntity) -> Int {
+        guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
+            return 0
+        }
+        return statsComponent.currentHealth
+    }
+
+    func getMaxHealth(_ entity: GameStateEntity) -> Int {
+        guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
+            return 0
+        }
+        return statsComponent.baseStats.hp
+    }
+
+    func checkIsEntityDead(_ entity: GameStateEntity) -> Bool {
+        getCurrentHealth(entity) <= 0
+    }
+
+    func getActionBar(_ entity: GameStateEntity) -> Float {
+        guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
+            return 0
+        }
+        return statsComponent.actionMeter
     }
 }

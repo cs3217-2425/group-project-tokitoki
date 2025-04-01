@@ -12,12 +12,12 @@ protocol BattleEventConvertible {
 }
 
 // Effect Result Enum
+// why does effect result need type again?
 enum EffectResultType {
     case damage
     case heal
     case defense
-    case buff
-    case debuff
+    case statsModified
     case statusApplied
     case statusRemoved
     case none

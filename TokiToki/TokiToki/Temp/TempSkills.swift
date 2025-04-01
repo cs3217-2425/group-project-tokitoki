@@ -43,9 +43,9 @@ let waterGun = BaseSkill(
     elementType: .water,
     basePower: 40,   // Water Gun deals 40 points of damage (adjust as needed).
     cooldown: 2,     // Water Gun has a 2-turn cooldown.
-    statusEffectChance: 0.3,   // 30% chance to reduce the target's speed.
-    statusEffect: .speedDebuff,       // The water gun applies a speed debuff status effect.
-    statusEffectDuration: 2,   // The speed debuff lasts for 2 turns.
+    statusEffectChance: 0,   // 30% chance to reduce the target's speed.
+    statusEffect: nil,       // The water gun applies a speed debuff status effect.
+    statusEffectDuration: 0,   // The speed debuff lasts for 2 turns.
     effectCalculator: attackCalculator
 )
 

@@ -8,14 +8,15 @@
 import Foundation
 
 // AI Component for opponents to determine which skill to use
-class AIComponent: BaseComponent {
+class AIComponent: Component {
     var rules: [AIRule]
     var skills: [Skill]
+    let entity: Entity
 
-    init(entityId: UUID, rules: [AIRule], skills: [Skill]) {
+    init(entity: Entity, rules: [AIRule], skills: [Skill]) {
         self.rules = rules
         self.skills = skills
-        super.init(entityId: entityId)
+        self.entity = entity
     }
 
     func determineAction(_ userEntity: GameStateEntity, _ playerEntities: [GameStateEntity],

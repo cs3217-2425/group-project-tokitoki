@@ -13,13 +13,11 @@ class EffectCalculatorFactory {
         self.calculators = [
            .attack: AttackCalculator(elementsSystem: elementsSystem),
            .heal: HealCalculator(),
-           .defend: DefenseCalculator(),
-           .buff: BuffCalculator(),
-           .debuff: DebuffCalculator()
        ]
     }
 
     func getCalculator(for skillType: SkillType) -> EffectCalculator {
-        calculators[skillType] ?? AttackCalculator(elementsSystem: self.elementsSystem) // Default to attack if not found
+        calculators[skillType] ?? AttackCalculator(elementsSystem: self.elementsSystem)
+        // Default to attack if not found
     }
 }

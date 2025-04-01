@@ -8,6 +8,5 @@
 import Foundation
 
 protocol Component {
-    var id: UUID { get }
-    var entityId: UUID { get }
+    var entity : Entity { get }
 }

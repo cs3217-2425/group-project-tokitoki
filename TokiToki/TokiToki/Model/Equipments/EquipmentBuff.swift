@@ -28,15 +28,15 @@ class CombinedBuffComponent: EquipmentComponent {
         self.buff = buff
     }
 
-    func apply(to stats: inout StatsComponent) {
-        stats.attack += buff.attack
-        stats.defense += buff.defense
-        stats.speed += buff.speed
+    func apply(to statsComponent: inout StatsComponent) {
+        statsComponent.baseStats.attack += buff.attack
+        statsComponent.baseStats.defense += buff.defense
+        statsComponent.baseStats.speed += buff.speed
     }
 
-    func remove(from stats: inout StatsComponent) {
-        stats.attack -= buff.attack
-        stats.defense -= buff.defense
-        stats.speed -= buff.speed
+    func remove(from statsComponent: inout StatsComponent) {
+        statsComponent.baseStats.attack -= buff.attack
+        statsComponent.baseStats.defense -= buff.defense
+        statsComponent.baseStats.speed -= buff.speed
     }
 }

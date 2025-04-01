@@ -5,11 +5,13 @@
 //  Created by proglab on 26/3/25.
 //
 
+import Foundation
+
 class StatusEffectsSystem: System {
     var priority = 1
     private let strategyFactory = StatusEffectStrategyFactory()
 
-    func update(_ entities: [GameStateEntity], _ logMessage: (String) -> Void) { // Check that this callback works
+    func update(_ entities: [GameStateEntity], _ logMessage: (String) -> Void) {
         for entity in entities {
             guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
                 return
@@ -29,6 +31,10 @@ class StatusEffectsSystem: System {
             updateEffects(statusComponent)
         }
     }
+    
+    func update(_ entities: [GameStateEntity]) {
+        
+    }
 
     private func updateEffects(_ statusComponent: StatusEffectsComponent) {
         statusComponent.activeEffects = statusComponent.activeEffects.map { effect in
@@ -45,5 +51,26 @@ class StatusEffectsSystem: System {
             }
             statusComponent.activeEffects = []
         }
+    }
+    
+    func addEffect(_ effect: StatusEffect, _ entity: GameStateEntity) {
+        guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
+            return
+        }
+        statusComponent.activeEffects.append(effect)
+    }
+
+    func removeEffect(_ statusEffect: StatusEffect, _ entity: GameStateEntity) {
+        guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
+            return
+        }
+        statusComponent.activeEffects.removeAll { $0 == statusEffect }
+    }
+
+    func checkHasEffect(ofType type: StatusEffectType, _ entity: GameStateEntity) -> Bool {
+        guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
+            return false
+        }
+        return statusComponent.activeEffects.contains { $0.type == type }
     }
 }
