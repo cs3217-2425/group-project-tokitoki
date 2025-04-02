@@ -9,17 +9,33 @@ import UIKit
 
 // Composite visual effect that combines multiple primitives
 class CompositeVisualFX: SkillVisualFX {
-    private var primitives: [(VisualFXPrimitive, [String: Any])] = []
     private let sourceView: UIView
     private let targetView: UIView
+
+    private var primitives: [(VisualFXPrimitive, [String: Any])] = []
 
     init(sourceView: UIView, targetView: UIView) {
         self.sourceView = sourceView
         self.targetView = targetView
     }
 
+    func getSourceView() -> UIView {
+        sourceView
+    }
+
+    func getTargetView() -> UIView {
+        targetView
+    }
+
     func addPrimitive(_ primitive: VisualFXPrimitive, with parameters: [String: Any]) {
-        primitives.append((primitive, parameters))
+        var updatedParameters = parameters
+
+        // Add a reference to the composite effect for primitives that need both source and target
+        if primitive is ProjectilePrimitive {
+            updatedParameters["compositeEffect"] = self
+        }
+
+        primitives.append((primitive, updatedParameters))
     }
 
     func play(completion: @escaping () -> Void) {

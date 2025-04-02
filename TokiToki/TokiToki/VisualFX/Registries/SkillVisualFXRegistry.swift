@@ -1,8 +1,8 @@
 //
-//  SkillVisualFXRegistry.swift
+//  ComponentBasedSkillVisualFXRegistry.swift
 //  TokiToki
 //
-//  Created by wesho on 23/3/25.
+//  Created by wesho on 31/3/25.
 //
 
 import UIKit
@@ -10,35 +10,43 @@ import UIKit
 class SkillVisualFXRegistry {
     static let shared = SkillVisualFXRegistry()
 
-    private var effectFactories: [String: (UIView, UIView) -> SkillVisualFX] = [:]
+    private var effectFactories: [SkillVisual: (UIView, UIView) -> SkillVisualFX] = [:]
 
     private init() {
         registerSkillVisualFXs()
     }
 
-    func register(skillName: String, factory: @escaping (UIView, UIView) -> SkillVisualFX) {
-        effectFactories[skillName] = factory
+    func register(skillVisual: SkillVisual, factory: @escaping (UIView, UIView) -> SkillVisualFX) {
+        effectFactories[skillVisual] = factory
+    }
+
+    func createVisualFX(for skillVisual: SkillVisual, sourceView: UIView, targetView: UIView) -> SkillVisualFX? {
+        if let factory = effectFactories[skillVisual] {
+            return factory(sourceView, targetView)
+        }
+        return nil
     }
 
     func createVisualFX(for skillName: String, sourceView: UIView, targetView: UIView) -> SkillVisualFX? {
-        effectFactories[skillName.lowercased()]?(sourceView, targetView)
+        // Try to map to enum first to see if there are existing skill visuals already
+        if let skillVisual = SkillVisual.fromString(skillName) {
+            return createVisualFX(for: skillVisual, sourceView: sourceView, targetView: targetView)
+        }
+
+        // Default fallback
+        return SkillVisualFXFactory.createDefaultSkillVisualFX(
+            sourceView: sourceView,
+            targetView: targetView
+        )
     }
 
     private func registerSkillVisualFXs() {
-        // TODO: Standardize skillName to be used for the skills (Need better decoupling)
-        register(skillName: "fireball") { sourceView, targetView in
-            FireballVisualFX(sourceView: sourceView, targetView: targetView)
+        register(skillVisual: .fireball) { sourceView, targetView in
+            SkillVisualFXFactory.createFireballFX(sourceView: sourceView, targetView: targetView)
         }
 
-        register(skillName: "fireslash") { sourceView, targetView in
-            FireslashVisualFX(sourceView: sourceView, targetView: targetView)
+        register(skillVisual: .fireSlash) { sourceView, targetView in
+            SkillVisualFXFactory.createFireslashFX(sourceView: sourceView, targetView: targetView)
         }
-
-        // TODO: Other skill SkillVisualFX
     }
-}
-
-// Base protocol for skill visual effects
-protocol SkillVisualFX {
-    func play(completion: @escaping () -> Void)
 }
