@@ -19,21 +19,22 @@ class GameEngine {
             battleLogObserver?.update(log: battleLog)
         }
     }
-    private var effectCalculatorFactory = EffectCalculatorFactory()
     private var elementsSystem = ElementsSystem()
     private let targetSelectionFactory = TargetSelectionFactory()
     private var statusEffectStrategyFactory = StatusEffectStrategyFactory()
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
     private let eventFactory = GameEventFactory()
-
-    private let turnSystem = TurnSystem()
+    
+    private let multiplierForActionMeter: Float = 0.1
+    private let MAX_ACTION_BAR: Float = 100
+    private let turnSystem: TurnSystem
     private let skillsSystem = SkillsSystem()
-    private let statusEffectsSystem = StatusEffectsSystem()
+    private let statusEffectsSystem: StatusEffectsSystem
     private let resetSystem = ResetSystem()
     private let statsSystem = StatsSystem()
     private let statsModifiersSystem = StatsModifiersSystem()
-    
+
     private var savedPlayersPlusOpponents: [GameStateEntity] = []
     private var savedPlayerTeam: [GameStateEntity] = []
     private var savedOpponentTeam: [GameStateEntity] = []
@@ -45,6 +46,8 @@ class GameEngine {
         self.savedPlayerTeam = playerTeam
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
+        self.turnSystem = TurnSystem()
+        self.statusEffectsSystem = StatusEffectsSystem.shared
     }
 
     func startBattle() {
@@ -62,6 +65,7 @@ class GameEngine {
 
     func startGameLoop() {
         while !isBattleOver() {
+            statusEffectsSystem.applyDmgOverTimeStatusEffects(logMessage)
             currentGameStateEntity = getNextReadyCharacter()
 
             guard let currentGameStateEntity = currentGameStateEntity else {
@@ -69,8 +73,8 @@ class GameEngine {
                 continue
             }
 
-            if statusEffectsSystem.checkHasEffect(ofType: .stun, currentGameStateEntity) ||
-                statusEffectsSystem.checkHasEffect(ofType: .frozen, currentGameStateEntity) {
+            if statusEffectsSystem.checkIfImmobilised(currentGameStateEntity) {
+                updateEntityForNewTurnAndAllEntities(currentGameStateEntity)
                 continue
             }
 
@@ -86,6 +90,7 @@ class GameEngine {
 
     private func updateAllActionMeters() {
         turnSystem.update(playersPlusOpponents)
+        statusEffectsSystem.updateDmgOverTimeEffectsActionMeter()
     }
 
     private func getNextReadyCharacter() -> GameStateEntity? {
@@ -103,7 +108,7 @@ class GameEngine {
         }
         battleEffectsDelegate?.updateSkillIcons(skillIcons)
     }
-    
+
     func useTokiSkill(_ skillIndex: Int) {
         guard let currentGameStateEntity = currentGameStateEntity else {
             return
@@ -114,17 +119,30 @@ class GameEngine {
         }
         mostRecentSkillSelected = skillSelected
         
-        if targetSelectionFactory.checkIfRequireTargetSelection(skillSelected.targetType)
-            && opponentTeam.count > 1 {
-            battleEffectsDelegate?.allowTargetSelection()
-            return
+        let singleTargetEffect = skillSelected.effectDefinitions.first {
+            targetSelectionFactory.checkIfRequireTargetSelection($0.targetType)
         }
         
-        let targets = targetSelectionFactory.generateTargets(playerTeam, opponentTeam, skillSelected.targetType)
+        if let singleTargetEffect = singleTargetEffect {
+            if singleTargetEffect.targetType == .singleEnemy && opponentTeam.count > 1 {
+                battleEffectsDelegate?.allowOpponentTargetSelection()
+                return
+            }
+            
+            if singleTargetEffect.targetType == .singleAlly && playerTeam.count > 1 {
+                battleEffectsDelegate?.allowAllyTargetSelection()
+                return
+            }
+        }
+        
+        // TODO: update event bus with new changes
+        let targets = targetSelectionFactory.generateTargets(currentGameStateEntity, playerTeam, opponentTeam,
+                                                             skillSelected.effectDefinitions[0].targetType)
         createBattleEventAndPublishToEventBus(currentGameStateEntity, skillSelected, targets)
-        createAndExecuteSkillAction(currentGameStateEntity, skillSelected, targets)
+        
+        createAndExecuteSkillAction(currentGameStateEntity, skillSelected, [])
     }
-    
+
     func useSingleTargetTokiSkill(_ targetId: UUID) {
         let target = playersPlusOpponents.first { $0.id == targetId }
         guard let mostRecentSkillSelected = mostRecentSkillSelected,
@@ -135,7 +153,7 @@ class GameEngine {
         createBattleEventAndPublishToEventBus(currentGameStateEntity, mostRecentSkillSelected, [target])
         createAndExecuteSkillAction(currentGameStateEntity, mostRecentSkillSelected, [target])
     }
-    
+
     fileprivate func createBattleEventAndPublishToEventBus(_ currentGameStateEntity: GameStateEntity,
                                                            _ skillSelected: any Skill,
                                                            _ targets: [GameStateEntity]) {
@@ -146,15 +164,14 @@ class GameEngine {
         )
         EventBus.shared.post(skillEvent)
     }
-    
+
     private func createAndExecuteSkillAction(_ currentGameStateEntity: GameStateEntity,
                                              _ skillSelected: any Skill, _ targets: [GameStateEntity]) {
-        let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected,
-                                    targets: targets)
+        let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected, playerTeam,
+                                    opponentTeam, targets)
         queueAction(action)
         let results = executeNextAction()
-        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true)
-        { [weak self] in
+        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
             self?.updateLogAndEntityAfterSkillUse(results, currentGameStateEntity)
         }
     }

@@ -16,11 +16,11 @@ class Toki {
     var baseStats: TokiBaseStats
     var skills: [Skill]
     var equipments: [Equipment]
-    let elementType: ElementType
+    let elementType: [ElementType]
 
     init(id: UUID = UUID(), name: String, rarity: TokiRarity,
          baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment],
-         elementType: ElementType, level: Int) {
+         elementType: [ElementType], level: Int) {
         self.id = id
         self.name = name
         self.rarity = rarity
@@ -30,12 +30,12 @@ class Toki {
         self.elementType = elementType
         self.level = level
     }
-    
+
     func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
         print("Toki receives a temporary buff: \(stat) +\(value) for \(duration) sec")
         // In a full implementation, integrate with a buff manager.
     }
-    
+
     func gainExperience(_ exp: Int) {
         print("Toki gains \(exp) EXP")
         // Update experience and level up if needed.
@@ -74,8 +74,10 @@ class Toki {
             defense: self.baseStats.defense + stat.defense,
             speed: self.baseStats.speed + stat.speed,
             heal: self.baseStats.heal + stat.heal,
-            exp: self.baseStats.exp - 100
-            )
+            exp: self.baseStats.exp - 100,
+            critHitChance: self.baseStats.critHitChance,
+            critHitDamage: self.baseStats.critHitDamage
+        )
         self.level += 1
     }
 }
@@ -87,6 +89,8 @@ struct TokiBaseStats {
     var speed: Int
     var heal: Int
     var exp: Int
+    var critHitChance: Int = 15
+    var critHitDamage: Int = 150
 }
 
 enum TokiRarity: String {

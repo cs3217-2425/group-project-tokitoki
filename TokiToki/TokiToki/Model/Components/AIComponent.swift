@@ -34,7 +34,7 @@ class AIComponent: Component {
             return NoAction()
         }
 
-        let targets = TargetSelectionFactory().generateTargets(opponentEntities, playerEntities, skillToUse.targetType)
-        return UseSkillAction(user: userEntity, skill: skillToUse, targets: targets) // todo: targets
+        //let targets = TargetSelectionFactory().generateTargets(opponentEntities, playerEntities, skillToUse.targetType)
+        return UseSkillAction(user: userEntity, skill: skillToUse, opponentEntities, playerEntities, [])
     }
 }

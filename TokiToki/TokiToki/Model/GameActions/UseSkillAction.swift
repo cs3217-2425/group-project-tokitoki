@@ -11,23 +11,28 @@ import Foundation
 class UseSkillAction: Action {
     let user: GameStateEntity
     let skill: Skill
-    let targets: [GameStateEntity]
+    let singleTargets: [GameStateEntity]
+    let playerTeam: [GameStateEntity]
+    let opponentTeam: [GameStateEntity]
 
-    init(user: GameStateEntity, skill: Skill, targets: [GameStateEntity]) {
+    init(user: GameStateEntity, skill: Skill, _ playerTeam: [GameStateEntity],
+         _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity]) {
         self.user = user
         self.skill = skill
-        self.targets = targets
+        self.singleTargets = singleTargets
+        self.playerTeam = playerTeam
+        self.opponentTeam = opponentTeam
     }
 
     func execute() -> [EffectResult] {
-        if targets.isEmpty {
-            return [EffectResult(entity: user, type: .none, value: 0, description: "No valid targets")]
-        }
+//        if targets.isEmpty {
+//            return [EffectResult(entity: user, type: .none, value: 0, description: "No valid targets")]
+//        }
 
         if !skill.canUse() {
             return [EffectResult(entity: user, type: .none, value: 0, description: "\(skill.name) is on cooldown")]
         }
 
-        return skill.use(from: user, on: targets)
+        return skill.use(from: user, playerTeam, opponentTeam, singleTargets)
     }
 }

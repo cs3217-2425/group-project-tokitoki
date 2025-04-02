@@ -12,7 +12,7 @@ class EquipmentBuff {
     let value: Int
     let description: String
     let affectedStat: String
-    
+
     init(value: Int, description: String, affectedStat: String) {
         self.value = value
         self.description = description
@@ -25,7 +25,7 @@ class StatBuff: EquipmentBuff {
     let attack: Int
     let defense: Int
     let speed: Int
-    
+
     init(attack: Int, defense: Int, speed: Int, description: String = "Stat Buff", affectedStat: String = "all") {
         self.attack = attack
         self.defense = defense
@@ -38,21 +38,20 @@ class StatBuff: EquipmentBuff {
 /// CombinedBuffComponent wraps a StatBuff so it can be applied to a StatsComponent.
 class CombinedBuffComponent: EquipmentComponent {
     let buff: StatBuff
-    
+
     init(buff: StatBuff) {
         self.buff = buff
     }
-    
+
     func apply(to stats: inout StatsComponent) {
         stats.baseStats.attack += buff.attack
         stats.baseStats.defense += buff.defense
         stats.baseStats.speed += buff.speed
     }
-    
+
     func remove(from stats: inout StatsComponent) {
         stats.baseStats.attack -= buff.attack
         stats.baseStats.defense -= buff.defense
         stats.baseStats.speed -= buff.speed
     }
 }
-

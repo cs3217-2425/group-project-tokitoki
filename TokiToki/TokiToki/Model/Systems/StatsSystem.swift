@@ -26,11 +26,11 @@ class StatsSystem: System {
 
         }
     }
-    
+
     func update(_ entities: [GameStateEntity]) {
         // does nothing
     }
-    
+
     func reset(_ entities: [GameStateEntity]) {
         for entity in entities {
             guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
@@ -40,36 +40,43 @@ class StatsSystem: System {
             statsComponent.actionMeter = 0
         }
     }
-    
+
     private func getStatValue(for keyPath: KeyPath<TokiBaseStats, Int>,
-                              modifierKeyPath: KeyPath<StatsModifier, Int>,
+                              modifierKeyPath: KeyPath<StatsModifier, Double>,
                               _ entity: GameStateEntity) -> Int {
         guard let statsComponent = entity.getComponent(ofType: StatsComponent.self),
               let statsModifiersComponent = entity.getComponent(ofType: StatsModifiersComponent.self) else {
             return 0
         }
-        let modifiedStat = statsModifiersComponent.statsModifiers
-            .reduce(statsComponent.baseStats[keyPath: keyPath]) { $0 * $1[keyPath: modifierKeyPath] }
-        return modifiedStat
-    }
-    
-    func getAttack(_ entity: GameStateEntity) -> Int {
-        return getStatValue(for: \.attack, modifierKeyPath: \.attack, entity)
+        let modifiedStat: Double = statsModifiersComponent.statsModifiers
+            .reduce(Double(statsComponent.baseStats[keyPath: keyPath])) { Double($0) * $1[keyPath: modifierKeyPath] }
+        return Int(modifiedStat)
     }
 
-    
+    func getAttack(_ entity: GameStateEntity) -> Int {
+        getStatValue(for: \.attack, modifierKeyPath: \.attack, entity)
+    }
+
     func getDefense(_ entity: GameStateEntity) -> Int {
-        return getStatValue(for: \.defense, modifierKeyPath: \.defense, entity)
+        getStatValue(for: \.defense, modifierKeyPath: \.defense, entity)
     }
 
     func getSpeed(_ entity: GameStateEntity) -> Int {
-        return getStatValue(for: \.speed, modifierKeyPath: \.speed, entity)
+        getStatValue(for: \.speed, modifierKeyPath: \.speed, entity)
     }
-    
+
     func getHeal(_ entity: GameStateEntity) -> Int {
-        return getStatValue(for: \.heal, modifierKeyPath: \.heal, entity)
+        getStatValue(for: \.heal, modifierKeyPath: \.heal, entity)
     }
     
+    func getCritChance(_ entity: GameStateEntity) -> Int {
+        getStatValue(for: \.critHitChance, modifierKeyPath: \.criticalHitChance, entity)
+    }
+    
+    func getCritDmg(_ entity: GameStateEntity) -> Int {
+        getStatValue(for: \.critHitDamage, modifierKeyPath: \.criticalHitDmg, entity)
+    }
+
     func getCurrentHealth(_ entity: GameStateEntity) -> Int {
         guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
             return 0

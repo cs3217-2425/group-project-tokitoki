@@ -14,7 +14,9 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     private var opponentTokisViews: [Views] = []
     private var gameStateIdToViews: [UUID: Views] = [:]
     private var opponentImageViews: [UIImageView] = []
+    private var playerTokisImageViews: [UIImageView] = []
     private var opponentImageViewsToId: [UIImageView: UUID] = [:]
+    private var playerImageViewsToId: [UIImageView: UUID] = [:]
 
     @IBOutlet var toki1HealthBarContainer: UIView!
     @IBOutlet var toki1HealthBar: UIView!
@@ -59,6 +61,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
         hideTokisIfNoTokiInThatSlot(opponentEntities, opponentTokisViews)
         addMappingOfOpponentEntitiesToImageView(opponentEntities)
+        addMappingOfPlayerEntitiesToImageView(playerEntities)
 
         self.gameEngine = GameEngine(playerTeam: playerEntities, opponentTeam: opponentEntities)
         self.gameEngine?.addObserver(self)
@@ -78,6 +81,13 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         for (index, opponent) in opponentEntities.enumerated() {
             gameStateIdToViews[opponent.id] = opponentTokisViews[index]
             opponentImageViewsToId[opponentImageViews[index]] = opponent.id
+        }
+    }
+    
+    fileprivate func addMappingOfPlayerEntitiesToImageView(_ playerEntities: [GameStateEntity]) {
+        for (index, player) in playerEntities.enumerated() {
+            gameStateIdToViews[player.id] = playerTokisViews[index]
+            playerImageViewsToId[playerTokisImageViews[index]] = player.id
         }
     }
 
@@ -129,6 +139,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
                               Views(overallView: opponent3View, healthBar: opponent3HealthBar, healthContainer: opponent3HealthBarContainer)]
 
         opponentImageViews = [opponent1, opponent2, opponent3]
+        playerTokisImageViews = [toki1, toki2, toki3]
     }
 
     fileprivate func configureLogBackground() {
@@ -150,6 +161,12 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(opponentTapped(_:)))
             imageView.addGestureRecognizer(tapGesture)
         }
+        
+        for imageView in playerTokisImageViews {
+            imageView.isUserInteractionEnabled = false
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(playerTokiTapped(_:)))
+            imageView.addGestureRecognizer(tapGesture)
+        }
     }
 
     @objc func skillTapped(_ sender: UITapGestureRecognizer) {
@@ -165,7 +182,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             return
         }
         gameEngine?.useSingleTargetTokiSkill(targetId)
-        
+
         for imageView in opponentImageViews {
             imageView.layer.removeAllAnimations()
             imageView.alpha = 1.0
@@ -173,7 +190,22 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         }
     }
     
-    func allowTargetSelection() {
+    @objc func playerTokiTapped(_ sender: UITapGestureRecognizer) {
+        guard let tappedImageView = sender.view as? UIImageView else { return }
+        let targetId = playerImageViewsToId[tappedImageView]
+        guard let targetId = targetId else {
+            return
+        }
+        gameEngine?.useSingleTargetTokiSkill(targetId)
+
+        for imageView in playerTokisImageViews {
+            imageView.layer.removeAllAnimations()
+            imageView.alpha = 1.0
+            imageView.isUserInteractionEnabled = false
+        }
+    }
+
+    func allowOpponentTargetSelection() {
         opponentImageViews.forEach { imageView in
             UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat, .allowUserInteraction]) {
                 imageView.alpha = 0.5
@@ -181,7 +213,15 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             imageView.isUserInteractionEnabled = true
         }
     }
-
+    
+    func allowAllyTargetSelection() {
+        playerTokisImageViews.forEach { imageView in
+            UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat, .allowUserInteraction]) {
+                imageView.alpha = 0.5
+            }
+            imageView.isUserInteractionEnabled = true
+        }
+    }
 
     func update(log: [String]) {
         let numberOfLinesToDisplay = 3
@@ -190,17 +230,11 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         battleLogDisplay.text = logToDisplay.joined(separator: "\n")
     }
 
-    fileprivate func animateMovement(_ tokiView: UIView, _ completion: @escaping () -> Void, _ isLeft: Bool) {
-        let originalPosition = tokiView.frame.origin.x
-        let rightPosition = tokiView.frame.origin.x + 50
-        let leftPosition = tokiView.frame.origin.x - 50
+    fileprivate func moveTokiView(_ tokiView: UIView, _ isAlly: Bool, _ leftPosition: CGFloat,
+                                  _ rightPosition: CGFloat, _ originalPosition: CGFloat,
+                                  _ completion: @escaping () -> Void) {
         UIView.animate(withDuration: 0.5, animations: {
-            if isLeft {
-                tokiView.frame.origin.x = leftPosition
-            } else {
-                tokiView.frame.origin.x = rightPosition
-            }
-
+            tokiView.frame.origin.x = isAlly ? leftPosition : rightPosition
         }) { _ in
             UIView.animate(withDuration: 0.5, animations: {
                 tokiView.frame.origin.x = originalPosition
@@ -209,21 +243,36 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             })
         }
     }
+    
+    fileprivate func animateMovement(_ tokiView: UIView, _ completion: @escaping () -> Void, _ isAlly: Bool) {
+        let originalPosition = tokiView.frame.origin.x
+        let rightPosition = tokiView.frame.origin.x + 50
+        let leftPosition = tokiView.frame.origin.x - 50
+        let delay: TimeInterval = 0.4
+        
+        if isAlly {
+            moveTokiView(tokiView, isAlly, leftPosition, rightPosition, originalPosition, completion)
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.moveTokiView(tokiView, isAlly, leftPosition, rightPosition, originalPosition, completion)
+            }
+        }
+    }
 
-    func showUseSkill(_ id: UUID, _ isLeft: Bool, completion: @escaping () -> Void = {}) {
+    func showUseSkill(_ id: UUID, _ isAlly: Bool, completion: @escaping () -> Void = {}) {
         let tokiView = gameStateIdToViews[id]
         guard let tokiView = tokiView else {
             completion()
             return
         }
 
-        animateMovement(tokiView.overallView, completion, isLeft)
+        animateMovement(tokiView.overallView, completion, isAlly)
     }
 
     fileprivate func removeCooldownOverlay(_ skillImageView: UIImageView) {
         skillImageView.subviews.forEach { $0.removeFromSuperview() }
     }
-    
+
     func updateSkillIcons(_ icons: [SkillUiInfo]?) {
         guard let icons = icons else {
             return

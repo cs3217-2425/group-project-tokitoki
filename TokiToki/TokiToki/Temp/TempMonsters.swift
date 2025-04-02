@@ -15,7 +15,7 @@ func createMonsterEntity(_ monster: Toki) -> GameStateEntity {
     return entity
 }
 
-let monsterBaseStats = TokiBaseStats(hp: 100, attack: 50, defense: 10, speed: 90, heal: 0, exp: 0)
+let monsterBaseStats = TokiBaseStats(hp: 100, attack: 100, defense: 10, speed: 90, heal: 0, exp: 0)
 
 let monsterToki = Toki(
     name: "Monster",
@@ -23,6 +23,6 @@ let monsterToki = Toki(
     baseStats: monsterBaseStats,
     skills: [basicAttack],
     equipments: [],
-    elementType: .air,
+    elementType: [.air],
     level: 0
 )

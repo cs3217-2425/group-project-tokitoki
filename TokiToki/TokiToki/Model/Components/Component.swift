@@ -8,5 +8,5 @@
 import Foundation
 
 protocol Component {
-    var entity : Entity { get }
+    var entity: Entity { get }
 }

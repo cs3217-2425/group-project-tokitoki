@@ -7,13 +7,15 @@
 
 import Foundation
 
-struct StatusEffect: Equatable {
+struct StatusEffect {
     let type: StatusEffectType
     var remainingDuration: Int
     let strength: Double
     let sourceId: UUID
+    var actionMeter: Float = 0
+    var speedOfDmgOverTime: Float = 100 // TODO: vary the speeds
+    let target: GameStateEntity
 
-    // Function to apply effect using strategy pattern
     func apply(to entity: GameStateEntity, strategyFactory: StatusEffectStrategyFactory) -> EffectResult {
         guard let strategy = strategyFactory.getStrategy(for: type) else {
             return EffectResult(
@@ -24,5 +26,9 @@ struct StatusEffect: Equatable {
             )
         }
         return strategy.apply(to: entity, effect: self)
+    }
+    
+    mutating func updateActionMeter(by multiplier: Float) {
+        self.actionMeter += speedOfDmgOverTime * multiplier
     }
 }

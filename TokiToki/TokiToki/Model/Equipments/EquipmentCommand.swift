@@ -5,7 +5,6 @@
 //  Created by Wh Kang on 31/3/25.
 //
 
-
 import Foundation
 
 protocol EquipmentCommand {
@@ -19,7 +18,7 @@ class UseConsumableCommand: EquipmentCommand {
     private let component: EquipmentComponent
     private let equipmentSystem: EquipmentSystem
     private let logger: EquipmentLogger
-    
+
     init(consumable: ConsumableEquipment, toki: Toki, component: EquipmentComponent, system: EquipmentSystem, logger: EquipmentLogger) {
         self.consumable = consumable
         self.toki = toki
@@ -27,12 +26,12 @@ class UseConsumableCommand: EquipmentCommand {
         self.equipmentSystem = system
         self.logger = logger
     }
-    
+
     func execute() {
         equipmentSystem.useConsumable(consumable, on: toki, in: component)
         logger.logEvent(.consumed(item: consumable))
     }
-    
+
     func undo() {
         logger.log("Undo not supported for consumable usage.")
     }
@@ -44,20 +43,20 @@ class EquipCommand: EquipmentCommand {
     private let equipmentSystem: EquipmentSystem
     private let logger: EquipmentLogger
     private var previousItem: NonConsumableEquipment?
-    
+
     init(item: NonConsumableEquipment, component: EquipmentComponent, system: EquipmentSystem, logger: EquipmentLogger) {
         self.item = item
         self.component = component
         self.equipmentSystem = system
         self.logger = logger
     }
-    
+
     func execute() {
         previousItem = component.equipped[item.slot]
         equipmentSystem.equipItem(item, in: component)
         logger.logEvent(.equipped(item: item))
     }
-    
+
     func undo() {
         if let prev = previousItem {
             equipmentSystem.equipItem(prev, in: component)
@@ -75,14 +74,14 @@ class CraftCommand: EquipmentCommand {
     private let craftingManager: CraftingManager
     private let logger: EquipmentLogger
     private var craftedItem: Equipment?
-    
+
     init(items: [Equipment], component: EquipmentComponent, craftingManager: CraftingManager, logger: EquipmentLogger) {
         self.items = items
         self.component = component
         self.craftingManager = craftingManager
         self.logger = logger
     }
-    
+
     func execute() {
         if let newItem = craftingManager.craft(with: items) {
             for item in items {
@@ -97,7 +96,7 @@ class CraftCommand: EquipmentCommand {
             logger.logEvent(.craftingFailed(reason: "Invalid recipe for items: \(items.map { $0.name }.joined(separator: ", "))"))
         }
     }
-    
+
     func undo() {
         if let crafted = craftedItem, let index = component.inventory.firstIndex(where: { $0.id == crafted.id }) {
             component.inventory.remove(at: index)

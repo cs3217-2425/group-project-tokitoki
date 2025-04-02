@@ -61,7 +61,7 @@ class GachaRepository {
                     ),
                     skills: [],
                     equipments: [],
-                    elementType: convertStringToElement(cd.elementType ?? "fire"),
+                    elementType: [convertStringToElement(cd.elementType ?? "fire")],
                     level: 0
                 )
             }

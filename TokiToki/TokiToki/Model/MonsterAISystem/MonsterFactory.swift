@@ -5,7 +5,7 @@
 //  Created by proglab on 15/3/25.
 //
 
-//class MonsterFactory {
+// class MonsterFactory {
 //    private let skillFactory = SkillFactory()
 //
 //    func createBasicMonster(name: String, health: Int, attack: Int, defense: Int, speed: Int,
@@ -115,4 +115,4 @@
 //
 //        return boss
 //    }
-//}
+// }
