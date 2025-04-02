@@ -65,7 +65,7 @@ class GameEngine {
 
     func startGameLoop() {
         while !isBattleOver() {
-            statusEffectsSystem.applyDmgOverTimeStatusEffects(logMessage)
+            statusEffectsSystem.applyDmgOverTimeStatusEffects(logMessage, battleEffectsDelegate)
             currentGameStateEntity = getNextReadyCharacter()
 
             guard let currentGameStateEntity = currentGameStateEntity else {

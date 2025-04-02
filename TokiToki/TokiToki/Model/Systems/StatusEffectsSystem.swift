@@ -9,6 +9,7 @@ import Foundation
 
 class StatusEffectsSystem: System {
     static let shared = StatusEffectsSystem()
+    let statsSystem = StatsSystem()
     var priority = 1
     private let strategyFactory = StatusEffectStrategyFactory()
     private let allDmgOverTimeStatusEffects: [StatusEffectType] = [.burn, .poison]
@@ -20,9 +21,13 @@ class StatusEffectsSystem: System {
     
     fileprivate func applyStatusEffectAndPublishResult(_ effect: StatusEffect,
                                                        _ entity: GameStateEntity,
-                                                       _ logMessage: (String) -> Void) {
+                                                       _ logMessage: (String) -> Void,
+                                                       _ battleEffectsDelegate: BattleEffectsDelegate?
+    ) {
         let result = effect.apply(to: entity, strategyFactory: strategyFactory)
         logMessage(result.description)
+        battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
+                                               statsSystem.getMaxHealth(entity))
         
         for event in result.toBattleEvents(sourceId: effect.sourceId) {
             EventBus.shared.post(event)
@@ -36,7 +41,7 @@ class StatusEffectsSystem: System {
             }
 
             for effect in statusComponent.activeEffects {
-                applyStatusEffectAndPublishResult(effect, entity, logMessage)
+                applyStatusEffectAndPublishResult(effect, entity, logMessage, nil)
             }
 
             updateEffects(statusComponent)
@@ -53,11 +58,12 @@ class StatusEffectsSystem: System {
         }
     }
     
-    func applyDmgOverTimeStatusEffects(_ logMessage: (String) -> Void)  {
+    func applyDmgOverTimeStatusEffects(_ logMessage: (String) -> Void,
+                                       _ battleEffectsDelegate: BattleEffectsDelegate?)  {
         for currentDmgOverTimeStatusEffect in currentDmgOverTimeStatusEffects
             where currentDmgOverTimeStatusEffect.actionMeter >= MAX_ACTION_BAR {
             applyStatusEffectAndPublishResult(currentDmgOverTimeStatusEffect,
-                                              currentDmgOverTimeStatusEffect.target, logMessage)
+                                              currentDmgOverTimeStatusEffect.target, logMessage, battleEffectsDelegate)
             updateDmgOverTimeStatusEffect(currentDmgOverTimeStatusEffect)
         }
         
