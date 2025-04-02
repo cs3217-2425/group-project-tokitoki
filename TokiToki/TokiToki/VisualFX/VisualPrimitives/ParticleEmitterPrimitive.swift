@@ -10,7 +10,7 @@ import UIKit
 class ParticleEmitterPrimitive: VisualFXPrimitive {
     func apply(to view: UIView, with parameters: [String: Any], completion: @escaping () -> Void) {
         guard let particleTypeString = parameters["particleType"] as? String,
-              let particleType = ParticleParameters.ParticleType(rawValue: particleTypeString),
+              let particleType = ParticleType(rawValue: particleTypeString),
               let count = parameters["count"] as? Int,
               let size = parameters["size"] as? CGFloat,
               let speed = parameters["speed"] as? CGFloat,

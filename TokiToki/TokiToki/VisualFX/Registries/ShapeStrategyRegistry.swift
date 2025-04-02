@@ -11,19 +11,19 @@ class ShapeStrategyRegistry {
     static let shared = ShapeStrategyRegistry()
 
     // Dictionary mapping shape types to their respective creation strategies
-    private var strategies: [ShapeParameters.ShapeType: ShapeCreationStrategy] = [:]
+    private var strategies: [ShapeType: ShapeCreationStrategy] = [:]
 
     private init() {
         registerDefaultStrategies()
     }
 
     // Register a strategy for a specific shape type
-    func register(type: ShapeParameters.ShapeType, strategy: ShapeCreationStrategy) {
+    func register(type: ShapeType, strategy: ShapeCreationStrategy) {
         strategies[type] = strategy
     }
 
     // Get the appropriate strategy for a shape type, with fallback to a default
-    func getStrategy(for type: ShapeParameters.ShapeType) -> ShapeCreationStrategy {
+    func getStrategy(for type: ShapeType) -> ShapeCreationStrategy {
         strategies[type] ?? DefaultShapeStrategy()
     }
 

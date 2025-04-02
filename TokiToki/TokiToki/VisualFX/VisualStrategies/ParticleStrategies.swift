@@ -12,6 +12,10 @@ protocol ParticleCreationStrategy {
     func createImage(size: CGSize, color: UIColor) -> UIImage
 }
 
+enum ParticleType: String {
+    case circle, square, triangle, spark, smoke, bubble
+}
+
 // Default fallback strategy
 class DefaultParticleStrategy: ParticleCreationStrategy {
     func createImage(size: CGSize, color: UIColor) -> UIImage {
@@ -47,7 +51,7 @@ class SquareParticleStrategy: ParticleCreationStrategy {
 class TriangleParticleStrategy: ParticleCreationStrategy {
     func createImage(size: CGSize, color: UIColor) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { context in
+        return renderer.image { _ in
             let path = UIBezierPath()
             path.move(to: CGPoint(x: size.width / 2, y: 0))
             path.addLine(to: CGPoint(x: size.width, y: size.height))

@@ -13,8 +13,7 @@ class SkillVisualFXComponent: VisualFXComponent<SkillUsedEvent> {
             return
         }
 
-//        let registry = SkillVisualFXRegistry.shared
-        let registry = ComponentBasedSkillVisualFXRegistry.shared
+        let registry = SkillVisualFXRegistry.shared
 
         for targetId in event.targetIds {
             guard let targetView = getView(for: targetId) else {
@@ -23,7 +22,8 @@ class SkillVisualFXComponent: VisualFXComponent<SkillUsedEvent> {
 
             // Try to get skill-specific effect
             if let effect = registry.createVisualFX(for: event.skillName,
-                                                    sourceView: sourceView, targetView: targetView) {
+                                                    sourceView: sourceView,
+                                                    targetView: targetView) {
                 effect.play {}
             }
         }

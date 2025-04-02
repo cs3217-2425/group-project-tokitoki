@@ -9,21 +9,21 @@ import Foundation
 
 class ParticleStrategyRegistry {
     static let shared = ParticleStrategyRegistry()
-    
-    private var strategies: [ParticleParameters.ParticleType: ParticleCreationStrategy] = [:]
+
+    private var strategies: [ParticleType: ParticleCreationStrategy] = [:]
 
     private init() {
         registerDefaultStrategies()
     }
-    
-    func register(type: ParticleParameters.ParticleType, strategy: ParticleCreationStrategy) {
+
+    func register(type: ParticleType, strategy: ParticleCreationStrategy) {
         strategies[type] = strategy
     }
-    
-    func getStrategy(for type: ParticleParameters.ParticleType) -> ParticleCreationStrategy {
-        return strategies[type] ?? DefaultParticleStrategy()
+
+    func getStrategy(for type: ParticleType) -> ParticleCreationStrategy {
+        strategies[type] ?? DefaultParticleStrategy()
     }
-    
+
     private func registerDefaultStrategies() {
         register(type: .circle, strategy: CircleParticleStrategy())
         register(type: .square, strategy: SquareParticleStrategy())

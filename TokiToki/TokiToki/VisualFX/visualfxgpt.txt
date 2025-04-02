@@ -1,0 +1,1731 @@
+The following text is a Git repository with code. The structure of the text are sections that begin with ----, followed by a single line containing the file path and file name, followed by a variable amount of lines containing the file contents. The text representing the Git repository ends when the symbols --END-- are encounted. Any further text beyond --END-- are meant to be interpreted as instructions using the aforementioned Git repository as context.
+----
+Projectile.swift
+//
+//  Projectile.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+// Projectile class for handling projectile creation and motion
+class Projectile {
+    private let sourceView: UIView
+    private let targetView: UIView
+    private let parameters: ProjectileParameters
+    private var projectileView: UIView?
+    private var trailEmitter: CAEmitterLayer?
+
+    init(sourceView: UIView, targetView: UIView, parameters: ProjectileParameters) {
+        self.sourceView = sourceView
+        self.targetView = targetView
+        self.parameters = parameters
+    }
+
+    func launch(completion: @escaping () -> Void) {
+        // Find the key window to add our projectile to
+        guard let window = UIApplication.shared.keyWindow ?? UIApplication.shared.windows.first else {
+            print("Could not find window")
+            completion()
+            return
+        }
+
+        // Convert source and target positions to window coordinates
+        let sourcePositionInWindow = sourceView.convert(
+            CGPoint(x: sourceView.bounds.midX, y: sourceView.bounds.midY),
+            to: window)
+
+        let targetPositionInWindow = targetView.convert(
+            CGPoint(x: targetView.bounds.midX, y: targetView.bounds.midY),
+            to: window)
+
+        // Create the main projectile view (the center visual shape)
+        let projectileView = createProjectileView()
+        self.projectileView = projectileView
+
+        // Set initial position in window
+        projectileView.center = sourcePositionInWindow
+        window.addSubview(projectileView)
+
+        // Add trail if enabled
+        if parameters.hasTrail, let trailType = parameters.trailType {
+            addTrail(to: projectileView, type: trailType)
+        }
+
+        // DIRECT ANIMATION
+        UIView.animate(withDuration: parameters.duration, animations: {
+            // Move to target
+            projectileView.center = targetPositionInWindow
+
+            // Scale up during movement
+            let scaleAmount = self.parameters.additionalParameters["scaleAmount"] as? CGFloat ?? 1.3
+            projectileView.transform = CGAffineTransform(scaleX: scaleAmount, y: scaleAmount)
+
+        }, completion: { finished in
+            if finished {
+                // Show impact effects
+                if self.parameters.hasImpactEffects {
+                    self.showImpactEffects(at: targetPositionInWindow, in: window)
+                }
+
+                // Fade out projectile
+                UIView.animate(withDuration: 0.2, animations: {
+                    projectileView.alpha = 0
+                }, completion: { _ in
+                    projectileView.removeFromSuperview()
+                    completion()
+                })
+            } else {
+                projectileView.removeFromSuperview()
+                completion()
+            }
+        })
+    }
+
+    private func createProjectileView() -> UIView {
+        let projectileContainer = UIView(frame: CGRect(
+            x: 0, y: 0, width: parameters.size, height: parameters.size
+        ))
+        projectileContainer.backgroundColor = .clear
+
+        // Create shape using strategy
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.frame = projectileContainer.bounds
+        shapeLayer.strokeColor = parameters.color.cgColor
+        shapeLayer.lineWidth = parameters.lineWidth
+        shapeLayer.fillColor = parameters.filled ? parameters.color.cgColor : UIColor.clear.cgColor
+
+        // Use shape strategy to create the main shape
+        let strategy = ShapeStrategyRegistry.shared.getStrategy(for: parameters.shape)
+        shapeLayer.path = strategy.createPath(in: projectileContainer.bounds)
+
+        projectileContainer.layer.addSublayer(shapeLayer)
+
+        // Add glow effect
+        if parameters.filled {
+            projectileContainer.layer.shadowColor = parameters.color.cgColor
+            projectileContainer.layer.shadowOffset = .zero
+            projectileContainer.layer.shadowRadius = 8
+            projectileContainer.layer.shadowOpacity = 0.7
+        }
+
+        return projectileContainer
+    }
+
+    private func addTrail(to projectileView: UIView, type: ParticleType) {
+        // Create emitter layer
+        let emitter = CAEmitterLayer()
+
+        // Position emitter at the center of the projectile
+        emitter.emitterPosition = CGPoint(x: projectileView.bounds.width / 2, y: projectileView.bounds.height / 2)
+
+        // Set emitter properties for a wider spread of particles
+        emitter.emitterShape = .circle
+        emitter.emitterSize = CGSize(width: parameters.size * 5.0, height: parameters.size * 5.0)
+        emitter.renderMode = .additive
+
+        // Create the particle cell
+        let cell = CAEmitterCell()
+
+        // Settings to spread particles more widely
+        cell.birthRate = Float(parameters.trailDensity)
+        cell.lifetime = 0.8
+        cell.lifetimeRange = 0.4
+
+        // Increase velocity and range significantly for wider spread
+        cell.velocity = 25
+        cell.velocityRange = 15
+        cell.emissionRange = .pi * 2
+
+        // Add some radial acceleration to push particles outward
+        cell.xAcceleration = 20
+        cell.yAcceleration = 20
+        cell.emissionLongitude = .pi  // Emit in opposite direction of travel
+
+        // Size settings
+        cell.scale = 0.3
+        cell.scaleRange = 0.2
+        cell.scaleSpeed = -0.1  // Shrink over time
+
+        // Color and alpha
+        let trailColor = parameters.trailColor ?? parameters.color
+        cell.color = trailColor.cgColor
+        cell.alphaSpeed = -1.0
+
+        // Add some spin for more dynamic effect
+        cell.spin = 1.5
+        cell.spinRange = 3.0
+
+        // Use the appropriate particle image
+        let strategy = ParticleStrategyRegistry.shared.getStrategy(for: type)
+        let particleImage = strategy.createImage(size: CGSize(width: 10, height: 10), color: trailColor)
+        cell.contents = particleImage.cgImage
+
+        // Set the cells to the emitter
+        emitter.emitterCells = [cell]
+
+        // Add emitter behind the projectile for better layering
+        if let firstSublayer = projectileView.layer.sublayers?.first {
+            projectileView.layer.insertSublayer(emitter, below: firstSublayer)
+        } else {
+            projectileView.layer.addSublayer(emitter)
+        }
+
+    }
+    private func showImpactEffects(at position: CGPoint, in window: UIView) {
+        // Add flash effect in the window at target position
+        let flashColor = parameters.impactFlashColor ?? parameters.color
+        let flashSize: CGFloat = parameters.size * 3
+        let flashView = UIView(frame: CGRect(
+            x: position.x - flashSize / 2,
+            y: position.y - flashSize / 2,
+            width: flashSize,
+            height: flashSize
+        ))
+        flashView.backgroundColor = flashColor.withAlphaComponent(parameters.impactFlashIntensity)
+        flashView.layer.cornerRadius = flashSize / 2
+        window.addSubview(flashView)
+
+        UIView.animate(withDuration: 0.3, animations: {
+            flashView.alpha = 0
+            flashView.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        }, completion: { _ in
+            flashView.removeFromSuperview()
+        })
+
+        // Add particle burst
+        if let particleType = parameters.impactParticleType {
+            let emitter = CAEmitterLayer()
+            emitter.emitterPosition = position
+            emitter.emitterSize = CGSize(width: 10, height: 10)
+            emitter.emitterShape = .circle
+            emitter.renderMode = .additive
+
+            let cell = CAEmitterCell()
+            cell.birthRate = Float(parameters.impactParticleCount * 5)  // High birth rate for burst
+            cell.lifetime = 0.7
+            cell.lifetimeRange = 0.3
+            cell.velocity = 50
+            cell.velocityRange = 20
+            cell.emissionRange = .pi * 2
+            cell.scale = 0.7
+            cell.scaleRange = 0.3
+
+            // Use color of projectile or specific impact color
+            let impactColor = parameters.impactFlashColor ?? parameters.color
+            cell.color = impactColor.cgColor
+            cell.alphaSpeed = -1.5
+
+            // Use particle strategy to create the right image
+            let strategy = ParticleStrategyRegistry.shared.getStrategy(for: particleType)
+            let particleImage = strategy.createImage(size: CGSize(width: 10, height: 10), color: impactColor)
+            cell.contents = particleImage.cgImage
+
+            emitter.emitterCells = [cell]
+            window.layer.addSublayer(emitter)
+
+            // Stop emission after a short burst
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                emitter.birthRate = 0
+
+                // Remove emitter after particles fade
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    emitter.removeFromSuperlayer()
+                }
+            }
+        }
+    }
+}
+
+----
+Registries/ParticleStrategyRegistry.swift
+//
+//  ParticleStrategyRegistry.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import Foundation
+
+class ParticleStrategyRegistry {
+    static let shared = ParticleStrategyRegistry()
+
+    private var strategies: [ParticleType: ParticleCreationStrategy] = [:]
+
+    private init() {
+        registerDefaultStrategies()
+    }
+
+    func register(type: ParticleType, strategy: ParticleCreationStrategy) {
+        strategies[type] = strategy
+    }
+
+    func getStrategy(for type: ParticleType) -> ParticleCreationStrategy {
+        strategies[type] ?? DefaultParticleStrategy()
+    }
+
+    private func registerDefaultStrategies() {
+        register(type: .circle, strategy: CircleParticleStrategy())
+        register(type: .square, strategy: SquareParticleStrategy())
+        register(type: .triangle, strategy: TriangleParticleStrategy())
+        register(type: .spark, strategy: SparkParticleStrategy())
+        register(type: .smoke, strategy: SmokeParticleStrategy())
+        register(type: .bubble, strategy: BubbleParticleStrategy())
+    }
+}
+
+----
+Registries/ProjectileStrategyRegistry.swift
+//
+//  ProjectileStrategyRegistry.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import Foundation
+
+// Registry for projectile strategies
+class ProjectileStrategyRegistry {
+    static let shared = ProjectileStrategyRegistry()
+
+    private var strategies: [ProjectileType: ProjectileStrategy] = [:]
+
+    private init() {
+        registerDefaultStrategies()
+    }
+
+    func register(type: ProjectileType, strategy: ProjectileStrategy) {
+        strategies[type] = strategy
+    }
+
+    func getStrategy(for type: ProjectileType) -> ProjectileStrategy {
+        strategies[type] ?? LinearProjectileStrategy()  // Default to linear if type not found
+    }
+
+    private func registerDefaultStrategies() {
+        register(type: .linear, strategy: LinearProjectileStrategy())
+        register(type: .arc, strategy: ArcProjectileStrategy())
+    }
+}
+
+----
+Registries/ShapeStrategyRegistry.swift
+//
+//  ShapeStrategyRegistry.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import Foundation
+
+class ShapeStrategyRegistry {
+    static let shared = ShapeStrategyRegistry()
+
+    // Dictionary mapping shape types to their respective creation strategies
+    private var strategies: [ShapeType: ShapeCreationStrategy] = [:]
+
+    private init() {
+        registerDefaultStrategies()
+    }
+
+    // Register a strategy for a specific shape type
+    func register(type: ShapeType, strategy: ShapeCreationStrategy) {
+        strategies[type] = strategy
+    }
+
+    // Get the appropriate strategy for a shape type, with fallback to a default
+    func getStrategy(for type: ShapeType) -> ShapeCreationStrategy {
+        strategies[type] ?? DefaultShapeStrategy()
+    }
+
+    // Register built-in strategies during initialization
+    private func registerDefaultStrategies() {
+        register(type: .circle, strategy: CircleShapeStrategy())
+        register(type: .square, strategy: SquareShapeStrategy())
+        register(type: .triangle, strategy: TriangleShapeStrategy())
+        register(type: .x, strategy: XShapeStrategy())
+        register(type: .line, strategy: LineShapeStrategy())
+        register(type: .arc, strategy: ArcShapeStrategy())
+        register(type: .spiral, strategy: SpiralShapeStrategy())
+        register(type: .star, strategy: StarShapeStrategy())
+    }
+}
+
+----
+Registries/SkillVisualFXRegistry.swift
+//
+//  ComponentBasedSkillVisualFXRegistry.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+class SkillVisualFXRegistry {
+    static let shared = SkillVisualFXRegistry()
+
+    private var effectFactories: [SkillVisual: (UIView, UIView) -> SkillVisualFX] = [:]
+
+    private init() {
+        registerSkillVisualFXs()
+    }
+
+    func register(skillVisual: SkillVisual, factory: @escaping (UIView, UIView) -> SkillVisualFX) {
+        effectFactories[skillVisual] = factory
+    }
+
+    func createVisualFX(for skillVisual: SkillVisual, sourceView: UIView, targetView: UIView) -> SkillVisualFX? {
+        if let factory = effectFactories[skillVisual] {
+            return factory(sourceView, targetView)
+        }
+        return nil
+    }
+
+    func createVisualFX(for skillName: String, sourceView: UIView, targetView: UIView) -> SkillVisualFX? {
+        // Try to map to enum first to see if there are existing skill visuals already
+        if let skillVisual = SkillVisual.fromString(skillName) {
+            return createVisualFX(for: skillVisual, sourceView: sourceView, targetView: targetView)
+        }
+
+        // Default fallback
+        return SkillVisualFXFactory.createDefaultSkillVisualFX(
+            sourceView: sourceView,
+            targetView: targetView
+        )
+    }
+
+    private func registerSkillVisualFXs() {
+        register(skillVisual: .fireball) { sourceView, targetView in
+            SkillVisualFXFactory.createFireballFX(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .fireSlash) { sourceView, targetView in
+            SkillVisualFXFactory.createFireslashFX(sourceView: sourceView, targetView: targetView)
+        }
+    }
+}
+
+----
+Registries/StatusEffectVisualFXRegistry.swift
+//
+//  StatusEffectVisualFXRegistry.swift
+//  TokiToki
+//
+//  Created by wesho on 23/3/25.
+//
+
+import UIKit
+
+class StatusEffectVisualFXRegistry {
+    static let shared = StatusEffectVisualFXRegistry()
+
+    private var effectFactories: [StatusEffectType: (UIView) -> StatusEffectVisualFX] = [:]
+
+    private init() {
+        registerStatusEffectVFXs()
+    }
+
+    func register(effectType: StatusEffectType, factory: @escaping (UIView) -> StatusEffectVisualFX) {
+        effectFactories[effectType] = factory
+    }
+
+    func createVisualFX(for effectType: StatusEffectType, targetView: UIView) -> StatusEffectVisualFX? {
+        effectFactories[effectType]?(targetView)
+    }
+
+    private func registerStatusEffectVFXs() {
+        register(effectType: .burn) { targetView in
+            BurnVisualFX(targetView: targetView)
+        }
+        // TODO: Add other StatusEffect VisualFXs
+    }
+}
+
+// Base protocol for skill visual effects
+protocol StatusEffectVisualFX {
+    func play(completion: @escaping () -> Void)
+}
+
+----
+SkillVisualFX/CompositeVisualFX.swift
+//
+//  CompositeVisualFX.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+// Composite visual effect that combines multiple primitives
+class CompositeVisualFX: SkillVisualFX {
+    private let sourceView: UIView
+    private let targetView: UIView
+
+    private var primitives: [(VisualFXPrimitive, [String: Any])] = []
+
+    init(sourceView: UIView, targetView: UIView) {
+        self.sourceView = sourceView
+        self.targetView = targetView
+    }
+
+    func getSourceView() -> UIView {
+        sourceView
+    }
+
+    func getTargetView() -> UIView {
+        targetView
+    }
+
+    func addPrimitive(_ primitive: VisualFXPrimitive, with parameters: [String: Any]) {
+        var updatedParameters = parameters
+
+        // Add a reference to the composite effect for primitives that need both source and target
+        if primitive is ProjectilePrimitive {
+            updatedParameters["compositeEffect"] = self
+        }
+
+        primitives.append((primitive, updatedParameters))
+    }
+
+    func play(completion: @escaping () -> Void) {
+        playNextPrimitive(index: 0, completion: completion)
+    }
+
+    private func playNextPrimitive(index: Int, completion: @escaping () -> Void) {
+        guard index < primitives.count else {
+            completion()
+            return
+        }
+
+        let (primitive, parameters) = primitives[index]
+        let isTargetEffect = parameters["isTargetEffect"] as? Bool ?? false
+        let view = isTargetEffect ? targetView : sourceView
+
+        primitive.apply(to: view, with: parameters) { [self] in
+            self.playNextPrimitive(index: index + 1, completion: completion)
+        }
+    }
+}
+
+----
+SkillVisualFX/SkillVisualFX.swift
+//
+//  SkillVisualFX.swift
+//  TokiToki
+//
+//  Created by wesho on 1/4/25.
+//
+
+import Foundation
+
+// Base protocol for skill visual effects
+protocol SkillVisualFX {
+    func play(completion: @escaping () -> Void)
+}
+
+----
+SkillVisualFX/SkillVisualFXFactory.swift
+//
+//  SkillVisualFXFactory.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+class SkillVisualFXFactory {
+    static func createFireballFX(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        // Fire color
+        let fireColor = UIColor.orange
+
+        return builder
+            .addProjectile(
+                shape: .circle,
+                size: 30,
+                color: fireColor,
+                filled: true,
+                motionType: .linear,
+                duration: 0.8,
+                trailType: .smoke,
+                impactParticleType: .spark
+            )
+            .build()
+    }
+
+    static func createFireslashFX(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        // Fire color
+        let fireColor = UIColor.orange
+
+        return builder
+            // Source effect - sword charges
+            .addColorFlash(color: fireColor, intensity: 0.3, fade: true, isTargetEffect: false)
+
+            // Target impact effects
+            .addShape(type: .x, size: 80, lineWidth: 4, color: fireColor, isTargetEffect: true)
+            .addColorFlash(color: fireColor, intensity: 0.5, isTargetEffect: true)
+            .addParticles(type: .circle, count: 25, size: 8, speed: 35,
+                          lifetime: 0.6, color: fireColor, isTargetEffect: true)
+
+            .build()
+    }
+
+    // Method to create default effect
+    static func createDefaultSkillVisualFX(
+        sourceView: UIView,
+        targetView: UIView
+    ) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addColorFlash(color: .red, intensity: 0.5, isTargetEffect: true)
+            .build()
+    }
+}
+
+----
+StatusEffectVisualFX/BurnVisualFX.swift
+//
+//  BurnVisualFX.swift
+//  TokiToki
+//
+//  Created by wesho on 23/3/25.
+//
+
+import UIKit
+
+class BurnVisualFX: StatusEffectVisualFX {
+    private let targetView: UIView
+
+    init(targetView: UIView) {
+        self.targetView = targetView
+    }
+
+    func play(completion: @escaping () -> Void) {
+        // Create a burst of fire particles
+        let emitter = createFireEmitter()
+        targetView.layer.addSublayer(emitter)
+
+        // Show damage number
+        let damageLabel = UILabel()
+        damageLabel.text = "BURN"
+        damageLabel.textColor = .orange
+        damageLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        damageLabel.sizeToFit()
+        damageLabel.center = CGPoint(x: targetView.bounds.midX, y: targetView.bounds.midY - 30)
+        targetView.addSubview(damageLabel)
+
+        // Animate the damage text rising and fading
+        UIView.animate(withDuration: 0.8, animations: {
+            damageLabel.alpha = 0
+            damageLabel.center.y -= 50
+        }, completion: { _ in
+            damageLabel.removeFromSuperview()
+        })
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            emitter.removeFromSuperlayer()
+            completion()
+        }
+    }
+
+    private func createFireEmitter() -> CAEmitterLayer {
+        let emitter = CAEmitterLayer()
+        emitter.emitterPosition = CGPoint(x: targetView.bounds.midX, y: targetView.bounds.midY)
+        emitter.emitterSize = CGSize(width: targetView.bounds.width, height: targetView.bounds.height)
+        emitter.emitterShape = .rectangle
+        emitter.renderMode = .additive
+
+        let cell = CAEmitterCell()
+        cell.birthRate = 100
+        cell.lifetime = 0.8
+        cell.lifetimeRange = 0.3
+        cell.velocity = 30
+        cell.velocityRange = 20
+        cell.emissionRange = .pi * 2
+        cell.scale = 0.1
+        cell.scaleRange = 0.05
+        cell.color = UIColor(red: 1.0, green: 0.3, blue: 0.1, alpha: 0.8).cgColor
+        cell.alphaSpeed = -1.0
+
+        let image = createCircleImage(diameter: 10, color: .orange)
+        cell.contents = image.cgImage
+
+        emitter.emitterCells = [cell]
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            emitter.birthRate = 0
+        }
+
+        return emitter
+    }
+
+    private func createCircleImage(diameter: CGFloat, color: UIColor) -> UIImage {
+        let size = CGSize(width: diameter, height: diameter)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            color.setFill()
+            context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
+        }
+    }
+}
+
+----
+VisualFXBuilder.swift
+//
+//  VisualFXBuilder.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+class VisualFXBuilder {
+    private var compositeEffect: CompositeVisualFX
+
+    init(sourceView: UIView, targetView: UIView) {
+        compositeEffect = CompositeVisualFX(sourceView: sourceView, targetView: targetView)
+    }
+
+    func addColorFlash(color: UIColor, intensity: CGFloat = 0.5,
+                       fade: Bool = true, isTargetEffect: Bool = true) -> VisualFXBuilder {
+        var parameters = ColorParameters(color: color, intensity: intensity, fade: fade).toDictionary()
+        parameters["isTargetEffect"] = isTargetEffect
+
+        compositeEffect.addPrimitive(ColorFlashPrimitive(), with: parameters)
+        return self
+    }
+
+    func addShape(type: ShapeType,
+                  size: CGFloat,
+                  lineWidth: CGFloat = 2.0,
+                  color: UIColor = .white,
+                  filled: Bool = false,
+                  isTargetEffect: Bool = true
+    ) -> VisualFXBuilder {
+        var parameters = ShapeParameters(type: type, size: size, lineWidth: lineWidth).toDictionary()
+        parameters["color"] = color
+        parameters["filled"] = filled
+        parameters["isTargetEffect"] = isTargetEffect
+
+        compositeEffect.addPrimitive(ShapePrimitive(), with: parameters)
+        return self
+    }
+
+    func addParticles(
+        type: ParticleType,
+        count: Int,
+        size: CGFloat,
+        speed: CGFloat = 30.0,
+        lifetime: TimeInterval = 0.8,
+        spreadRadius: CGFloat = 50.0,
+        color: UIColor = .white,
+        isTargetEffect: Bool = true
+    ) -> VisualFXBuilder {
+        var parameters = ParticleParameters(
+            type: type,
+            count: count,
+            size: size,
+            speed: speed,
+            lifetime: lifetime,
+            spreadRadius: spreadRadius
+        ).toDictionary()
+        parameters["color"] = color
+        parameters["isTargetEffect"] = isTargetEffect
+
+        compositeEffect.addPrimitive(ParticleEmitterPrimitive(), with: parameters)
+        return self
+    }
+
+    func addProjectile(
+        shape: ShapeType = .circle,
+        size: CGFloat = 30,
+        color: UIColor = .orange,
+        lineWidth: CGFloat = 2,
+        filled: Bool = true,
+        motionType: ProjectileType = .linear,
+        duration: TimeInterval = 0.8,
+        hasTrail: Bool = true,
+        trailType: ParticleType? = .spark,
+        trailDensity: Int = 50,
+        trailColor: UIColor? = nil,
+        hasImpactEffects: Bool = true,
+        impactParticleType: ParticleType? = .spark,
+        impactParticleCount: Int = 25,
+        impactFlashColor: UIColor? = nil,
+        impactFlashIntensity: CGFloat = 0.7,
+        additionalParameters: [String: Any] = [:]
+    ) -> VisualFXBuilder {
+        let params = ProjectileParameters(
+            shape: shape,
+            size: size,
+            color: color,
+            lineWidth: lineWidth,
+            filled: filled,
+            motionType: motionType,
+            duration: duration,
+            hasTrail: hasTrail,
+            trailType: trailType,
+            trailDensity: trailDensity,
+            trailColor: trailColor,
+            hasImpactEffects: hasImpactEffects,
+            impactParticleType: impactParticleType,
+            impactParticleCount: impactParticleCount,
+            impactFlashColor: impactFlashColor,
+            impactFlashIntensity: impactFlashIntensity,
+            additionalParameters: additionalParameters
+        )
+
+        compositeEffect.addPrimitive(ProjectilePrimitive(), with: ["parameters": params])
+        return self
+    }
+
+    func build() -> SkillVisualFX {
+        compositeEffect
+    }
+}
+
+----
+VisualFXComponents/CriticalHitEffectComponent.swift
+//
+//  CriticalHitEffectComponent.swift
+//  TokiToki
+//
+//  Created by wesho on 23/3/25.
+//
+
+import UIKit
+
+class CriticalHitEffectComponent: VisualFXComponent<DamageDealtEvent> {
+    override func handleEvent(_ event: DamageDealtEvent) {
+        guard event.isCritical else {
+            return
+        }
+
+        guard let targetView = getView(for: event.targetId) else {
+            return
+        }
+
+        createCriticalHitEffect(on: targetView, amount: event.amount)
+    }
+
+    private func createCriticalHitEffect(on view: UIView, amount: Int) {
+        // Flash the view in red to indicate critical damage taken
+        let flashView = UIView(frame: view.bounds)
+        flashView.backgroundColor = UIColor.red.withAlphaComponent(0.5)
+        view.addSubview(flashView)
+
+        // Create damage number
+        let damageLabel = UILabel()
+        damageLabel.text = "\(amount)"
+        damageLabel.textColor = .red
+        damageLabel.font = UIFont.boldSystemFont(ofSize: 24)
+        damageLabel.sizeToFit()
+        damageLabel.center = CGPoint(x: view.bounds.midX, y: view.bounds.midY - 30)
+        view.addSubview(damageLabel)
+
+        // Create "CRITICAL" text
+        let criticalLabel = UILabel()
+        criticalLabel.text = "CRITICAL!"
+        criticalLabel.textColor = .yellow
+        criticalLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        criticalLabel.sizeToFit()
+        criticalLabel.center = CGPoint(x: view.bounds.midX, y: view.bounds.midY - 60)
+        view.addSubview(criticalLabel)
+
+        // Animate everything
+        UIView.animate(withDuration: 0.1, animations: {
+            flashView.alpha = 1.0
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.1, animations: {
+                flashView.alpha = 0
+            }, completion: { _ in
+                UIView.animate(withDuration: 0.1, animations: {
+                    flashView.alpha = 0.5
+                }, completion: { _ in
+                    UIView.animate(withDuration: 0.6, animations: {
+                        flashView.alpha = 0
+                        damageLabel.alpha = 0
+                        damageLabel.center.y -= 40
+                        criticalLabel.alpha = 0
+                        criticalLabel.center.y -= 40
+                    }, completion: { _ in
+                        flashView.removeFromSuperview()
+                        damageLabel.removeFromSuperview()
+                        criticalLabel.removeFromSuperview()
+                    })
+                })
+            })
+        })
+    }
+}
+
+----
+VisualFXComponents/SkillVisualFXComponent.swift
+//
+//  SkillVisualFXComponent.swift
+//  TokiToki
+//
+//  Created by wesho on 23/3/25.
+//
+
+import UIKit
+
+class SkillVisualFXComponent: VisualFXComponent<SkillUsedEvent> {
+    override func handleEvent(_ event: SkillUsedEvent) {
+        guard let sourceView = getView(for: event.entityId) else {
+            return
+        }
+
+        let registry = SkillVisualFXRegistry.shared
+
+        for targetId in event.targetIds {
+            guard let targetView = getView(for: targetId) else {
+                continue
+            }
+
+            // Try to get skill-specific effect
+            if let effect = registry.createVisualFX(for: event.skillName,
+                                                    sourceView: sourceView,
+                                                    targetView: targetView) {
+                effect.play {}
+            }
+        }
+    }
+}
+
+----
+VisualFXComponents/StatusEffectVisualFXComponent.swift
+//
+//  StatusEffectVisualFXComponent.swift
+//  TokiToki
+//
+//  Created by wesho on 23/3/25.
+//
+
+import UIKit
+
+class StatusEffectVisualFXComponent: VisualFXComponent<StatusEffectAppliedEvent> {
+    override func handleEvent(_ event: StatusEffectAppliedEvent) {
+        let registry = StatusEffectVisualFXRegistry.shared
+
+        guard let targetView = getView(for: event.targetId) else {
+            return
+        }
+
+        if let effect = registry.createVisualFX(for: event.effectType, targetView: targetView) {
+            effect.play {}
+        }
+    }
+}
+
+----
+VisualFXComponents/VisualFXComponent.swift
+//
+//  EffectComponent.swift
+//  TokiToki
+//
+//  Created by wesho on 22/3/25.
+//
+
+// EffectComponent.swift
+import UIKit
+
+class VisualFXComponent<E: BattleEvent> {
+    private let viewProvider: ((UUID) -> UIView?)
+
+    init(viewProvider: @escaping (UUID) -> UIView?) {
+        self.viewProvider = viewProvider
+        registerHandlers()
+    }
+
+    func registerHandlers() {
+        EventBus.shared.register { [weak self] (event: E) in
+            self?.handleEvent(event)
+        }
+    }
+
+    func handleEvent(_ event: E) {
+        // Base implementation does nothing
+        // Subclasses will override to implement specific effects
+    }
+
+    func getView(for entityId: UUID) -> UIView? {
+        viewProvider(entityId)
+    }
+}
+
+----
+VisualPrimitives/ColorFlashPrimitive.swift
+//
+//  ColorFlashPrimitive.swift
+//  TokiToki
+//
+//  Created by wesho on 30/3/25.
+//
+
+import UIKit
+
+class ColorFlashPrimitive: VisualFXPrimitive {
+    func apply(to view: UIView, with parameters: [String: Any], completion: @escaping () -> Void) {
+        guard let color = parameters["color"] as? UIColor,
+              let intensity = parameters["intensity"] as? CGFloat,
+              let fade = parameters["fade"] as? Bool else {
+            completion()
+            return
+        }
+
+        let flashView = UIView(frame: view.bounds)
+        flashView.backgroundColor = color.withAlphaComponent(intensity)
+        view.addSubview(flashView)
+
+        if fade {
+            UIView.animate(withDuration: 0.3, animations: {
+                flashView.alpha = 0
+            }, completion: { _ in
+                flashView.removeFromSuperview()
+                completion()
+            })
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                flashView.removeFromSuperview()
+                completion()
+            }
+        }
+    }
+}
+
+----
+VisualPrimitives/ParticleEmitterPrimitive.swift
+//
+//  ParticleEmitterPrimitive.swift
+//  TokiToki
+//
+//  Created by wesho on 30/3/25.
+//
+
+import UIKit
+
+class ParticleEmitterPrimitive: VisualFXPrimitive {
+    func apply(to view: UIView, with parameters: [String: Any], completion: @escaping () -> Void) {
+        guard let particleTypeString = parameters["particleType"] as? String,
+              let particleType = ParticleType(rawValue: particleTypeString),
+              let count = parameters["count"] as? Int,
+              let size = parameters["size"] as? CGFloat,
+              let speed = parameters["speed"] as? CGFloat,
+              let lifetime = parameters["lifetime"] as? TimeInterval,
+              let spreadRadius = parameters["spreadRadius"] as? CGFloat else {
+            completion()
+            return
+        }
+
+        let color = parameters["color"] as? UIColor ?? .white
+
+        let emitter = CAEmitterLayer()
+        emitter.emitterPosition = CGPoint(x: view.bounds.midX, y: view.bounds.midY)
+        emitter.emitterSize = CGSize(width: spreadRadius, height: spreadRadius)
+        emitter.emitterShape = .circle
+        emitter.renderMode = .additive
+
+        let cell = CAEmitterCell()
+        cell.birthRate = Float(count)
+        cell.lifetime = Float(lifetime)
+        cell.velocity = speed
+        cell.velocityRange = speed / 2
+        cell.emissionRange = .pi * 2
+        cell.scale = size / 10
+        cell.scaleRange = size / 20
+        cell.color = color.cgColor
+        cell.alphaSpeed = -1.0
+
+        // Use strategy pattern instead of switch
+        let strategy = ParticleStrategyRegistry.shared.getStrategy(for: particleType)
+        let image = strategy.createImage(size: CGSize(width: 20, height: 20), color: color)
+        cell.contents = image.cgImage
+
+        emitter.emitterCells = [cell]
+        view.layer.addSublayer(emitter)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // Stop emitting new particles
+            emitter.birthRate = 0
+
+            // Remove emitter after all particles are gone
+            DispatchQueue.main.asyncAfter(deadline: .now() + lifetime) {
+                emitter.removeFromSuperlayer()
+                completion()
+            }
+        }
+    }
+}
+
+----
+VisualPrimitives/ProjectilePrimitive.swift
+//
+//  ProjectilePrimitive.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+class ProjectilePrimitive: VisualFXPrimitive {
+    func apply(to view: UIView, with parameters: [String: Any], completion: @escaping () -> Void) {
+        guard let projectileParams = parameters["parameters"] as? ProjectileParameters else {
+            completion()
+            return
+        }
+
+        // Get both source and target views from the CompositeVisualFX
+        guard let compositeEffect = parameters["compositeEffect"] as? CompositeVisualFX else {
+            print("Error: ProjectilePrimitive requires a reference to the CompositeVisualFX")
+            completion()
+            return
+        }
+
+        let sourceView = compositeEffect.getSourceView()
+        let targetView = compositeEffect.getTargetView()
+
+        let projectile = Projectile(
+            sourceView: sourceView,
+            targetView: targetView,
+            parameters: projectileParams
+        )
+
+        // Launch the projectile
+        projectile.launch {
+            completion()
+        }
+    }
+}
+
+----
+VisualPrimitives/ShapePrimitive.swift
+//
+//  ShapePrimitive.swift
+//  TokiToki
+//
+//  Created by wesho on 30/3/25.
+//
+
+import UIKit
+
+class ShapePrimitive: VisualFXPrimitive {
+    func apply(to view: UIView, with parameters: [String: Any], completion: @escaping () -> Void) {
+        guard let shapeTypeString = parameters["shapeType"] as? String,
+              let shapeType = ShapeType(rawValue: shapeTypeString),
+              let size = parameters["size"] as? CGFloat,
+              let lineWidth = parameters["lineWidth"] as? CGFloat else {
+            completion()
+            return
+        }
+
+        let color = parameters["color"] as? UIColor ?? .white
+        let filled = parameters["filled"] as? Bool ?? false
+
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.frame = view.bounds
+        shapeLayer.strokeColor = color.cgColor
+        shapeLayer.lineWidth = lineWidth
+        shapeLayer.fillColor = filled ? color.cgColor : UIColor.clear.cgColor
+
+        // Use strategy pattern instead of switch-cases
+        let strategy = ShapeStrategyRegistry.shared.getStrategy(for: shapeType)
+        let rect = CGRect(x: (view.bounds.width - size) / 2,
+                          y: (view.bounds.height - size) / 2,
+                          width: size, height: size)
+        shapeLayer.path = strategy.createPath(in: rect)
+
+        view.layer.addSublayer(shapeLayer)
+
+        // Animate the shape
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
+        animation.fromValue = 0
+        animation.toValue = 1
+        animation.duration = 0.3
+        shapeLayer.add(animation, forKey: "strokeEnd")
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            shapeLayer.removeFromSuperlayer()
+            completion()
+        }
+    }
+}
+
+----
+VisualPrimitives/VisualFXPrimitive.swift
+//
+//  VisualFXPrimitive.swift
+//  TokiToki
+//
+//  Created by wesho on 30/3/25.
+//
+
+import UIKit
+
+// Base protocol for a single VFX component
+protocol VisualFXPrimitive {
+    func apply(to view: UIView, with parameters: [String: Any], completion: @escaping () -> Void)
+}
+
+// Parameters structs for common effect components
+struct ColorParameters {
+    let color: UIColor
+    let intensity: CGFloat
+    let fade: Bool
+
+    func toDictionary() -> [String: Any] {
+        [
+            "color": color,
+            "intensity": intensity,
+            "fade": fade
+        ]
+    }
+}
+
+struct ShapeParameters {
+    let type: ShapeType
+    let size: CGFloat
+    let lineWidth: CGFloat
+
+    func toDictionary() -> [String: Any] {
+        [
+            "shapeType": type.rawValue,
+            "size": size,
+            "lineWidth": lineWidth
+        ]
+    }
+}
+
+struct ParticleParameters {
+    let type: ParticleType
+    let count: Int
+    let size: CGFloat
+    let speed: CGFloat
+    let lifetime: TimeInterval
+    let spreadRadius: CGFloat
+
+    func toDictionary() -> [String: Any] {
+        [
+            "particleType": type.rawValue,
+            "count": count,
+            "size": size,
+            "speed": speed,
+            "lifetime": lifetime,
+            "spreadRadius": spreadRadius
+        ]
+    }
+}
+
+struct MotionParameters {
+    enum MotionType: String {
+        case linear, arc, bounce, fadeIn, fadeOut, grow, shrink, orbit
+    }
+
+    let type: MotionType
+    let duration: TimeInterval
+    let distance: CGFloat
+
+    func toDictionary() -> [String: Any] {
+        [
+            "motionType": type.rawValue,
+            "duration": duration,
+            "distance": distance
+        ]
+    }
+}
+
+struct ProjectileParameters {
+    // Basic appearance, the main projectile
+    let shape: ShapeType
+    let size: CGFloat
+    let color: UIColor
+    let lineWidth: CGFloat
+    let filled: Bool
+
+    // Motion parameters
+    let motionType: ProjectileType
+    let duration: TimeInterval
+
+    // Trail effect
+    let hasTrail: Bool
+    let trailType: ParticleType?
+    let trailDensity: Int
+    let trailColor: UIColor?
+
+    // Impact effects, visual upon impact
+    let hasImpactEffects: Bool
+    let impactParticleType: ParticleType?
+    let impactParticleCount: Int
+    let impactFlashColor: UIColor?
+    let impactFlashIntensity: CGFloat
+
+    // Additional parameters for specific motion types
+    var additionalParameters: [String: Any]
+
+    // Initialization with default values
+    init(
+        shape: ShapeType = .circle,
+        size: CGFloat = 30,
+        color: UIColor = .white,
+        lineWidth: CGFloat = 2,
+        filled: Bool = true,
+        motionType: ProjectileType = .linear,
+        duration: TimeInterval = 1.0,
+        hasTrail: Bool = false,
+        trailType: ParticleType?,
+        trailDensity: Int = 50,
+        trailColor: UIColor? = nil,
+        hasImpactEffects: Bool = false,
+        impactParticleType: ParticleType?,
+        impactParticleCount: Int = 25,
+        impactFlashColor: UIColor? = nil,  // Default to projectile color if nil
+        impactFlashIntensity: CGFloat = 0.7,
+        additionalParameters: [String: Any] = [:]
+    ) {
+        self.shape = shape
+        self.size = size
+        self.color = color
+        self.lineWidth = lineWidth
+        self.filled = filled
+        self.motionType = motionType
+        self.duration = duration
+        self.hasTrail = hasTrail
+        self.trailType = trailType
+        self.trailDensity = trailDensity
+        self.trailColor = trailColor
+        self.hasImpactEffects = hasImpactEffects
+        self.impactParticleType = impactParticleType
+        self.impactParticleCount = impactParticleCount
+        self.impactFlashColor = impactFlashColor
+        self.impactFlashIntensity = impactFlashIntensity
+
+        // Add default scale effect if not specified
+        var updatedParams = additionalParameters
+        if updatedParams["scaleEffect"] == nil {
+            updatedParams["scaleEffect"] = true
+        }
+        if updatedParams["scaleAmount"] == nil {
+            updatedParams["scaleAmount"] = 1.3
+        }
+        self.additionalParameters = updatedParams
+    }
+}
+
+----
+VisualStrategies/ParticleStrategies.swift
+//
+//  ParticleStrategies.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+// Particle creation strategy protocol
+protocol ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage
+}
+
+enum ParticleType: String {
+    case circle, square, triangle, spark, smoke, bubble
+}
+
+// Default fallback strategy
+class DefaultParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            color.setFill()
+            context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
+        }
+    }
+}
+
+// Specific particle strategies
+class CircleParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            color.setFill()
+            context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
+        }
+    }
+}
+
+class SquareParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            color.setFill()
+            context.cgContext.fill(CGRect(origin: .zero, size: size))
+        }
+    }
+}
+
+class TriangleParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            let path = UIBezierPath()
+            path.move(to: CGPoint(x: size.width / 2, y: 0))
+            path.addLine(to: CGPoint(x: size.width, y: size.height))
+            path.addLine(to: CGPoint(x: 0, y: size.height))
+            path.close()
+
+            color.setFill()
+            path.fill()
+        }
+    }
+}
+
+class SparkParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let cgContext = context.cgContext
+
+            // Create a spark-like gradient
+            let locations: [CGFloat] = [0.0, 0.5, 1.0]
+            let colors: [CGColor] = [
+                color.withAlphaComponent(0.8).cgColor,
+                color.withAlphaComponent(0.4).cgColor,
+                color.withAlphaComponent(0.0).cgColor
+            ]
+
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: locations)!
+
+            cgContext.drawRadialGradient(gradient,
+                                         startCenter: CGPoint(x: size.width / 2, y: size.height / 2),
+                                         startRadius: 0,
+                                         endCenter: CGPoint(x: size.width / 2, y: size.height / 2),
+                                         endRadius: size.width / 2,
+                                         options: .drawsBeforeStartLocation)
+        }
+    }
+}
+
+class SmokeParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let cgContext = context.cgContext
+
+            // Create a smoke-like gradient
+            let locations: [CGFloat] = [0.0, 0.5, 1.0]
+            let colors: [CGColor] = [
+                color.withAlphaComponent(0.6).cgColor,
+                color.withAlphaComponent(0.3).cgColor,
+                color.withAlphaComponent(0.0).cgColor
+            ]
+
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: locations)!
+
+            cgContext.drawRadialGradient(gradient,
+                                         startCenter: CGPoint(x: size.width / 2, y: size.height / 2),
+                                         startRadius: 0,
+                                         endCenter: CGPoint(x: size.width / 2, y: size.height / 2),
+                                         endRadius: size.width / 2,
+                                         options: .drawsBeforeStartLocation)
+        }
+    }
+}
+
+class BubbleParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            // Outer circle
+            color.withAlphaComponent(0.7).setStroke()
+            let circlePath = UIBezierPath(ovalIn: CGRect(x: 1, y: 1, width: size.width - 2, height: size.height - 2))
+            circlePath.lineWidth = 1
+            circlePath.stroke()
+
+            // Inner highlight
+            color.withAlphaComponent(0.3).setFill()
+            let highlightPath = UIBezierPath(ovalIn: CGRect(x: size.width * 0.25, y: size.width * 0.25,
+                                                            width: size.width * 0.25, height: size.height * 0.25))
+            highlightPath.fill()
+        }
+    }
+}
+
+----
+VisualStrategies/ProjectileStrategies.swift
+//
+//  ProjectileStrategies.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+// Protocol for projectile motion strategies
+protocol ProjectileStrategy {
+    func applyProjectileMotion(
+        projectileView: UIView,
+        from sourcePoint: CGPoint,
+        to targetPoint: CGPoint,
+        with parameters: [String: Any],
+        completion: @escaping () -> Void
+    )
+}
+
+enum ProjectileType: String {
+    case linear
+    case arc
+}
+
+// Strategy for linear projectile motion
+class LinearProjectileStrategy: ProjectileStrategy {
+    func applyProjectileMotion(
+        projectileView: UIView,
+        from sourcePoint: CGPoint,
+        to targetPoint: CGPoint,
+        with parameters: [String: Any],
+        completion: @escaping () -> Void
+    ) {
+        let duration = parameters["duration"] as? TimeInterval ?? 0.8
+
+        // Make sure initial position is set correctly
+        projectileView.center = sourcePoint
+
+        // Optional scaling effect during animation
+        let scaleEffect = parameters["scaleEffect"] as? Bool ?? true
+        let scaleAmount = parameters["scaleAmount"] as? CGFloat ?? 1.3
+
+        UIView.animate(withDuration: duration, animations: {
+            // Move to target
+            projectileView.center = targetPoint
+
+            // Optional scale effect
+            if scaleEffect {
+                projectileView.transform = CGAffineTransform(scaleX: scaleAmount, y: scaleAmount)
+            }
+        }, completion: { finished in
+            if finished {
+                completion()
+            }
+        })
+    }
+}
+
+// Strategy for arc projectile motion
+class ArcProjectileStrategy: ProjectileStrategy {
+    func applyProjectileMotion(
+        projectileView: UIView,
+        from sourcePoint: CGPoint,
+        to targetPoint: CGPoint,
+        with parameters: [String: Any],
+        completion: @escaping () -> Void
+    ) {
+        let duration = parameters["duration"] as? TimeInterval ?? 0.8
+        let arcHeight = parameters["arcHeight"] as? CGFloat ?? 100.0
+
+        // Make sure initial position is set correctly
+        projectileView.center = sourcePoint
+
+        // Optional scaling effect during animation
+        let scaleEffect = parameters["scaleEffect"] as? Bool ?? true
+        let scaleAmount = parameters["scaleAmount"] as? CGFloat ?? 1.3
+
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            if scaleEffect {
+                // Ensure scale is applied by completion
+                projectileView.transform = CGAffineTransform(scaleX: scaleAmount, y: scaleAmount)
+            }
+            completion()
+        }
+
+        // Create the arc path
+        let path = UIBezierPath()
+        path.move(to: sourcePoint)
+
+        let controlPoint = CGPoint(
+            x: (sourcePoint.x + targetPoint.x) / 2,
+            y: min(sourcePoint.y, targetPoint.y) - arcHeight
+        )
+        path.addQuadCurve(to: targetPoint, controlPoint: controlPoint)
+
+        // Set up the path animation
+        let animation = CAKeyframeAnimation(keyPath: "position")
+        animation.path = path.cgPath
+        animation.duration = duration
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+        // Apply the animation
+        projectileView.layer.add(animation, forKey: "arcMotion")
+
+        // Apply scale if needed
+        if scaleEffect {
+            UIView.animate(withDuration: duration) {
+                projectileView.transform = CGAffineTransform(scaleX: scaleAmount, y: scaleAmount)
+            }
+        }
+
+        // Update the model value to match final position
+        projectileView.center = targetPoint
+
+        CATransaction.commit()
+    }
+}
+
+----
+VisualStrategies/ShapeStrategies.swift
+//
+//  ShapeStrategies.swift
+//  TokiToki
+//
+//  Created by wesho on 31/3/25.
+//
+
+import UIKit
+
+// Shape creation strategy protocol
+protocol ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath
+}
+
+enum ShapeType: String {
+    case circle,
+         square,
+         triangle,
+         x,
+         line,
+         arc,
+         spiral,
+         star
+}
+
+// Default fallback strategy
+class DefaultShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        UIBezierPath(ovalIn: rect).cgPath
+    }
+}
+
+// Specific shape strategies
+class CircleShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        UIBezierPath(ovalIn: rect).cgPath
+    }
+}
+
+class SquareShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        UIBezierPath(rect: rect).cgPath
+    }
+}
+
+class TriangleShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.close()
+        return path.cgPath
+    }
+}
+
+class XShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.move(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        return path.cgPath
+    }
+}
+
+class LineShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+        return path.cgPath
+    }
+}
+
+class ArcShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        let path = UIBezierPath()
+        path.addArc(withCenter: CGPoint(x: rect.midX, y: rect.midY),
+                    radius: rect.width / 2,
+                    startAngle: 0, endAngle: .pi, clockwise: true)
+        return path.cgPath
+    }
+}
+
+class SpiralShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        let path = UIBezierPath()
+        var currentPoint = CGPoint(x: rect.midX, y: rect.midY)
+        let maxRadius = min(rect.width, rect.height) / 2
+        path.move(to: currentPoint)
+
+        for i in 0..<36 {
+            let angle = CGFloat(i) * .pi / 18
+            let radius = CGFloat(i) * maxRadius / 36
+            let x = rect.midX + radius * cos(angle)
+            let y = rect.midY + radius * sin(angle)
+            currentPoint = CGPoint(x: x, y: y)
+            path.addLine(to: currentPoint)
+        }
+
+        return path.cgPath
+    }
+}
+
+class StarShapeStrategy: ShapeCreationStrategy {
+    func createPath(in rect: CGRect) -> CGPath {
+        let path = UIBezierPath()
+        let centerX = rect.midX
+        let centerY = rect.midY
+        let radius = min(rect.width, rect.height) / 2
+        let innerRadius = radius * 0.4
+
+        for i in 0..<5 {
+            let angle = CGFloat(i) * .pi * 2 / 5 - .pi / 2
+            let point = CGPoint(x: centerX + cos(angle) * radius,
+                                y: centerY + sin(angle) * radius)
+
+            if i == 0 {
+                path.move(to: point)
+            } else {
+                path.addLine(to: point)
+            }
+
+            let innerAngle = angle + .pi / 5
+            let innerPoint = CGPoint(x: centerX + cos(innerAngle) * innerRadius,
+                                     y: centerY + sin(innerAngle) * innerRadius)
+            path.addLine(to: innerPoint)
+        }
+
+        path.close()
+        return path.cgPath
+    }
+}
+
+--END--
