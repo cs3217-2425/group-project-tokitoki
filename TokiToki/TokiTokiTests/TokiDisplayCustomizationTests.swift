@@ -90,7 +90,7 @@ class TokiDisplayCustomizationTests: XCTestCase {
         let initialEquipmentCount = toki.equipments.count
 
         // Create dummy equipment for testing
-        let newEquipment = Equipment(
+        let newEquipment = BaseEquipment(
             name: "Test Staff",
             description: "A magical staff for testing purposes",
             elementType: .fire,  // Adjust if ElementType is defined differently
@@ -124,7 +124,7 @@ class TokiDisplayCustomizationTests: XCTestCase {
         let toki = display.toki
         let initialCount = toki.equipments.count
 
-        let duplicateEquipment = Equipment(
+        let duplicateEquipment = BaseEquipment(
             name: "Duplicate Staff",
             description: "Duplicate equipment for testing",
             elementType: .fire,
@@ -144,7 +144,7 @@ class TokiDisplayCustomizationTests: XCTestCase {
         let toki = display.toki
         let initialCount = toki.equipments.count
 
-        let emptyNameEquipment = Equipment(
+        let emptyNameEquipment = BaseEquipment(
             name: "",
             description: "Equipment with an empty name",
             elementType: .fire,
@@ -215,7 +215,7 @@ class TokiDisplayCustomizationTests: XCTestCase {
         // Measure performance for adding 100 equipment items
         measure {
             for i in 1...100 {
-                let equipment = Equipment(
+                let equipment = BaseEquipment(
                     name: "Equipment \(i)",
                     description: "Test equipment \(i)",
                     elementType: .fire,

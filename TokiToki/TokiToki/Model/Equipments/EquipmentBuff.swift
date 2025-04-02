@@ -7,36 +7,52 @@
 
 import Foundation
 
-/// A simple struct that represents a buff with flat bonuses.
-struct Buff {
+// Base class for equipment buffs.
+class EquipmentBuff {
+    let value: Int
+    let description: String
+    let affectedStat: String
+    
+    init(value: Int, description: String, affectedStat: String) {
+        self.value = value
+        self.description = description
+        self.affectedStat = affectedStat
+    }
+}
+
+// StatBuff is a subclass of EquipmentBuff that represents a buff affecting multiple stats.
+class StatBuff: EquipmentBuff {
     let attack: Int
     let defense: Int
     let speed: Int
+    
+    init(attack: Int, defense: Int, speed: Int, description: String = "Stat Buff", affectedStat: String = "all") {
+        self.attack = attack
+        self.defense = defense
+        self.speed = speed
+        let totalValue = attack + defense + speed
+        super.init(value: totalValue, description: description, affectedStat: affectedStat)
+    }
 }
 
-/// EquipmentComponent defines how a buff component can be applied to or removed from a StatsComponent.
-protocol EquipmentComponent {
-    func apply(to stats: inout StatsComponent)
-    func remove(from stats: inout StatsComponent)
-}
-
-/// CombinedBuffComponent wraps a Buff so it conforms to EquipmentComponent.
+/// CombinedBuffComponent wraps a StatBuff so it can be applied to a StatsComponent.
 class CombinedBuffComponent: EquipmentComponent {
-    let buff: Buff
-
-    init(buff: Buff) {
+    let buff: StatBuff
+    
+    init(buff: StatBuff) {
         self.buff = buff
     }
-
-    func apply(to statsComponent: inout StatsComponent) {
-        statsComponent.baseStats.attack += buff.attack
-        statsComponent.baseStats.defense += buff.defense
-        statsComponent.baseStats.speed += buff.speed
+    
+    func apply(to stats: inout StatsComponent) {
+        stats.baseStats.attack += buff.attack
+        stats.baseStats.defense += buff.defense
+        stats.baseStats.speed += buff.speed
     }
-
-    func remove(from statsComponent: inout StatsComponent) {
-        statsComponent.baseStats.attack -= buff.attack
-        statsComponent.baseStats.defense -= buff.defense
-        statsComponent.baseStats.speed -= buff.speed
+    
+    func remove(from stats: inout StatsComponent) {
+        stats.baseStats.attack -= buff.attack
+        stats.baseStats.defense -= buff.defense
+        stats.baseStats.speed -= buff.speed
     }
 }
+

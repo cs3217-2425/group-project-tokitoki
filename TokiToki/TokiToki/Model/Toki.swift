@@ -30,11 +30,20 @@ class Toki {
         self.elementType = elementType
         self.level = level
     }
+    
+    func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
+        print("Toki receives a temporary buff: \(stat) +\(value) for \(duration) sec")
+        // In a full implementation, integrate with a buff manager.
+    }
+    
+    func gainExperience(_ exp: Int) {
+        print("Toki gains \(exp) EXP")
+        // Update experience and level up if needed.
+    }
 
     func createBattleEntity() -> GameStateEntity {
         let entity = GameStateEntity(name)
 
-        // Add components
         var statsComponent = StatsComponent(
             entity: entity,
             baseStats: baseStats,
@@ -45,9 +54,10 @@ class Toki {
         let statusEffectsComponent = StatusEffectsComponent(entity: entity)
         let statsModifiersComponent = StatsModifiersComponent(entity: entity)
 
-        for equipment in equipments {
-            equipment.applyBuffs(to: &statsComponent)
-        }
+        // TODO: Why does equipment not have the method
+//        for equipment in equipments {
+//            equipment.applyBuffs(to: &statsComponent)
+//        }
 
         entity.addComponent(statsComponent)
         entity.addComponent(skillsComponent)

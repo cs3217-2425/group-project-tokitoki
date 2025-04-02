@@ -29,13 +29,6 @@ class TargetSelectionFactory {
         return [entity]
     }
 
-//    func makeTargetSelection(_ targetType: TargetType) -> [GameStateEntity] {
-//        guard let targets = targetTypeToTargets[targetType] else {
-//            return []
-//        }
-//        return targets
-//    }
-
     func checkIfRequireTargetSelection(_ targetType: TargetType) -> Bool {
         targetTypesThatRequireSelection.contains(targetType)
     }
