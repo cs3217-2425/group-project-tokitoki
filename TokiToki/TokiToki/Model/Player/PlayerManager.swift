@@ -10,13 +10,11 @@ import Foundation
 class PlayerManager {
     static let shared = PlayerManager()
 
-    private let playerRepository: PlayerRepository
+    // private let playerRepository: PlayerRepository
     private var currentPlayer: Player?
 
     private init() {
-        // Use CoreData context in DataManager since its the single access point
         let context = DataManager.shared.viewContext
-        self.playerRepository = CoreDataPlayerRepository(context: context)
     }
 
     // MARK: Player Access
@@ -26,11 +24,6 @@ class PlayerManager {
             return player
         }
 
-        if let storedPlayer = playerRepository.getPlayer() {
-            currentPlayer = storedPlayer
-            return storedPlayer
-        }
-
         return nil
     }
 
@@ -38,16 +31,28 @@ class PlayerManager {
         if let player = getPlayer() {
             return player
         }
-
-        let newPlayer = playerRepository.createDefaultPlayer(name: name)
-        currentPlayer = newPlayer
-        return newPlayer
+        
+        let player = Player(
+                    id: UUID(),
+                    name: name,
+                    level: 1,
+                    experience: 0,
+                    currency: 1000,
+                    statistics: Player.PlayerStatistics(totalBattles: 0, battlesWon: 0),
+                    lastLoginDate: Date(),
+                    ownedTokis: [],
+                    ownedSkills: [],
+                    ownedEquipments: [],
+                    pullsSinceRare: 0
+                )
+        currentPlayer = player
+        return player
     }
 
     private func savePlayer() {
-        if let player = currentPlayer {
-            playerRepository.savePlayer(player)
-        }
+//        if let player = currentPlayer {
+//            playerRepository.savePlayer(player)
+//        }
     }
 
     // MARK: Player Operations
@@ -93,27 +98,41 @@ class PlayerManager {
         savePlayer()
     }
     
-    // MARK: - PlayerTokis
+    // MARK: - Item Management
 
-    /// Adds a single PlayerToki to the player's owned list.
-    func addPlayerToki(_ playerToki: PlayerToki) {
+    /// Adds a single item to the player's collection
+    func addItem(_ item: any IGachaItem) {
         var player = getOrCreatePlayer()
-        player.ownedTokis.append(playerToki)
+        player.addItem(item)
         currentPlayer = player
         savePlayer()
     }
 
-    /// Adds multiple PlayerToki at once.
-    func addPlayerTokis(_ tokis: [PlayerToki]) {
+    /// Adds multiple items at once to the player's collection
+    func addItems(_ items: [any IGachaItem]) {
         var player = getOrCreatePlayer()
-        player.ownedTokis.append(contentsOf: tokis)
+        for item in items {
+            player.addItem(item)
+        }
         currentPlayer = player
         savePlayer()
     }
 
-    /// Retrieve the player's entire Toki collection.
-    func getOwnedPlayerTokis() -> [PlayerToki] {
+    /// Retrieve all Tokis owned by the player
+    func getOwnedTokis() -> [Toki] {
         let player = getOrCreatePlayer()
         return player.ownedTokis
+    }
+    
+    /// Retrieve all Skills owned by the player
+    func getOwnedSkills() -> [Skill] {
+        let player = getOrCreatePlayer()
+        return player.ownedSkills
+    }
+    
+    /// Retrieve all Equipment owned by the player
+    func getOwnedEquipment() -> [Equipment] {
+        let player = getOrCreatePlayer()
+        return player.ownedEquipments
     }
 }

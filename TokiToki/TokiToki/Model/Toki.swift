@@ -12,13 +12,13 @@ class Toki {
     let id: UUID
     let name: String
     var level: Int
-    let rarity: TokiRarity
+    let rarity: ItemRarity
     var baseStats: TokiBaseStats
     var skills: [Skill]
     var equipment: [Equipment]
     let elementType: ElementType
 
-    init(id: UUID = UUID(), name: String, rarity: TokiRarity,
+    init(id: UUID = UUID(), name: String, rarity: ItemRarity,
          baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment],
          elementType: ElementType, level: Int) {
         self.id = id
@@ -90,10 +90,3 @@ struct TokiBaseStats {
     let exp: Int
 }
 
-enum TokiRarity: String {
-    case common = "common"
-    case uncommon = "uncommon"
-    case rare = "rare"
-    case epic = "epic"
-    case legendary = "legendary"
-}

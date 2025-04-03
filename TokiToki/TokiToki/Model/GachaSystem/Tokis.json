@@ -1,6 +1,7 @@
 {
   "tokis": [
       {
+        "id": "firefox",
         "name": "FireFox",
         "rarity": 0,
         "baseHealth": 80,
@@ -12,6 +13,7 @@
         "elementType": "fire"
       },
       {
+        "id": "water-serpent",
         "name": "WaterSerpent",
         "rarity": 0,
         "baseHealth": 100,
@@ -23,6 +25,7 @@
         "elementType": "water"
       },
       {
+        "id": "earth-dragon",
         "name": "EarthDragon",
         "rarity": 4,
         "baseHealth": 200,
@@ -34,6 +37,7 @@
         "elementType": "earth"
       },
       {
+        "id": "sky-phoenix",
         "name": "SkyPhoenix",
         "rarity": 3,
         "baseHealth": 180,
