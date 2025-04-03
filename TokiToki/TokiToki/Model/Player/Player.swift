@@ -70,12 +70,12 @@ struct Player {
     // MARK: - Item Management
     mutating func addItem(_ item: any IGachaItem) {
         switch item {
-        case let toki as Toki:
-            ownedTokis.append(toki)
-        case let skill as BaseSkill:
-            ownedSkills.append(skill)
-        case let equipment as Equipment:
-            ownedEquipments.append(equipment)
+        case let toki as TokiGachaItem:
+            ownedTokis.append(toki.getToki())
+        case let skill as SkillGachaItem:
+            ownedSkills.append(skill.getSkill())
+        case let equipment as EquipmentGachaItem:
+            ownedEquipments.append(equipment.getEquipment())
         default:
             print("Unknown item type: \(type(of: item))")
         }
