@@ -8,7 +8,7 @@
 import UIKit
 
 class VisualFXBuilder {
-    private var compositeEffect: CompositeVisualFX
+    var compositeEffect: CompositeVisualFX
 
     init(sourceView: UIView, targetView: UIView) {
         compositeEffect = CompositeVisualFX(sourceView: sourceView, targetView: targetView)

@@ -12,7 +12,11 @@ class CompositeVisualFX: SkillVisualFX {
     private let sourceView: UIView
     private let targetView: UIView
 
-    private var primitives: [(VisualFXPrimitive, [String: Any])] = []
+    // Groups of primitives - each group is executed concurrently, but groups are executed sequentially
+    private var primitiveGroups: [[(VisualFXPrimitive, [String: Any])]] = []
+
+    // Current group being built
+    private var currentGroup: [(VisualFXPrimitive, [String: Any])] = []
 
     init(sourceView: UIView, targetView: UIView) {
         self.sourceView = sourceView
@@ -27,6 +31,7 @@ class CompositeVisualFX: SkillVisualFX {
         targetView
     }
 
+    // Add a primitive to the current group (will be executed concurrently with others in this group)
     func addPrimitive(_ primitive: VisualFXPrimitive, with parameters: [String: Any]) {
         var updatedParameters = parameters
 
@@ -35,25 +40,60 @@ class CompositeVisualFX: SkillVisualFX {
             updatedParameters["compositeEffect"] = self
         }
 
-        primitives.append((primitive, updatedParameters))
+        currentGroup.append((primitive, updatedParameters))
+    }
+
+    // Commit the current group of primitives and start a new one
+    func commitGroup() {
+        if !currentGroup.isEmpty {
+            primitiveGroups.append(currentGroup)
+            currentGroup = []
+        }
     }
 
     func play(completion: @escaping () -> Void) {
-        playNextPrimitive(index: 0, completion: completion)
+        // Add any remaining primitives in the current group
+        commitGroup()
+
+        // Play all groups in sequence
+        playNextGroup(index: 0, completion: completion)
     }
 
-    private func playNextPrimitive(index: Int, completion: @escaping () -> Void) {
-        guard index < primitives.count else {
+    private func playNextGroup(index: Int, completion: @escaping () -> Void) {
+        guard index < primitiveGroups.count else {
             completion()
             return
         }
 
-        let (primitive, parameters) = primitives[index]
-        let isTargetEffect = parameters["isTargetEffect"] as? Bool ?? false
-        let view = isTargetEffect ? targetView : sourceView
+        let currentGroup = primitiveGroups[index]
 
-        primitive.apply(to: view, with: parameters) { [self] in
-            self.playNextPrimitive(index: index + 1, completion: completion)
+        // If group is empty, move to next group
+        if currentGroup.isEmpty {
+            playNextGroup(index: index + 1, completion: completion)
+            return
+        }
+
+        // For concurrent execution, we need to track when all primitives in the group are complete
+        var completedCount = 0
+        let totalCount = currentGroup.count
+
+        // Closure to check if all primitives in the group are complete
+        let groupCompletionCheck = {
+            completedCount += 1
+            if completedCount == totalCount {
+                // All primitives in this group are finished, move to next group
+                self.playNextGroup(index: index + 1, completion: completion)
+            }
+        }
+
+        // Play all primitives in the current group concurrently
+        for (primitive, parameters) in currentGroup {
+            let isTargetEffect = parameters["isTargetEffect"] as? Bool ?? false
+            let view = isTargetEffect ? targetView : sourceView
+
+            primitive.apply(to: view, with: parameters) {
+                groupCompletionCheck()
+            }
         }
     }
 }

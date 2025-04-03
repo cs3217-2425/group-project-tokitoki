@@ -41,6 +41,8 @@ class SkillVisualFXFactory {
             // Target impact effects
             .addShape(type: .x, size: 80, lineWidth: 4, color: fireColor, isTargetEffect: true)
             .addColorFlash(color: fireColor, intensity: 0.5, isTargetEffect: true)
+        
+            .beginConcurrentGroup()
             .addParticles(type: .circle, count: 25, size: 8, speed: 35,
                           lifetime: 0.6, color: fireColor, isTargetEffect: true)
 
