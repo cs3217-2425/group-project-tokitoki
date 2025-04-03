@@ -20,6 +20,7 @@ protocol Skill {
     var statusEffectChance: Double { get }
     var statusEffect: StatusEffectType? { get }
     var statusEffectDuration: Int { get }
+    var rarity: ItemRarity { get }
 
     func canUse() -> Bool
     func use(from source: GameStateEntity, on targets: [GameStateEntity]) -> [EffectResult]
@@ -61,10 +62,6 @@ enum StatusEffectType {
 enum SkillVisual: String, CaseIterable {
     case fireball = "fireball"
     case fireSlash = "fireslash"
-    case iceSpear = "icespear"
-    case thunderBolt = "thunderbolt"
-    case heal = "heal"
-    case shield = "shield"
 
     // Fallback for string-based lookup when needed
     static func fromString(_ string: String) -> SkillVisual? {

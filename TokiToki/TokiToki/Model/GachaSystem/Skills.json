@@ -1,0 +1,74 @@
+{
+  "skills": [
+    {
+      "id": "fireball",
+      "name": "Fireball",
+      "description": "Launches a ball of fire at the enemy.",
+      "rarity": 0,
+      "skillType": "attack",
+      "targetType": "singleEnemy",
+      "elementType": "fire",
+      "basePower": 40,
+      "cooldown": 2,
+      "statusEffectChance": 0.2,
+      "statusEffect": "burn",
+      "statusEffectDuration": 2
+    },
+    {
+      "id": "water-blast",
+      "name": "Water Blast",
+      "description": "Blasts the enemy with a jet of water.",
+      "rarity": 0,
+      "skillType": "attack",
+      "targetType": "singleEnemy",
+      "elementType": "water",
+      "basePower": 35,
+      "cooldown": 1,
+      "statusEffectChance": 0.0,
+      "statusEffect": null,
+      "statusEffectDuration": 0
+    },
+    {
+      "id": "earth-shield",
+      "name": "Earth Shield",
+      "description": "Creates a shield of earth to protect the user.",
+      "rarity": 1,
+      "skillType": "defend",
+      "targetType": "ownself",
+      "elementType": "earth",
+      "basePower": 30,
+      "cooldown": 3,
+      "statusEffectChance": 1.0,
+      "statusEffect": "defenseBuff",
+      "statusEffectDuration": 2
+    },
+    {
+      "id": "healing-wind",
+      "name": "Healing Wind",
+      "description": "A gentle breeze that heals allies.",
+      "rarity": 1,
+      "skillType": "heal",
+      "targetType": "allAllies",
+      "elementType": "air",
+      "basePower": 25,
+      "cooldown": 4,
+      "statusEffectChance": 0.0,
+      "statusEffect": null,
+      "statusEffectDuration": 0
+    },
+    {
+      "id": "lightning-strike",
+      "name": "Lightning Strike",
+      "description": "Summons lightning to strike all enemies.",
+      "rarity": 2,
+      "skillType": "attack",
+      "targetType": "allEnemies",
+      "elementType": "air",
+      "basePower": 60,
+      "cooldown": 5,
+      "statusEffectChance": 0.3,
+      "statusEffect": "paralysis",
+      "statusEffectDuration": 1
+    }
+  ]
+}

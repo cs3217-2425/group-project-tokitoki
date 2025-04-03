@@ -12,13 +12,13 @@ class Toki {
     let id: UUID
     let name: String
     var level: Int
-    let rarity: TokiRarity
+    let rarity: ItemRarity
     var baseStats: TokiBaseStats
     var skills: [Skill]
     var equipment: [Equipment]
     let elementType: ElementType
 
-    init(id: UUID = UUID(), name: String, rarity: TokiRarity,
+    init(id: UUID = UUID(), name: String, rarity: ItemRarity,
          baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment],
          elementType: ElementType, level: Int) {
         self.id = id
@@ -30,12 +30,22 @@ class Toki {
         self.elementType = elementType
         self.level = level
     }
+    
+    func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
+        print("Toki receives a temporary buff: \(stat) +\(value) for \(duration) sec")
+        // In a full implementation, integrate with a buff manager.
+    }
+    
+    func gainExperience(_ exp: Int) {
+        print("Toki gains \(exp) EXP")
+        // Update experience and level up if needed.
+    }
 
     func createBattleEntity() -> GameStateEntity {
         let entity = GameStateEntity(name)
 
         // Add components
-        var statsComponent = StatsComponent(
+        let statsComponent = StatsComponent(
             entityId: entity.id,
             maxHealth: baseStats.hp,
             attack: baseStats.attack,
@@ -47,9 +57,9 @@ class Toki {
         let skillsComponent = SkillsComponent(entityId: entity.id, skills: skills)
         let statusEffectsComponent = StatusEffectsComponent(entityId: entity.id)
         
-        for e in equipment {
-            e.applyBuffs(to: &statsComponent)
-        }
+//        for e in equipment {
+//            e.applyBuffs(to: &statsComponent)
+//        }
 
         entity.addComponent(statsComponent)
         entity.addComponent(skillsComponent)
@@ -80,10 +90,3 @@ struct TokiBaseStats {
     let exp: Int
 }
 
-enum TokiRarity: String {
-    case common = "common"
-    case uncommon = "uncommon"
-    case rare = "rare"
-    case epic = "epic"
-    case legendary = "legendary"
-}

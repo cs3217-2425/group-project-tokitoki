@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-   uuid = "E7A0FD43-BC8C-4237-9448-ED11FC5C4C6A"
+   uuid = "4C5A5467-8E9B-403D-BD74-DC59FE2BEC78"
    type = "1"
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7B4D442A-39B5-45E8-893D-6C6ACDDBC6C8"
-            shouldBeEnabled = "No"
+            uuid = "EE58C84D-33F4-4DCD-A2A4-2396C0D7B7C5"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "TokiToki/Controller/TokiDisplayViewController.swift"
+            filePath = "TokiToki/Model/GachaSystem/GachaItemAdapters.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "handleEquipmentLongPress(_:)"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "convertEquipmentRarityToItemRarity(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
