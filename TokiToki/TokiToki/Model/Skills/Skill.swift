@@ -20,6 +20,7 @@ protocol Skill {
     var statusEffectChance: Double { get }
     var statusEffect: StatusEffectType? { get }
     var statusEffectDuration: Int { get }
+    var rarity: ItemRarity { get }
 
     func canUse() -> Bool
     func use(from source: GameStateEntity, on targets: [GameStateEntity]) -> [EffectResult]

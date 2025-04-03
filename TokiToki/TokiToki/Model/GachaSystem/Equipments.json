@@ -1,0 +1,86 @@
+{
+  "equipment": [
+    {
+      "id": "wooden-sword",
+      "name": "Wooden Sword",
+      "description": "A simple wooden sword for training.",
+      "equipmentType": "nonConsumable",
+      "rarity": 0,
+      "elementType": "neutral",
+      "buff": {
+        "value": 5,
+        "description": "Basic attack boost",
+        "affectedStat": "attack"
+      },
+      "slot": "weapon"
+    },
+    {
+      "id": "fire-amulet",
+      "name": "Fire Amulet",
+      "description": "An amulet that enhances fire abilities.",
+      "equipmentType": "nonConsumable",
+      "rarity": 1,
+      "elementType": "fire",
+      "buff": {
+        "value": 10,
+        "description": "Fire power boost",
+        "affectedStat": "attack"
+      },
+      "slot": "accessory"
+    },
+    {
+      "id": "dragon-scale-armor",
+      "name": "Dragon Scale Armor",
+      "description": "Armor made from dragon scales. Provides excellent protection.",
+      "equipmentType": "nonConsumable",
+      "rarity": 2,
+      "elementType": "fire",
+      "buff": {
+        "value": 15,
+        "description": "Superior defense",
+        "affectedStat": "defense"
+      },
+      "slot": "armor"
+    },
+    {
+      "id": "attack-potion",
+      "name": "Attack Potion",
+      "description": "Temporarily boosts a Toki's attack.",
+      "equipmentType": "consumable",
+      "rarity": 1,
+      "elementType": "neutral",
+      "effectStrategy": {
+        "type": "potion",
+        "buffValue": 15,
+        "duration": 30,
+        "statType": "attack"
+      }
+    },
+    {
+      "id": "speed-elixir",
+      "name": "Speed Elixir",
+      "description": "Temporarily boosts a Toki's speed.",
+      "equipmentType": "consumable",
+      "rarity": 1,
+      "elementType": "neutral",
+      "effectStrategy": {
+        "type": "potion",
+        "buffValue": 20,
+        "duration": 30,
+        "statType": "speed"
+      }
+    },
+    {
+      "id": "upgrade-candy",
+      "name": "Upgrade Candy",
+      "description": "Provides bonus EXP to a Toki.",
+      "equipmentType": "consumable",
+      "rarity": 2,
+      "elementType": "neutral",
+      "effectStrategy": {
+        "type": "upgradeCandy",
+        "bonusExp": 100
+      }
+    }
+  ]
+}

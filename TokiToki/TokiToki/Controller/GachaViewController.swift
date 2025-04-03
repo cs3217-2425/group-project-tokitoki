@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import CoreData
 
 class GachaViewController: UIViewController {
     @IBOutlet private var gachaDrawButton: UIButton!
@@ -14,99 +13,122 @@ class GachaViewController: UIViewController {
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var gachaPackCollectionView: UICollectionView!
     
-    private var gachaRepository = GachaRepository()
+    private let itemRepository = ItemRepository()
+    private let playerManager = PlayerManager.shared
+    private var eventService: EventService?
     private var gachaService: GachaService?
     
     private var selectedGachaPack: GachaPack?
     
     private let colorData: [UIColor] = [.red, .purple]
     
-    private var currentPlayer: Player = Player(
-        id: UUID(),
-        name: "NewPlayer",
-        level: 1,
-        experience: 0,
-        currency: 500,
-        statistics: Player.PlayerStatistics(totalBattles: 0, battlesWon: 0),
-        lastLoginDate: Date(),
-        ownedTokis: [],
-        pullsSinceRare: 0
-    )
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Setup collection view
         gachaPackCollectionView.dataSource = self
         gachaPackCollectionView.delegate = self
         gachaPackCollectionView.allowsSelection = true
         
+        // Initialize services
         let context = DataManager.shared.viewContext
-        gachaRepository.initializeData(context: context)
-        gachaService = GachaService(gachaRepository: gachaRepository, context: context)
-        selectedGachaPack = gachaRepository.gachaPacks.first
+        let itemRepository = ItemRepository()
+        let eventService = EventService(itemRepository: itemRepository, context: context)
+        
+        // Initialize Gacha Service
+        gachaService = GachaService(
+            itemRepository: itemRepository,
+            eventService: eventService,
+            context: context
+        )
+        
+        // Select first pack by default
+        selectedGachaPack = gachaService?.getAllPacks().first
+        updatePackSelectorLabel()
+    }
+    
+    private func updatePackSelectorLabel() {
+        packSelectorLabel.text = selectedGachaPack.map {
+            "Selected Pack: \($0.name) (Cost: \($0.cost))"
+        } ?? "No Pack Selected"
     }
     
     @IBAction func gachaDrawButtonTapped(_ sender: UIButton) {
-        guard let service = gachaService else {
-            print("GachaService not initialized")
-            gachaPackLabel?.text = "Error: No Gacha Service."
+        guard let gachaService = gachaService else {
+            showErrorMessage("Gacha Service not initialized")
             return
-        }
-
-        guard let packToSelectFrom = selectedGachaPack else {
-            print("No pack selected")
-            gachaPackLabel?.text = "Error: No pack selected."
-            return
-        }
-
-        let newlyAcquired = service.drawPack(packId: packToSelectFrom.id, for: &currentPlayer)
-        
-        if newlyAcquired.isEmpty {
-            gachaPackLabel?.text = "No new Tokis acquired."
-            return
-        }
-
-        var resultText = ""
-        for pToki in newlyAcquired {
-            if let definition = gachaRepository.allTokis.first(where: { $0.id == pToki.baseTokiId }) {
-                resultText += "\(definition.name) [\(definition.rarity)]"
-            } else {
-                resultText += " - Unknown Toki "
-            }
         }
         
-        gachaPackLabel?.text = resultText
+        guard let selectedPack = selectedGachaPack else {
+            showErrorMessage("No pack selected")
+            return
+        }
+        
+        // Get or create player
+        var player = playerManager.getOrCreatePlayer()
+        
+        // Attempt to draw from the pack
+        let drawnItems = gachaService.drawFromPack(packName: selectedPack.name, count: 1, for: &player)
+        
+        // Update player
+        playerManager.addItems(drawnItems)
+        
+        // Display drawn items
+        displayDrawnItems(drawnItems)
+    }
+    
+    private func showErrorMessage(_ message: String) {
+        gachaPackLabel.text = message
+        print(message)
+    }
+    
+    private func displayDrawnItems(_ items: [any IGachaItem]) {
+        guard !items.isEmpty else {
+            gachaPackLabel.text = "No items drawn."
+            return
+        }
+        
+        let itemDescriptions = items.map { item in
+            "\(item.name) [\(item.rarity.rawValue.capitalized)]"
+        }.joined(separator: ", ")
+        
+        gachaPackLabel.text = "Drawn: \(itemDescriptions)"
     }
 }
 
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 extension GachaViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("Number of packs: \(gachaRepository.gachaPacks.count)")
-        return gachaRepository.gachaPacks.count
+        return gachaService?.getAllPacks().count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        
+        // Alternate background colors
         cell.backgroundColor = colorData[indexPath.item % colorData.count]
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedPack = gachaRepository.gachaPacks[indexPath.item]
-        print("Selected pack: \(selectedPack.name)")
+        guard let packs = gachaService?.getAllPacks() else { return }
+        
+        let selectedPack = packs[indexPath.item]
         selectedGachaPack = selectedPack
-        packSelectorLabel.text = "Selected Pack: \(selectedPack.name)"
+        updatePackSelectorLabel()
 
+        // Animate selected cell
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
 
+        // Reset initial state
         cell.layer.shadowColor = UIColor.black.cgColor
         cell.layer.shadowOffset = CGSize(width: 0, height: 0)
         cell.layer.shadowOpacity = 0.0
         cell.layer.shadowRadius = 0
         cell.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
 
+        // Animate to final state
         UIView.animate(withDuration: 0.3,
                        delay: 0,
                        usingSpringWithDamping: 0.6,
@@ -119,6 +141,5 @@ extension GachaViewController: UICollectionViewDataSource, UICollectionViewDeleg
         }, completion: nil)
     }
 }
-
 
 

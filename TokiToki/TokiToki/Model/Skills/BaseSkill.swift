@@ -20,12 +20,13 @@ class BaseSkill: Skill {
     let statusEffectChance: Double
     let statusEffect: StatusEffectType?
     let statusEffectDuration: Int
+    let rarity: ItemRarity
 
     private let effectCalculator: EffectCalculator
 
     init(name: String, description: String, type: SkillType, targetType: TargetType,
          elementType: ElementType, basePower: Int, cooldown: Int, statusEffectChance: Double,
-         statusEffect: StatusEffectType?, statusEffectDuration: Int = 0, effectCalculator: EffectCalculator) {
+         statusEffect: StatusEffectType?, statusEffectDuration: Int = 0, effectCalculator: EffectCalculator, rarity: ItemRarity = .common) {
         self.name = name
         self.description = description
         self.type = type
@@ -37,6 +38,7 @@ class BaseSkill: Skill {
         self.statusEffect = statusEffect
         self.statusEffectDuration = statusEffectDuration
         self.effectCalculator = effectCalculator
+        self.rarity = rarity
     }
 
     func canUse() -> Bool {
