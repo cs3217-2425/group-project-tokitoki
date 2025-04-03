@@ -14,9 +14,7 @@ class PlayerManager {
     private var currentPlayer: Player?
 
     private init() {
-        // Use CoreData context in DataManager since its the single access point
         let context = DataManager.shared.viewContext
-        // self.playerRepository = CoreDataPlayerRepository(context: context)
     }
 
     // MARK: Player Access
@@ -25,11 +23,6 @@ class PlayerManager {
         if let player = currentPlayer {
             return player
         }
-
-//        if let storedPlayer = playerRepository.getPlayer() {
-//            currentPlayer = storedPlayer
-//            return storedPlayer
-//        }
 
         return nil
     }
@@ -52,10 +45,7 @@ class PlayerManager {
                     ownedEquipments: [],
                     pullsSinceRare: 0
                 )
-
-        // let newPlayer = playerRepository.createDefaultPlayer(name: name)
-//        currentPlayer = newPlayer
-//        return newPlayer
+        currentPlayer = player
         return player
     }
 

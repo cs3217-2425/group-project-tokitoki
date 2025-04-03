@@ -159,7 +159,7 @@ class GachaService {
             }
             
             // Apply pity system for rare items
-            if isRare(item) && player.pullsSinceRare >= 100 {
+            if isRare(item) && player.pullsSinceRare >= 20 {
                 rate *= 5.0 // Significant boost for pity
             }
             
