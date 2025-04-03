@@ -22,7 +22,8 @@ class SkillVisualFXComponent: VisualFXComponent<SkillUsedEvent> {
 
             // Try to get skill-specific effect
             if let effect = registry.createVisualFX(for: event.skillName,
-                                                    sourceView: sourceView, targetView: targetView) {
+                                                    sourceView: sourceView,
+                                                    targetView: targetView) {
                 effect.play {}
             }
         }

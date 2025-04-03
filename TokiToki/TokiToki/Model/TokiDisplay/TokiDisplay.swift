@@ -11,23 +11,23 @@ import UIKit
 class TokiDisplay {
     static let shared = TokiDisplay()
     private var _toki: Toki
-    private var equipmentFacade = AdvancedEquipmentFacade()
+    internal var equipmentFacade = AdvancedEquipmentFacade()
 
     var toki: Toki {
-        get { return _toki }
+        get { _toki }
         set { _toki = newValue }
     }
-    
+
     required init() {
         self._toki = Toki(name: "Default Toki",
-                         rarity: .common,
-                         baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 42),
-                         skills: [],
-                         equipments: [],
-                         elementType: .fire,
-                         level: 1)
+                          rarity: .common,
+                          baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 42),
+                          skills: [],
+                          equipments: [],
+                          elementType: .fire,
+                          level: 1)
     }
-    
+
     private func createTestSkill(name: String = "Thunder Strike") -> Skill {
         let skillsFactory = SkillFactory()
         let skill = skillsFactory.createAttackSkill(
@@ -43,7 +43,7 @@ class TokiDisplay {
         )
         return skill
     }
-    
+
     private func createTestEquipment(name: String = "Magic Staff") -> Equipment {
         // Use EquipmentRepository instead of EquipmentFactory.
         let repository = EquipmentRepository.shared
@@ -58,7 +58,7 @@ class TokiDisplay {
                                                                 slot: .custom)
         return equipment
     }
-    
+
     /// Registers sample crafting recipes.
     func setupCraftingRecipes() {
         let potionRecipe = CraftingRecipe(requiredEquipmentIdentifiers: ["health potion", "health potion"]) { (equipments: [Equipment]) in
@@ -76,7 +76,7 @@ class TokiDisplay {
             }
             return nil
         }
-        
+
         let weaponRecipe = CraftingRecipe(requiredEquipmentIdentifiers: ["sword", "sword"]) { (equipments: [Equipment]) in
             if let weapon1 = equipments[0] as? NonConsumableEquipment,
                let weapon2 = equipments[1] as? NonConsumableEquipment {
@@ -91,11 +91,11 @@ class TokiDisplay {
             }
             return nil
         }
-        
+
         ServiceLocator.shared.craftingManager.register(recipe: potionRecipe)
         ServiceLocator.shared.craftingManager.register(recipe: weaponRecipe)
     }
-    
+
     /// Returns the current equipment state for display purposes.
     func currentState() -> (inventory: String, equipped: String) {
         let component = equipmentFacade.equipmentComponent
@@ -104,70 +104,6 @@ class TokiDisplay {
         let equippedNames = component.equipped.map { "\($0.key.rawValue): \($0.value.name)" }
             .joined(separator: ", ")
         return (inventoryNames, equippedNames)
-    }
-    
-    /// Loads sample equipment into the system.
-    func loadSampleEquipment() {
-        let repository = EquipmentRepository.shared
-        
-        let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 5)
-        let healthPotion = repository.createConsumableEquipment(name: "Health Potion",
-                                                                description: "Restores health temporarily.",
-                                                                rarity: 1,
-                                                                effectStrategy: potionStrategy)
-        
-        let upgradeCandyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
-        let upgradeCandy = repository.createConsumableEquipment(name: "Upgrade Candy",
-                                                                description: "Grants bonus EXP permanently.",
-                                                                rarity: 1,
-                                                                effectStrategy: upgradeCandyStrategy)
-        
-        let swordBuff = EquipmentBuff(value: 15, description: "Increases attack power", affectedStat: "attack")
-        let sword = repository.createNonConsumableEquipment(name: "Sword",
-                                                            description: "A sharp blade.",
-                                                            rarity: 2,
-                                                            buff: swordBuff,
-                                                            slot: .weapon)
-        
-        let shieldBuff = EquipmentBuff(value: 5, description: "Increases defense", affectedStat: "defense")
-        let shield = repository.createNonConsumableEquipment(name: "Shield",
-                                                             description: "A sturdy shield.",
-                                                             rarity: 2,
-                                                             buff: shieldBuff,
-                                                             slot: .armor)
-        
-        let component = equipmentFacade.equipmentComponent
-        
-        let equipmentItems: [Equipment] = [healthPotion, upgradeCandy, sword, shield, healthPotion]
-        component.inventory.append(contentsOf: equipmentItems)
-        equipmentFacade.equipmentComponent = component
-    }
-    
-    /// Crafts equipment using the first two items from the inventory.
-    func craftEquipment() {
-        let component = equipmentFacade.equipmentComponent
-        guard component.inventory.count >= 2 else { return }
-        let itemsToCraft = Array(component.inventory.prefix(2))
-        equipmentFacade.craftItems(items: itemsToCraft)
-    }
-    
-    /// Equips the first available weapon in the inventory.
-    func equipWeapon() {
-        let component = equipmentFacade.equipmentComponent
-        if let weapon = component.inventory.first(where: {
-            $0.equipmentType == .nonConsumable && ($0 as? NonConsumableEquipment)?.slot == .weapon
-        }) as? NonConsumableEquipment {
-            equipmentFacade.equipItem(item: weapon)
-        }
-    }
-    
-    /// Uses the first consumable item found in the inventory.
-    func useConsumable() {
-        let component = equipmentFacade.equipmentComponent
-        if let consumable = component.inventory.first(where: { $0.equipmentType == .consumable }) as? ConsumableEquipment {
-            let toki = Toki(name: "Demo Toki", rarity: .common, baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 42), skills: [], equipments: [], elementType: .fire, level: 1)
-            equipmentFacade.useConsumable(consumable: consumable, on: toki)
-        }
     }
     
     /// Undoes the last equipment action.
@@ -248,19 +184,22 @@ class TokiDisplay {
         if let attackPV = control.attackProgressView {
             let baseAttack = Float(toki.baseStats.attack)
             let buffAttack = totalEquipmentBuff(for: "attack")
-            updateProgressBar(attackPV, baseValue: baseAttack, buffValue: buffAttack, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
+            updateProgressBar(attackPV, baseValue: baseAttack, buffValue: buffAttack,
+                              maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
         
         if let defensePV = control.defenseProgressView {
             let baseDefense = Float(toki.baseStats.defense)
             let buffDefense = totalEquipmentBuff(for: "defense")
-            updateProgressBar(defensePV, baseValue: baseDefense, buffValue: buffDefense, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
+            updateProgressBar(defensePV, baseValue: baseDefense, buffValue: buffDefense,
+                              maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
         
         if let speedPV = control.speedProgressView {
             let baseSpeed = Float(toki.baseStats.speed)
             let buffSpeed = totalEquipmentBuff(for: "speed")
-            updateProgressBar(speedPV, baseValue: baseSpeed, buffValue: buffSpeed, maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
+            updateProgressBar(speedPV, baseValue: baseSpeed, buffValue: buffSpeed,
+                              maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
         
         control.healProgressView?.progress = Float(toki.baseStats.heal) / statMax
@@ -424,33 +363,6 @@ class TokiDisplay {
                 popoverController.sourceRect = sender.bounds
             }
             control.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    func handleEquipmentLongPress(_ gesture: UILongPressGestureRecognizer, _ control: TokiDisplayViewController) {
-        if gesture.state == .began {
-            guard let cell = gesture.view as? UITableViewCell,
-                  let indexPath = control.equipmentTableView?.indexPath(for: cell) else { return }
-            let equipment = toki.equipment[indexPath.row]
-            var message = "No buff details available."
-            if let buffComponent = (equipment as? NonConsumableEquipment)?.components.first as? CombinedBuffComponent {
-                message = "Attack Buff: \(buffComponent.buff.attack)\nDefense Buff: \(buffComponent.buff.defense)\nSpeed Buff: \(buffComponent.buff.speed)"
-            }
-            let alert = UIAlertController(title: equipment.name, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            control.present(alert, animated: true)
-        }
-    }
-
-    func handleSkillLongPress(_ gesture: UILongPressGestureRecognizer, _ control: TokiDisplayViewController) {
-        if gesture.state == .began {
-            guard let cell = gesture.view as? UITableViewCell,
-                  let indexPath = control.skillsTableView?.indexPath(for: cell) else { return }
-            let skill = toki.skills[indexPath.row]
-            let message = "Description: \(skill.description)\nBase Power: \(skill.basePower)\nCooldown: \(skill.cooldown)"
-            let alert = UIAlertController(title: skill.name, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            control.present(alert, animated: true)
         }
     }
 }

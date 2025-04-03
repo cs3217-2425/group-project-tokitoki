@@ -114,20 +114,22 @@ class EquipmentGachaItem: IGachaItem {
 
 /// Factory to create various GachaItem adapters
 class GachaItemFactory {
-    
+
     /// Create a GachaItem adapter for a Toki
-    static func createTokiGachaItem(toki: Toki, ownerId: UUID? = nil, dateAcquired: Date? = nil) -> TokiGachaItem {
-        return TokiGachaItem(toki: toki, ownerId: ownerId, dateAcquired: dateAcquired)
+    static func createTokiGachaItem(toki: Toki, ownerId: UUID? = nil,
+                                    dateAcquired: Date? = nil) -> TokiGachaItem {
+        TokiGachaItem(toki: toki, ownerId: ownerId, dateAcquired: dateAcquired)
     }
-    
+
     /// Create a GachaItem adapter for a Skill
-    static func createSkillGachaItem(skill: Skill, rarity: ItemRarity = .common, ownerId: UUID? = nil, dateAcquired: Date? = nil) -> SkillGachaItem {
-        return SkillGachaItem(skill: skill, rarity: rarity, ownerId: ownerId, dateAcquired: dateAcquired)
+    static func createSkillGachaItem(skill: Skill, rarity: ItemRarity = .common,
+                                     ownerId: UUID? = nil, dateAcquired: Date? = nil) -> SkillGachaItem {
+        SkillGachaItem(skill: skill, rarity: rarity, ownerId: ownerId, dateAcquired: dateAcquired)
     }
-    
+
     /// Create a GachaItem adapter for Equipment
-    static func createEquipmentGachaItem(equipment: Equipment, elementType: ElementType = .neutral, ownerId: UUID? = nil, dateAcquired: Date? = nil) -> EquipmentGachaItem {
-        return EquipmentGachaItem(equipment: equipment, elementType: elementType, ownerId: ownerId, dateAcquired: dateAcquired)
+    static func createEquipmentGachaItem(equipment: Equipment, elementType: ElementType = .neutral,
+                                         ownerId: UUID? = nil, dateAcquired: Date? = nil) -> EquipmentGachaItem {
+        EquipmentGachaItem(equipment: equipment, elementType: elementType, ownerId: ownerId, dateAcquired: dateAcquired)
     }
 }
-
