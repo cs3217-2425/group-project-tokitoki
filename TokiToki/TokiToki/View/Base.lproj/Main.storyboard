@@ -5,7 +5,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
-        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -33,8 +32,7 @@
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Gacha" buttonSize="large"/>
                                         <connections>
-                                            <action selector="gachaButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Kqu-ta-oE2"/>
-                                            <segue destination="bx0-6u-sXI" kind="show" id="I4I-jj-sgi"/>
+                                            <action selector="gachaButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4D2-8d-ckw"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u45-ZZ-mQj">
@@ -78,86 +76,6 @@
             </objects>
             <point key="canvasLocation" x="754.06976744186045" y="-34.011627906976742"/>
         </scene>
-        <!--GachaViewController-->
-        <scene sceneID="Ag9-vT-Rq2">
-            <objects>
-                <viewController id="bx0-6u-sXI" userLabel="GachaViewController" customClass="GachaViewController" customModule="TokiToki" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="UKm-Nn-x9R">
-                        <rect key="frame" x="0.0" y="0.0" width="1032" height="1376"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RDJ-q8-2zr">
-                                <rect key="frame" x="484.5" y="941" width="63.5" height="34.5"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Draw"/>
-                                <connections>
-                                    <action selector="gachaDrawButtonTapped:" destination="bx0-6u-sXI" eventType="touchUpInside" id="Nh4-D9-YQm"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Result" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEK-zM-Hiy">
-                                <rect key="frame" x="492.5" y="866" width="47.5" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="3m4-ta-RVx">
-                                <rect key="frame" x="118" y="377" width="796" height="417"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="417" id="GeC-kC-KSn"/>
-                                    <constraint firstAttribute="width" constant="796" id="e0c-9I-khd"/>
-                                </constraints>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="lwN-1j-gf1">
-                                    <size key="itemSize" width="237" height="417"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="lM2-DD-Nrg">
-                                        <rect key="frame" x="0.0" y="0.0" width="237" height="417"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="bJd-8w-kEA">
-                                            <rect key="frame" x="0.0" y="0.0" width="237" height="417"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </collectionViewCellContentView>
-                                        <size key="customSize" width="237" height="417"/>
-                                    </collectionViewCell>
-                                </cells>
-                            </collectionView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a pack" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c1M-yf-TMG">
-                                <rect key="frame" x="464.5" y="210" width="103" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="xTc-1U-ouG"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="xTc-1U-ouG" firstAttribute="trailing" secondItem="3m4-ta-RVx" secondAttribute="trailing" constant="118" id="28g-1d-jfT"/>
-                            <constraint firstItem="qEK-zM-Hiy" firstAttribute="centerX" secondItem="UKm-Nn-x9R" secondAttribute="centerX" id="EJy-w8-0ct"/>
-                            <constraint firstItem="c1M-yf-TMG" firstAttribute="centerX" secondItem="UKm-Nn-x9R" secondAttribute="centerX" id="FnK-5g-9dZ"/>
-                            <constraint firstItem="RDJ-q8-2zr" firstAttribute="centerX" secondItem="UKm-Nn-x9R" secondAttribute="centerX" id="P6y-Ai-Z0a"/>
-                            <constraint firstItem="qEK-zM-Hiy" firstAttribute="top" secondItem="3m4-ta-RVx" secondAttribute="bottom" constant="72" id="aQV-Pc-I2b"/>
-                            <constraint firstItem="c1M-yf-TMG" firstAttribute="top" secondItem="xTc-1U-ouG" secondAttribute="top" constant="136" id="g9G-7e-0Pf"/>
-                            <constraint firstItem="3m4-ta-RVx" firstAttribute="leading" secondItem="xTc-1U-ouG" secondAttribute="leading" constant="118" id="l9F-J7-zt5"/>
-                            <constraint firstItem="RDJ-q8-2zr" firstAttribute="top" secondItem="qEK-zM-Hiy" secondAttribute="bottom" constant="54.5" id="vMR-b7-RxE"/>
-                            <constraint firstItem="3m4-ta-RVx" firstAttribute="top" secondItem="xTc-1U-ouG" secondAttribute="top" constant="303" id="wz2-R2-OjA"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="o5l-2i-49g"/>
-                    <connections>
-                        <outlet property="gachaDrawButton" destination="RDJ-q8-2zr" id="E6M-uE-0nc"/>
-                        <outlet property="gachaPackCollectionView" destination="3m4-ta-RVx" id="hSc-0D-1XT"/>
-                        <outlet property="gachaPackLabel" destination="qEK-zM-Hiy" id="ZjP-CB-a3E"/>
-                        <outlet property="packSelectorLabel" destination="c1M-yf-TMG" id="PbV-IH-OXo"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="KaK-12-gRD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1605.8139534883721" y="-39.244186046511629"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="Azt-ih-2x9">
             <objects>
@@ -180,9 +98,6 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemIndigoColor">
-            <color red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="iPad13_0rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--GachaViewController-->
+        <scene sceneID="DM4-at-hF3">
+            <objects>
+                <viewController storyboardIdentifier="GachaScreenVC" id="qtJ-h1-3N4" userLabel="GachaViewController" customClass="GachaViewController" customModule="TokiToki" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="P4a-T5-lbg">
+                        <rect key="frame" x="0.0" y="0.0" width="1032" height="1376"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gacha_background" translatesAutoresizingMaskIntoConstraints="NO" id="a2B-i8-VMi">
+                                <rect key="frame" x="85.5" y="24" width="861" height="1332"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fOS-W7-aKi">
+                                <rect key="frame" x="484.5" y="891" width="63.5" height="34.5"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Draw"/>
+                                <connections>
+                                    <action selector="gachaDrawButtonTapped:" destination="qtJ-h1-3N4" eventType="touchUpInside" id="xej-jG-BV6"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Result" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mjJ-4s-nUu">
+                                <rect key="frame" x="492.5" y="816" width="47.5" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="systemGroupedBackgroundColor"/>
+                                <color key="highlightedColor" systemColor="opaqueSeparatorColor"/>
+                            </label>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6eH-9Y-25N">
+                                <rect key="frame" x="118" y="327" width="796" height="417"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="796" id="38L-hH-6if"/>
+                                    <constraint firstAttribute="height" constant="417" id="SLX-4Q-zQw"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="jcY-e0-h9A">
+                                    <size key="itemSize" width="237" height="417"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="6YQ-tm-OIF">
+                                        <rect key="frame" x="0.0" y="0.0" width="237" height="417"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="czs-t1-Zod">
+                                            <rect key="frame" x="0.0" y="0.0" width="237" height="417"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="237" height="417"/>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a pack" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="btL-a8-a2C">
+                                <rect key="frame" x="464.5" y="160" width="103" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="systemBackgroundColor"/>
+                                <color key="highlightedColor" systemColor="opaqueSeparatorColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="gqM-1s-fex"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="fOS-W7-aKi" firstAttribute="top" secondItem="mjJ-4s-nUu" secondAttribute="bottom" constant="54.5" id="8Zw-7P-grG"/>
+                            <constraint firstItem="a2B-i8-VMi" firstAttribute="centerY" secondItem="P4a-T5-lbg" secondAttribute="centerY" id="ALR-hz-OfM"/>
+                            <constraint firstItem="6eH-9Y-25N" firstAttribute="leading" secondItem="gqM-1s-fex" secondAttribute="leading" constant="118" id="Dfk-bm-HpP"/>
+                            <constraint firstItem="mjJ-4s-nUu" firstAttribute="centerX" secondItem="P4a-T5-lbg" secondAttribute="centerX" id="EqQ-mc-CQg"/>
+                            <constraint firstItem="gqM-1s-fex" firstAttribute="bottom" secondItem="a2B-i8-VMi" secondAttribute="bottom" id="HHh-hW-tqa"/>
+                            <constraint firstItem="a2B-i8-VMi" firstAttribute="centerX" secondItem="P4a-T5-lbg" secondAttribute="centerX" id="UAd-Jp-hk1"/>
+                            <constraint firstItem="btL-a8-a2C" firstAttribute="top" secondItem="gqM-1s-fex" secondAttribute="top" constant="136" id="UgT-f6-zIK"/>
+                            <constraint firstItem="a2B-i8-VMi" firstAttribute="top" secondItem="gqM-1s-fex" secondAttribute="top" id="Vl0-Ub-jNt"/>
+                            <constraint firstItem="btL-a8-a2C" firstAttribute="centerX" secondItem="P4a-T5-lbg" secondAttribute="centerX" id="XFm-5h-MR8"/>
+                            <constraint firstItem="gqM-1s-fex" firstAttribute="trailing" secondItem="6eH-9Y-25N" secondAttribute="trailing" constant="118" id="a4j-L1-EMl"/>
+                            <constraint firstItem="mjJ-4s-nUu" firstAttribute="top" secondItem="6eH-9Y-25N" secondAttribute="bottom" constant="72" id="g4t-ng-bcS"/>
+                            <constraint firstItem="6eH-9Y-25N" firstAttribute="top" secondItem="gqM-1s-fex" secondAttribute="top" constant="303" id="joj-zl-IFQ"/>
+                            <constraint firstItem="fOS-W7-aKi" firstAttribute="centerX" secondItem="P4a-T5-lbg" secondAttribute="centerX" id="vEV-UL-6ab"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="raG-xd-RKr"/>
+                    <connections>
+                        <outlet property="gachaDrawButton" destination="fOS-W7-aKi" id="oKQ-Vo-tUC"/>
+                        <outlet property="gachaPackCollectionView" destination="6eH-9Y-25N" id="0Ni-j8-kIY"/>
+                        <outlet property="gachaPackLabel" destination="mjJ-4s-nUu" id="Wvd-bg-GE6"/>
+                        <outlet property="packSelectorLabel" destination="btL-a8-a2C" id="uJU-f6-cs2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="c1s-KK-1ms" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1605.8139534883721" y="-39.244186046511629"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="gacha_background" width="861" height="1078"/>
+        <systemColor name="opaqueSeparatorColor">
+            <color red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGroupedBackgroundColor">
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

@@ -15,7 +15,9 @@ struct Player {
     var currency: Int
     var statistics: PlayerStatistics
     var lastLoginDate: Date
-    var ownedTokis: [PlayerToki]
+    var ownedTokis: [Toki]
+    var ownedSkills: [Skill]
+    var ownedEquipments: [Equipment]
     var pullsSinceRare: Int
 
     struct PlayerStatistics {
@@ -62,6 +64,20 @@ struct Player {
         statistics.totalBattles += 1
         if won {
             statistics.battlesWon += 1
+        }
+    }
+    
+    // MARK: - Item Management
+    mutating func addItem(_ item: any IGachaItem) {
+        switch item {
+        case let toki as Toki:
+            ownedTokis.append(toki)
+        case let skill as BaseSkill:
+            ownedSkills.append(skill)
+        case let equipment as Equipment:
+            ownedEquipments.append(equipment)
+        default:
+            print("Unknown item type: \(type(of: item))")
         }
     }
 }
