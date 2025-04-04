@@ -111,7 +111,7 @@ class ItemRepository {
         )
         
         // Randomly select some skills and equipment for the Toki
-        let skills = selectRandomSkills(count: 2)
+        //let skills = selectRandomSkills(count: 2)
         let equipment = selectRandomEquipment(count: 1)
         
         return Toki(
@@ -119,103 +119,103 @@ class ItemRepository {
             name: template.name,
             rarity: convertIntToItemRarity(template.rarity),
             baseStats: baseStats,
-            skills: skills,
+            skills: [], // TODO: fill up with skills
             equipments: equipment,
-            elementType: convertStringToElement(template.elementType),
+            elementType: [convertStringToElement(template.elementType)],
             level: 1
         )
     }
     
     // Create a Skill object from template
-    func createSkill(from template: SkillData) -> Skill {
-        let skillType = convertStringToSkillType(template.skillType)
-        let targetType = convertStringToTargetType(template.targetType)
-        let elementType = convertStringToElement(template.elementType)
-        
-        // Convert optional status effect
-        var statusEffect: StatusEffectType? = nil
-        if let statusEffectStr = template.statusEffect {
-            statusEffect = convertStringToStatusEffect(statusEffectStr)
-        }
-        
-        // Use the appropriate factory method based on skill type
-        switch skillType {
-        case .attack:
-            return skillFactory.createAttackSkill(
-                name: template.name,
-                description: template.description,
-                elementType: elementType,
-                basePower: template.basePower,
-                cooldown: template.cooldown,
-                targetType: targetType,
-                statusEffect: statusEffect,
-                statusEffectChance: template.statusEffectChance ?? 0.0,
-                statusEffectDuration: template.statusEffectDuration ?? 0
-            )
-        case .heal:
-            return skillFactory.createHealSkill(
-                name: template.name,
-                description: template.description,
-                basePower: template.basePower,
-                cooldown: template.cooldown,
-                targetType: targetType
-            )
-        case .defend:
-            return skillFactory.createDefenseSkill(
-                name: template.name,
-                description: template.description,
-                basePower: template.basePower,
-                cooldown: template.cooldown,
-                targetType: targetType
-            )
-        case .buff:
-            if let effect = statusEffect {
-                return skillFactory.createBuffSkill(
-                    name: template.name,
-                    description: template.description,
-                    basePower: template.basePower,
-                    cooldown: template.cooldown,
-                    targetType: targetType,
-                    statusEffect: effect,
-                    duration: template.statusEffectDuration ?? 1
-                )
-            } else {
-                // Fallback if no status effect specified
-                return skillFactory.createBuffSkill(
-                    name: template.name,
-                    description: template.description,
-                    basePower: template.basePower,
-                    cooldown: template.cooldown,
-                    targetType: targetType,
-                    statusEffect: .attackBuff,
-                    duration: 1
-                )
-            }
-        case .debuff:
-            if let effect = statusEffect {
-                return skillFactory.createDebuffSkill(
-                    name: template.name,
-                    description: template.description,
-                    basePower: template.basePower,
-                    cooldown: template.cooldown,
-                    targetType: targetType,
-                    statusEffect: effect,
-                    duration: template.statusEffectDuration ?? 1
-                )
-            } else {
-                // Fallback if no status effect specified
-                return skillFactory.createDebuffSkill(
-                    name: template.name,
-                    description: template.description,
-                    basePower: template.basePower,
-                    cooldown: template.cooldown,
-                    targetType: targetType,
-                    statusEffect: .attackDebuff,
-                    duration: 1
-                )
-            }
-        }
-    }
+//    func createSkill(from template: SkillData) -> Skill {
+//        let skillType = convertStringToSkillType(template.skillType)
+//        let targetType = convertStringToTargetType(template.targetType)
+//        let elementType = convertStringToElement(template.elementType)
+//        
+//        // Convert optional status effect
+//        var statusEffect: StatusEffectType? = nil
+//        if let statusEffectStr = template.statusEffect {
+//            statusEffect = convertStringToStatusEffect(statusEffectStr)
+//        }
+//        
+//        // Use the appropriate factory method based on skill type
+//        switch skillType {
+//        case .attack:
+//            return skillFactory.createAttackSkill(
+//                name: template.name,
+//                description: template.description,
+//                elementType: elementType,
+//                basePower: template.basePower,
+//                cooldown: template.cooldown,
+//                targetType: targetType,
+//                statusEffect: statusEffect,
+//                statusEffectChance: template.statusEffectChance ?? 0.0,
+//                statusEffectDuration: template.statusEffectDuration ?? 0
+//            )
+//        case .heal:
+//            return skillFactory.createHealSkill(
+//                name: template.name,
+//                description: template.description,
+//                basePower: template.basePower,
+//                cooldown: template.cooldown,
+//                targetType: targetType
+//            )
+//        case .defend:
+//            return skillFactory.createDefenseSkill(
+//                name: template.name,
+//                description: template.description,
+//                basePower: template.basePower,
+//                cooldown: template.cooldown,
+//                targetType: targetType
+//            )
+//        case .buff:
+//            if let effect = statusEffect {
+//                return skillFactory.createBuffSkill(
+//                    name: template.name,
+//                    description: template.description,
+//                    basePower: template.basePower,
+//                    cooldown: template.cooldown,
+//                    targetType: targetType,
+//                    statusEffect: effect,
+//                    duration: template.statusEffectDuration ?? 1
+//                )
+//            } else {
+//                // Fallback if no status effect specified
+//                return skillFactory.createBuffSkill(
+//                    name: template.name,
+//                    description: template.description,
+//                    basePower: template.basePower,
+//                    cooldown: template.cooldown,
+//                    targetType: targetType,
+//                    statusEffect: .attackBuff,
+//                    duration: 1
+//                )
+//            }
+//        case .debuff:
+//            if let effect = statusEffect {
+//                return skillFactory.createDebuffSkill(
+//                    name: template.name,
+//                    description: template.description,
+//                    basePower: template.basePower,
+//                    cooldown: template.cooldown,
+//                    targetType: targetType,
+//                    statusEffect: effect,
+//                    duration: template.statusEffectDuration ?? 1
+//                )
+//            } else {
+//                // Fallback if no status effect specified
+//                return skillFactory.createDebuffSkill(
+//                    name: template.name,
+//                    description: template.description,
+//                    basePower: template.basePower,
+//                    cooldown: template.cooldown,
+//                    targetType: targetType,
+//                    statusEffect: .attackDebuff,
+//                    duration: 1
+//                )
+//            }
+//        }
+//    }
     
     // Create an Equipment object from template
     func createEquipment(from template: EquipmentData) -> Equipment {
@@ -283,20 +283,20 @@ class ItemRepository {
     // MARK: - Helper Methods for Creating Random Collections
     
     // Select random skills for a newly drawn Toki
-    private func selectRandomSkills(count: Int) -> [Skill] {
-        let templates = Array(skillTemplates.values)
-        guard !templates.isEmpty else { return [] }
-        
-        var selectedSkills: [Skill] = []
-        for _ in 0..<min(count, templates.count) {
-            if let template = templates.randomElement() {
-                let skill = createSkill(from: template)
-                selectedSkills.append(skill)
-            }
-        }
-        
-        return selectedSkills
-    }
+//    private func selectRandomSkills(count: Int) -> [Skill] {
+//        let templates = Array(skillTemplates.values)
+//        guard !templates.isEmpty else { return [] }
+//        
+//        var selectedSkills: [Skill] = []
+//        for _ in 0..<min(count, templates.count) {
+//            if let template = templates.randomElement() {
+//                let skill = createSkill(from: template)
+//                selectedSkills.append(skill)
+//            }
+//        }
+//        
+//        return selectedSkills
+//    }
     
     // Select random equipment for a newly drawn Toki
     private func selectRandomEquipment(count: Int) -> [Equipment] {
@@ -353,9 +353,6 @@ class ItemRepository {
         switch str.lowercased() {
         case "attack": return .attack
         case "heal": return .heal
-        case "defend": return .defend
-        case "buff": return .buff
-        case "debuff": return .debuff
         default: return .attack
         }
     }
@@ -379,12 +376,6 @@ class ItemRepository {
         case "burn": return .burn
         case "frozen": return .frozen
         case "paralysis": return .paralysis
-        case "attackbuff": return .attackBuff
-        case "defensebuff": return .defenseBuff
-        case "speedbuff": return .speedBuff
-        case "attackdebuff": return .attackDebuff
-        case "defensedebuff": return .defenseDebuff
-        case "speeddebuff": return .speedDebuff
         default: return nil
         }
     }

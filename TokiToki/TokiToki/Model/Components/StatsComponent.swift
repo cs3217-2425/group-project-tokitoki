@@ -7,22 +7,17 @@
 
 import Foundation
 
-class StatsComponent: BaseComponent {
-    var maxHealth: Int
+class StatsComponent: Component {
+    let entity: Entity
     var currentHealth: Int
-    var attack: Int
-    var defense: Int
-    var speed: Int
-    var elementType: ElementType
+    var elementType: [ElementType]
     var actionMeter: Float = 0
+    var baseStats: TokiBaseStats
 
-    init(entityId: UUID, maxHealth: Int, attack: Int, defense: Int, speed: Int, elementType: ElementType) {
-        self.maxHealth = maxHealth
-        self.currentHealth = maxHealth
-        self.attack = attack
-        self.defense = defense
-        self.speed = speed
+    init(entity: Entity, baseStats: TokiBaseStats, elementType: [ElementType]) {
+        self.baseStats = baseStats
+        self.currentHealth = baseStats.hp
         self.elementType = elementType
-        super.init(entityId: entityId)
+        self.entity = entity
     }
 }

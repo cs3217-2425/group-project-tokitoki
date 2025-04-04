@@ -12,4 +12,6 @@ protocol BattleEffectsDelegate {
     func updateSkillIcons(_ icons: [SkillUiInfo]?)
     func updateHealthBar(_ id: UUID, _ currentHealth: Int, _ maxHealth: Int)
     func removeDeadBody(_ id: UUID)
+    func allowOpponentTargetSelection()
+    func allowAllyTargetSelection()
 }

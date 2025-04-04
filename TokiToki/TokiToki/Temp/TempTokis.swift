@@ -11,9 +11,9 @@ let wizardToki = Toki(
     name: "Wizard",
     rarity: .rare,
     baseStats: wizardBaseStats,
-    skills: [basicSpell, fireball],
+    skills: [basicSpell, fireball, waterGun],
     equipments: [],
-    elementType: .fire,
+    elementType: [.fire],
     level: 0
 )
 
@@ -25,6 +25,18 @@ let knightToki = Toki(
     baseStats: knightBaseStats,
     skills: [basicAttack, excalibur],
     equipments: [],
-    elementType: .light,
+    elementType: [.light],
+    level: 0
+)
+
+let archerBaseStats = TokiBaseStats(hp: 80, attack: 60, defense: 30, speed: 120, heal: 0, exp: 0)
+
+let archerToki = Toki(
+    name: "Archer",
+    rarity: .rare,
+    baseStats: archerBaseStats,
+    skills: [basicArrow, iceShot, arrowRain],
+    equipments: [],
+    elementType: [.earth],
     level: 0
 )

@@ -76,7 +76,7 @@ extension TokiDisplay {
                                               speed: 50,
                                               heal: 100,
                                               exp: 42
-                                             ), skills: [], equipments: [], elementType: .fire, level: 1)
+                                             ), skills: [], equipments: [], elementType: [.fire], level: 1)
             equipmentFacade.useConsumable(consumable: consumable, on: toki)
         }
     }

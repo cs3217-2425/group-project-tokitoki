@@ -6,99 +6,104 @@
 //
 
 class SkillFactory {
-    private let effectCalculatorFactory = EffectCalculatorFactory()
-
-    func createAttackSkill(name: String, description: String, elementType: ElementType, basePower: Int,
-                           cooldown: Int, targetType: TargetType, statusEffect: StatusEffectType? = nil,
-                           statusEffectChance: Double = 0.0, statusEffectDuration: Int = 0) -> Skill {
-        let calculator = effectCalculatorFactory.getCalculator(for: .attack)
-
-        return BaseSkill(
+    func createBasicSingleTargetDmgSkill(name: String,
+                                         description: String,
+                                         cooldown: Int,
+                                         elementType: ElementType,
+                                         basePower: Int) -> Skill {
+        BaseSkill(
             name: name,
             description: description,
-            type: .attack,
-            targetType: targetType,
-            elementType: elementType,
-            basePower: basePower,
             cooldown: cooldown,
-            statusEffectChance: statusEffectChance,
-            statusEffect: statusEffect,
-            statusEffectDuration: statusEffectDuration,
-            effectCalculator: calculator
+            effectDefinitions: [
+                EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+                    AttackCalculator(elementType: elementType, basePower: basePower)
+                ])
+            ]
         )
     }
-
-    func createHealSkill(name: String, description: String, basePower: Int, cooldown: Int, targetType: TargetType) -> Skill {
-        let calculator = effectCalculatorFactory.getCalculator(for: .heal)
-
-        return BaseSkill(
+    
+    func createSingleTargetDmgSkillWithStatusEffect(name: String,
+                                                    description: String,
+                                                    cooldown: Int,
+                                                    elementType: ElementType,
+                                                    basePower: Int,
+                                                    statusEffectChance: Double,
+                                                    statusEffect: StatusEffectType?,
+                                                    statusEffectDuration: Int = 1,
+                                                    statusEffectStrength: Double = 1.0
+    ) -> Skill {
+        BaseSkill(
             name: name,
             description: description,
-            type: .heal,
-            targetType: targetType,
-            elementType: .neutral,
-            basePower: basePower,
             cooldown: cooldown,
-            statusEffectChance: 0.0,
-            statusEffect: nil,
-            statusEffectDuration: 0,
-            effectCalculator: calculator
+            effectDefinitions: [
+                EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+                    AttackCalculator(elementType: elementType, basePower: basePower),
+                    StatusEffectCalculator(statusEffectChance: statusEffectChance, statusEffect: statusEffect,
+                                           statusEffectDuration: statusEffectDuration,
+                                           statusEffectStrength: statusEffectStrength)
+                ])
+            ]
         )
     }
-
-    func createDefenseSkill(name: String, description: String, basePower: Int, cooldown: Int, targetType: TargetType) -> Skill {
-        let calculator = effectCalculatorFactory.getCalculator(for: .defend)
-
-        return BaseSkill(
+    
+    func createSingleTargetDmgSkillWithDebuff(name: String,
+                                              description: String,
+                                              cooldown: Int,
+                                              elementType: ElementType,
+                                              basePower: Int,
+                                              duration: Int,
+                                              attack: Double = 1.0,
+                                              defense: Double = 1.0,
+                                              speed: Double = 1.0,
+                                              heal: Double = 1.0
+                                              
+    ) -> Skill {
+        BaseSkill(
             name: name,
             description: description,
-            type: .defend,
-            targetType: targetType,
-            elementType: .neutral,
-            basePower: basePower,
             cooldown: cooldown,
-            statusEffectChance: 0.0,
-            statusEffect: nil,
-            statusEffectDuration: 0,
-            effectCalculator: calculator
+            effectDefinitions: [
+                EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+                    AttackCalculator(elementType: elementType, basePower: basePower),
+                    StatsModifiersCalculator(statsModifiers: [
+                        StatsModifier(remainingDuration: duration, attack: attack, defense: defense,
+                                      speed: speed, heal: heal)
+                    ])
+                ])
+            ]
         )
     }
-
-    func createBuffSkill(name: String, description: String, basePower: Int, cooldown: Int,
-                         targetType: TargetType, statusEffect: StatusEffectType, duration: Int) -> Skill {
-        let calculator = effectCalculatorFactory.getCalculator(for: .buff)
-
-        return BaseSkill(
+    
+    func createSingleTargetDmgSkillAndBuffSelf(name: String,
+                                               description: String,
+                                               cooldown: Int,
+                                               elementType: ElementType,
+                                               basePower: Int,
+                                               duration: Int,
+                                               attack: Double = 1.0,
+                                               defense: Double = 1.0,
+                                               speed: Double = 1.0,
+                                               heal: Double = 1.0
+                                              
+    ) -> Skill {
+        BaseSkill(
             name: name,
             description: description,
-            type: .buff,
-            targetType: targetType,
-            elementType: .neutral,
-            basePower: basePower,
             cooldown: cooldown,
-            statusEffectChance: 1.0,
-            statusEffect: statusEffect,
-            statusEffectDuration: duration,
-            effectCalculator: calculator
-        )
-    }
-
-    func createDebuffSkill(name: String, description: String, basePower: Int, cooldown: Int,
-                           targetType: TargetType, statusEffect: StatusEffectType, duration: Int) -> Skill {
-        let calculator = effectCalculatorFactory.getCalculator(for: .debuff)
-
-        return BaseSkill(
-            name: name,
-            description: description,
-            type: .debuff,
-            targetType: targetType,
-            elementType: .neutral,
-            basePower: basePower,
-            cooldown: cooldown,
-            statusEffectChance: 1.0,
-            statusEffect: statusEffect,
-            statusEffectDuration: duration,
-            effectCalculator: calculator
+            effectDefinitions: [
+                EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+                    AttackCalculator(elementType: elementType, basePower: basePower),
+                ]),
+                EffectDefinition(targetType: .ownself, effectCalculators: [
+                    StatsModifiersCalculator(statsModifiers: [
+                        StatsModifier(remainingDuration: duration, attack: attack, defense: defense,
+                                      speed: speed, heal: heal)
+                    ])
+                ])
+                
+            ]
         )
     }
 }

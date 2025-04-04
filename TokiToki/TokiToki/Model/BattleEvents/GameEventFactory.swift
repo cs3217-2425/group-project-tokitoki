@@ -12,7 +12,7 @@ class GameEventFactory {
         SkillUsedEvent(
             entityId: user.id,
             skillName: skill.name,
-            elementType: skill.elementType,
+            elementType: .neutral, // modify implementation
             targetIds: targets.map { $0.id }
         )
     }

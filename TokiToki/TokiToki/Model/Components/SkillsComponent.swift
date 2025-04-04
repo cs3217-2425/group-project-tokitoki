@@ -7,11 +7,12 @@
 
 import Foundation
 
-class SkillsComponent: BaseComponent {
+class SkillsComponent: Component {
     var skills: [Skill]
+    let entity: Entity
 
-    init(entityId: UUID, skills: [Skill]) {
+    init(entity: Entity, skills: [Skill]) {
         self.skills = skills
-        super.init(entityId: entityId)
+        self.entity = entity
     }
 }
