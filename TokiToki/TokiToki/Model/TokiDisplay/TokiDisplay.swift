@@ -73,7 +73,7 @@ class TokiDisplay {
         let repository = EquipmentRepository.shared
         let candyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
         let candy = repository.createConsumableEquipment(name: name,
-                                                         description: "Grants bonus EXP permanently.",
+                                                         description: "Grants bonus +50 EXP",
                                                          rarity: 1,
                                                          effectStrategy: candyStrategy)
         return candy
@@ -137,8 +137,6 @@ class TokiDisplay {
         let consumable = createTestConsumableEquipment()
         let upgradeCandy = createTestUpgradeCandy()
         
-        // Set up your Toki with an empty equipment array
-        // (so we're no longer mixing Toki's .equipments with the facade's inventory).
         self.toki = Toki(
             name: "Tokimon Omicron 1",
             rarity: .common,
@@ -149,7 +147,6 @@ class TokiDisplay {
             level: 1
         )
 
-        // Now add the new equipment to the facade's inventory.
         let facade = TokiDisplay.shared.equipmentFacade
         let component = facade.equipmentComponent
         component.inventory.append(contentsOf: [equipment, consumable, upgradeCandy])
@@ -311,7 +308,7 @@ class TokiDisplay {
            let consumable = item as? ConsumableEquipment {
 
             let useAction = UIContextualAction(style: .normal, title: "Use") { _, _, completion in
-                self.useConsumable(consumable, at: indexPath, equipmentTableView: tableView)
+                self.useConsumable(consumable, at: indexPath, equipmentTableView: tableView, control: control)
                 completion(true)
             }
             useAction.backgroundColor = .systemGreen

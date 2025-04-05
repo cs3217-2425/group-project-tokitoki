@@ -38,7 +38,15 @@ class Toki {
     
     func gainExperience(_ exp: Int) {
         print("Toki gains \(exp) EXP")
-        // Update experience and level up if needed.
+        // Update experience
+        self.baseStats = TokiBaseStats(
+            hp: self.baseStats.hp,
+            attack: self.baseStats.attack,
+            defense: self.baseStats.defense,
+            speed: self.baseStats.speed,
+            heal: self.baseStats.heal,
+            exp: self.baseStats.exp + exp
+        )
     }
 
     func createBattleEntity() -> GameStateEntity {

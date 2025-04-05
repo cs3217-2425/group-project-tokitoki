@@ -63,7 +63,7 @@ extension TokiDisplay {
         }
     }
     
-    func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath, equipmentTableView: UITableView?) {
+    func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath, equipmentTableView: UITableView?, control: TokiDisplayViewController) {
         // 1. Use it on the real Toki so that Toki’s exp updates
         TokiDisplay.shared.equipmentFacade.useConsumable(
             consumable: consumable,
@@ -71,7 +71,7 @@ extension TokiDisplay {
         )
 
         // 2. Remove from the facade’s inventory so it no longer appears in the table
-        var component = TokiDisplay.shared.equipmentFacade.equipmentComponent
+        let component = TokiDisplay.shared.equipmentFacade.equipmentComponent
         if let idx = component.inventory.firstIndex(where: { $0.id == consumable.id }) {
             component.inventory.remove(at: idx)
             TokiDisplay.shared.equipmentFacade.equipmentComponent = component
@@ -84,5 +84,6 @@ extension TokiDisplay {
 
         // 4. Reload the table to reflect the changes
         equipmentTableView?.reloadData()
+        self.updateUI(control)
     }
 }
