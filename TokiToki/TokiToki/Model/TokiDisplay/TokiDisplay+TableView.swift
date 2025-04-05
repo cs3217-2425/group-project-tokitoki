@@ -86,13 +86,12 @@ extension TokiDisplay {
             }
         }
 
-        // e.g. a "Craft" button:
-//        let craftAction = UIContextualAction(style: .normal, title: "Craft") { _, _, completion in
-//            control.showCraftingPopup(for: item)
-//            completion(true)
-//        }
-//        craftAction.backgroundColor = .systemBlue
-//        actions.append(craftAction)
+        let craftAction = UIContextualAction(style: .normal, title: "Craft") { _, _, completion in
+            control.showCraftingPopup(for: item)
+            completion(true)
+        }
+        craftAction.backgroundColor = .systemBlue
+        actions.append(craftAction)
 
         return UISwipeActionsConfiguration(actions: actions)
     }
