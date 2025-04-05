@@ -11,7 +11,8 @@ class EquipmentComponent {
     var inventory: [Equipment] = []
     var equipped: [EquipmentSlot: NonConsumableEquipment] = [:]
 
-    init(inventory: [Equipment] = [], equipped: [EquipmentSlot: NonConsumableEquipment] = [:]) {
+    init(inventory: [Equipment] = [],
+         equipped: [EquipmentSlot: NonConsumableEquipment] = [:]) {
         self.inventory = inventory
         self.equipped = equipped
     }

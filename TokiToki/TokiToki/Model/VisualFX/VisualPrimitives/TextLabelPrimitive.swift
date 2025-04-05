@@ -85,7 +85,7 @@ class TextLabelPrimitive: VisualFXPrimitive {
         scaleAnimation.keyTimes = [0, 0.5, 1]
         scaleAnimation.duration = 0.5
         scaleAnimation.repeatCount = 2
-        
+
         label.layer.add(scaleAnimation, forKey: "pulsate")
     }
 }

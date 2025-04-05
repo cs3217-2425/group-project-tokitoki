@@ -26,7 +26,7 @@ struct StatusEffect {
         }
         return strategy.apply(to: entity, effect: self)
     }
-    
+
     mutating func updateActionMeter(by multiplier: Float) {
         self.actionMeter += speedOfDmgOverTime * multiplier
     }

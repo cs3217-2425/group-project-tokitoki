@@ -32,8 +32,7 @@ class Toki {
     }
 
     func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
-        print("Toki receives a temporary buff: \(stat) +\(value) for \(duration) sec")
-        // In a full implementation, integrate with a buff manager.
+
     }
 
     func gainExperience(_ exp: Int) {
@@ -92,4 +91,3 @@ struct TokiBaseStats {
     var critHitChance: Int = 15
     var critHitDamage: Int = 150
 }
-

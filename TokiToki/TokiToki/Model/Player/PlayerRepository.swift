@@ -1,13 +1,13 @@
-//import CoreData
-//import Foundation
+// import CoreData
+// import Foundation
 //
-//protocol PlayerRepository {
+// protocol PlayerRepository {
 //    func getPlayer() -> Player?
 //    func savePlayer(_ player: Player)
 //    func createDefaultPlayer(name: String) -> Player
-//}
+// }
 //
-//class CoreDataPlayerRepository: PlayerRepository {
+// class CoreDataPlayerRepository: PlayerRepository {
 //    private let context: NSManagedObjectContext
 //    
 //    init(context: NSManagedObjectContext) {
@@ -343,5 +343,5 @@
 //            description: "Some equipment"
 //        )
 //    }
-//}
+// }
 //

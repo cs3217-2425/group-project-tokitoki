@@ -12,32 +12,32 @@ import Foundation
 /// Adapter to make Toki conform to IGachaItem
 class TokiGachaItem: IGachaItem {
     private let toki: Toki
-    
+
     // IGachaItem properties
-    var id: UUID { return toki.id }
-    var name: String { return toki.name }
-    var rarity: ItemRarity { return toki.rarity }
-    var elementType: [ElementType] { return toki.elementType }
+    var id: UUID { toki.id }
+    var name: String { toki.name }
+    var rarity: ItemRarity { toki.rarity }
+    var elementType: [ElementType] { toki.elementType }
     var ownerId: UUID?
     var dateAcquired: Date?
-    
+
     init(toki: Toki, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
         self.toki = toki
         self.ownerId = ownerId
         self.dateAcquired = dateAcquired
     }
-    
+
     /// Get the wrapped Toki object
     func getToki() -> Toki {
-        return toki
+        toki
     }
-    
+
 }
 
 // MARK: - Skill Adapter
 
 /// Adapter to make Skill conform to IGachaItem
-//class SkillGachaItem: IGachaItem {
+// class SkillGachaItem: IGachaItem {
 //    private let skill: Skill
 //    
 //    // IGachaItem properties
@@ -58,22 +58,22 @@ class TokiGachaItem: IGachaItem {
 //    func getSkill() -> Skill {
 //        return skill
 //    }
-//}
+// }
 
 // MARK: - Equipment Adapter
 
 /// Adapter to make Equipment conform to IGachaItem
 class EquipmentGachaItem: IGachaItem {
     private let equipment: Equipment
-    
+
     // IGachaItem properties
-    var id: UUID { return equipment.id }
-    var name: String { return equipment.name }
+    var id: UUID { equipment.id }
+    var name: String { equipment.name }
     var rarity: ItemRarity
     var elementType: [ElementType]
     var ownerId: UUID?
     var dateAcquired: Date?
-    
+
     init(equipment: Equipment, elementType: ElementType = .neutral, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
         self.equipment = equipment
         self.rarity = .common
@@ -82,22 +82,22 @@ class EquipmentGachaItem: IGachaItem {
         self.dateAcquired = dateAcquired
         self.rarity = convertEquipmentRarityToItemRarity(equipment.rarity)
     }
-    
+
     /// Get the wrapped Equipment object
     func getEquipment() -> Equipment {
-        return equipment
+        equipment
     }
-    
+
     /// Get as consumable equipment if applicable
     func getConsumableEquipment() -> ConsumableEquipment? {
-        return equipment as? ConsumableEquipment
+        equipment as? ConsumableEquipment
     }
-    
+
     /// Get as non-consumable equipment if applicable
     func getNonConsumableEquipment() -> NonConsumableEquipment? {
-        return equipment as? NonConsumableEquipment
+        equipment as? NonConsumableEquipment
     }
-    
+
     /// Convert from Equipment's integer rarity to IGachaItem's rarity
     private func convertEquipmentRarityToItemRarity(_ equipmentRarity: Int) -> ItemRarity {
         switch equipmentRarity {
