@@ -19,7 +19,7 @@ class AttackCalculator: EffectCalculator {
     func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self),
               let targetStats = target.getComponent(ofType: StatsComponent.self) else {
-            return EffectResult(entity: target, type: .none, value: 0, description: "Failed to get stats")
+            return EffectResult(entity: target, value: 0, description: "Failed to get stats")
         }
 
         // Base formula

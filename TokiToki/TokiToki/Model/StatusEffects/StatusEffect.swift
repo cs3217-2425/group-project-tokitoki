@@ -20,7 +20,6 @@ struct StatusEffect {
         guard let strategy = strategyFactory.getStrategy(for: type) else {
             return EffectResult(
                 entity: entity,
-                type: .none,
                 value: 0,
                 description: "No effect applied (no strategy found)"
             )

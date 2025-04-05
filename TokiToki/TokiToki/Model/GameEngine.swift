@@ -24,8 +24,7 @@ class GameEngine {
     private var statusEffectStrategyFactory = StatusEffectStrategyFactory()
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
-    private let eventFactory = GameEventFactory()
-    
+
     private let multiplierForActionMeter: Float = 0.1
     private let MAX_ACTION_BAR: Float = 100
     private let turnSystem: TurnSystem
@@ -157,12 +156,11 @@ class GameEngine {
     fileprivate func createBattleEventAndPublishToEventBus(_ currentGameStateEntity: GameStateEntity,
                                                            _ skillSelected: any Skill,
                                                            _ targets: [GameStateEntity]) {
-        let skillEvent = eventFactory.createSkillUsedEvent(
+        BattleEventManager.shared.publishSkillUsedEvent(
             user: currentGameStateEntity,
             skill: skillSelected,
             targets: targets
         )
-        EventBus.shared.post(skillEvent)
     }
 
     private func createAndExecuteSkillAction(_ currentGameStateEntity: GameStateEntity,
@@ -201,12 +199,8 @@ class GameEngine {
             sourceId = skillAction.user.id
         }
 
-        // Convert results to events and post them
         for result in results {
-            for battleResultEvent in result.toBattleEvents(sourceId: sourceId) {
-                // Post-action damage taken, status effects, etc events are emitted
-                EventBus.shared.post(battleResultEvent)
-            }
+            BattleEventManager.shared.publishEffectResult(result, sourceId: sourceId)
         }
 
         return results

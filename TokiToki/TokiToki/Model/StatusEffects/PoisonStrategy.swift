@@ -14,7 +14,6 @@ class PoisonStrategy: StatusEffectStrategy {
 
         return EffectResult(
             entity: entity,
-            type: .damage,
             value: damage,
             description: "\(entity.getName()) takes \(damage) poison damage!"
         )

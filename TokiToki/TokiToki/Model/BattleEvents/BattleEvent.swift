@@ -28,7 +28,6 @@ struct DamageDealtEvent: BattleEvent {
 struct SkillUsedEvent: BattleEvent {
     let entityId: UUID
     let skillName: String
-    let elementType: ElementType
     let targetIds: [UUID]
 }
 struct HealingEvent: BattleEvent {

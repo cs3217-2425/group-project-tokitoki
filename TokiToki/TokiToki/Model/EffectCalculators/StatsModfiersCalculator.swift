@@ -19,7 +19,7 @@ class StatsModifiersCalculator: EffectCalculator {
                 return nil
             }
             StatsModifiersSystem().addModifier(modifier, target)
-            return EffectResult(entity: target, type: .statsModified, value: 0,
+            return EffectResult(entity: target, value: 0,
                                         description: modifier.describeChanges(for: target))
         }
         return nil
