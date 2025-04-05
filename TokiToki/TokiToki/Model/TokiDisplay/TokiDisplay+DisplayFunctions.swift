@@ -63,21 +63,26 @@ extension TokiDisplay {
         }
     }
     
-    /// Uses the first consumable item found in the inventory.
-    func useConsumable() {
-        let component = equipmentFacade.equipmentComponent
-        if let consumable = component.inventory.first(
-            where: { $0.equipmentType == .consumable }
-        ) as? ConsumableEquipment {
-            let toki = Toki(name: "Demo Toki", rarity: .common, baseStats:
-                                TokiBaseStats(hp: 100,
-                                              attack: 50,
-                                              defense: 50,
-                                              speed: 50,
-                                              heal: 100,
-                                              exp: 42
-                                             ), skills: [], equipments: [], elementType: .fire, level: 1)
-            equipmentFacade.useConsumable(consumable: consumable, on: toki)
+    func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath, equipmentTableView: UITableView?) {
+        // 1. Use it on the real Toki so that Toki’s exp updates
+        TokiDisplay.shared.equipmentFacade.useConsumable(
+            consumable: consumable,
+            on: TokiDisplay.shared.toki
+        )
+
+        // 2. Remove from the facade’s inventory so it no longer appears in the table
+        var component = TokiDisplay.shared.equipmentFacade.equipmentComponent
+        if let idx = component.inventory.firstIndex(where: { $0.id == consumable.id }) {
+            component.inventory.remove(at: idx)
+            TokiDisplay.shared.equipmentFacade.equipmentComponent = component
         }
+
+        // 3. Also remove from Toki’s equipment array to keep them in sync (if Toki had it).
+        if let tokiIndex = TokiDisplay.shared.toki.equipment.firstIndex(where: { $0.id == consumable.id }) {
+            TokiDisplay.shared.toki.equipment.remove(at: tokiIndex)
+        }
+
+        // 4. Reload the table to reflect the changes
+        equipmentTableView?.reloadData()
     }
 }

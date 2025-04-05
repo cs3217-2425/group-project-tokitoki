@@ -47,9 +47,7 @@ class TokiDisplay {
     private func createTestEquipment(name: String = "Magic Staff") -> Equipment {
         // Use EquipmentRepository instead of EquipmentFactory.
         let repository = EquipmentRepository.shared
-        // Here, assume that the equipment's elementType is provided by the repository
-        // and that Buff is replaced by EquipmentBuff.
-        // For compatibility with legacy code, we'll create a dummy EquipmentBuff.
+        // For compatibility with legacy code, create a dummy EquipmentBuff.
         let dummyBuff = EquipmentBuff(value: 10, description: "Magical buff", affectedStat: "attack")
         let equipment = repository.createNonConsumableEquipment(name: name,
                                                                 description: "A magical staff",
@@ -58,7 +56,29 @@ class TokiDisplay {
                                                                 slot: .custom)
         return equipment
     }
-
+    
+    // New helper method to create a test consumable equipment (Health Potion)
+    private func createTestConsumableEquipment(name: String = "Health Potion") -> ConsumableEquipment {
+        let repository = EquipmentRepository.shared
+        let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 5)
+        let consumable = repository.createConsumableEquipment(name: name,
+                                                              description: "Restores health temporarily.",
+                                                              rarity: 1,
+                                                              effectStrategy: potionStrategy)
+        return consumable
+    }
+    
+    // New helper method to create another test consumable equipment (Upgrade Candy)
+    private func createTestUpgradeCandy(name: String = "Upgrade Candy") -> ConsumableEquipment {
+        let repository = EquipmentRepository.shared
+        let candyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
+        let candy = repository.createConsumableEquipment(name: name,
+                                                         description: "Grants bonus EXP permanently.",
+                                                         rarity: 1,
+                                                         effectStrategy: candyStrategy)
+        return candy
+    }
+    
     /// Registers sample crafting recipes.
     func setupCraftingRecipes() {
         let potionRecipe = CraftingRecipe(requiredEquipmentIdentifiers: ["health potion", "health potion"]) { (equipments: [Equipment]) in
@@ -114,13 +134,30 @@ class TokiDisplay {
     func loadTest() {
         let skill = createTestSkill()
         let equipment = createTestEquipment()
-        self.toki = Toki(name: "Tokimon Omicron 1",
-                         rarity: .common,
-                         baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 492),
-                         skills: [skill],
-                         equipments: [equipment],
-                         elementType: .fire,
-                         level: 1)
+        let consumable = createTestConsumableEquipment()
+        let upgradeCandy = createTestUpgradeCandy()
+        
+        // Set up your Toki with an empty equipment array
+        // (so we're no longer mixing Toki's .equipments with the facade's inventory).
+        self.toki = Toki(
+            name: "Tokimon Omicron 1",
+            rarity: .common,
+            baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 492),
+            skills: [skill],
+            equipments: [], // empty, to avoid duplication
+            elementType: .fire,
+            level: 1
+        )
+
+        // Now add the new equipment to the facade's inventory.
+        let facade = TokiDisplay.shared.equipmentFacade
+        let component = facade.equipmentComponent
+        component.inventory.append(contentsOf: [equipment, consumable, upgradeCandy])
+        
+        facade.equipmentComponent = component
+        ServiceLocator.shared.dataStore.save()
+        
+        self.toki.equipment.append(contentsOf: [equipment, consumable, upgradeCandy])
     }
     
     private func totalEquipmentBuff(for stat: String) -> Float {
@@ -256,6 +293,35 @@ class TokiDisplay {
         return cell
     }
     
+    // Provide the trailing swipe configuration.
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath, _ control: TokiDisplayViewController)
+                   -> UISwipeActionsConfiguration? {
+
+        // Get the inventory from the facade's EquipmentComponent.
+        let inventory = TokiDisplay.shared.equipmentFacade.equipmentComponent.inventory
+
+        // Safely check row bounds.
+        guard indexPath.row < inventory.count else { return nil }
+
+        let item = inventory[indexPath.row]
+
+        // If this item is consumable, show a “Use” button.
+        if item.equipmentType == .consumable,
+           let consumable = item as? ConsumableEquipment {
+
+            let useAction = UIContextualAction(style: .normal, title: "Use") { _, _, completion in
+                self.useConsumable(consumable, at: indexPath, equipmentTableView: tableView)
+                completion(true)
+            }
+            useAction.backgroundColor = .systemGreen
+            return UISwipeActionsConfiguration(actions: [useAction])
+        }
+
+        // If not a consumable, no swipe action.
+        return nil
+    }
+    
     func changeEquipmentTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.equipmentTableView?.indexPathForSelectedRow else {
             let noSelectionAlert = UIAlertController(title: "No Selection",
@@ -366,3 +432,4 @@ class TokiDisplay {
         }
     }
 }
+

@@ -87,3 +87,16 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         TokiDisplay.shared.handleSkillLongPress(gesture, self)
     }
 }
+
+extension TokiDisplayViewController {
+
+    // Provide the trailing swipe configuration.
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
+                   -> UISwipeActionsConfiguration? {
+
+        return TokiDisplay.shared.tableView(tableView,
+                                                trailingSwipeActionsConfigurationForRowAt: indexPath,
+                                                self)
+    }
+}
