@@ -17,17 +17,17 @@ class EquipmentSystem: System {
     var priority: Int = 0
     var equipmentComponent = PlayerManager.shared.getOrCreatePlayer().ownedEquipments
     var savedEquipments: [Equipment] = []
-    
+
     private init() {}
-    
+
     func update(_ entities: [GameStateEntity]) {
         // Future: Process temporary buff expirations, cooldowns, etc.
     }
-    
+
     func saveEquipments() {
         self.savedEquipments = self.equipmentComponent.inventory
     }
-    
+
     func reset(_ entities: [GameStateEntity]) {
         equipmentComponent.inventory = savedEquipments
     }
@@ -61,11 +61,11 @@ class EquipmentSystem: System {
             component.inventory.append(item)
         }
     }
-    
+
     func getConsumable(_ name: String) -> Equipment? {
         equipmentComponent.inventory.first { $0.equipmentType == .consumable && $0.name == name }
     }
-    
+
     func countConsumables() -> [ConsumableGroupings] {
         let countsDict = equipmentComponent.inventory
            .filter { $0.equipmentType == .consumable }

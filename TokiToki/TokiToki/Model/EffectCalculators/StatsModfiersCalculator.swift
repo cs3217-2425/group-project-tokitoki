@@ -8,7 +8,7 @@
 class StatsModifiersCalculator: EffectCalculator {
     private let statsSystem = StatsSystem()
     private let statsModifiers: [StatsModifier]
-    
+
     init(statsModifiers: [StatsModifier] = []) {
         self.statsModifiers = statsModifiers
     }

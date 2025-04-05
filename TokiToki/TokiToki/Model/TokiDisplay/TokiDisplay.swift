@@ -42,7 +42,7 @@ class TokiDisplay {
 //            statusEffectDuration: 2
 //        )
 //        return skill
-        return BaseSkill(
+        BaseSkill(
             name: name,
             description: "Strikes with thunder power",
             cooldown: 3,
@@ -75,8 +75,7 @@ class TokiDisplay {
     func setupCraftingRecipes() {
         let potionRecipe = CraftingRecipe(requiredEquipmentIdentifiers: ["health potion", "health potion"]) { (equipments: [Equipment]) in
             if let potion1 = equipments[0] as? Potion,
-               let potion2 = equipments[1] as? Potion
-                {
+               let potion2 = equipments[1] as? Potion {
                 let calculator1 = potion1.effectCalculators
                 let calculator2 = potion2.effectCalculators
 //                let newBuff = strat1.buffValue + strat2.buffValue
@@ -350,7 +349,7 @@ class TokiDisplay {
         }
         control.present(alert, animated: true)
     }
-    
+
     func levelUp(_ sender: UIButton, _ control: TokiDisplayViewController) {
         if toki.baseStats.exp >= 100 {
             let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)
@@ -379,7 +378,4 @@ class TokiDisplay {
         }
     }
 }
-
-
-    
 

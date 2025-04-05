@@ -8,13 +8,13 @@
 import Foundation
 
 class Candy: ConsumableEquipment {
-    var id: UUID = UUID()
+    var id = UUID()
     var name: String
     var description: String
     var equipmentType: EquipmentType = .consumable
     var rarity: Int
     let bonusExp: Int
-    
+
     init(name: String, description: String, rarity: Int, bonusExp: Int) {
         self.name = name
         self.description = description

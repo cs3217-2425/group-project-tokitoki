@@ -24,10 +24,10 @@ class GameEngine {
     private var statusEffectStrategyFactory = StatusEffectStrategyFactory()
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
-    
+
     static let multiplierForActionMeter: Float = 0.1
     static let MAX_ACTION_BAR: Float = 100
-    
+
     private let turnSystem = TurnSystem.shared
     private let skillsSystem = SkillsSystem()
     private let statusEffectsSystem = StatusEffectsSystem.shared
@@ -83,7 +83,7 @@ class GameEngine {
                 executeOpponentTurn(currentGameStateEntity)
                 return
             }
-            
+
             logMessage("It's now \(currentGameStateEntity.name)'s turn!")
             updateSkillIconsForCurrentEntity(currentGameStateEntity)
             return
@@ -120,30 +120,30 @@ class GameEngine {
             return
         }
         mostRecentSkillSelected = skillSelected
-        
+
         let singleTargetEffect = skillSelected.effectDefinitions.first {
             targetSelectionFactory.checkIfRequireTargetSelection($0.targetType)
         }
-        
+
         if let singleTargetEffect = singleTargetEffect {
             if singleTargetEffect.targetType == .singleEnemy && opponentTeam.count > 1 {
                 battleEffectsDelegate?.allowOpponentTargetSelection()
                 logMessage("Choose a target")
                 return
             }
-            
+
             if singleTargetEffect.targetType == .singleAlly && playerTeam.count > 1 {
                 battleEffectsDelegate?.allowAllyTargetSelection()
                 logMessage("Choose a target")
                 return
             }
         }
-        
+
         // TODO: update event bus with new changes
         let targets = targetSelectionFactory.generateTargets(currentGameStateEntity, playerTeam, opponentTeam,
                                                              skillSelected.effectDefinitions[0].targetType)
         createBattleEventAndPublishToEventBus(currentGameStateEntity, skillSelected, targets)
-        
+
         createAndExecuteSkillAction(currentGameStateEntity, skillSelected, [])
     }
 
@@ -157,7 +157,7 @@ class GameEngine {
         createBattleEventAndPublishToEventBus(currentGameStateEntity, mostRecentSkillSelected, [target])
         createAndExecuteSkillAction(currentGameStateEntity, mostRecentSkillSelected, [target])
     }
-    
+
     func useConsumable(_ consumableName: String) {
         let consumable = equipmentSystem.getConsumable(consumableName)
         guard let currentGameStateEntity = currentGameStateEntity,
@@ -171,7 +171,7 @@ class GameEngine {
             self?.updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
         }
     }
-    
+
     func takeNoAction() {
         guard let currentGameStateEntity = currentGameStateEntity else {
             return
@@ -268,7 +268,7 @@ class GameEngine {
 
     private func updateHealthBars(completion: @escaping () -> Void = {}) {
         var remainingAnimations = playersPlusOpponents.count
-        
+
         playersPlusOpponents.forEach {
             let currentHealth = $0.getComponent(ofType: StatsComponent.self)?.currentHealth
             let maxHealth = $0.getComponent(ofType: StatsComponent.self)?.baseStats.hp
@@ -323,7 +323,7 @@ class GameEngine {
         opponentTeam = savedOpponentTeam
         mostRecentSkillSelected = nil
         pendingActions = []
-        updateHealthBars() 
+        updateHealthBars()
         startBattle()
     }
 }

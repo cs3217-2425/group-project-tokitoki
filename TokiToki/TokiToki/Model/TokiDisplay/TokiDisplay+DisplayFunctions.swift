@@ -18,7 +18,6 @@ extension TokiDisplay {
                                   rarity: 1,
                                   effectCalculators: [healCalculator])
 
-        
         let upgradeCandy = Candy(name: "Upgrade Candy",
                                  description: "Grants bonus EXP permanently.",
                                  rarity: 1,
@@ -62,7 +61,7 @@ extension TokiDisplay {
             equipmentFacade.equipItem(item: weapon)
         }
     }
-    
+
     /// Uses the first consumable item found in the inventory.
     func useConsumable() {
         let component = equipmentFacade.equipmentComponent

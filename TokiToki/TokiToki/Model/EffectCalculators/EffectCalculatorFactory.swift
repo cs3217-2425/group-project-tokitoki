@@ -5,7 +5,7 @@
 //  Created by proglab on 15/3/25.
 //
 
-//class EffectCalculatorFactory {
+// class EffectCalculatorFactory {
 //    private let elementsSystem = ElementsSystem()
 //    private let calculators: [SkillType: EffectCalculator]
 //
@@ -20,4 +20,4 @@
 //        calculators[skillType] ?? AttackCalculator()
 //        // Default to attack if not found
 //    }
-//}
+// }

@@ -66,7 +66,7 @@ struct Player {
             statistics.battlesWon += 1
         }
     }
-    
+
     // MARK: - Item Management
     mutating func addItem(_ item: any IGachaItem) {
         switch item {
@@ -80,10 +80,8 @@ struct Player {
             print("Unknown item type: \(type(of: item))")
         }
     }
-    
+
     func countConsumables() -> [ConsumableGroupings] {
         EquipmentSystem.shared.countConsumables()
     }
 }
-
-

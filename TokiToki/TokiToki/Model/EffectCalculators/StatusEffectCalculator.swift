@@ -12,7 +12,7 @@ class StatusEffectCalculator: EffectCalculator {
     let statusEffect: StatusEffectType?
     let statusEffectDuration: Int
     let statusEffectStrength: Double
-    
+
     init(statusEffectChance: Double = 0, statusEffect: StatusEffectType? = nil,
          statusEffectDuration: Int = 0,
          statusEffectStrength: Double = 1.0) {
@@ -27,20 +27,20 @@ class StatusEffectCalculator: EffectCalculator {
             return EffectResult(entity: target, value: 0,
                                 description: "No status effect found!")
         }
-        
+
         if Double.random(in: 0...1) > statusEffectChance {
             return nil
         }
-        
+
         let effect = StatusEffect(type: effectType, remainingDuration: statusEffectDuration,
                                   strength: statusEffectStrength,
                                   sourceId: source.id, target: target)
-        
+
         guard let statusComponent = target.getComponent(ofType: StatusEffectsComponent.self) else {
             return EffectResult(entity: target, value: 0,
                                 description: "No status component found!")
         }
-        
+
         statusEffectsSystem.addEffect(effect, target)
         return EffectResult(entity: target, value: 0,
                                     description: "\(target.name) is affected by \(effectType)!")

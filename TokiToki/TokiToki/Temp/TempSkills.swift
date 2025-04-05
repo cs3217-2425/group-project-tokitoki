@@ -73,7 +73,7 @@ let excalibur = BaseSkill(
     cooldown: 4,
     effectDefinitions: [
         EffectDefinition(targetType: .singleEnemy, effectCalculators: [
-            AttackCalculator(elementType: .light, basePower: 60),
+            AttackCalculator(elementType: .light, basePower: 60)
         ]),
         EffectDefinition(targetType: .ownself, effectCalculators: [
             StatsModifiersCalculator(statsModifiers: [
@@ -107,7 +107,7 @@ let iceShot = BaseSkill(
     ]
 )
 //
-//let arrowRain = BaseSkill(
+// let arrowRain = BaseSkill(
 //    name: "Arrow Rain",
 //    description: "A shower of arrows that deals damage to all enemies.",
 //    type: .attack,
@@ -116,7 +116,7 @@ let iceShot = BaseSkill(
 //    basePower: 40,
 //    cooldown: 3,
 //    effectCalculator: attackCalculator
-//)
+// )
 
 let arrowRain = BaseSkill(
     name: "Arrow Rain",
@@ -124,7 +124,7 @@ let arrowRain = BaseSkill(
     cooldown: 3,
     effectDefinitions: [
         EffectDefinition(targetType: .allEnemies, effectCalculators: [
-            AttackCalculator(elementType: .earth, basePower: 40),
+            AttackCalculator(elementType: .earth, basePower: 40)
         ])
     ]
 )

@@ -32,7 +32,7 @@ class Toki {
     }
 
     func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
-        
+
     }
 
     func gainExperience(_ exp: Int) {
@@ -62,7 +62,7 @@ class Toki {
         entity.addComponent(skillsComponent)
         entity.addComponent(statusEffectsComponent)
         entity.addComponent(statsModifiersComponent)
-        
+
         return entity
     }
 
@@ -91,4 +91,3 @@ struct TokiBaseStats {
     var critHitChance: Int = 15
     var critHitDamage: Int = 150
 }
-

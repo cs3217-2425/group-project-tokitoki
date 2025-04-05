@@ -25,7 +25,7 @@ struct StatsModifier: Equatable {
     let heal: Double
     let criticalHitChance: Double
     let criticalHitDmg: Double
-    
+
     init(remainingDuration: Int, attack: Double = 1.0, defense: Double = 1.0, speed: Double = 1.0,
          heal: Double = 1.0, criticalHitChance: Double = 1.0, criticalHitDmg: Double = 1.0) {
         self.remainingDuration = remainingDuration

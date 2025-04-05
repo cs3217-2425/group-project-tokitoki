@@ -15,10 +15,10 @@ class UseConsumableAction: Action {
         self.user = user
         self.consumable = consumable
     }
-    
+
     func execute() -> [EffectResult] {
         let results = EquipmentSystem.shared.useConsumable(consumable, on: nil, user)
-        
+
         return results ?? []
     }
 }

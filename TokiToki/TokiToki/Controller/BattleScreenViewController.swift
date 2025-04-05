@@ -43,8 +43,8 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     @IBOutlet var opponent3HealthBarContainer: UIView!
     @IBOutlet var opponent3View: UIView!
 
-    @IBOutlet weak var noAction: UIImageView!
-    @IBOutlet weak var consumables: UIImageView!
+    @IBOutlet var noAction: UIImageView!
+    @IBOutlet var consumables: UIImageView!
     @IBOutlet var skill1: UIImageView!
     @IBOutlet var skill2: UIImageView!
     @IBOutlet var skill3: UIImageView!
@@ -86,7 +86,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             opponentImageViewsToId[opponentImageViews[index]] = opponent.id
         }
     }
-    
+
     fileprivate func addMappingOfPlayerEntitiesToImageView(_ playerEntities: [GameStateEntity]) {
         for (index, player) in playerEntities.enumerated() {
             gameStateIdToViews[player.id] = playerTokisViews[index]
@@ -164,21 +164,21 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(opponentTapped(_:)))
             imageView.addGestureRecognizer(tapGesture)
         }
-        
+
         for imageView in playerTokisImageViews {
             imageView.isUserInteractionEnabled = false
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(playerTokiTapped(_:)))
             imageView.addGestureRecognizer(tapGesture)
         }
-        
+
         consumables.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(useConsumables(_:)))
         consumables.addGestureRecognizer(tapGesture)
-        
+
         noAction.isUserInteractionEnabled = true
         let noActionTapGesture = UITapGestureRecognizer(target: self, action: #selector(takeNoAction(_:)))
         noAction.addGestureRecognizer(noActionTapGesture)
-        
+
         playerActionImageViews = skillImageViews + [consumables, noAction]
     }
 
@@ -202,7 +202,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             imageView.isUserInteractionEnabled = false
         }
     }
-    
+
     @objc func playerTokiTapped(_ sender: UITapGestureRecognizer) {
         guard let tappedImageView = sender.view as? UIImageView else { return }
         let targetId = playerImageViewsToId[tappedImageView]
@@ -226,7 +226,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             imageView.isUserInteractionEnabled = true
         }
     }
-    
+
     func allowAllyTargetSelection() {
         playerTokisImageViews.forEach { imageView in
             UIView.animate(withDuration: 1, delay: 0, options: [.autoreverse, .repeat, .allowUserInteraction]) {
@@ -256,13 +256,13 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             })
         }
     }
-    
+
     fileprivate func animateMovement(_ tokiView: UIView, _ completion: @escaping () -> Void, _ isAlly: Bool) {
         let originalPosition = tokiView.frame.origin.x
         let rightPosition = tokiView.frame.origin.x + 50
         let leftPosition = tokiView.frame.origin.x - 50
         let delay: TimeInterval = 0.4
-        
+
         if isAlly {
             moveTokiView(tokiView, isAlly, leftPosition, rightPosition, originalPosition, completion)
         } else {
@@ -362,10 +362,10 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             view.overallView.isHidden = false
         }
     }
-    
+
     @objc func useConsumables(_ sender: UITapGestureRecognizer) {
         guard let tappedView = sender.view else { return }
-        
+
         let items = EquipmentSystem.shared.countConsumables()
 
         let alert = UIAlertController(title: "Use Consumable", message: "Choose an item to use:", preferredStyle: .actionSheet)
@@ -391,7 +391,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
 
         self.present(alert, animated: true)
     }
-    
+
     @objc func takeNoAction(_ sender: UITapGestureRecognizer) {
         playerActionImageViews.forEach { $0.isHidden = true }
         gameEngine?.takeNoAction()

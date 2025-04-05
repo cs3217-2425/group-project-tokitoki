@@ -68,11 +68,11 @@ class StatsSystem: System {
     func getHeal(_ entity: GameStateEntity) -> Int {
         getStatValue(for: \.heal, modifierKeyPath: \.heal, entity)
     }
-    
+
     func getCritChance(_ entity: GameStateEntity) -> Int {
         getStatValue(for: \.critHitChance, modifierKeyPath: \.criticalHitChance, entity)
     }
-    
+
     func getCritDmg(_ entity: GameStateEntity) -> Int {
         getStatValue(for: \.critHitDamage, modifierKeyPath: \.criticalHitDmg, entity)
     }

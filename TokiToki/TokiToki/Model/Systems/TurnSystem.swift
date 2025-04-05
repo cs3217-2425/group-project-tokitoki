@@ -11,8 +11,8 @@ class TurnSystem: System {
     let MAX_ACTION_BAR: Float = GameEngine.MAX_ACTION_BAR
     var multiplierForActionMeter: Float = GameEngine.multiplierForActionMeter
     let statsSystem = StatsSystem()
-    var globalTurnCounter: Int = 0 
-    
+    var globalTurnCounter: Int = 0
+
     private init() {}
 
     func update(_ entities: [GameStateEntity]) {
@@ -27,7 +27,8 @@ class TurnSystem: System {
     func getNextEntityToAct(_ entities: [GameStateEntity]) -> GameStateEntity? {
         let readyEntity = entities
             .filter { statsSystem.getActionBar($0) >= 100 &&
-                statsSystem.checkIsEntityDead($0) == false }
+                statsSystem.checkIsEntityDead($0) == false
+            }
             .sorted {
                 if statsSystem.getActionBar($0) == statsSystem.getActionBar($1) {
                     return statsSystem.getSpeed($0) > statsSystem.getSpeed($1)

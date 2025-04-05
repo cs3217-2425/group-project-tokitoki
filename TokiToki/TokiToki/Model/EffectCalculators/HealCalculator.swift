@@ -8,7 +8,7 @@
 class HealCalculator: EffectCalculator {
     private let statsSystem = StatsSystem()
     private let healPower: Int
-    
+
     init(healPower: Int) {
         self.healPower = healPower
     }

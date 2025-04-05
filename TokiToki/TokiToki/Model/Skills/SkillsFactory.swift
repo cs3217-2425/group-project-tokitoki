@@ -22,7 +22,7 @@ class SkillsFactory {
             ]
         )
     }
-    
+
     func createSingleTargetDmgSkillWithStatusEffect(name: String,
                                                     description: String,
                                                     cooldown: Int,
@@ -47,7 +47,7 @@ class SkillsFactory {
             ]
         )
     }
-    
+
     func createAoeDmgSkillWithStatusEffect(name: String,
                                            description: String,
                                            cooldown: Int,
@@ -72,7 +72,7 @@ class SkillsFactory {
             ]
         )
     }
-    
+
     func createSingleTargetDmgSkillWithDebuff(name: String,
                                               description: String,
                                               cooldown: Int,
@@ -83,7 +83,7 @@ class SkillsFactory {
                                               defense: Double = 1.0,
                                               speed: Double = 1.0,
                                               heal: Double = 1.0
-                                              
+
     ) -> Skill {
         BaseSkill(
             name: name,
@@ -100,7 +100,7 @@ class SkillsFactory {
             ]
         )
     }
-    
+
     func createAoeDmgSkillWithDebuff(name: String,
                                      description: String,
                                      cooldown: Int,
@@ -111,7 +111,7 @@ class SkillsFactory {
                                      defense: Double = 1.0,
                                      speed: Double = 1.0,
                                      heal: Double = 1.0
-                                              
+
     ) -> Skill {
         BaseSkill(
             name: name,
@@ -128,7 +128,7 @@ class SkillsFactory {
             ]
         )
     }
-    
+
     func createSingleTargetDmgSkillAndBuffSelf(name: String,
                                                description: String,
                                                cooldown: Int,
@@ -139,7 +139,7 @@ class SkillsFactory {
                                                defense: Double = 1.0,
                                                speed: Double = 1.0,
                                                heal: Double = 1.0
-                                              
+
     ) -> Skill {
         BaseSkill(
             name: name,
@@ -147,7 +147,7 @@ class SkillsFactory {
             cooldown: cooldown,
             effectDefinitions: [
                 EffectDefinition(targetType: .singleEnemy, effectCalculators: [
-                    AttackCalculator(elementType: elementType, basePower: basePower),
+                    AttackCalculator(elementType: elementType, basePower: basePower)
                 ]),
                 EffectDefinition(targetType: .ownself, effectCalculators: [
                     StatsModifiersCalculator(statsModifiers: [
@@ -155,7 +155,7 @@ class SkillsFactory {
                                       speed: speed, heal: heal)
                     ])
                 ])
-                
+
             ]
         )
     }

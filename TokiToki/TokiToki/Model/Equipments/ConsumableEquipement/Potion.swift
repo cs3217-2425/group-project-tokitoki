@@ -8,13 +8,13 @@
 import Foundation
 
 class Potion: ConsumableEquipment {
-    var id: UUID = UUID()
+    var id = UUID()
     var name: String
     var description: String
     var equipmentType: EquipmentType = .consumable
     var rarity: Int
     let effectCalculators: [EffectCalculator]
-    
+
     init(name: String, description: String, rarity: Int, effectCalculators: [EffectCalculator]) {
         self.name = name
         self.description = description

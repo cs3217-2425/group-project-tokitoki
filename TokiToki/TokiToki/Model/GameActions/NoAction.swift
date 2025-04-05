@@ -7,11 +7,11 @@
 
 class NoAction: Action {
     let entity: GameStateEntity
-    
+
     init(entity: GameStateEntity) {
         self.entity = entity
     }
-    
+
     func execute() -> [EffectResult] {
         [EffectResult(entity: GameStateEntity("doesnt matter"), value: 0, description: "No action taken by \(entity.name)")]
     }

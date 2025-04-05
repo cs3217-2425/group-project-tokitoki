@@ -5,16 +5,16 @@
 //  Created by Wh Kang on 31/3/25.
 //
 
-//import Foundation
+// import Foundation
 //
-//protocol ConsumableEffectStrategy {
+// protocol ConsumableEffectStrategy {
 //    // Takes in both toki and game state entity as arguments because a consumable
 //    // can either be used on a toki outside of battle, or on a game state entity during battle
 //    func applyEffect(to toki: Toki?,
 //                     _ entity: GameStateEntity?, completion: (() -> Void)?)
-//}
+// }
 //
-//struct PotionEffectStrategy: ConsumableEffectStrategy {
+// struct PotionEffectStrategy: ConsumableEffectStrategy {
 //    let effectDefinitions: [EffectDefinition]
 //
 //    func applyEffect(to toki: Toki?, _ entity: GameStateEntity?, completion: (() -> Void)? = nil) {
@@ -29,9 +29,9 @@
 //        }
 //        completion?()
 //    }
-//}
+// }
 //
-//struct UpgradeCandyEffectStrategy: ConsumableEffectStrategy {
+// struct UpgradeCandyEffectStrategy: ConsumableEffectStrategy {
 //    let bonusExp: Int
 //
 //    func applyEffect(to toki: Toki?,
@@ -40,4 +40,4 @@
 //        toki?.gainExperience(bonusExp)
 //        completion?()
 //    }
-//}
+// }
