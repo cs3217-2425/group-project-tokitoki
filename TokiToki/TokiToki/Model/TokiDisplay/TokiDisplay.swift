@@ -135,6 +135,7 @@ class TokiDisplay {
         let skill = createTestSkill()
         let equipment = createTestEquipment()
         let consumable = createTestConsumableEquipment()
+        let consumable2 = createTestConsumableEquipment()
         let upgradeCandy = createTestUpgradeCandy()
         
         self.toki = Toki(
@@ -146,15 +147,17 @@ class TokiDisplay {
             elementType: .fire,
             level: 15
         )
+        
+        setupCraftingRecipes()
 
         let facade = TokiDisplay.shared.equipmentFacade
         let component = facade.equipmentComponent
-        component.inventory.append(contentsOf: [equipment, consumable, upgradeCandy])
+        component.inventory.append(contentsOf: [equipment, consumable, consumable2, upgradeCandy])
         
         facade.equipmentComponent = component
         ServiceLocator.shared.dataStore.save()
         
-        self.toki.equipment.append(contentsOf: [equipment, consumable, upgradeCandy])
+        self.toki.equipment.append(contentsOf: [equipment, consumable, consumable2, upgradeCandy])
     }
     
     private func totalEquipmentBuff(for stat: String) -> Float {
