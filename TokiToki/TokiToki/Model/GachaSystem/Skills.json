@@ -4,71 +4,182 @@
       "id": "fireball",
       "name": "Fireball",
       "description": "Launches a ball of fire at the enemy.",
-      "rarity": 0,
-      "skillType": "attack",
-      "targetType": "singleEnemy",
-      "elementType": "fire",
-      "basePower": 40,
       "cooldown": 2,
-      "statusEffectChance": 0.2,
-      "statusEffect": "burn",
-      "statusEffectDuration": 2
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "fire",
+              "basePower": 40
+            },
+            {
+              "calculatorType": "statusEffect",
+              "statusEffectChance": 0.2,
+              "statusEffect": "burn",
+              "statusEffectDuration": 2,
+              "statusEffectStrength": 1.0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "water-blast",
       "name": "Water Blast",
       "description": "Blasts the enemy with a jet of water.",
-      "rarity": 0,
-      "skillType": "attack",
-      "targetType": "singleEnemy",
-      "elementType": "water",
-      "basePower": 35,
       "cooldown": 1,
-      "statusEffectChance": 0.0,
-      "statusEffect": null,
-      "statusEffectDuration": 0
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "water",
+              "basePower": 35
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "earth-shield",
       "name": "Earth Shield",
       "description": "Creates a shield of earth to protect the user.",
-      "rarity": 1,
-      "skillType": "defend",
-      "targetType": "ownself",
-      "elementType": "earth",
-      "basePower": 30,
       "cooldown": 3,
-      "statusEffectChance": 1.0,
-      "statusEffect": "defenseBuff",
-      "statusEffectDuration": 2
+      "effectDefinitions": [
+        {
+          "targetType": "ownself",
+          "calculators": [
+            {
+              "calculatorType": "statsModifier",
+              "statsModifierDuration": 2,
+              "attackModifier": 0.0,
+              "defenseModifier": 1.5,
+              "speedModifier": 0.0,
+              "healModifier": 0.0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "healing-wind",
       "name": "Healing Wind",
       "description": "A gentle breeze that heals allies.",
-      "rarity": 1,
-      "skillType": "heal",
-      "targetType": "allAllies",
-      "elementType": "air",
-      "basePower": 25,
       "cooldown": 4,
-      "statusEffectChance": 0.0,
-      "statusEffect": null,
-      "statusEffectDuration": 0
+      "effectDefinitions": [
+        {
+          "targetType": "allAllies",
+          "calculators": [
+            {
+              "calculatorType": "heal",
+              "basePower": 25
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "lightning-strike",
       "name": "Lightning Strike",
       "description": "Summons lightning to strike all enemies.",
-      "rarity": 2,
-      "skillType": "attack",
-      "targetType": "allEnemies",
-      "elementType": "air",
-      "basePower": 60,
       "cooldown": 5,
-      "statusEffectChance": 0.3,
-      "statusEffect": "paralysis",
-      "statusEffectDuration": 1
+      "effectDefinitions": [
+        {
+          "targetType": "allEnemies",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "air",
+              "basePower": 60
+            },
+            {
+              "calculatorType": "statusEffect",
+              "statusEffectChance": 0.3,
+              "statusEffect": "paralysis",
+              "statusEffectDuration": 1,
+              "statusEffectStrength": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flame-slash",
+      "name": "Flame Slash",
+      "description": "A powerful slash imbued with fire energy.",
+      "cooldown": 3,
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "fire",
+              "basePower": 50
+            }
+          ]
+        },
+        {
+          "targetType": "ownself",
+          "calculators": [
+            {
+              "calculatorType": "statsModifier",
+              "statsModifierDuration": 2,
+              "attackModifier": 1.2,
+              "defenseModifier": 0.0,
+              "speedModifier": 0.0,
+              "healModifier": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ice-spear",
+      "name": "Ice Spear",
+      "description": "Launches a spear of ice that slows the enemy.",
+      "cooldown": 3,
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "water",
+              "basePower": 45
+            },
+            {
+              "calculatorType": "statsModifier",
+              "statsModifierDuration": 2,
+              "attackModifier": 0.0,
+              "defenseModifier": 0.0,
+              "speedModifier": 0.8,
+              "healModifier": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "earthquake",
+      "name": "Earthquake",
+      "description": "Creates a powerful earthquake that damages all enemies.",
+      "cooldown": 4,
+      "effectDefinitions": [
+        {
+          "targetType": "allEnemies",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "earth",
+              "basePower": 40
+            }
+          ]
+        }
+      ]
     }
   ]
 }

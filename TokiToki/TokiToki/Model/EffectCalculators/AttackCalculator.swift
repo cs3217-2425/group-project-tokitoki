@@ -8,8 +8,8 @@
 class AttackCalculator: EffectCalculator {
     private let elementsSystem = ElementsSystem()
     private let statsSystem = StatsSystem()
-    private let elementType: ElementType
-    private let basePower: Int
+    let elementType: ElementType
+    let basePower: Int
 
     init(elementType: ElementType, basePower: Int) {
         self.elementType = elementType

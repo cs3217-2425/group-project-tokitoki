@@ -16,11 +16,6 @@
           "baseRate": 0.30
         },
         {
-          "itemId": "Fireball",
-          "itemType": "skill",
-          "baseRate": 0.20
-        },
-        {
           "itemId": "WoodenShield",
           "itemType": "equipment",
           "baseRate": 0.20
@@ -41,16 +36,6 @@
           "itemId": "SkyPhoenix",
           "itemType": "toki",
           "baseRate": 0.10
-        },
-        {
-          "itemId": "Lightning Strike",
-          "itemType": "skill",
-          "baseRate": 0.30
-        },
-        {
-          "itemId": "Healing Wind",
-          "itemType": "skill",
-          "baseRate": 0.20
         },
         {
           "itemId": "Dragon Scale Armor",

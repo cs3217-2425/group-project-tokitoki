@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="23G93" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="EffectCalculatorCD" representedClassName="EffectCalculatorCD" syncable="YES" codeGenerationType="class">
+        <attribute name="attackModifier" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="basePower" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="calculatorType" optional="YES" attributeType="String"/>
+        <attribute name="defenseModifier" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="elementType" optional="YES" attributeType="String"/>
+        <attribute name="healModifier" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="speedModifier" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="statsModifierDuration" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="statusEffect" optional="YES" attributeType="String"/>
+        <attribute name="statusEffectChance" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="statusEffectDuration" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="statusEffectStrength" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="effectDefinition" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EffectDefinitionCD" inverseName="calculators" inverseEntity="EffectDefinitionCD"/>
+    </entity>
+    <entity name="EffectDefinitionCD" representedClassName="EffectDefinitionCD" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="targetType" optional="YES" attributeType="String"/>
+        <relationship name="calculators" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EffectCalculatorCD" inverseName="effectDefinition" inverseEntity="EffectCalculatorCD"/>
+        <relationship name="skill" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SkillCD" inverseName="effectDefinitions" inverseEntity="SkillCD"/>
+    </entity>
     <entity name="EquipmentCD" representedClassName="EquipmentCD" syncable="YES" codeGenerationType="class">
         <attribute name="buff_affectedStat" optional="YES" attributeType="String"/>
         <attribute name="buff_desc" optional="YES" attributeType="String"/>
@@ -34,21 +56,14 @@
         <relationship name="tokis" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TokiCD" inverseName="player" inverseEntity="TokiCD"/>
     </entity>
     <entity name="SkillCD" representedClassName="SkillCD" syncable="YES" codeGenerationType="class">
-        <attribute name="basePower" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="cooldown" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="currentCooldown" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="dateAcquired" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="desc" optional="YES" attributeType="String"/>
-        <attribute name="elementType" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="ownerId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="rarity" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="statusEffect" optional="YES" attributeType="String"/>
-        <attribute name="statusEffectChance" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="statusEffectDuration" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="targetType" optional="YES" attributeType="String"/>
-        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="effectDefinitions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EffectDefinitionCD" inverseName="skill" inverseEntity="EffectDefinitionCD"/>
         <relationship name="player" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerCD" inverseName="skills" inverseEntity="PlayerCD"/>
         <relationship name="toki" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TokiCD" inverseName="skills" inverseEntity="TokiCD"/>
     </entity>

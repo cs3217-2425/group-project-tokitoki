@@ -72,8 +72,8 @@ struct Player {
         switch item {
         case let toki as TokiGachaItem:
             ownedTokis.append(toki.getToki())
-        case let skill as SkillGachaItem:
-            ownedSkills.append(skill.getSkill())
+//        case let skill as SkillGachaItem:
+//            ownedSkills.append(skill.getSkill())
         case let equipment as EquipmentGachaItem:
             ownedEquipments.append(equipment.getEquipment())
         default:
