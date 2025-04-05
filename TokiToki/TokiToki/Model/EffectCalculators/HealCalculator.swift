@@ -18,7 +18,7 @@ class HealCalculator: EffectCalculator {
 
         statsSystem.heal(amount: healAmount, [target])
 
-        return EffectResult(entity: target, type: .heal, value: healAmount,
+        return EffectResult(entity: target, value: healAmount,
                             description: "\(source.getName()) used \(moveName) "
                             + "to heal \(target.getName()) for \(healAmount) HP")
     }

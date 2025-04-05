@@ -254,10 +254,10 @@
             filePath = "TokiToki/Model/GameEngine.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
-            landmarkName = "updateHealthBars(completion:)"
-            landmarkType = "7">
+            startingLineNumber = "267"
+            endingLineNumber = "267"
+            landmarkName = "GameEngine"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -270,8 +270,8 @@
             filePath = "TokiToki/Model/GameEngine.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "282"
-            endingLineNumber = "282"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
             landmarkName = "updateHealthBars(completion:)"
             landmarkType = "7">
          </BreakpointContent>
