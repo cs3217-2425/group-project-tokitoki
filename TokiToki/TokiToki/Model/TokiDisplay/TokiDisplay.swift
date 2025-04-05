@@ -64,7 +64,7 @@ class TokiDisplay {
         let consumable = repository.createConsumableEquipment(name: name,
                                                               description: "Restores health temporarily.",
                                                               rarity: 1,
-                                                              effectStrategy: potionStrategy)
+                                                              effectStrategy: potionStrategy, usageContext: .battleOnly)
         return consumable
     }
     
@@ -75,7 +75,7 @@ class TokiDisplay {
         let candy = repository.createConsumableEquipment(name: name,
                                                          description: "Grants bonus +50 EXP",
                                                          rarity: 1,
-                                                         effectStrategy: candyStrategy)
+                                                         effectStrategy: candyStrategy, usageContext: .outOfBattleOnly)
         return candy
     }
     
@@ -92,7 +92,7 @@ class TokiDisplay {
                 return ConsumableEquipment(name: "Super Health Potion",
                                            description: "A crafted potion with enhanced effects.",
                                            rarity: max(potion1.rarity, potion2.rarity) + 1,
-                                           effectStrategy: newStrategy)
+                                           effectStrategy: newStrategy, usageContext: .battleOnly)
             }
             return nil
         }
@@ -144,7 +144,7 @@ class TokiDisplay {
             skills: [skill],
             equipments: [], // empty, to avoid duplication
             elementType: .fire,
-            level: 1
+            level: 15
         )
 
         let facade = TokiDisplay.shared.equipmentFacade
@@ -240,83 +240,6 @@ class TokiDisplay {
         control.hpProgressView?.progressTintColor = .systemRed
         control.equipmentTableView?.reloadData()
         control.skillsTableView?.reloadData()
-    }
-    
-    // TableView DataSource Methods
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int, _ control: TokiDisplayViewController) -> Int {
-        let baseSlots = 1
-        let extraSlots = toki.level / 5
-        let totalSlots = baseSlots + extraSlots
-        if tableView == control.equipmentTableView {
-            return max(totalSlots, toki.equipment.count)
-        } else {
-            return max(totalSlots, toki.skills.count)
-        }
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, _ control: TokiDisplayViewController) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TokiTableCell", for: indexPath) as? TokiTableCell else {
-            return UITableViewCell()
-        }
-        
-        if tableView == control.equipmentTableView {
-            if indexPath.row < toki.equipment.count {
-                let equipmentItem = toki.equipment[indexPath.row]
-                cell.nameLabel.text = equipmentItem.name
-                cell.itemImageView.image = UIImage(named: equipmentItem.name)
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleEquipmentLongPress(_:)))
-                cell.addGestureRecognizer(longPress)
-            } else {
-                cell.nameLabel.text = "Empty Slot"
-                cell.itemImageView.image = UIImage(named: "empty")
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleEquipmentLongPress(_:)))
-                cell.addGestureRecognizer(longPress)
-            }
-        } else {
-            if indexPath.row < toki.skills.count {
-                let skillItem = toki.skills[indexPath.row]
-                cell.nameLabel.text = skillItem.name
-                cell.itemImageView.image = UIImage(named: skillItem.name)
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleSkillLongPress(_:)))
-                cell.addGestureRecognizer(longPress)
-            } else {
-                cell.nameLabel.text = "Empty Slot"
-                cell.itemImageView.image = UIImage(named: "empty")
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleSkillLongPress(_:)))
-                cell.addGestureRecognizer(longPress)
-            }
-        }
-        
-        return cell
-    }
-    
-    // Provide the trailing swipe configuration.
-    func tableView(_ tableView: UITableView,
-                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath, _ control: TokiDisplayViewController)
-                   -> UISwipeActionsConfiguration? {
-
-        // Get the inventory from the facade's EquipmentComponent.
-        let inventory = TokiDisplay.shared.equipmentFacade.equipmentComponent.inventory
-
-        // Safely check row bounds.
-        guard indexPath.row < inventory.count else { return nil }
-
-        let item = inventory[indexPath.row]
-
-        // If this item is consumable, show a “Use” button.
-        if item.equipmentType == .consumable,
-           let consumable = item as? ConsumableEquipment {
-
-            let useAction = UIContextualAction(style: .normal, title: "Use") { _, _, completion in
-                self.useConsumable(consumable, at: indexPath, equipmentTableView: tableView, control: control)
-                completion(true)
-            }
-            useAction.backgroundColor = .systemGreen
-            return UISwipeActionsConfiguration(actions: [useAction])
-        }
-
-        // If not a consumable, no swipe action.
-        return nil
     }
     
     func changeEquipmentTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {

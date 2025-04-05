@@ -8,6 +8,12 @@
 
 import Foundation
 
+enum ConsumableUsageContext {
+    case battleOnly
+    case outOfBattleOnly
+    case anywhere
+}
+
 struct ConsumableEquipment: Equipment {
     let id: UUID = UUID()
     let name: String
@@ -15,4 +21,5 @@ struct ConsumableEquipment: Equipment {
     let equipmentType: EquipmentType = .consumable
     let rarity: Int
     let effectStrategy: ConsumableEffectStrategy
+    let usageContext: ConsumableUsageContext
 }

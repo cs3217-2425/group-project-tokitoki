@@ -12,9 +12,9 @@ class EquipmentRepository {
     private init() {}
 
     func createConsumableEquipment(name: String, description: String, rarity: Int,
-                                   effectStrategy: ConsumableEffectStrategy) -> ConsumableEquipment {
+                                   effectStrategy: ConsumableEffectStrategy, usageContext: ConsumableUsageContext) -> ConsumableEquipment {
         ConsumableEquipment(name: name, description: description, rarity: rarity,
-                                   effectStrategy: effectStrategy)
+                                   effectStrategy: effectStrategy, usageContext: usageContext)
     }
 
     func createNonConsumableEquipment(name: String, description: String, rarity: Int,

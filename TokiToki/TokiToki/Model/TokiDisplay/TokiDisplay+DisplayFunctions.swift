@@ -16,13 +16,13 @@ extension TokiDisplay {
         let healthPotion = repository.createConsumableEquipment(name: "Health Potion",
                                                                 description: "Restores health temporarily.",
                                                                 rarity: 1,
-                                                                effectStrategy: potionStrategy)
+                                                                effectStrategy: potionStrategy, usageContext: .battleOnly)
 
         let upgradeCandyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
         let upgradeCandy = repository.createConsumableEquipment(name: "Upgrade Candy",
                                                                 description: "Grants bonus EXP permanently.",
                                                                 rarity: 1,
-                                                                effectStrategy: upgradeCandyStrategy)
+                                                                effectStrategy: upgradeCandyStrategy, usageContext: .outOfBattleOnly)
 
         let swordBuff = EquipmentBuff(value: 15, description: "Increases attack power", affectedStat: "attack")
         let sword = repository.createNonConsumableEquipment(name: "Sword",
