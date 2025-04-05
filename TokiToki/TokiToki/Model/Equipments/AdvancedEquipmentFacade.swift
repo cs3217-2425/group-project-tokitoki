@@ -36,13 +36,16 @@ class AdvancedEquipmentFacade {
         serviceLocator.dataStore.save()
     }
     
-    func craftItems(items: [Equipment]) {
+    func craftItems(items: [Equipment]) -> Equipment? {
         let command = CraftCommand(items: items,
                                    component: equipmentComponent,
                                    craftingManager: serviceLocator.craftingManager,
                                    logger: serviceLocator.equipmentLogger)
         commandInvoker.execute(command: command)
         serviceLocator.dataStore.save()
+
+        // Return the item that was crafted, or nil if crafting failed
+        return command.craftedItem
     }
     
     func undoLastAction() {

@@ -87,8 +87,9 @@ extension TokiDisplay {
         }
 
         let craftAction = UIContextualAction(style: .normal, title: "Craft") { _, _, completion in
-            control.showCraftingPopup(for: item)
+            control.showCraftingPopup(for: item, at: indexPath.row)
             completion(true)
+            tableView.reloadData()
         }
         craftAction.backgroundColor = .systemBlue
         actions.append(craftAction)

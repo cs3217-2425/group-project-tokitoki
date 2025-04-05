@@ -103,25 +103,28 @@ extension TokiDisplayViewController {
 
 // MARK: - Crafting Popup
 extension TokiDisplayViewController {
-    /// Presents the new CraftingPopupViewController for drag-and-drop crafting.
-    func showCraftingPopup(for item: Equipment) {
-        // Create the popup
+
+    func showCraftingPopup(for item: Equipment, at originalIndex: Int) {
         let craftVC = CraftingPopupViewController()
         
-        // If you have multiple items, or you want to pass an array:
-        craftVC.itemsToCraft = [item]
-        
-        // Or you might let the user pick multiple items from your inventory table:
-        // craftVC.itemsToCraft = selectedInventoryItems
+        // Pass along the original item and its index in the inventory
+        craftVC.originalItem = item
+        craftVC.originalItemIndex = originalIndex
 
-        // Choose a presentation style
+        // Present as a popover or modal
         craftVC.modalPresentationStyle = .popover
 
-        // Configure the popover if needed
-        if let popoverController = craftVC.popoverPresentationController {
-            popoverController.sourceView = self.view // or a specific button
-            popoverController.sourceRect = CGRect(x: 0, y: 0, width: 1, height: 1)
-            popoverController.permittedArrowDirections = []
+        if let popover = craftVC.popoverPresentationController {
+            popover.sourceView = self.view
+            popover.sourceRect = CGRect(x: 100, y: 100, width: 1, height: 1)
+            popover.permittedArrowDirections = []
+        }
+        
+        // Optionally, set a callback so we can reload Toki UI after crafting
+        craftVC.onCraftComplete = { [weak self] in
+            // Reload your table and other UI
+            self?.equipmentTableView?.reloadData()
+            TokiDisplay.shared.updateUI(self!)
         }
 
         present(craftVC, animated: true, completion: nil)
