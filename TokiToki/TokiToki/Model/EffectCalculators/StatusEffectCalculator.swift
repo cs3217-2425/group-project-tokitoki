@@ -24,7 +24,7 @@ class StatusEffectCalculator: EffectCalculator {
 
     func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         guard let effectType = statusEffect else {
-            return EffectResult(entity: target, type: .statusApplied, value: 0,
+            return EffectResult(entity: target, value: 0,
                                 description: "No status effect found!")
         }
         
@@ -37,12 +37,12 @@ class StatusEffectCalculator: EffectCalculator {
                                   sourceId: source.id, target: target)
         
         guard let statusComponent = target.getComponent(ofType: StatusEffectsComponent.self) else {
-            return EffectResult(entity: target, type: .statusApplied, value: 0,
+            return EffectResult(entity: target, value: 0,
                                 description: "No status component found!")
         }
         
         statusEffectsSystem.addEffect(effect, target)
-        return EffectResult(entity: target, type: .statusApplied, value: 0,
+        return EffectResult(entity: target, value: 0,
                                     description: "\(target.name) is affected by \(effectType)!")
     }
 }

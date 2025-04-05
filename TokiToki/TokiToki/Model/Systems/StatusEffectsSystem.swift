@@ -29,9 +29,7 @@ class StatusEffectsSystem: System {
         battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
                                                statsSystem.getMaxHealth(entity))
         
-        for event in result.toBattleEvents(sourceId: effect.sourceId) {
-            EventBus.shared.post(event)
-        }
+        BattleEventManager.shared.publishEffectResult(result, sourceId: effect.sourceId)
     }
     
     func update(_ entities: [GameStateEntity], _ logMessage: (String) -> Void) {
