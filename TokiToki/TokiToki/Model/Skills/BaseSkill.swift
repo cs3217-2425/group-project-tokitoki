@@ -43,7 +43,7 @@ class BaseSkill: Skill {
             
             for target in targets {
                 for effectCalculator in effectDefinition.effectCalculators {
-                    let result = effectCalculator.calculate(skill: self, source: source, target: target)
+                    let result = effectCalculator.calculate(moveName: self.name, source: source, target: target)
                     guard let result = result else {
                         continue
                     }

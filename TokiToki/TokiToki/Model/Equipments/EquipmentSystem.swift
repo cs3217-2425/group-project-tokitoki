@@ -12,20 +12,36 @@ extension Notification.Name {
     static let EquipmentConsumed = Notification.Name("EquipmentConsumed")
 }
 
-class EquipmentSystem {
+class EquipmentSystem: System {
+    static let shared = EquipmentSystem()
     var priority: Int = 0
-
-    func update(deltaTime: TimeInterval) {
+    var equipmentComponent = PlayerManager.shared.getOrCreatePlayer().ownedEquipments
+    var savedEquipments: [Equipment] = []
+    
+    private init() {}
+    
+    func update(_ entities: [GameStateEntity]) {
         // Future: Process temporary buff expirations, cooldowns, etc.
     }
+    
+    func saveEquipments() {
+        self.savedEquipments = self.equipmentComponent.inventory
+    }
+    
+    func reset(_ entities: [GameStateEntity]) {
+        equipmentComponent.inventory = savedEquipments
+    }
 
-    func useConsumable(_ equipment: ConsumableEquipment, on toki: Toki, in component: EquipmentComponent) {
-        equipment.effectStrategy.applyEffect(to: toki) {
+    func useConsumable(_ equipment: ConsumableEquipment, on toki: Toki?,
+                       _ entity: GameStateEntity?)
+    -> [EffectResult]? {
+        let results = equipment.applyEffect(to: toki, entity) {
             NotificationCenter.default.post(name: .EquipmentConsumed, object: equipment)
         }
-        if let index = component.inventory.firstIndex(where: { $0.id == equipment.id }) {
-            component.inventory.remove(at: index)
+        if let index = equipmentComponent.inventory.firstIndex(where: { $0.id == equipment.id }) {
+            equipmentComponent.inventory.remove(at: index)
         }
+        return results
     }
 
     func equipItem(_ item: NonConsumableEquipment, in component: EquipmentComponent) {
@@ -45,4 +61,23 @@ class EquipmentSystem {
             component.inventory.append(item)
         }
     }
+    
+    func getConsumable(_ name: String) -> Equipment? {
+        equipmentComponent.inventory.first { $0.equipmentType == .consumable && $0.name == name }
+    }
+    
+    func countConsumables() -> [ConsumableGroupings] {
+        let countsDict = equipmentComponent.inventory
+           .filter { $0.equipmentType == .consumable }
+           .reduce(into: [String: Int]()) { counts, item in
+               counts[item.name, default: 0] += 1
+           }
+
+       return countsDict.map { ConsumableGroupings(name: $0.key, quantity: $0.value) }
+    }
+}
+
+struct ConsumableGroupings {
+    let name: String
+    let quantity: Int
 }

@@ -16,9 +16,11 @@ class AdvancedEquipmentFacade {
         set { serviceLocator.dataStore.equipmentComponent = newValue }
     }
 
-    func useConsumable(consumable: ConsumableEquipment, on toki: Toki) {
+    func useConsumable(consumable: ConsumableEquipment, on toki: Toki?,
+                       _ entity: GameStateEntity?) {
         let command = UseConsumableCommand(consumable: consumable,
                                            toki: toki,
+                                           entity: entity,
                                            component: equipmentComponent,
                                            system: serviceLocator.equipmentSystem,
                                            logger: serviceLocator.equipmentLogger)

@@ -12,17 +12,17 @@ extension TokiDisplay {
     func loadSampleEquipment() {
         let repository = EquipmentRepository.shared
 
-        let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 5)
-        let healthPotion = repository.createConsumableEquipment(name: "Health Potion",
-                                                                description: "Restores health temporarily.",
-                                                                rarity: 1,
-                                                                effectStrategy: potionStrategy)
+        let healCalculator = HealCalculator(healPower: 100)
+        let healthPotion = Potion(name: "Health Potion",
+                                  description: "Restores health temporarily.",
+                                  rarity: 1,
+                                  effectCalculators: [healCalculator])
 
-        let upgradeCandyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
-        let upgradeCandy = repository.createConsumableEquipment(name: "Upgrade Candy",
-                                                                description: "Grants bonus EXP permanently.",
-                                                                rarity: 1,
-                                                                effectStrategy: upgradeCandyStrategy)
+        
+        let upgradeCandy = Candy(name: "Upgrade Candy",
+                                 description: "Grants bonus EXP permanently.",
+                                 rarity: 1,
+                                 bonusExp: 50)
 
         let swordBuff = EquipmentBuff(value: 15, description: "Increases attack power", affectedStat: "attack")
         let sword = repository.createNonConsumableEquipment(name: "Sword",
@@ -77,7 +77,7 @@ extension TokiDisplay {
                                               heal: 100,
                                               exp: 42
                                              ), skills: [], equipments: [], elementType: [.fire], level: 1)
-            equipmentFacade.useConsumable(consumable: consumable, on: toki)
+            equipmentFacade.useConsumable(consumable: consumable, on: toki, nil)
         }
     }
 }

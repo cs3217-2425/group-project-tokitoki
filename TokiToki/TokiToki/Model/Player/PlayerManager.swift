@@ -42,7 +42,8 @@ class PlayerManager {
                     lastLoginDate: Date(),
                     ownedTokis: [],
                     ownedSkills: [],
-                    ownedEquipments: [],
+                    ownedEquipments: EquipmentComponent(
+                        inventory: [healthPotion, healthPotion, buffPotion, critPotion]),
                     pullsSinceRare: 0
                 )
         currentPlayer = player
@@ -133,6 +134,6 @@ class PlayerManager {
     /// Retrieve all Equipment owned by the player
     func getOwnedEquipment() -> [Equipment] {
         let player = getOrCreatePlayer()
-        return player.ownedEquipments
+        return player.ownedEquipments.inventory
     }
 }

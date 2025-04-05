@@ -37,7 +37,7 @@ class MainMenuViewController: UIViewController {
          let viewController = storyboard.instantiateViewController(withIdentifier: "BattleVC")
 
          // Present the view controller
-         viewController.modalPresentationStyle = .fullScreen // Optional, use if needed
+         viewController.modalPresentationStyle = .fullScreen 
 
          present(viewController, animated: true, completion: nil)
     }

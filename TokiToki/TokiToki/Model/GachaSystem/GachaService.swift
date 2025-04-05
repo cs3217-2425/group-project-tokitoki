@@ -131,7 +131,7 @@ class GachaService {
 //                    player.ownedSkills.append(skillGachaItem.getSkill())
 //                }
                 else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
-                    player.ownedEquipments.append(equipmentGachaItem.getEquipment())
+                    player.ownedEquipments.inventory.append(equipmentGachaItem.getEquipment())
                 }
             }
         }

@@ -32,8 +32,7 @@ class Toki {
     }
 
     func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
-        print("Toki receives a temporary buff: \(stat) +\(value) for \(duration) sec")
-        // In a full implementation, integrate with a buff manager.
+        
     }
 
     func gainExperience(_ exp: Int) {
@@ -63,7 +62,7 @@ class Toki {
         entity.addComponent(skillsComponent)
         entity.addComponent(statusEffectsComponent)
         entity.addComponent(statsModifiersComponent)
-
+        
         return entity
     }
 

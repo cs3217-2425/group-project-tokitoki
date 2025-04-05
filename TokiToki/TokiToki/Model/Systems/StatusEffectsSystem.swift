@@ -14,10 +14,15 @@ class StatusEffectsSystem: System {
     private let strategyFactory = StatusEffectStrategyFactory()
     private let allDmgOverTimeStatusEffects: [StatusEffectType] = [.burn, .poison]
     var currentDmgOverTimeStatusEffects: [StatusEffect] = []
-    private let multiplierForActionMeter: Float = 0.1
-    private let MAX_ACTION_BAR: Float = 100
+    private let multiplierForActionMeter: Float = GameEngine.multiplierForActionMeter
+    private let MAX_ACTION_BAR: Float = GameEngine.MAX_ACTION_BAR
+    private var gameEngine: GameEngine?
     
     private init() {}
+    
+    func setGameEngine(_ gameEngine: GameEngine) {
+        self.gameEngine = gameEngine
+    }
     
     fileprivate func applyStatusEffectAndPublishResult(_ effect: StatusEffect,
                                                        _ entity: GameStateEntity,
@@ -27,7 +32,9 @@ class StatusEffectsSystem: System {
         let result = effect.apply(to: entity, strategyFactory: strategyFactory)
         logMessage(result.description)
         battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
-                                               statsSystem.getMaxHealth(entity))
+                                               statsSystem.getMaxHealth(entity)) { [weak self] in
+            self?.gameEngine?.checkIfEntitiesAreDead()
+        }
         
         for event in result.toBattleEvents(sourceId: effect.sourceId) {
             EventBus.shared.post(event)

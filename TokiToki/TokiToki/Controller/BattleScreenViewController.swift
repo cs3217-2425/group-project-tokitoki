@@ -10,6 +10,7 @@ import UIKit
 class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEffectsDelegate {
     private var gameEngine: GameEngine?
     private var skillImageViews: [UIImageView] = []
+    private var playerActionImageViews: [UIImageView] = []
     private var playerTokisViews: [Views] = []
     private var opponentTokisViews: [Views] = []
     private var gameStateIdToViews: [UUID: Views] = [:]
@@ -42,6 +43,8 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     @IBOutlet var opponent3HealthBarContainer: UIView!
     @IBOutlet var opponent3View: UIView!
 
+    @IBOutlet weak var noAction: UIImageView!
+    @IBOutlet weak var consumables: UIImageView!
     @IBOutlet var skill1: UIImageView!
     @IBOutlet var skill2: UIImageView!
     @IBOutlet var skill3: UIImageView!
@@ -167,11 +170,21 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(playerTokiTapped(_:)))
             imageView.addGestureRecognizer(tapGesture)
         }
+        
+        consumables.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(useConsumables(_:)))
+        consumables.addGestureRecognizer(tapGesture)
+        
+        noAction.isUserInteractionEnabled = true
+        let noActionTapGesture = UITapGestureRecognizer(target: self, action: #selector(takeNoAction(_:)))
+        noAction.addGestureRecognizer(noActionTapGesture)
+        
+        playerActionImageViews = skillImageViews + [consumables, noAction]
     }
 
     @objc func skillTapped(_ sender: UITapGestureRecognizer) {
         guard let tappedImageView = sender.view as? UIImageView else { return }
-        skillImageViews.forEach { $0.isHidden = true }
+        playerActionImageViews.forEach { $0.isHidden = true }
         gameEngine?.useTokiSkill(tappedImageView.tag)
     }
 
@@ -277,7 +290,7 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         guard let icons = icons else {
             return
         }
-        skillImageViews.forEach { $0.isHidden = false }
+        playerActionImageViews.forEach { $0.isHidden = false }
         if skillImageViews.count > icons.count {
             for i in icons.count..<skillImageViews.count {
                 skillImageViews[i].isHidden = true
@@ -307,7 +320,8 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         }
     }
 
-    func updateHealthBar(_ id: UUID, _ currentHealth: Int, _ maxHealth: Int) {
+    func updateHealthBar(_ id: UUID, _ currentHealth: Int, _ maxHealth: Int,
+                         completion: @escaping () -> Void) {
         let healthPercentage = CGFloat(currentHealth) / CGFloat(maxHealth)
         let healthBar = gameStateIdToViews[id]?.healthBar
         let healthContainerWidth = gameStateIdToViews[id]?.healthContainer.bounds.width
@@ -316,9 +330,11 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
             return
         }
 
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             healthBar.frame.size.width = healthContainerWidth * healthPercentage
-        }
+        }, completion: { _ in
+            completion()
+        })
 
         if healthPercentage > 0.5 {
             healthBar.backgroundColor = .green
@@ -345,6 +361,40 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
         for view in gameStateIdToViews.values {
             view.overallView.isHidden = false
         }
+    }
+    
+    @objc func useConsumables(_ sender: UITapGestureRecognizer) {
+        guard let tappedView = sender.view else { return }
+        
+        let items = EquipmentSystem.shared.countConsumables()
+
+        let alert = UIAlertController(title: "Use Consumable", message: "Choose an item to use:", preferredStyle: .actionSheet)
+
+        for item in items where item.quantity > 0 {
+            let action = UIAlertAction(title: "\(item.name) x\(item.quantity)", style: .default) { _ in
+                self.gameEngine?.useConsumable(item.name)
+            }
+            alert.addAction(action)
+        }
+
+        if alert.actions.isEmpty {
+            alert.message = "You have no usable consumables."
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+
+        // Present from image view location (for iPad compatibility)
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = tappedView
+            popoverController.sourceRect = tappedView.bounds
+        }
+
+        self.present(alert, animated: true)
+    }
+    
+    @objc func takeNoAction(_ sender: UITapGestureRecognizer) {
+        playerActionImageViews.forEach { $0.isHidden = true }
+        gameEngine?.takeNoAction()
     }
 }
 

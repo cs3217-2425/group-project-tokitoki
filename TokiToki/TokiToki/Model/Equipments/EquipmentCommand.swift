@@ -14,21 +14,24 @@ protocol EquipmentCommand {
 
 class UseConsumableCommand: EquipmentCommand {
     private let consumable: ConsumableEquipment
-    private let toki: Toki
+    private let toki: Toki?
+    private let entity: GameStateEntity?
     private let component: EquipmentComponent
     private let equipmentSystem: EquipmentSystem
     private let logger: EquipmentLogger
 
-    init(consumable: ConsumableEquipment, toki: Toki, component: EquipmentComponent, system: EquipmentSystem, logger: EquipmentLogger) {
+    init(consumable: ConsumableEquipment, toki: Toki?, entity: GameStateEntity?,
+         component: EquipmentComponent, system: EquipmentSystem, logger: EquipmentLogger) {
         self.consumable = consumable
         self.toki = toki
         self.component = component
         self.equipmentSystem = system
         self.logger = logger
+        self.entity = entity
     }
 
     func execute() {
-        equipmentSystem.useConsumable(consumable, on: toki, in: component)
+        equipmentSystem.useConsumable(consumable, on: toki, entity)
         logger.logEvent(.consumed(item: consumable))
     }
 

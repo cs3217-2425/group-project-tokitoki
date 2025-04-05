@@ -74,17 +74,18 @@ class TokiDisplay {
     /// Registers sample crafting recipes.
     func setupCraftingRecipes() {
         let potionRecipe = CraftingRecipe(requiredEquipmentIdentifiers: ["health potion", "health potion"]) { (equipments: [Equipment]) in
-            if let potion1 = equipments[0] as? ConsumableEquipment,
-               let potion2 = equipments[1] as? ConsumableEquipment,
-               let strat1 = potion1.effectStrategy as? PotionEffectStrategy,
-               let strat2 = potion2.effectStrategy as? PotionEffectStrategy {
-                let newBuff = strat1.buffValue + strat2.buffValue
-                let newDuration = (strat1.duration + strat2.duration) / 2
-                let newStrategy = PotionEffectStrategy(buffValue: newBuff, duration: newDuration)
-                return ConsumableEquipment(name: "Super Health Potion",
+            if let potion1 = equipments[0] as? Potion,
+               let potion2 = equipments[1] as? Potion
+                {
+                let calculator1 = potion1.effectCalculators
+                let calculator2 = potion2.effectCalculators
+//                let newBuff = strat1.buffValue + strat2.buffValue
+//                let newDuration = (strat1.duration + strat2.duration) / 2
+//                let newStrategy = PotionEffectStrategy(buffValue: newBuff, duration: newDuration)
+                return Potion(name: "Super Health Potion",
                                            description: "A crafted potion with enhanced effects.",
                                            rarity: max(potion1.rarity, potion2.rarity) + 1,
-                                           effectStrategy: newStrategy)
+                                           effectCalculators: calculator1 + calculator2)
             }
             return nil
         }

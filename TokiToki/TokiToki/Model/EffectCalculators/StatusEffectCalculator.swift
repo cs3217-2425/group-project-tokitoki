@@ -22,7 +22,7 @@ class StatusEffectCalculator: EffectCalculator {
         self.statusEffectStrength = statusEffectStrength
     }
 
-    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
+    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         guard let effectType = statusEffect else {
             return EffectResult(entity: target, type: .statusApplied, value: 0,
                                 description: "No status effect found!")
