@@ -61,17 +61,11 @@ class GachaViewController: UIViewController {
         // Select first pack by default
         selectedGachaPack = gachaService?.getAllPacks().first
         updatePackSelectorLabel()
-        
-        // Update player currency display
-        print("Updating player currency in viewDidLoad \(playerManager.getOrCreatePlayer().currency)")
         updatePlayerCurrencyLabel()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Refresh currency display when view appears
-        print("Refreshing player currency in viewWillAppear \(playerManager.getOrCreatePlayer().currency)")
         updatePlayerCurrencyLabel()
     }
     
@@ -90,7 +84,6 @@ class GachaViewController: UIViewController {
     
     private func updatePlayerCurrencyLabel() {
         let player = playerManager.getOrCreatePlayer()
-        print("Updating Player currency: \(player.currency)")
         playerCurrencyLabel.text = "\(player.currency)"
         
         // Optional: Highlight the label if player has enough currency for selected pack

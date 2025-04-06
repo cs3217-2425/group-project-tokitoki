@@ -11,7 +11,7 @@
         <!--Gacha View Controller-->
         <scene sceneID="ZMY-e3-aZj">
             <objects>
-                <viewController storyboardIdentifier="GachaScreen2VC" id="7dt-D5-NBw" customClass="GachaViewController" customModule="TokiToki" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GachaScreenVC" id="7dt-D5-NBw" customClass="GachaViewController" customModule="TokiToki" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9Lc-7d-iiZ">
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1210"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

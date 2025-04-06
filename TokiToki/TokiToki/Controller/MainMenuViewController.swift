@@ -43,8 +43,8 @@ class MainMenuViewController: UIViewController {
     }
 
     @IBAction func gachaButtonTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "GachaScreen2", bundle: nil)
-        let viewController = storyboard.instantiateViewController(withIdentifier: "GachaScreen2VC")
+        let storyboard = UIStoryboard(name: "GachaScreen", bundle: nil)
+        let viewController = storyboard.instantiateViewController(withIdentifier: "GachaScreenVC")
         viewController.modalPresentationStyle = .fullScreen
         present(viewController, animated: true, completion: nil)
     }
