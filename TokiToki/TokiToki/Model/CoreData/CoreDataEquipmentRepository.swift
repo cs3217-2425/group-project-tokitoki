@@ -1,22 +1,8 @@
-//
-//  CoreDataEquipmentRepository.swift
-//  TokiToki
-//
-//  Created by Pawan Kishor Patil on 5/4/25.
-//
-
-
-//
-//  CoreDataEquipmentRepository.swift
-//  TokiToki
-//
-
 import CoreData
 import Foundation
 
 class CoreDataEquipmentRepository {
     private let context: NSManagedObjectContext
-    private let equipmentFactory = EquipmentRepository.shared
     
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -42,14 +28,21 @@ class CoreDataEquipmentRepository {
         case .consumable:
             equipmentCD.equipmentType = "consumable"
             
-            if let consumable = equipment as? ConsumableEquipment {
-                if let potionStrategy = consumable.effectStrategy as? PotionEffectStrategy {
-                    equipmentCD.effect_type = "potion"
-                    equipmentCD.effect_buffValue = Int32(potionStrategy.buffValue)
-                    equipmentCD.effect_duration = Int32(potionStrategy.duration)
-                } else if let candyStrategy = consumable.effectStrategy as? UpgradeCandyEffectStrategy {
-                    equipmentCD.effect_type = "upgradeCandy"
-                    equipmentCD.effect_bonusExp = Int32(candyStrategy.bonusExp)
+            // Handle specific consumable types
+            if let potion = equipment as? Potion {
+                equipmentCD.effect_type = "potion"
+                // Store any specific potion properties
+                // Note: We can't save the full effectCalculators array, but we can save metadata
+                equipmentCD.consumable_usage_context = consumableUsageContextToString(potion.usageContext)
+            } else if let candy = equipment as? Candy {
+                equipmentCD.effect_type = "candy"
+                equipmentCD.effect_bonusExp = Int32(candy.bonusExp)
+                equipmentCD.consumable_usage_context = consumableUsageContextToString(candy.usageContext)
+            } else {
+                // Generic consumable
+                equipmentCD.effect_type = "generic"
+                if let consumable = equipment as? ConsumableEquipment {
+                    equipmentCD.consumable_usage_context = consumableUsageContextToString(consumable.usageContext)
                 }
             }
             
@@ -61,11 +54,8 @@ class CoreDataEquipmentRepository {
                 equipmentCD.buff_desc = nonConsumable.buff.description
                 equipmentCD.buff_affectedStat = nonConsumable.buff.affectedStat
                 
-                // Store slot information if available
-                if let slotString = nonConsumableSlotToString(nonConsumable.slot) {
-                    // This would require adding a slot attribute to the EquipmentCD entity
-                    // equipmentCD.slot = slotString
-                }
+                // Store slot information
+                equipmentCD.equipment_slot = nonConsumableSlotToString(nonConsumable.slot)
             }
         }
         
@@ -82,32 +72,46 @@ class CoreDataEquipmentRepository {
         let equipmentTypeString = equipmentCD.equipmentType ?? "nonConsumable"
         
         if equipmentTypeString == "consumable" {
-            // Create consumable equipment
-            let effectTypeString = equipmentCD.effect_type ?? "potion"
-            let effectStrategy: ConsumableEffectStrategy
+            let effectTypeString = equipmentCD.effect_type ?? "generic"
+            let usageContext = stringToConsumableUsageContext(equipmentCD.consumable_usage_context ?? "battleOnly")
             
             switch effectTypeString {
             case "potion":
-                let buffValue = Int(equipmentCD.effect_buffValue)
-                let duration = TimeInterval(equipmentCD.effect_duration)
-                effectStrategy = PotionEffectStrategy(buffValue: buffValue, duration: duration)
+                // Create a simple effect calculator for the potion
+                let healCalculator = StatsModifiersCalculator(statsModifiers: [
+                    StatsModifier(
+                        remainingDuration: 1,
+                        attack: 0,
+                        defense: 0,
+                        speed: 0,
+                        heal: Double(equipmentCD.effect_buffValue)
+                    )
+                ])
                 
-            case "upgradeCandy":
-                let bonusExp = Int(equipmentCD.effect_bonusExp)
-                effectStrategy = UpgradeCandyEffectStrategy(bonusExp: bonusExp)
+                return Potion(
+                    name: equipmentCD.name ?? "Unknown Potion",
+                    description: equipmentCD.desc ?? "A mysterious potion",
+                    rarity: Int(equipmentCD.rarity),
+                    effectCalculators: [healCalculator]
+                )
+                
+            case "candy":
+                return Candy(
+                    name: equipmentCD.name ?? "Unknown Candy",
+                    description: equipmentCD.desc ?? "A mysterious candy",
+                    rarity: Int(equipmentCD.rarity),
+                    bonusExp: Int(equipmentCD.effect_bonusExp)
+                )
                 
             default:
-                // Default to potion with some values
-                effectStrategy = PotionEffectStrategy(buffValue: 10, duration: 30.0)
+                // Create a generic potion as fallback
+                return Potion(
+                    name: equipmentCD.name ?? "Unknown Consumable",
+                    description: equipmentCD.desc ?? "A mysterious item",
+                    rarity: Int(equipmentCD.rarity),
+                    effectCalculators: []
+                )
             }
-            
-            // Use factory to create the equipment
-            return equipmentFactory.createConsumableEquipment(
-                name: equipmentCD.name ?? "Unknown Equipment",
-                description: equipmentCD.desc ?? "",
-                rarity: Int(equipmentCD.rarity),
-                effectStrategy: effectStrategy
-            )
         } else {
             // Create non-consumable equipment
             let buffValue = Int(equipmentCD.buff_value)
@@ -121,10 +125,9 @@ class CoreDataEquipmentRepository {
             )
             
             // Determine slot (default to weapon if not specified)
-            let slot = EquipmentSlot.weapon
+            let slot = stringToNonConsumableSlot(equipmentCD.equipment_slot ?? "weapon")
             
-            // Use factory to create the equipment
-            return equipmentFactory.createNonConsumableEquipment(
+            return NonConsumableEquipment(
                 name: equipmentCD.name ?? "Unknown Equipment",
                 description: equipmentCD.desc ?? "",
                 rarity: Int(equipmentCD.rarity),
@@ -168,23 +171,31 @@ class CoreDataEquipmentRepository {
     // MARK: - Helper Methods
     
     /// Convert EquipmentSlot enum to string
-    private func nonConsumableSlotToString(_ slot: EquipmentSlot) -> String? {
-        switch slot {
-        case .weapon: return "weapon"
-        case .armor: return "armor"
-        case .accessory: return "accessory"
-        case .custom: return "custom"
-        }
+    private func nonConsumableSlotToString(_ slot: EquipmentSlot) -> String {
+        return slot.rawValue
     }
     
     /// Convert string to EquipmentSlot enum
     private func stringToNonConsumableSlot(_ string: String) -> EquipmentSlot {
+        return EquipmentSlot(rawValue: string.lowercased()) ?? .weapon
+    }
+    
+    /// Convert ConsumableUsageContext enum to string
+    private func consumableUsageContextToString(_ context: ConsumableUsageContext) -> String {
+        switch context {
+        case .battleOnly: return "battleOnly"
+        case .outOfBattleOnly: return "outOfBattleOnly"
+        case .anywhere: return "anywhere"
+        }
+    }
+    
+    /// Convert string to ConsumableUsageContext enum
+    private func stringToConsumableUsageContext(_ string: String) -> ConsumableUsageContext {
         switch string.lowercased() {
-        case "weapon": return .weapon
-        case "armor": return .armor
-        case "accessory": return .accessory
-        case "custom": return .custom
-        default: return .weapon
+        case "battleonly": return .battleOnly
+        case "outofbattleonly": return .outOfBattleOnly
+        case "anywhere": return .anywhere
+        default: return .battleOnly
         }
     }
 }

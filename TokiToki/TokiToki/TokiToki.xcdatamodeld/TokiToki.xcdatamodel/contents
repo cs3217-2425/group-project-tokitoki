@@ -26,6 +26,7 @@
         <attribute name="buff_affectedStat" optional="YES" attributeType="String"/>
         <attribute name="buff_desc" optional="YES" attributeType="String"/>
         <attribute name="buff_value" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="consumable_usage_context" optional="YES" attributeType="String"/>
         <attribute name="dateAcquired" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="desc" optional="YES" attributeType="String"/>
         <attribute name="effect_bonusExp" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -33,6 +34,7 @@
         <attribute name="effect_duration" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="effect_statType" optional="YES" attributeType="String"/>
         <attribute name="effect_type" optional="YES" attributeType="String"/>
+        <attribute name="equipment_slot" optional="YES" attributeType="String"/>
         <attribute name="equipmentType" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>

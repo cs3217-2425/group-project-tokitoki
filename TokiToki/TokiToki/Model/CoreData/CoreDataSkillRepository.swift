@@ -8,7 +8,7 @@ import Foundation
 
 class CoreDataSkillRepository {
     private let context: NSManagedObjectContext
-    private let skillFactory = SkillFactory()
+    private let skillFactory = SkillsFactory()
     
     init(context: NSManagedObjectContext) {
         self.context = context

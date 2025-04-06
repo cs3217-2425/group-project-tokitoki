@@ -178,7 +178,7 @@ class PlayerManager {
     /// Adds equipment directly to the player's collection
     func addEquipment(_ equipment: Equipment) {
         var player = getOrCreatePlayer()
-        player.ownedEquipments.append(equipment)
+        player.ownedEquipments.inventory.append(equipment)
         currentPlayer = player
         savePlayer()
     }

@@ -1,12 +1,3 @@
-//
-//  CoreDataPlayerRepository.swift
-//  TokiToki
-//
-//  Created by Pawan Kishor Patil on 5/4/25.
-//
-
-
-
 import CoreData
 import Foundation
 
@@ -65,6 +56,10 @@ class CoreDataPlayerRepository: PlayerRepository {
     
     /// Create a default player object
     func createDefaultPlayer(name: String) -> Player {
+        // Create a default equipment component with initial items
+        // Note: You'll need to ensure these items are defined somewhere accessible
+        let equipmentComponent = EquipmentComponent(inventory: [])
+        
         let player = Player(
             id: UUID(),
             name: name,
@@ -75,7 +70,7 @@ class CoreDataPlayerRepository: PlayerRepository {
             lastLoginDate: Date(),
             ownedTokis: [],
             ownedSkills: [],
-            ownedEquipments: [],
+            ownedEquipments: equipmentComponent,
             pullsSinceRare: 0,
             dailyPullsCount: 0,
             dailyPullsLastReset: Date()
@@ -117,7 +112,10 @@ class CoreDataPlayerRepository: PlayerRepository {
         
         // Load Equipment
         let equipmentCDs = entity.equipments as? Set<EquipmentCD> ?? []
-        let equipment = equipmentCDs.map { equipmentRepository.loadEquipment(from: $0) }
+        let equipmentInventory = equipmentCDs.map { equipmentRepository.loadEquipment(from: $0) }
+        
+        // Create equipment component with loaded inventory
+        let equipmentComponent = EquipmentComponent(inventory: equipmentInventory)
         
         // Create and return the player
         return Player(
@@ -130,7 +128,7 @@ class CoreDataPlayerRepository: PlayerRepository {
             lastLoginDate: entity.lastLoginDate ?? Date(),
             ownedTokis: tokis,
             ownedSkills: skills,
-            ownedEquipments: equipment,
+            ownedEquipments: equipmentComponent,
             pullsSinceRare: Int(entity.pullsSinceRare),
             dailyPullsCount: Int(entity.dailyPullsCount),
             dailyPullsLastReset: entity.dailyPullsLastReset
@@ -191,8 +189,8 @@ class CoreDataPlayerRepository: PlayerRepository {
             entity.addToSkills(skillEntity)
         }
         
-        // Save Equipment
-        for equipment in player.ownedEquipments {
+        // Save Equipment from the EquipmentComponent
+        for equipment in player.ownedEquipments.inventory {
             let equipmentEntity = equipmentRepository.saveEquipment(equipment, ownerId: player.id)
             entity.addToEquipments(equipmentEntity)
         }
