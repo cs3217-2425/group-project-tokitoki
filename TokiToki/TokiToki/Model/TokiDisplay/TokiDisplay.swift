@@ -114,6 +114,7 @@ class TokiDisplay {
     // Optionally keep an array of *all* Tokis loaded from JSON so you can pick which one to display.
     var allTokis: [Toki] = []
     var allSkills: [Skill] = []
+    var allEquipment: [Equipment] = []
 
     // The advanced facade and other system references remain.
     internal var equipmentFacade = AdvancedEquipmentFacade()
