@@ -7,11 +7,30 @@
 
 import UIKit
 
+// Protocol for communication between GachaViewController and CollectionViewController
+protocol GachaViewControllerDelegate: AnyObject {
+    func didSelectPack(pack: GachaPack)
+}
+
 class GachaViewController: UIViewController {
     @IBOutlet private var gachaDrawButton: UIButton!
     @IBOutlet private var gachaPackLabel: UILabel!
     @IBOutlet private var packSelectorLabel: UILabel!
-    @IBOutlet private var gachaPackCollectionView: UICollectionView!
+    @IBOutlet private var playerCurrencyLabel: UILabel!
+    private var gachaPackCollectionViewController: CollectionViewController!
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let collectionVC = segue.destination as? CollectionViewController {
+            self.gachaPackCollectionViewController = collectionVC
+            // Set delegate for communication
+            collectionVC.delegate = self
+            
+            // If packs already loaded, update the collection view
+            if let packs = gachaService?.getAllPacks(), !packs.isEmpty {
+                collectionVC.packs = packs
+            }
+        }
+    }
     
     private let itemRepository = ItemRepository()
     private let playerManager = PlayerManager.shared
@@ -19,16 +38,10 @@ class GachaViewController: UIViewController {
     private var gachaService: GachaService?
 
     private var selectedGachaPack: GachaPack?
-
-    private let colorData: [UIColor] = [.red, .purple]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Setup collection view
-        gachaPackCollectionView.dataSource = self
-        gachaPackCollectionView.delegate = self
-        gachaPackCollectionView.allowsSelection = true
         
         // Initialize services
         let context = DataManager.shared.viewContext
@@ -42,18 +55,57 @@ class GachaViewController: UIViewController {
             context: context
         )
         
+        // Load packs
+        loadGachaPacks()
+        
         // Select first pack by default
         selectedGachaPack = gachaService?.getAllPacks().first
         updatePackSelectorLabel()
+        
+        // Update player currency display
+        print("Updating player currency in viewDidLoad \(playerManager.getOrCreatePlayer().currency)")
+        updatePlayerCurrencyLabel()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Refresh currency display when view appears
+        print("Refreshing player currency in viewWillAppear \(playerManager.getOrCreatePlayer().currency)")
+        updatePlayerCurrencyLabel()
+    }
+    
+    private func loadGachaPacks() {
+        if let packs = gachaService?.getAllPacks(), !packs.isEmpty {
+            // Update collection view with packs
+            gachaPackCollectionViewController?.packs = packs
+        }
     }
     
     private func updatePackSelectorLabel() {
-        packSelectorLabel.text = selectedGachaPack.map {
+        gachaPackLabel.text = selectedGachaPack.map {
             "Selected Pack: \($0.name) (Cost: \($0.cost))"
         } ?? "No Pack Selected"
     }
+    
+    private func updatePlayerCurrencyLabel() {
+        let player = playerManager.getOrCreatePlayer()
+        print("Updating Player currency: \(player.currency)")
+        playerCurrencyLabel.text = "\(player.currency)"
+        
+        // Optional: Highlight the label if player has enough currency for selected pack
+        if let selectedPack = selectedGachaPack {
+            if player.canSpendCurrency(selectedPack.cost) {
+                playerCurrencyLabel.textColor = .white
+            } else {
+                playerCurrencyLabel.textColor = .systemRed
+            }
+        } else {
+            playerCurrencyLabel.textColor = .white
+        }
+    }
 
-    @IBAction func gachaDrawButtonTapped(_ sender: UIButton) {
+    @IBAction func gachaDrawButtonPressed(_ sender: UIButton) {
         guard let gachaService = gachaService else {
             showErrorMessage("Gacha Service not initialized")
             return
@@ -64,80 +116,101 @@ class GachaViewController: UIViewController {
             return
         }
         
-        // Get or create player
-        var player = playerManager.getOrCreatePlayer()
+        // Get current player state to check if they can afford the pack
+        let player = playerManager.getOrCreatePlayer()
         
-        // Attempt to draw from the pack
-        let drawnItems = gachaService.drawFromPack(packName: selectedPack.name, count: 1, for: &player)
+        // Check if player has enough currency
+        if !player.canSpendCurrency(selectedPack.cost) {
+            showErrorMessage("Not enough currency. Need \(selectedPack.cost)")
+            return
+        }
         
-        // Update player
-        playerManager.addItems(drawnItems)
+        // Use the centralized method in PlayerManager to handle the gacha draw
+        // This ensures proper player state management
+        let drawnItems = playerManager.drawFromGachaPack(
+            packName: selectedPack.name,
+            count: 1,
+            gachaService: gachaService
+        )
+        
+        // Update currency display immediately after purchase
+        updatePlayerCurrencyLabel()
         
         // Display drawn items
         displayDrawnItems(drawnItems)
     }
     
     private func showErrorMessage(_ message: String) {
-        gachaPackLabel.text = message
+        packSelectorLabel.text = message
         print(message)
+        
+        // Animate the label to draw attention
+        UIView.animate(withDuration: 0.1, animations: {
+            self.packSelectorLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.packSelectorLabel.transform = .identity
+            }
+        })
     }
     
     private func displayDrawnItems(_ items: [any IGachaItem]) {
         guard !items.isEmpty else {
-            gachaPackLabel.text = "No items drawn."
+            packSelectorLabel.text = "No items drawn."
             return
         }
         
         let itemDescriptions = items.map { item in
-            "\(item.name) [\(item.rarity.rawValue.capitalized)]"
+            let raritySymbol: String
+            switch item.rarity {
+            case .common: raritySymbol = "⚪"
+            case .rare: raritySymbol = "🔵"
+            case .epic: raritySymbol = "🟣"
+            }
+            return "\(raritySymbol) \(item.name) [\(item.rarity.rawValue.capitalized)]"
         }.joined(separator: ", ")
         
-        gachaPackLabel.text = "Drawn: \(itemDescriptions)"
+        packSelectorLabel.text = "Drawn: \(itemDescriptions)"
+        
+        // Play a short celebration animation for the drawn item
+        playCelebrationAnimation()
+    }
+    
+    private func playCelebrationAnimation() {
+        // Create a simple particle effect for celebration
+        let emitterLayer = CAEmitterLayer()
+        emitterLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2)
+        emitterLayer.emitterShape = .point
+        emitterLayer.emitterSize = CGSize(width: 1, height: 1)
+        
+        let cell = CAEmitterCell()
+        cell.birthRate = 20
+        cell.lifetime = 1.5
+        cell.velocity = 100
+        cell.velocityRange = 50
+        cell.emissionRange = .pi * 2
+        cell.scale = 0.2
+        cell.scaleRange = 0.1
+        cell.contents = UIImage(systemName: "star.fill")?.cgImage
+        cell.color = UIColor.systemYellow.cgColor
+        
+        emitterLayer.emitterCells = [cell]
+        view.layer.addSublayer(emitterLayer)
+        
+        // Remove the emitter after animation completes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            emitterLayer.removeFromSuperlayer()
+        }
     }
 }
 
-// MARK: - UICollectionViewDataSource, UICollectionViewDelegate
-extension GachaViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return gachaService?.getAllPacks().count ?? 0
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        
-        // Alternate background colors
-        cell.backgroundColor = colorData[indexPath.item % colorData.count]
-        
-        return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let packs = gachaService?.getAllPacks() else { return }
-        
-        let selectedPack = packs[indexPath.item]
-        selectedGachaPack = selectedPack
+// MARK: - GachaViewControllerDelegate
+extension GachaViewController: GachaViewControllerDelegate {
+    func didSelectPack(pack: GachaPack) {
+        selectedGachaPack = pack
         updatePackSelectorLabel()
-
-        // Animate selected cell
-        guard let cell = collectionView.cellForItem(at: indexPath) else { return }
-
-        // Reset initial state
-        cell.layer.shadowColor = UIColor.black.cgColor
-        cell.layer.shadowOffset = CGSize(width: 0, height: 0)
-        cell.layer.shadowOpacity = 0.0
-        cell.layer.shadowRadius = 0
-        cell.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-
-        // Animate to final state
-        UIView.animate(withDuration: 0.3,
-                       delay: 0,
-                       usingSpringWithDamping: 0.6,
-                       initialSpringVelocity: 0.5,
-                       options: .curveEaseInOut,
-                       animations: {
-            cell.transform = .identity
-            cell.layer.shadowOpacity = 0.3
-            cell.layer.shadowRadius = 5
-        }, completion: nil)
+        
+        // Update currency color based on whether player can afford the selected pack
+        updatePlayerCurrencyLabel()
     }
 }

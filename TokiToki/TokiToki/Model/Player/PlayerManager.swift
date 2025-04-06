@@ -35,6 +35,7 @@ class PlayerManager {
 
     func getPlayer() -> Player? {
         if let player = currentPlayer {
+            print("Returning current player: \(player.name) \(player.currency)")
             return player
         }
         
@@ -48,8 +49,10 @@ class PlayerManager {
 
     func getOrCreatePlayer(name: String = "Player") -> Player {
         if let player = getPlayer() {
+            print("Returning existing player: \(player.name) \(player.currency)")
             return player
         }
+        print("Creating a new player with default name: \(name)")
         
         let player = playerRepository.createDefaultPlayer(name: name)
         currentPlayer = player
@@ -147,6 +150,37 @@ class PlayerManager {
         player.ownedEquipments.append(equipment)
         currentPlayer = player
         savePlayer()
+    }
+    
+    // MARK: - Gacha Operations
+    
+    /// Draw from a gacha pack, handling all player updates internally
+    func drawFromGachaPack(packName: String, count: Int, gachaService: GachaService) -> [any IGachaItem] {
+        // Get current player state
+        var player = getOrCreatePlayer()
+        
+        // Find the pack
+        guard let pack = gachaService.findPack(byName: packName) else {
+            print("No pack found with name \(packName)")
+            return []
+        }
+        
+        // Check if player has enough currency
+        let totalCost = pack.cost * count
+        guard player.canSpendCurrency(totalCost) else {
+            print("Player doesn't have enough currency to draw")
+            return []
+        }
+        
+        // Draw from the pack
+        let drawnItems = gachaService.drawFromPack(packName: packName, count: count, for: &player)
+        
+        currentPlayer = player
+        
+        // Save player to Core Data
+        savePlayer()
+        
+        return drawnItems
     }
     
     // MARK: - Data Management

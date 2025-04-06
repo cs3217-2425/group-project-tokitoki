@@ -44,13 +44,6 @@ class GachaService {
                             let createdToki = itemRepository.createToki(from: toki)
                             gachaItem = GachaItemFactory.createTokiGachaItem(toki: createdToki)
                         }
-//                    case "skill":
-//                        if let skill = itemRepository.getSkillTemplate(name: itemName) {
-//                            let createdSkill = itemRepository.createSkill(from: skill)
-//                            let rarity = itemData.rarity != nil ?
-//                                convertIntToItemRarity(itemData.rarity!) : .common
-//                            gachaItem = GachaItemFactory.createSkillGachaItem(skill: createdSkill, rarity: rarity)
-//                        }
                     case "equipment":
                         if let equipment = itemRepository.getEquipmentTemplate(name: itemName) {
                             let createdEquipment = itemRepository.createEquipment(from: equipment)
@@ -95,13 +88,12 @@ class GachaService {
         return Array(gachaPacks.values)
     }
     
-    // Pull from a gacha pack
+    // Pull from a gacha pack (now just handles the draw logic, not player state)
     func drawFromPack(packName: String, count: Int, for player: inout Player) -> [any IGachaItem] {
         guard let pack = findPack(byName: packName) else {
             print("No pack found with name \(packName)")
             return []
         }
-        
         
         // Check if player has enough currency
         let totalCost = pack.cost * count
@@ -109,7 +101,6 @@ class GachaService {
             print("Player doesn't have enough currency to draw")
             return []
         }
-        
         
         // Get event rate modifiers
         let rateModifiers = eventService.getRateModifiers(packName: packName)
@@ -124,12 +115,11 @@ class GachaService {
                 
                 drawnItems.append(itemWithOwnership)
                 
+                // Add the drawn item to player's inventory
+                // Note: This modifies the passed player reference
                 if let tokiGachaItem = itemWithOwnership as? TokiGachaItem {
                     player.ownedTokis.append(tokiGachaItem.getToki())
                 }
-//                else if let skillGachaItem = itemWithOwnership as? SkillGachaItem {
-//                    player.ownedSkills.append(skillGachaItem.getSkill())
-//                }
                 else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
                     player.ownedEquipments.append(equipmentGachaItem.getEquipment())
                 }
@@ -139,6 +129,7 @@ class GachaService {
         // Deduct currency
         _ = player.spendCurrency(totalCost)
         
+        // The modified player instance is returned via the inout parameter
         return drawnItems
     }
     
@@ -147,13 +138,11 @@ class GachaService {
         var totalWeight: Double = 0
         var weightedItems: [(item: any IGachaItem, weight: Double)] = []
         
-        
         for packItem in pack.items {
             let item = packItem.item
             let itemName = packItem.itemName
             var rate = packItem.baseRate
             
-
             if let modifier = rateModifiers[itemName] {
                 rate *= modifier
             }
@@ -169,7 +158,6 @@ class GachaService {
             }
         }
         
-
         guard !weightedItems.isEmpty, totalWeight > 0 else {
             print("No valid items in pack or all rates are zero")
             return pack.items.first?.item
@@ -226,5 +214,3 @@ class GachaService {
         }
     }
 }
-
-
