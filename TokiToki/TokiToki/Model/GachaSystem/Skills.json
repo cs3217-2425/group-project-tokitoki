@@ -55,10 +55,10 @@
             {
               "calculatorType": "statsModifier",
               "statsModifierDuration": 2,
-              "attackModifier": 0.0,
+              "attackModifier": 1.0,
               "defenseModifier": 1.5,
-              "speedModifier": 0.0,
-              "healModifier": 0.0
+              "speedModifier": 1.0,
+              "healModifier": 1.0
             }
           ]
         }
@@ -129,9 +129,9 @@
               "calculatorType": "statsModifier",
               "statsModifierDuration": 2,
               "attackModifier": 1.2,
-              "defenseModifier": 0.0,
-              "speedModifier": 0.0,
-              "healModifier": 0.0
+              "defenseModifier": 1.0,
+              "speedModifier": 1.0,
+              "healModifier": 1.0
             }
           ]
         }
@@ -154,10 +154,10 @@
             {
               "calculatorType": "statsModifier",
               "statsModifierDuration": 2,
-              "attackModifier": 0.0,
-              "defenseModifier": 0.0,
+              "attackModifier": 1.0,
+              "defenseModifier": 1.0,
               "speedModifier": 0.8,
-              "healModifier": 0.0
+              "healModifier": 1.0
             }
           ]
         }
