@@ -8,61 +8,6 @@
 import UIKit
 
 extension TokiDisplay {
-    /// Loads sample equipment into the system.
-    func loadSampleEquipment() {
-        let repository = EquipmentRepository.shared
-
-        let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 5)
-        let healthPotion = repository.createConsumableEquipment(name: "Health Potion",
-                                                                description: "Restores health temporarily.",
-                                                                rarity: 1,
-                                                                effectStrategy: potionStrategy, usageContext: .battleOnly)
-
-        let upgradeCandyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
-        let upgradeCandy = repository.createConsumableEquipment(name: "Upgrade Candy",
-                                                                description: "Grants bonus EXP permanently.",
-                                                                rarity: 1,
-                                                                effectStrategy: upgradeCandyStrategy, usageContext: .outOfBattleOnly)
-
-        let swordBuff = EquipmentBuff(value: 15, description: "Increases attack power", affectedStat: "attack")
-        let sword = repository.createNonConsumableEquipment(name: "Sword",
-                                                            description: "A sharp blade.",
-                                                            rarity: 2,
-                                                            buff: swordBuff,
-                                                            slot: .weapon)
-
-        let shieldBuff = EquipmentBuff(value: 5, description: "Increases defense", affectedStat: "defense")
-        let shield = repository.createNonConsumableEquipment(name: "Shield",
-                                                             description: "A sturdy shield.",
-                                                             rarity: 2,
-                                                             buff: shieldBuff,
-                                                             slot: .armor)
-
-        let component = equipmentFacade.equipmentComponent
-
-        let equipmentItems: [Equipment] = [healthPotion, upgradeCandy, sword, shield, healthPotion]
-        component.inventory.append(contentsOf: equipmentItems)
-        equipmentFacade.equipmentComponent = component
-    }
-
-    /// Crafts equipment using the first two items from the inventory.
-    func craftEquipment() {
-        let component = equipmentFacade.equipmentComponent
-        guard component.inventory.count >= 2 else { return }
-        let itemsToCraft = Array(component.inventory.prefix(2))
-        equipmentFacade.craftItems(items: itemsToCraft)
-    }
-
-    /// Equips the first available weapon in the inventory.
-    func equipWeapon() {
-        let component = equipmentFacade.equipmentComponent
-        if let weapon = component.inventory.first(where: {
-            $0.equipmentType == .nonConsumable && ($0 as? NonConsumableEquipment)?.slot == .weapon
-        }) as? NonConsumableEquipment {
-            equipmentFacade.equipItem(item: weapon)
-        }
-    }
-    
     func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath,
                        equipmentTableView: UITableView?, control: TokiDisplayViewController) {
         // 1. Use it on the real Toki so that Toki’s exp updates
@@ -88,6 +33,54 @@ extension TokiDisplay {
         self.updateUI(control)
     }
     
+    func changeEquipmentTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
+        guard let indexPath = control.equipmentTableView?.indexPathForSelectedRow else {
+            let noSelectionAlert = UIAlertController(title: "No Selection",
+                                                     message: "Please select an equipment cell to change.",
+                                                     preferredStyle: .alert)
+            noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            control.present(noSelectionAlert, animated: true)
+            return
+        }
+        
+        let component = self.equipmentFacade.equipmentComponent
+        
+        // Build an action sheet using all equipment loaded from JSON.
+        let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment", preferredStyle: .actionSheet)
+        
+        for equipment in component.inventory {
+            alert.addAction(UIAlertAction(title: equipment.name, style: .default, handler: { _ in
+                // Check if this equipment is already part of the Toki's equipment.
+                if self.toki.equipments.contains(where: { $0.id == equipment.id }) {
+                    let existsAlert = UIAlertController(title: "Already Exists",
+                                                        message: "Equipment \(equipment.name) already exists.",
+                                                        preferredStyle: .alert)
+                    existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                    control.present(existsAlert, animated: true)
+                } else {
+                    // Update the Toki model.
+                    if indexPath.row < self.toki.equipments.count {
+                        self.toki.equipments[indexPath.row] = equipment
+                    } else {
+                        self.toki.equipments.append(equipment)
+                    }
+                    // Now update the facade's inventory to reflect this change.
+                    let component = self.equipmentFacade.equipmentComponent
+                    self.equipmentFacade.equipmentComponent = component
+                    self.updateUI(control)
+                }
+            }))
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+        }
+        control.present(alert, animated: true)
+    }
+
     func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {
             let noSelectionAlert = UIAlertController(title: "No Selection",
@@ -101,7 +94,6 @@ extension TokiDisplay {
         // Build an action sheet using all skills loaded from JSON.
         let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
         
-        // Iterate over allSkills array loaded from JSON.
         for skill in self.allSkills {
             alert.addAction(UIAlertAction(title: skill.name, style: .default, handler: { _ in
                 // Check if this skill is already part of the Toki's skills.
@@ -112,6 +104,7 @@ extension TokiDisplay {
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
+                    // Update the Toki model.
                     if indexPath.row < self.toki.skills.count {
                         self.toki.skills[indexPath.row] = skill
                     } else {

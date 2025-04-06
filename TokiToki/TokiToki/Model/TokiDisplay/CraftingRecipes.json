@@ -1,0 +1,20 @@
+{
+  "recipes": [
+    {
+      "type": "consumable",
+      "requiredEquipmentIdentifiers": ["Attack Potion", "Attack Potion"],
+      "resultName": "Super Attack Potion",
+      "description": "A crafted potion with enhanced effects.",
+      "rarityIncrement": 1,
+      "usageContext": "battleOnly"
+    },
+    {
+      "type": "nonconsumable",
+      "requiredEquipmentIdentifiers": ["sword", "sword"],
+      "resultName": "Dual Sword",
+      "description": "A crafted weapon combining two swords.",
+      "rarityIncrement": 1,
+      "slot": "weapon"
+    }
+  ]
+}

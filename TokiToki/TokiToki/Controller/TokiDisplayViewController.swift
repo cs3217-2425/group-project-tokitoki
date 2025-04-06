@@ -49,7 +49,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         defenseProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
         speedProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
 
-        // Load Toki Data
+        TokiDisplay.shared.loadEquipmentsFromJSON()
         TokiDisplay.shared.updateUI(self)
     }
 
