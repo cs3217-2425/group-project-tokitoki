@@ -12,93 +12,93 @@ class ItemRepository {
     private var tokiTemplates: [String: TokiData] = [:]
     private var skillTemplates: [String: SkillData] = [:]
     private var equipmentTemplates: [String: EquipmentData] = [:]
-    
+
     // Factory objects
-    private let skillFactory = SkillFactory()
+    private let skillFactory = SkillsFactory()
     private let equipmentRepository = EquipmentRepository.shared
-    
+
     init() {
         loadTemplatesFromJSON()
     }
-    
+
     // MARK: - Data Initialization
-    
+
     private func loadTemplatesFromJSON() {
         loadTokiTemplates()
         loadSkillTemplates()
         loadEquipmentTemplates()
     }
-    
+
     private func loadTokiTemplates() {
         do {
             let tokisData: TokisData = try ResourceLoader.loadJSON(fromFile: "Tokis")
-            
+
             for tokiData in tokisData.tokis {
                 tokiTemplates[tokiData.name] = tokiData
             }
-            
+
             print("Loaded \(tokiTemplates.count) Toki templates from JSON")
         } catch {
             print("Error loading Toki templates: \(error)")
         }
     }
-    
+
     private func loadSkillTemplates() {
         do {
             let skillsData: SkillsData = try ResourceLoader.loadJSON(fromFile: "Skills")
-            
+
             for skillData in skillsData.skills {
                 skillTemplates[skillData.name] = skillData
             }
-            
+
             print("Loaded \(skillTemplates.count) Skill templates from JSON")
         } catch {
             print("Error loading Skill templates: \(error)")
         }
     }
-    
+
     private func loadEquipmentTemplates() {
         do {
             let equipmentsData: EquipmentsData = try ResourceLoader.loadJSON(fromFile: "Equipments")
-            
+
             for equipmentData in equipmentsData.equipment {
                 equipmentTemplates[equipmentData.name] = equipmentData
             }
-            
+
             print("Loaded \(equipmentTemplates.count) Equipment templates from JSON")
         } catch {
             print("Error loading Equipment templates: \(error)")
         }
     }
-    
+
     // MARK: - Template Access Methods
-    
+
     func getTokiTemplate(name: String) -> TokiData? {
-        return tokiTemplates[name]
+        tokiTemplates[name]
     }
-    
+
     func getSkillTemplate(name: String) -> SkillData? {
-        return skillTemplates[name]
+        skillTemplates[name]
     }
-    
+
     func getEquipmentTemplate(name: String) -> EquipmentData? {
-        return equipmentTemplates[name]
+        equipmentTemplates[name]
     }
-    
+
     func getAllTokiTemplates() -> [TokiData] {
-        return Array(tokiTemplates.values)
+        Array(tokiTemplates.values)
     }
-    
+
     func getAllSkillTemplates() -> [SkillData] {
-        return Array(skillTemplates.values)
+        Array(skillTemplates.values)
     }
-    
+
     func getAllEquipmentTemplates() -> [EquipmentData] {
-        return Array(equipmentTemplates.values)
+        Array(equipmentTemplates.values)
     }
-    
+
     // MARK: - Create Game Objects from Templates
-    
+
     // Create a full Toki object from a template
     func createToki(from template: TokiData) -> Toki {
         let baseStats = TokiBaseStats(
@@ -109,11 +109,11 @@ class ItemRepository {
             heal: template.baseHeal,
             exp: template.baseExp
         )
-        
+
         // Randomly select some skills and equipment for the Toki
         let skills = selectRandomSkills(count: 2)
         let equipment = selectRandomEquipment(count: 1)
-        
+
         return Toki(
             id: UUID(),
             name: template.name,
@@ -125,7 +125,7 @@ class ItemRepository {
             level: 1
         )
     }
-    
+
     // Create a Skill object from template
     private func createSkill(from template: SkillData) -> Skill? {
         // First, analyze the structure to determine which factory method to use
@@ -286,28 +286,43 @@ class ItemRepository {
     // Create an Equipment object from template
     func createEquipment(from template: EquipmentData) -> Equipment {
         // Check equipment type
-        if template.equipmentType.lowercased() == "consumable" {
-            // For consumable equipment
-            guard let effectData = template.effectStrategy else {
-                // Fallback for consumable with no effect strategy
-                let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 30.0)
-                return equipmentRepository.createConsumableEquipment(
-                    name: template.name,
-                    description: template.description,
-                    rarity: template.rarity,
-                    effectStrategy: potionStrategy
-                )
-            }
-            
-            // Create effect strategy based on type
-            let effectStrategy = createEffectStrategy(from: effectData)
-            return equipmentRepository.createConsumableEquipment(
-                name: template.name,
-                description: template.description,
-                rarity: template.rarity,
-                effectStrategy: effectStrategy
-            )
-        } else {
+
+//        if template.equipmentType.lowercased() == "consumable" {
+//             For consumable equipment
+//            guard let effectData = template.effectStrategy else {
+//                // Fallback for consumable with no effect strategy
+//                let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 30.0)
+//                return equipmentRepository.createConsumableEquipment(
+//                    name: template.name,
+//                    description: template.description,
+//                    rarity: template.rarity,
+//                    effectStrategy: potionStrategy,
+//                    usageContext: {
+//                        if let inBattleOnly = template.inBattleOnly {
+//                            return inBattleOnly ? .battleOnly : .outOfBattleOnly
+//                        } else {
+//                            return .anywhere
+//                        }
+//                    }()
+//                )
+//            }
+//            
+//            // Create effect strategy based on type
+//            let effectStrategy = createEffectStrategy(from: effectData)
+//            return equipmentRepository.createConsumableEquipment(
+//                name: template.name,
+//                description: template.description,
+//                rarity: template.rarity,
+//                effectStrategy: effectStrategy,
+//                usageContext: {
+//                    if let inBattleOnly = template.inBattleOnly {
+//                        return inBattleOnly ? .battleOnly : .outOfBattleOnly
+//                    } else {
+//                        return .anywhere
+//                    }
+//                }()
+//            )
+ //       } else {
             // For non-consumable equipment
             guard let buffData = template.buff, let slot = template.slot else {
                 // Fallback for non-consumable with no buff or slot
@@ -320,7 +335,7 @@ class ItemRepository {
                     slot: .weapon
                 )
             }
-            
+
             // Create StatBuff based on affected stat
             let statBuff: StatBuff
             switch buffData.affectedStat.lowercased() {
@@ -333,9 +348,9 @@ class ItemRepository {
             default:
                 statBuff = StatBuff(attack: 0, defense: 0, speed: 0, description: "No stat boost")
             }
-            
+
             let equipmentSlot = convertStringToEquipmentSlot(slot)
-            
+
             return equipmentRepository.createNonConsumableEquipment(
                 name: template.name,
                 description: template.description,
@@ -343,9 +358,9 @@ class ItemRepository {
                 buff: statBuff,
                 slot: equipmentSlot
             )
-        }
+     //  }
     }
-    
+
     // MARK: - Helper Methods for Creating Random Collections
     
     private func selectRandomSkills(count: Int) -> [Skill] {
@@ -366,10 +381,10 @@ class ItemRepository {
     
     
     // Select random equipment for a newly drawn Toki
-    private func selectRandomEquipment(count: Int) -> [Equipment] {
+    func selectRandomEquipment(count: Int) -> [Equipment] {
         let templates = Array(equipmentTemplates.values)
         guard !templates.isEmpty else { return [] }
-        
+
         var selectedEquipment: [Equipment] = []
         for _ in 0..<min(count, templates.count) {
             if let template = templates.randomElement() {
@@ -377,26 +392,26 @@ class ItemRepository {
                 selectedEquipment.append(equipment)
             }
         }
-        
+
         return selectedEquipment
     }
-    
+
     // Helper to create consumable effect strategy
-    private func createEffectStrategy(from effectData: EquipmentData.EffectStrategyData) -> ConsumableEffectStrategy {
-        switch effectData.type.lowercased() {
-        case "potion":
-            let buffValue = effectData.buffValue ?? 10
-            let duration = effectData.duration ?? 30.0
-            return PotionEffectStrategy(buffValue: buffValue, duration: duration)
-        case "upgradecandy":
-            let bonusExp = effectData.bonusExp ?? 100
-            return UpgradeCandyEffectStrategy(bonusExp: bonusExp)
-        default: return PotionEffectStrategy(buffValue: 10, duration: 30.0)
-        }
-    }
-    
+//    private func createEffectStrategy(from effectData: EquipmentData.EffectStrategyData) -> ConsumableEffectStrategy {
+//        switch effectData.type.lowercased() {
+//        case "potion":
+//            let buffValue = effectData.buffValue ?? 10
+//            let duration = effectData.duration ?? 30.0
+//            return PotionEffectStrategy(buffValue: buffValue, duration: duration)
+//        case "upgradecandy":
+//            let bonusExp = effectData.bonusExp ?? 100
+//            return UpgradeCandyEffectStrategy(bonusExp: bonusExp)
+//        default: return PotionEffectStrategy(buffValue: 10, duration: 30.0)
+//        }
+//    }
+
     // MARK: - Type Conversion Helpers
-    
+
     private func convertStringToElement(_ str: String) -> ElementType {
         switch str.lowercased() {
         case "fire": return .fire
@@ -408,14 +423,14 @@ class ItemRepository {
         default: return .neutral
         }
     }
-    
+
     private func convertIntToItemRarity(_ value: Int) -> ItemRarity {
         if let rarity = ItemRarity(intValue: value) {
             return rarity
         }
         return .common
     }
-    
+
     private func convertStringToSkillType(_ str: String) -> SkillType {
         switch str.lowercased() {
         case "attack": return .attack
@@ -423,7 +438,7 @@ class ItemRepository {
         default: return .attack
         }
     }
-    
+
     private func convertStringToTargetType(_ str: String) -> TargetType {
         switch str.lowercased() {
         case "singleenemy": return .singleEnemy
@@ -435,7 +450,7 @@ class ItemRepository {
         default: return .singleEnemy
         }
     }
-    
+
     private func convertStringToStatusEffect(_ str: String) -> StatusEffectType? {
         switch str.lowercased() {
         case "stun": return .stun
@@ -446,7 +461,7 @@ class ItemRepository {
         default: return nil
         }
     }
-    
+
     private func convertStringToEquipmentSlot(_ str: String) -> EquipmentSlot {
         switch str.lowercased() {
         case "weapon": return .weapon
@@ -455,6 +470,4 @@ class ItemRepository {
         default: return .weapon
         }
     }
-    
-    
 }

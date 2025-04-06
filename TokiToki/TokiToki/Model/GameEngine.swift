@@ -24,16 +24,17 @@ class GameEngine {
     private var statusEffectStrategyFactory = StatusEffectStrategyFactory()
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
-    private let eventFactory = GameEventFactory()
-    
-    private let multiplierForActionMeter: Float = 0.1
-    private let MAX_ACTION_BAR: Float = 100
-    private let turnSystem: TurnSystem
+
+    static let multiplierForActionMeter: Float = 0.1
+    static let MAX_ACTION_BAR: Float = 100
+
+    private let turnSystem = TurnSystem.shared
     private let skillsSystem = SkillsSystem()
-    private let statusEffectsSystem: StatusEffectsSystem
+    private let statusEffectsSystem = StatusEffectsSystem.shared
     private let resetSystem = ResetSystem()
     private let statsSystem = StatsSystem()
     private let statsModifiersSystem = StatsModifiersSystem()
+    private let equipmentSystem = EquipmentSystem.shared
 
     private var savedPlayersPlusOpponents: [GameStateEntity] = []
     private var savedPlayerTeam: [GameStateEntity] = []
@@ -46,8 +47,8 @@ class GameEngine {
         self.savedPlayerTeam = playerTeam
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
-        self.turnSystem = TurnSystem()
-        self.statusEffectsSystem = StatusEffectsSystem.shared
+        self.statusEffectsSystem.setGameEngine(self)
+        self.equipmentSystem.saveEquipments()
     }
 
     func startBattle() {
@@ -74,7 +75,7 @@ class GameEngine {
             }
 
             if statusEffectsSystem.checkIfImmobilised(currentGameStateEntity) {
-                updateEntityForNewTurnAndAllEntities(currentGameStateEntity)
+                updateEntityForNewTurn(currentGameStateEntity)
                 continue
             }
 
@@ -83,6 +84,7 @@ class GameEngine {
                 return
             }
 
+            logMessage("It's now \(currentGameStateEntity.name)'s turn!")
             updateSkillIconsForCurrentEntity(currentGameStateEntity)
             return
         }
@@ -118,28 +120,30 @@ class GameEngine {
             return
         }
         mostRecentSkillSelected = skillSelected
-        
+
         let singleTargetEffect = skillSelected.effectDefinitions.first {
             targetSelectionFactory.checkIfRequireTargetSelection($0.targetType)
         }
-        
+
         if let singleTargetEffect = singleTargetEffect {
             if singleTargetEffect.targetType == .singleEnemy && opponentTeam.count > 1 {
                 battleEffectsDelegate?.allowOpponentTargetSelection()
+                logMessage("Choose a target")
                 return
             }
-            
+
             if singleTargetEffect.targetType == .singleAlly && playerTeam.count > 1 {
                 battleEffectsDelegate?.allowAllyTargetSelection()
+                logMessage("Choose a target")
                 return
             }
         }
-        
+
         // TODO: update event bus with new changes
         let targets = targetSelectionFactory.generateTargets(currentGameStateEntity, playerTeam, opponentTeam,
                                                              skillSelected.effectDefinitions[0].targetType)
         createBattleEventAndPublishToEventBus(currentGameStateEntity, skillSelected, targets)
-        
+
         createAndExecuteSkillAction(currentGameStateEntity, skillSelected, [])
     }
 
@@ -154,15 +158,38 @@ class GameEngine {
         createAndExecuteSkillAction(currentGameStateEntity, mostRecentSkillSelected, [target])
     }
 
+    func useConsumable(_ consumableName: String) {
+        let consumable = equipmentSystem.getConsumable(consumableName)
+        guard let currentGameStateEntity = currentGameStateEntity,
+              let consumable = consumable as? ConsumableEquipment else {
+            return
+        }
+        let action = UseConsumableAction(user: currentGameStateEntity, consumable: consumable)
+        queueAction(action)
+        let results = executeNextAction()
+        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
+            self?.updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
+        }
+    }
+
+    func takeNoAction() {
+        guard let currentGameStateEntity = currentGameStateEntity else {
+            return
+        }
+        let action = NoAction(entity: currentGameStateEntity)
+        queueAction(action)
+        let results = executeNextAction()
+        updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
+    }
+
     fileprivate func createBattleEventAndPublishToEventBus(_ currentGameStateEntity: GameStateEntity,
                                                            _ skillSelected: any Skill,
                                                            _ targets: [GameStateEntity]) {
-        let skillEvent = eventFactory.createSkillUsedEvent(
+        BattleEventManager.shared.publishSkillUsedEvent(
             user: currentGameStateEntity,
             skill: skillSelected,
             targets: targets
         )
-        EventBus.shared.post(skillEvent)
     }
 
     private func createAndExecuteSkillAction(_ currentGameStateEntity: GameStateEntity,
@@ -172,16 +199,15 @@ class GameEngine {
         queueAction(action)
         let results = executeNextAction()
         battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
-            self?.updateLogAndEntityAfterSkillUse(results, currentGameStateEntity)
+            self?.updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
         }
     }
 
-    fileprivate func updateLogAndEntityAfterSkillUse(_ results: [EffectResult], _ currentGameStateEntity: GameStateEntity) {
+    fileprivate func updateLogAndEntityAfterActionTaken(_ results: [EffectResult], _ currentGameStateEntity: GameStateEntity) {
         for result in results {
             logMessage(result.description)
         }
         updateEntityForNewTurnAndAllEntities(currentGameStateEntity)
-        startGameLoop()
     }
 
     func queueAction(_ action: Action) {
@@ -201,12 +227,8 @@ class GameEngine {
             sourceId = skillAction.user.id
         }
 
-        // Convert results to events and post them
         for result in results {
-            for battleResultEvent in result.toBattleEvents(sourceId: sourceId) {
-                // Post-action damage taken, status effects, etc events are emitted
-                EventBus.shared.post(battleResultEvent)
-            }
+            BattleEventManager.shared.publishEffectResult(result, sourceId: sourceId)
         }
 
         return results
@@ -219,7 +241,6 @@ class GameEngine {
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
                 self?.updateLogAfterMove(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
-                self?.startGameLoop()
             }
         }
     }
@@ -235,20 +256,37 @@ class GameEngine {
         statusEffectsSystem.update([entity], logMessage)
         statsModifiersSystem.update([entity])
         turnSystem.endTurn(for: entity)
-        updateHealthBars()
-        checkIfEntitiesAreDead()
+        updateHealthBars { [weak self] in
+            self?.checkIfEntitiesAreDead()
+            self?.startGameLoop()
+        }
+    }
+
+    private func updateEntityForNewTurn(_ entity: GameStateEntity) {
+        updateSkillCooldowns(entity)
+        statusEffectsSystem.update([entity], logMessage)
+        statsModifiersSystem.update([entity])
+        turnSystem.endTurn(for: entity)
     }
 
     fileprivate func updateSkillCooldowns(_ entity: GameStateEntity) {
         skillsSystem.update([entity])
     }
 
-    private func updateHealthBars() {
+    private func updateHealthBars(completion: @escaping () -> Void = {}) {
+        var remainingAnimations = playersPlusOpponents.count
+
         playersPlusOpponents.forEach {
             let currentHealth = $0.getComponent(ofType: StatsComponent.self)?.currentHealth
             let maxHealth = $0.getComponent(ofType: StatsComponent.self)?.baseStats.hp
             guard let currentHealth = currentHealth, let maxHealth = maxHealth else { return }
-            battleEffectsDelegate?.updateHealthBar($0.id, currentHealth, maxHealth)
+            battleEffectsDelegate?.updateHealthBar($0.id, currentHealth, maxHealth) {
+                remainingAnimations -= 1
+
+                if remainingAnimations == 0 {
+                    completion()
+                }
+            }
         }
     }
 

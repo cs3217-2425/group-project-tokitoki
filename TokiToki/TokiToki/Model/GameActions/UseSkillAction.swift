@@ -25,12 +25,8 @@ class UseSkillAction: Action {
     }
 
     func execute() -> [EffectResult] {
-//        if targets.isEmpty {
-//            return [EffectResult(entity: user, type: .none, value: 0, description: "No valid targets")]
-//        }
-
         if !skill.canUse() {
-            return [EffectResult(entity: user, type: .none, value: 0, description: "\(skill.name) is on cooldown")]
+            return [EffectResult(entity: user, value: 0, description: "\(skill.name) is on cooldown")]
         }
 
         return skill.use(from: user, playerTeam, opponentTeam, singleTargets)

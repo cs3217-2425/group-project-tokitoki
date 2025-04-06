@@ -13,13 +13,13 @@ class StatsModifiersCalculator: EffectCalculator {
         self.statsModifiers = statsModifiers
     }
 
-    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
+    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         for modifier in statsModifiers {
             guard let statsModifiersComponent = target.getComponent(ofType: StatsModifiersComponent.self) else {
                 return nil
             }
             StatsModifiersSystem().addModifier(modifier, target)
-            return EffectResult(entity: target, type: .statsModified, value: 0,
+            return EffectResult(entity: target, value: 0,
                                         description: modifier.describeChanges(for: target))
         }
         return nil

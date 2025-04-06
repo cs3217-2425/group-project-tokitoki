@@ -5,7 +5,6 @@
 //  Created by Pawan Kishor Patil on 31/3/25.
 //
 
-
 struct EquipmentsData: Codable {
     let equipment: [EquipmentData]
 }
@@ -84,7 +83,6 @@ struct SkillsData: Codable {
     let skills: [SkillData]
 }
 
-
 // Gacha Item Data within a pack
 struct GachaItemData: Codable {
     let itemId: String
@@ -93,7 +91,6 @@ struct GachaItemData: Codable {
     let rarity: Int?
     let elementType: String?
 }
-
 
 // Gacha Pack Data for loading from JSON
 struct GachaPackData: Codable {
@@ -107,9 +104,8 @@ struct GachaPacksData: Codable {
     let packs: [GachaPackData]
 }
 
-
 // Gacha Pack
-struct GachaPack{
+struct GachaPack {
     let name: String
     let description: String
     let cost: Int
@@ -133,27 +129,27 @@ struct EquipmentData: Codable {
     let buff: BuffData?          // Optional because consumables might not have buffs
     let slot: String?            // Optional because consumables don't have slots
     let effectStrategy: EffectStrategyData?  // Optional because nonConsumables don't have effects
-    
+
+    let inBattleOnly: Bool? // Optional -> Null = Anywhere, False = Outside, True = InBattle
+
     struct BuffData: Codable {
         let value: Int
         let description: String
         let affectedStat: String
     }
-    
+
     struct EffectStrategyData: Codable {
         let type: String          // "healing", "potion", "upgradeCandy", etc.
-        
+
         // For healing effects
         let healAmount: Int?
-        
+
         // For potion effects
         let buffValue: Int?
         let duration: Double?
         let statType: String?
-        
+
         // For upgrade candy effects
         let bonusExp: Int?
     }
 }
-
-

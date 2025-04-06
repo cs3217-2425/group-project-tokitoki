@@ -31,10 +31,10 @@ class AIComponent: Component {
         }
 
         guard let skillToUse = skillToUse else {
-            return NoAction()
+            return NoAction(entity: userEntity)
         }
 
-        //let targets = TargetSelectionFactory().generateTargets(opponentEntities, playerEntities, skillToUse.targetType)
+        // let targets = TargetSelectionFactory().generateTargets(opponentEntities, playerEntities, skillToUse.targetType)
         return UseSkillAction(user: userEntity, skill: skillToUse, opponentEntities, playerEntities, [])
     }
 }

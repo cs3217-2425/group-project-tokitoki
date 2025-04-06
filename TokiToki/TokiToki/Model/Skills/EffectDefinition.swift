@@ -8,7 +8,7 @@
 class EffectDefinition {
     let targetType: TargetType
     let effectCalculators: [EffectCalculator]
-    
+
     init(targetType: TargetType, effectCalculators: [EffectCalculator]) {
         self.targetType = targetType
         self.effectCalculators = effectCalculators

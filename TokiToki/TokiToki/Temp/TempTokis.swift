@@ -11,7 +11,7 @@ let wizardToki = Toki(
     name: "Wizard",
     rarity: .rare,
     baseStats: wizardBaseStats,
-    skills: [basicSpell, fireball, waterGun],
+    skills: [basicSpell, fireball, lightningStorm],
     equipments: [],
     elementType: [.fire],
     level: 0

@@ -48,7 +48,7 @@ class GachaViewController: UIViewController {
         let context = DataManager.shared.viewContext
         let itemRepository = ItemRepository()
         let eventService = EventService(itemRepository: itemRepository, context: context)
-        
+
         // Initialize Gacha Service
         gachaService = GachaService(
             itemRepository: itemRepository,
@@ -78,7 +78,7 @@ class GachaViewController: UIViewController {
             gachaPackCollectionViewController?.packs = packs
         }
     }
-    
+
     private func updatePackSelectorLabel() {
         gachaPackLabel.text = selectedGachaPack.map {
             "Selected Pack: \($0.name) (Cost: \($0.cost))"
@@ -118,7 +118,7 @@ class GachaViewController: UIViewController {
             showErrorMessage("Gacha Service not initialized")
             return
         }
-        
+
         guard let selectedPack = selectedGachaPack else {
             showErrorMessage("No pack selected")
             return
@@ -159,7 +159,7 @@ class GachaViewController: UIViewController {
         // Display drawn items
         displayDrawnItems(drawnItems)
     }
-    
+
     private func showErrorMessage(_ message: String) {
         packSelectorLabel.text = message
         print(message)
@@ -173,13 +173,13 @@ class GachaViewController: UIViewController {
             }
         })
     }
-    
+
     private func displayDrawnItems(_ items: [any IGachaItem]) {
         guard !items.isEmpty else {
             packSelectorLabel.text = "No items drawn."
             return
         }
-        
+
         let itemDescriptions = items.map { item in
             let raritySymbol: String
             switch item.rarity {

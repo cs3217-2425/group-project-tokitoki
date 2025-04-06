@@ -10,14 +10,13 @@ class ParalysisStrategy: StatusEffectStrategy {
         if Double.random(in: 0...1) < 0.5 {
             return EffectResult(
                 entity: entity,
-                type: .statusApplied,
                 value: 0,
                 description: "\(entity.getName()) is paralyzed and can't move!"
             )
         }
+        StatusEffectsSystem.shared.removeEffect(effect, entity)
         return EffectResult(
             entity: entity,
-            type: .statusApplied,
             value: 0,
             description: "\(entity.getName()) overcomes paralysis!"
         )

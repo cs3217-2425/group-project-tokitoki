@@ -5,7 +5,7 @@
 //  Created by proglab on 19/3/25.
 //
 
-//let attackCalculator = AttackCalculator()
+let skillsFactory = SkillsFactory()
 
 let basicSpell = BaseSkill(
     name: "Basic Spell",
@@ -45,20 +45,16 @@ let waterGun = BaseSkill(
     ]
 )
 
-//let lightningBolt = BaseSkill(
-//    name: "Lightning Bolt",
-//    description: "A bolt of lightning that deals damage to a single enemy and has a chance to paralyze them.",
-//    type: .attack,
-//    targetType: .singleEnemy,
-//    elementType: .air,
-//    basePower: 60,
-//    cooldown: 4,
-//    effectCalculator: attackCalculator,
-//    statusEffectChance: 0.25,
-//    statusEffect: .paralysis,
-//    statusEffectDuration: 2
-//)
-//
+let lightningStorm = skillsFactory.createAoeDmgSkillWithStatusEffect(
+    name: "Lightning Storm",
+    description: "A storm of lightning that deals damage to all enemies and has a chance to paralyze them.",
+    cooldown: 5,
+    elementType: .lightning,
+    basePower: 50,
+    statusEffectChance: 0.15,
+    statusEffect: .paralysis,
+    statusEffectDuration: 2
+)
 
 let basicAttack = BaseSkill(
     name: "Basic Attack",
@@ -77,7 +73,7 @@ let excalibur = BaseSkill(
     cooldown: 4,
     effectDefinitions: [
         EffectDefinition(targetType: .singleEnemy, effectCalculators: [
-            AttackCalculator(elementType: .light, basePower: 60),
+            AttackCalculator(elementType: .light, basePower: 60)
         ]),
         EffectDefinition(targetType: .ownself, effectCalculators: [
             StatsModifiersCalculator(statsModifiers: [
@@ -105,13 +101,13 @@ let iceShot = BaseSkill(
     effectDefinitions: [
         EffectDefinition(targetType: .singleEnemy, effectCalculators: [
             AttackCalculator(elementType: .ice, basePower: 40),
-            StatusEffectCalculator(statusEffectChance: 1.0, statusEffect: .frozen,
+            StatusEffectCalculator(statusEffectChance: 0.15, statusEffect: .frozen,
                                    statusEffectDuration: 2)
         ])
     ]
 )
 //
-//let arrowRain = BaseSkill(
+// let arrowRain = BaseSkill(
 //    name: "Arrow Rain",
 //    description: "A shower of arrows that deals damage to all enemies.",
 //    type: .attack,
@@ -120,7 +116,7 @@ let iceShot = BaseSkill(
 //    basePower: 40,
 //    cooldown: 3,
 //    effectCalculator: attackCalculator
-//)
+// )
 
 let arrowRain = BaseSkill(
     name: "Arrow Rain",
@@ -128,7 +124,7 @@ let arrowRain = BaseSkill(
     cooldown: 3,
     effectDefinitions: [
         EffectDefinition(targetType: .allEnemies, effectCalculators: [
-            AttackCalculator(elementType: .earth, basePower: 40),
+            AttackCalculator(elementType: .earth, basePower: 40)
         ])
     ]
 )

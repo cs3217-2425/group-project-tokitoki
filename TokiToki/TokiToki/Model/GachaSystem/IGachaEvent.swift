@@ -14,7 +14,7 @@ protocol IGachaEvent: Identifiable {
     var startDate: Date { get }
     var endDate: Date { get }
     var isActive: Bool { get }
-    
+
     // Returns rate modifiers for specific items
     func getRateModifiers() -> [String: Double]
 }

@@ -14,21 +14,24 @@ protocol EquipmentCommand {
 
 class UseConsumableCommand: EquipmentCommand {
     private let consumable: ConsumableEquipment
-    private let toki: Toki
+    private let toki: Toki?
+    private let entity: GameStateEntity?
     private let component: EquipmentComponent
     private let equipmentSystem: EquipmentSystem
     private let logger: EquipmentLogger
 
-    init(consumable: ConsumableEquipment, toki: Toki, component: EquipmentComponent, system: EquipmentSystem, logger: EquipmentLogger) {
+    init(consumable: ConsumableEquipment, toki: Toki?, entity: GameStateEntity?,
+         component: EquipmentComponent, system: EquipmentSystem, logger: EquipmentLogger) {
         self.consumable = consumable
         self.toki = toki
         self.component = component
         self.equipmentSystem = system
         self.logger = logger
+        self.entity = entity
     }
 
     func execute() {
-        equipmentSystem.useConsumable(consumable, on: toki, in: component)
+        equipmentSystem.useConsumable(consumable, on: toki, entity)
         logger.logEvent(.consumed(item: consumable))
     }
 
@@ -73,9 +76,12 @@ class CraftCommand: EquipmentCommand {
     private let component: EquipmentComponent
     private let craftingManager: CraftingManager
     private let logger: EquipmentLogger
-    private var craftedItem: Equipment?
+    private(set) var craftedItem: Equipment?
 
-    init(items: [Equipment], component: EquipmentComponent, craftingManager: CraftingManager, logger: EquipmentLogger) {
+    init(items: [Equipment],
+         component: EquipmentComponent,
+         craftingManager: CraftingManager,
+         logger: EquipmentLogger) {
         self.items = items
         self.component = component
         self.craftingManager = craftingManager
@@ -84,6 +90,7 @@ class CraftCommand: EquipmentCommand {
 
     func execute() {
         if let newItem = craftingManager.craft(with: items) {
+            // Valid recipe – remove old items, add new item
             for item in items {
                 if let index = component.inventory.firstIndex(where: { $0.id == item.id }) {
                     component.inventory.remove(at: index)
@@ -93,6 +100,7 @@ class CraftCommand: EquipmentCommand {
             component.inventory.append(newItem)
             logger.logEvent(.crafted(item: newItem))
         } else {
+            // Invalid recipe
             logger.logEvent(.craftingFailed(reason: "Invalid recipe for items: \(items.map { $0.name }.joined(separator: ", "))"))
         }
     }

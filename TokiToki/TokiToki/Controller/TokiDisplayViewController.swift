@@ -50,7 +50,6 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         speedProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
 
         // Load Toki Data
-        TokiDisplay.shared.loadTest()
         TokiDisplay.shared.updateUI(self)
     }
 
@@ -83,5 +82,48 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
 
     @objc func handleSkillLongPress(_ gesture: UILongPressGestureRecognizer) {
         TokiDisplay.shared.handleSkillLongPress(gesture, self)
+    }
+}
+
+extension TokiDisplayViewController {
+
+    // Provide the trailing swipe configuration.
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
+                   -> UISwipeActionsConfiguration? {
+
+        TokiDisplay.shared.tableView(tableView,
+                                                trailingSwipeActionsConfigurationForRowAt: indexPath,
+                                                self)
+    }
+}
+
+// MARK: - Crafting Popup
+extension TokiDisplayViewController {
+
+    func showCraftingPopup(for item: Equipment, at originalIndex: Int) {
+        let craftVC = CraftingPopupViewController()
+
+        // Pass along the original item and its index in the inventory
+        craftVC.originalItem = item
+        craftVC.originalItemIndex = originalIndex
+
+        // Present as a popover or modal
+        craftVC.modalPresentationStyle = .popover
+
+        if let popover = craftVC.popoverPresentationController {
+            popover.sourceView = self.view
+            popover.sourceRect = CGRect(x: 100, y: 100, width: 1, height: 1)
+            popover.permittedArrowDirections = []
+        }
+
+        // Optionally, set a callback so we can reload Toki UI after crafting
+        craftVC.onCraftComplete = { [weak self] in
+            // Reload your table and other UI
+            self?.equipmentTableView?.reloadData()
+            TokiDisplay.shared.updateUI(self!)
+        }
+
+        present(craftVC, animated: true, completion: nil)
     }
 }

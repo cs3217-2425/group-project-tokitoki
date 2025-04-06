@@ -11,9 +11,11 @@ class EquipmentRepository {
     static let shared = EquipmentRepository()
     private init() {}
 
-    func createConsumableEquipment(name: String, description: String, rarity: Int, effectStrategy: ConsumableEffectStrategy) -> ConsumableEquipment {
-        ConsumableEquipment(name: name, description: description, rarity: rarity, effectStrategy: effectStrategy)
-    }
+//    func createConsumableEquipment(name: String, description: String, rarity: Int,
+//                                   effectStrategy: ConsumableEffectStrategy, usageContext: ConsumableUsageContext) -> ConsumableEquipment {
+//        ConsumableEquipment(name: name, description: description, rarity: rarity,
+//                                   effectStrategy: effectStrategy, usageContext: usageContext)
+//    }
 
     func createNonConsumableEquipment(name: String, description: String, rarity: Int,
                                       buff: EquipmentBuff, slot: EquipmentSlot) -> NonConsumableEquipment {
