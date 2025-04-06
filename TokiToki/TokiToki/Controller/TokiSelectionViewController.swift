@@ -8,17 +8,13 @@
 import UIKit
 
 class TokiSelectionViewController: UIViewController {
-
     @IBOutlet var tokiTableView: UITableView?
 
-    // We'll read from TokiDisplay's allTokis array (which is loaded from JSON).
-    // Alternatively, you can store the Toki array locally or pass it in some other way.
     private let tokis = TokiDisplay.shared.allTokis
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Set up the tableView dataSource and delegate
         tokiTableView?.dataSource = self
         tokiTableView?.delegate = self
     }
