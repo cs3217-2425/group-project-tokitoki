@@ -10,7 +10,10 @@ import UIKit
 class HorizontalScrollViewController: UICollectionViewController {
     private var indexOfCellBeforeDragging = 0
     private var collectionViewFlowLayout: UICollectionViewFlowLayout {
-        return collectionViewLayout as! UICollectionViewFlowLayout
+        guard let collectionView = collectionViewLayout as? UICollectionViewFlowLayout else {
+            return UICollectionViewFlowLayout()
+        }
+        return collectionView
     }
 
     override func viewDidLoad() {
@@ -33,7 +36,10 @@ class HorizontalScrollViewController: UICollectionViewController {
         let inset: CGFloat = calculateSectionInset()
         collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
 
-        collectionViewFlowLayout.itemSize = CGSize(width: collectionViewLayout.collectionView!.frame.size.width - inset * 2, height: collectionViewLayout.collectionView!.frame.size.height)
+        let size = CGSize(width:
+                          collectionViewLayout.collectionView!.frame.size.width - inset * 2,
+                          height: collectionViewLayout.collectionView!.frame.size.height)
+        collectionViewFlowLayout.itemSize = size
     }
 
     func indexOfMajorCell() -> Int {
@@ -49,7 +55,9 @@ class HorizontalScrollViewController: UICollectionViewController {
         indexOfCellBeforeDragging = indexOfMajorCell()
     }
 
-    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    override func scrollViewWillEndDragging(_ scrollView: UIScrollView,
+                                            withVelocity velocity: CGPoint,
+                                            targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         targetContentOffset.pointee = scrollView.contentOffset
 
         let indexOfMajorCell = self.indexOfMajorCell()
@@ -59,7 +67,8 @@ class HorizontalScrollViewController: UICollectionViewController {
         let hasEnoughVelocityToSlideToTheNextCell = indexOfCellBeforeDragging + 1 < dataSourceCount && velocity.x > swipeVelocityThreshold
         let hasEnoughVelocityToSlideToThePreviousCell = indexOfCellBeforeDragging - 1 >= 0 && velocity.x < -swipeVelocityThreshold
         let majorCellIsTheCellBeforeDragging = indexOfMajorCell == indexOfCellBeforeDragging
-        let didUseSwipeToSkipCell = majorCellIsTheCellBeforeDragging && (hasEnoughVelocityToSlideToTheNextCell || hasEnoughVelocityToSlideToThePreviousCell)
+        let didUseSwipeToSkipCell = majorCellIsTheCellBeforeDragging && (hasEnoughVelocityToSlideToTheNextCell ||
+             hasEnoughVelocityToSlideToThePreviousCell)
 
         if didUseSwipeToSkipCell {
 
@@ -67,7 +76,9 @@ class HorizontalScrollViewController: UICollectionViewController {
             let toValue = collectionViewFlowLayout.itemSize.width * CGFloat(snapToIndex)
 
 
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: velocity.x, options: .allowUserInteraction, animations: {
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1,
+                           initialSpringVelocity: velocity.x,
+                           options: .allowUserInteraction, animations: {
                 scrollView.contentOffset = CGPoint(x: toValue, y: 0)
                 scrollView.layoutIfNeeded()
             }, completion: nil)

@@ -130,101 +130,7 @@ class ItemRepository {
     private func createSkill(from template: SkillData) -> Skill? {
         // First, analyze the structure to determine which factory method to use
         if template.effectDefinitions.count == 1 {
-            // Single effect definition cases
-            let effectDef = template.effectDefinitions[0]
-            let targetType = convertStringToTargetType(effectDef.targetType)
-            
-            if targetType == .singleEnemy {
-                // Check for calculators
-                let hasAttack = effectDef.calculators.contains { $0.calculatorType.lowercased() == "attack" }
-                let hasStatusEffect = effectDef.calculators.contains { $0.calculatorType.lowercased() == "statuseffect" }
-                let hasStatsModifier = effectDef.calculators.contains { $0.calculatorType.lowercased() == "statsmodifier" }
-                
-                // Extract attack calculator data
-                let attackCalc = effectDef.calculators.first { $0.calculatorType.lowercased() == "attack" }
-                guard let attackCalc = attackCalc,
-                      let elementTypeStr = attackCalc.elementType,
-                      let basePower = attackCalc.basePower else {
-                    // If no valid attack calculator, return nil
-                    return nil
-                }
-                
-                let elementType = convertStringToElement(elementTypeStr)
-                
-                if hasAttack && hasStatusEffect {
-                    // Single target attack with status effect
-                    let statusCalc = effectDef.calculators.first { $0.calculatorType.lowercased() == "statuseffect" }
-                    guard let statusCalc = statusCalc,
-                          let statusEffectChance = statusCalc.statusEffectChance,
-                          let statusEffectStr = statusCalc.statusEffect else {
-                        // Fall back to basic attack if status effect details missing
-                        return skillFactory.createBasicSingleTargetDmgSkill(
-                            name: template.name,
-                            description: template.description,
-                            cooldown: template.cooldown,
-                            elementType: elementType,
-                            basePower: basePower
-                        )
-                    }
-                    
-                    let statusEffect = convertStringToStatusEffect(statusEffectStr)
-                    let duration = statusCalc.statusEffectDuration ?? 1
-                    let strength = statusCalc.statusEffectStrength ?? 1.0
-                    
-                    return skillFactory.createSingleTargetDmgSkillWithStatusEffect(
-                        name: template.name,
-                        description: template.description,
-                        cooldown: template.cooldown,
-                        elementType: elementType,
-                        basePower: basePower,
-                        statusEffectChance: statusEffectChance,
-                        statusEffect: statusEffect,
-                        statusEffectDuration: duration,
-                        statusEffectStrength: strength
-                    )
-                } else if hasAttack && hasStatsModifier {
-                    // Single target attack with debuff
-                    let statsCalc = effectDef.calculators.first { $0.calculatorType.lowercased() == "statsmodifier" }
-                    guard let statsCalc = statsCalc else {
-                        // Fall back to basic attack if stats modifier missing
-                        return skillFactory.createBasicSingleTargetDmgSkill(
-                            name: template.name,
-                            description: template.description,
-                            cooldown: template.cooldown,
-                            elementType: elementType,
-                            basePower: basePower
-                        )
-                    }
-                    
-                    let duration = statsCalc.statsModifierDuration ?? 1
-                    let attackMod = statsCalc.attackModifier ?? 1.0
-                    let defenseMod = statsCalc.defenseModifier ?? 1.0
-                    let speedMod = statsCalc.speedModifier ?? 1.0
-                    let healMod = statsCalc.healModifier ?? 1.0
-                    
-                    return skillFactory.createSingleTargetDmgSkillWithDebuff(
-                        name: template.name,
-                        description: template.description,
-                        cooldown: template.cooldown,
-                        elementType: elementType,
-                        basePower: basePower,
-                        duration: duration,
-                        attack: attackMod,
-                        defense: defenseMod,
-                        speed: speedMod,
-                        heal: healMod
-                    )
-                } else {
-                    // Basic single target attack
-                    return skillFactory.createBasicSingleTargetDmgSkill(
-                        name: template.name,
-                        description: template.description,
-                        cooldown: template.cooldown,
-                        elementType: elementType,
-                        basePower: basePower
-                    )
-                }
-            }
+            return makeSingleEffectDefinitionSkill(template)
         } else if template.effectDefinitions.count == 2 {
             // Check for attack + self buff pattern
             let firstEffectDef = template.effectDefinitions[0]
@@ -281,6 +187,105 @@ class ItemRepository {
             elementType: elementType,
             basePower: basePower
         )
+    }
+    
+    private func makeSingleEffectDefinitionSkill(_ template: SkillData) -> Skill? {
+        // Single effect definition cases
+        let effectDef = template.effectDefinitions[0]
+        let targetType = convertStringToTargetType(effectDef.targetType)
+        
+        if targetType == .singleEnemy {
+            // Check for calculators
+            let hasAttack = effectDef.calculators.contains { $0.calculatorType.lowercased() == "attack" }
+            let hasStatusEffect = effectDef.calculators.contains { $0.calculatorType.lowercased() == "statuseffect" }
+            let hasStatsModifier = effectDef.calculators.contains { $0.calculatorType.lowercased() == "statsmodifier" }
+            
+            // Extract attack calculator data
+            let attackCalc = effectDef.calculators.first { $0.calculatorType.lowercased() == "attack" }
+            guard let attackCalc = attackCalc,
+                  let elementTypeStr = attackCalc.elementType,
+                  let basePower = attackCalc.basePower else {
+                // If no valid attack calculator, return nil
+                return nil
+            }
+            
+            let elementType = convertStringToElement(elementTypeStr)
+            
+            if hasAttack && hasStatusEffect {
+                // Single target attack with status effect
+                let statusCalc = effectDef.calculators.first { $0.calculatorType.lowercased() == "statuseffect" }
+                guard let statusCalc = statusCalc,
+                      let statusEffectChance = statusCalc.statusEffectChance,
+                      let statusEffectStr = statusCalc.statusEffect else {
+                    // Fall back to basic attack if status effect details missing
+                    return skillFactory.createBasicSingleTargetDmgSkill(
+                        name: template.name,
+                        description: template.description,
+                        cooldown: template.cooldown,
+                        elementType: elementType,
+                        basePower: basePower
+                    )
+                }
+                
+                let statusEffect = convertStringToStatusEffect(statusEffectStr)
+                let duration = statusCalc.statusEffectDuration ?? 1
+                let strength = statusCalc.statusEffectStrength ?? 1.0
+                
+                return skillFactory.createSingleTargetDmgSkillWithStatusEffect(
+                    name: template.name,
+                    description: template.description,
+                    cooldown: template.cooldown,
+                    elementType: elementType,
+                    basePower: basePower,
+                    statusEffectChance: statusEffectChance,
+                    statusEffect: statusEffect,
+                    statusEffectDuration: duration,
+                    statusEffectStrength: strength
+                )
+            } else if hasAttack && hasStatsModifier {
+                // Single target attack with debuff
+                let statsCalc = effectDef.calculators.first { $0.calculatorType.lowercased() == "statsmodifier" }
+                guard let statsCalc = statsCalc else {
+                    // Fall back to basic attack if stats modifier missing
+                    return skillFactory.createBasicSingleTargetDmgSkill(
+                        name: template.name,
+                        description: template.description,
+                        cooldown: template.cooldown,
+                        elementType: elementType,
+                        basePower: basePower
+                    )
+                }
+                
+                let duration = statsCalc.statsModifierDuration ?? 1
+                let attackMod = statsCalc.attackModifier ?? 1.0
+                let defenseMod = statsCalc.defenseModifier ?? 1.0
+                let speedMod = statsCalc.speedModifier ?? 1.0
+                let healMod = statsCalc.healModifier ?? 1.0
+                
+                return skillFactory.createSingleTargetDmgSkillWithDebuff(
+                    name: template.name,
+                    description: template.description,
+                    cooldown: template.cooldown,
+                    elementType: elementType,
+                    basePower: basePower,
+                    duration: duration,
+                    attack: attackMod,
+                    defense: defenseMod,
+                    speed: speedMod,
+                    heal: healMod
+                )
+            } else {
+                // Basic single target attack
+                return skillFactory.createBasicSingleTargetDmgSkill(
+                    name: template.name,
+                    description: template.description,
+                    cooldown: template.cooldown,
+                    elementType: elementType,
+                    basePower: basePower
+                )
+            }
+        }
+        return nil
     }
     
     // Create an Equipment object from template

@@ -29,13 +29,15 @@ class CollectionViewController: HorizontalScrollViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return packs.count > 0 ? packs.count : 1 // At least one cell to show
+        return !packs.isEmpty ? packs.count : 1 // At least one cell to show
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! GachaPackCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? GachaPackCell else {
+            return UICollectionViewCell()
+        }
         
-        if packs.count > 0 && indexPath.item < packs.count {
+        if !packs.isEmpty && indexPath.item < packs.count {
             let pack = packs[indexPath.item]
             cell.configure(with: pack)
         } else {
@@ -47,7 +49,7 @@ class CollectionViewController: HorizontalScrollViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if packs.count > 0 && indexPath.item < packs.count {
+        if !packs.isEmpty && indexPath.item < packs.count {
             let selectedPack = packs[indexPath.item]
             delegate?.didSelectPack(pack: selectedPack)
         }
