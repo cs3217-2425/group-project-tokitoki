@@ -12,3 +12,9 @@ protocol ConsumableEquipment: Equipment {
     func applyEffect(to toki: Toki?,
                      _ entity: GameStateEntity?, completion: (() -> Void)?) -> [EffectResult]?
 }
+
+enum ConsumableUsageContext {
+    case battleOnly
+    case outOfBattleOnly
+    case anywhere
+}
