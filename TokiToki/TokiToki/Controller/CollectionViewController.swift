@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CollectionViewController: HorizontalPeekingPagesCollectionViewController {
+class CollectionViewController: HorizontalScrollViewController {
     
     var packs: [GachaPack] = [] {
         didSet {
@@ -123,7 +123,7 @@ class GachaPackCell: UICollectionViewCell {
             packNameLabel.text = pack.name
             packCostLabel.text = "Cost \(pack.cost)"
             
-            // Use different colors based on pack cost
+            // Change background color based on cost
             if pack.cost >= 300 {
                 containerView.backgroundColor = .systemPurple
             } else if pack.cost >= 200 {

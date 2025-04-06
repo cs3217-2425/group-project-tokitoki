@@ -7,7 +7,7 @@
 
 import UIKit
 
-// Protocol for communication between GachaViewController and CollectionViewController
+
 protocol GachaViewControllerDelegate: AnyObject {
     func didSelectPack(pack: GachaPack)
 }
@@ -89,7 +89,6 @@ class GachaViewController: UIViewController {
         let player = playerManager.getOrCreatePlayer()
         playerCurrencyLabel.text = "\(player.currency)"
         
-        // Optional: Highlight the label if player has enough currency for selected pack
         if let selectedPack = selectedGachaPack {
             if player.canSpendCurrency(selectedPack.cost) {
                 playerCurrencyLabel.textColor = .white
@@ -105,7 +104,6 @@ class GachaViewController: UIViewController {
         let remainingPulls = playerManager.getRemainingDailyPulls()
         dailyPullsCountLabel.text = "Daily Pulls Available: \(remainingPulls)"
         
-        // Change color based on remaining pulls
         if remainingPulls == 0 {
             dailyPullsCountLabel.textColor = .systemRed
         } else if remainingPulls <= 1 {
@@ -140,16 +138,13 @@ class GachaViewController: UIViewController {
             showErrorMessage("Not enough currency. Need \(selectedPack.cost)")
             return
         }
-        
-        // Use the centralized method in PlayerManager to handle the gacha draw
-        // This ensures proper player state management
+
         let drawnItems = playerManager.drawFromGachaPack(
             packName: selectedPack.name,
             count: 1,
             gachaService: gachaService
         )
         
-        // If no items were drawn, it could be due to the daily limit
         if drawnItems.isEmpty {
             showErrorMessage("No items drawn. Daily limit may have been reached.")
             return
@@ -234,8 +229,6 @@ extension GachaViewController: GachaViewControllerDelegate {
     func didSelectPack(pack: GachaPack) {
         selectedGachaPack = pack
         updatePackSelectorLabel()
-        
-        // Update currency color based on whether player can afford the selected pack
         updatePlayerCurrencyLabel()
     }
 }

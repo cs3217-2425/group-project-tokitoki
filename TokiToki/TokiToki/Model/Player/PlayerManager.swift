@@ -26,7 +26,6 @@ class PlayerManager {
     private func loadPlayerData() {
         if let loadedPlayer = playerRepository.getPlayer() {
             currentPlayer = loadedPlayer
-            print("Player loaded from Core Data: \(loadedPlayer.name)")
         } else {
             print("No saved player found in Core Data")
         }
@@ -36,7 +35,6 @@ class PlayerManager {
 
     func getPlayer() -> Player? {
         if let player = currentPlayer {
-            print("Returning current player: \(player.name) \(player.currency)")
             return player
         }
         
@@ -50,10 +48,8 @@ class PlayerManager {
 
     func getOrCreatePlayer(name: String = "Player") -> Player {
         if let player = getPlayer() {
-            print("Returning existing player: \(player.name) \(player.currency)")
             return player
         }
-        print("Creating a new player with default name: \(name)")
         
         let player = playerRepository.createDefaultPlayer(name: name)
         currentPlayer = player
