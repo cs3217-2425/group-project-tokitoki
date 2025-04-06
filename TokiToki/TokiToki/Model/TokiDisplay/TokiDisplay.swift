@@ -8,78 +8,331 @@
 import Foundation
 import UIKit
 
-class TokiDisplay {
-    static let shared = TokiDisplay()
-    private var _toki: Toki
-    internal var equipmentFacade = AdvancedEquipmentFacade()
+// MARK: - Decodable Data Models for JSON
+// These structs mirror the fields in Tokis.json, Skills.json, and Equipments.json,
+// just enough to parse raw JSON into intermediate model objects. Then we'll map them to your actual Toki, Skill, and Equipment.
 
+struct TokiJSON: Decodable {
+    let id: String
+    let name: String
+    let rarity: Int
+    let baseHealth: Int
+    let baseAttack: Int
+    let baseDefense: Int
+    let baseSpeed: Int
+    let baseHeal: Int
+    let baseExp: Int
+    let elementType: String
+}
+
+struct TokisWrapper: Decodable {
+    let tokis: [TokiJSON]
+}
+
+struct SkillJSON: Decodable {
+    let id: String
+    let name: String
+    let description: String
+    let rarity: Int
+    let skillType: String
+    let targetType: String
+    let elementType: String
+    let basePower: Int
+    let cooldown: Int
+    let statusEffectChance: Double
+    let statusEffect: String?
+    let statusEffectDuration: Int
+}
+
+struct SkillsWrapper: Decodable {
+    let skills: [SkillJSON]
+}
+
+struct ConsumableEffectStrategyJSON: Decodable {
+    let type: String // e.g. "potion" or "upgradeCandy"
+    let buffValue: Int?
+    let duration: Int?
+    let statType: String?
+    let bonusExp: Int?
+}
+
+struct EquipmentBuffJSON: Decodable {
+    let value: Int
+    let description: String
+    let affectedStat: String
+}
+
+struct EquipmentJSON: Decodable {
+    let id: String
+    let name: String
+    let description: String
+    let equipmentType: String  // "consumable" or "nonConsumable"
+    let rarity: Int
+    let elementType: String
+    let buff: EquipmentBuffJSON?            // Only if nonConsumable
+    let effectStrategy: ConsumableEffectStrategyJSON? // Only if consumable
+    let slot: String?                       // Only if nonConsumable
+}
+
+struct EquipmentsWrapper: Decodable {
+    let equipment: [EquipmentJSON]
+}
+
+// MARK: - TokiDisplay Class
+
+class TokiDisplay {
+    
+    // Singleton or shared reference if needed.
+    static let shared = TokiDisplay()
+    
+    // Private storage for “currently viewed” Toki.
+    // We need some Toki to attach to the UI, but we’re no longer
+    // constructing a test Toki. Instead, we’ll pick one from JSON.
+    private var _toki: Toki
+    
+    // Expose the “current” Toki.
     var toki: Toki {
         get { _toki }
         set { _toki = newValue }
     }
-
-    required init() {
-        self._toki = Toki(name: "Default Toki",
-                          rarity: .common,
-                          baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 42),
-                          skills: [],
-                          equipments: [],
-                          elementType: .fire,
-                          level: 1)
-    }
-
-    private func createTestSkill(name: String = "Thunder Strike") -> Skill {
-        let skillsFactory = SkillFactory()
-        let skill = skillsFactory.createAttackSkill(
-            name: name,
-            description: "Strikes with thunder power",
-            elementType: .light,
-            basePower: 50,
-            cooldown: 3,
-            targetType: .singleEnemy,
-            statusEffect: .paralysis,
-            statusEffectChance: 0.3,
-            statusEffectDuration: 2
-        )
-        return skill
-    }
-
-    private func createTestEquipment(name: String = "Magic Staff") -> Equipment {
-        // Use EquipmentRepository instead of EquipmentFactory.
-        let repository = EquipmentRepository.shared
-        // For compatibility with legacy code, create a dummy EquipmentBuff.
-        let dummyBuff = EquipmentBuff(value: 10, description: "Magical buff", affectedStat: "attack")
-        let equipment = repository.createNonConsumableEquipment(name: name,
-                                                                description: "A magical staff",
-                                                                rarity: 1,
-                                                                buff: dummyBuff,
-                                                                slot: .custom)
-        return equipment
+    
+    // Optionally keep an array of *all* Tokis loaded from JSON so you can pick which one to display.
+    var allTokis: [Toki] = []
+    
+    // If you want to keep all equipment and skills loaded, store them here.
+    // This can be used to show the user a full list or to attach them to a Toki.
+    var allEquipment: [Equipment] = []
+    var allSkills: [Skill] = []
+    
+    // The advanced facade and other system references remain.
+    internal var equipmentFacade = AdvancedEquipmentFacade()
+    
+    // MARK: - Init
+    // We remove the “test constructor” that previously set a “Default Toki”.
+    // Instead, we load data from JSON, then pick the first Toki as the “current Toki.”
+    
+    init() {
+        // Temporary placeholder. We’ll override it once we load from JSON.
+        let placeholderStats = TokiBaseStats(hp: 1, attack: 1, defense: 1, speed: 1, heal: 1, exp: 0)
+        _toki = Toki(name: "Placeholder",
+                     rarity: .common,
+                     baseStats: placeholderStats,
+                     skills: [],
+                     equipments: [],
+                     elementType: .fire,
+                     level: 1)
+        
+        // Load from JSON
+        loadAllData()
+        
+        // If we have at least one Toki, pick the first as the “current Toki”
+        if let firstToki = allTokis.first {
+            _toki = firstToki
+        }
     }
     
-    // New helper method to create a test consumable equipment (Health Potion)
-    private func createTestConsumableEquipment(name: String = "Health Potion") -> ConsumableEquipment {
-        let repository = EquipmentRepository.shared
-        let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 5)
-        let consumable = repository.createConsumableEquipment(name: name,
-                                                              description: "Restores health temporarily.",
-                                                              rarity: 1,
-                                                              effectStrategy: potionStrategy, usageContext: .battleOnly)
-        return consumable
+    // MARK: - JSON Loading
+    
+    /// Load Tokis, Skills, and Equipment from local JSON files.
+    /// Adapt the file paths or decoding strategy as appropriate.
+    private func loadAllData() {
+        loadTokisFromJSON()
+        loadSkillsFromJSON()
+        loadEquipmentsFromJSON()
+        
+        // Optionally set up any needed crafting recipes, etc.
+        setupCraftingRecipes()
     }
     
-    // New helper method to create another test consumable equipment (Upgrade Candy)
-    private func createTestUpgradeCandy(name: String = "Upgrade Candy") -> ConsumableEquipment {
-        let repository = EquipmentRepository.shared
-        let candyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
-        let candy = repository.createConsumableEquipment(name: name,
-                                                         description: "Grants bonus +50 EXP",
-                                                         rarity: 1,
-                                                         effectStrategy: candyStrategy, usageContext: .outOfBattleOnly)
-        return candy
+    private func loadTokisFromJSON() {
+        guard let url = Bundle.main.url(forResource: "Tokis", withExtension: "json") else {
+            print("Tokis.json not found in bundle.")
+            return
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            let decoded = try JSONDecoder().decode(TokisWrapper.self, from: data)
+            self.allTokis = decoded.tokis.map { convertToToki($0) }
+            print("Tokis loaded: \(self.allTokis.count)")
+        } catch {
+            print("Failed to parse Tokis.json: \(error)")
+        }
     }
     
-    /// Registers sample crafting recipes.
+    private func loadSkillsFromJSON() {
+        guard let url = Bundle.main.url(forResource: "Skills", withExtension: "json") else {
+            print("Skills.json not found in bundle.")
+            return
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            let decoded = try JSONDecoder().decode(SkillsWrapper.self, from: data)
+            self.allSkills = decoded.skills.map { convertToSkill($0) }
+            print("Skills loaded: \(self.allSkills.count)")
+        } catch {
+            print("Failed to parse Skills.json: \(error)")
+        }
+    }
+    
+    private func loadEquipmentsFromJSON() {
+        guard let url = Bundle.main.url(forResource: "Equipments", withExtension: "json") else {
+            print("Equipments.json not found in bundle.")
+            return
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            let decoded = try JSONDecoder().decode(EquipmentsWrapper.self, from: data)
+            self.allEquipment = decoded.equipment.compactMap { convertToEquipment($0) }
+            print("Equipments loaded: \(self.allEquipment.count)")
+        } catch {
+            print("Failed to parse Equipments.json: \(error)")
+        }
+    }
+    
+    // MARK: - Converters from JSON to your app’s real Toki/Skill/Equipment
+    
+    private func convertToToki(_ json: TokiJSON) -> Toki {
+         // Use the new ItemRarity initializer.
+         let rarityEnum = ItemRarity(intValue: json.rarity) ?? .common
+         // Convert string to ElementType using fromString.
+         let elementEnum = ElementType.fromString(json.elementType) ?? .fire
+         
+         let stats = TokiBaseStats(hp: json.baseHealth,
+                                   attack: json.baseAttack,
+                                   defense: json.baseDefense,
+                                   speed: json.baseSpeed,
+                                   heal: json.baseHeal,
+                                   exp: json.baseExp)
+         
+         // Create a Toki with empty skills and equipment; attach later as needed.
+         return Toki(name: json.name,
+                     rarity: rarityEnum,
+                     baseStats: stats,
+                     skills: [],
+                     equipments: [],
+                     elementType: elementEnum,
+                     level: 1)
+     }
+    
+    private func convertToSkill(_ json: SkillJSON) -> Skill {
+         // Use the new ElementType conversion.
+         let elemType = ElementType.fromString(json.elementType) ?? .neutral
+         
+         let factory = SkillFactory()
+         
+         switch json.skillType.lowercased() {
+         case "attack":
+             return factory.createAttackSkill(
+                 name: json.name,
+                 description: json.description,
+                 elementType: elemType,
+                 basePower: json.basePower,
+                 cooldown: json.cooldown,
+                 targetType: convertTargetType(json.targetType),
+                 statusEffect: convertStatusEffect(json.statusEffect),
+                 statusEffectChance: Double(json.statusEffectChance),
+                 statusEffectDuration: json.statusEffectDuration
+             )
+         case "heal":
+             return factory.createHealSkill(
+                 name: json.name,
+                 description: json.description,
+                 basePower: json.basePower,
+                 cooldown: json.cooldown,
+                 targetType: convertTargetType(json.targetType)
+             )
+         case "defend":
+             return factory.createDefenseSkill(
+                name: json.name,
+                description: json.description,
+                basePower: json.basePower,
+                cooldown: json.cooldown,
+                targetType: convertTargetType(json.targetType)
+             )
+         default:
+             return factory.createAttackSkill(
+                 name: json.name,
+                 description: json.description,
+                 elementType: elemType,
+                 basePower: json.basePower,
+                 cooldown: json.cooldown,
+                 targetType: .singleEnemy,
+                 statusEffect: .none,
+                 statusEffectChance: 0.0,
+                 statusEffectDuration: 0
+             )
+         }
+     }
+     
+    
+    private func convertToEquipment(_ json: EquipmentJSON) -> Equipment? {
+         let repo = EquipmentRepository.shared
+         let rarity = json.rarity
+         let desc = json.description
+         
+         if json.equipmentType == "consumable", let strategyInfo = json.effectStrategy {
+             let strategy: ConsumableEffectStrategy
+             switch strategyInfo.type.lowercased() {
+             case "potion":
+                 let buff = strategyInfo.buffValue ?? 0
+                 let durSec = TimeInterval(strategyInfo.duration ?? 0)
+                 strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
+             case "upgradecandy":
+                 let bonus = strategyInfo.bonusExp ?? 0
+                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
+             default:
+                 strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
+             }
+             
+             return repo.createConsumableEquipment(
+                 name: json.name,
+                 description: desc,
+                 rarity: rarity,
+                 effectStrategy: strategy,
+                 usageContext: .outOfBattleOnly
+             )
+         } else if json.equipmentType == "nonConsumable", let buffInfo = json.buff, let slotName = json.slot {
+             let buff = EquipmentBuff(value: buffInfo.value,
+                                      description: buffInfo.description,
+                                      affectedStat: buffInfo.affectedStat)
+             let slotEnum = EquipmentSlot(rawValue: slotName) ?? .custom
+             
+             return repo.createNonConsumableEquipment(
+                 name: json.name,
+                 description: desc,
+                 rarity: rarity,
+                 buff: buff,
+                 slot: slotEnum
+             )
+         }
+         return nil
+     }
+    
+    /// Example converters for skill target type and status effect
+    private func convertTargetType(_ raw: String) -> TargetType {
+        switch raw.lowercased() {
+        case "singleenemy": return .singleEnemy
+        case "allallies": return .allAllies
+        case "allenemies": return .allEnemies
+        case "ownself": return .ownself
+        default: return .singleEnemy
+        }
+    }
+    
+    private func convertStatusEffect(_ raw: String?) -> StatusEffectType {
+        guard let raw = raw else { return .attackBuff }
+        switch raw.lowercased() {
+        case "burn": return .burn
+        case "paralysis": return .paralysis
+        case "defensebuff": return .defenseBuff
+        default: return .attackBuff
+        }
+    }
+
+
+    // MARK: - Reuse existing methods: (UI updating, recipes, etc.)
+    
+    /// Registers sample crafting recipes (same as original).
     func setupCraftingRecipes() {
         let potionRecipe = CraftingRecipe(requiredEquipmentIdentifiers: ["health potion", "health potion"]) { (equipments: [Equipment]) in
             if let potion1 = equipments[0] as? ConsumableEquipment,
@@ -92,7 +345,8 @@ class TokiDisplay {
                 return ConsumableEquipment(name: "Super Health Potion",
                                            description: "A crafted potion with enhanced effects.",
                                            rarity: max(potion1.rarity, potion2.rarity) + 1,
-                                           effectStrategy: newStrategy, usageContext: .battleOnly)
+                                           effectStrategy: newStrategy,
+                                           usageContext: .outOfBattleOnly)
             }
             return nil
         }
@@ -115,49 +369,21 @@ class TokiDisplay {
         ServiceLocator.shared.craftingManager.register(recipe: potionRecipe)
         ServiceLocator.shared.craftingManager.register(recipe: weaponRecipe)
     }
-
-    /// Returns the current equipment state for display purposes.
+    
+    /// Returns current inventory/equipped state for UI display.
     func currentState() -> (inventory: String, equipped: String) {
         let component = equipmentFacade.equipmentComponent
-        let inventoryNames = component.inventory.map { "\($0.name)(\($0.equipmentType == .consumable ? "C" : "N"))" }
+        let inventoryNames = component.inventory
+            .map { "\($0.name)(\($0.equipmentType == .consumable ? "C" : "N"))" }
             .joined(separator: ", ")
-        let equippedNames = component.equipped.map { "\($0.key.rawValue): \($0.value.name)" }
+        let equippedNames = component.equipped
+            .map { "\($0.key.rawValue): \($0.value.name)" }
             .joined(separator: ", ")
         return (inventoryNames, equippedNames)
     }
     
-    /// Undoes the last equipment action.
     func undoLastAction() {
         equipmentFacade.undoLastAction()
-    }
-    
-    func loadTest() {
-        let skill = createTestSkill()
-        let equipment = createTestEquipment()
-        let consumable = createTestConsumableEquipment()
-        let consumable2 = createTestConsumableEquipment()
-        let upgradeCandy = createTestUpgradeCandy()
-        
-        self.toki = Toki(
-            name: "Tokimon Omicron 1",
-            rarity: .common,
-            baseStats: TokiBaseStats(hp: 100, attack: 50, defense: 50, speed: 50, heal: 100, exp: 492),
-            skills: [skill],
-            equipments: [], // empty, to avoid duplication
-            elementType: .fire,
-            level: 15
-        )
-        
-        setupCraftingRecipes()
-
-        let facade = TokiDisplay.shared.equipmentFacade
-        let component = facade.equipmentComponent
-        component.inventory.append(contentsOf: [equipment, consumable, consumable2, upgradeCandy])
-        
-        facade.equipmentComponent = component
-        ServiceLocator.shared.dataStore.save()
-        
-        self.toki.equipment.append(contentsOf: [equipment, consumable, consumable2, upgradeCandy])
     }
     
     private func totalEquipmentBuff(for stat: String) -> Float {
@@ -255,23 +481,24 @@ class TokiDisplay {
             return
         }
         
-        let candidateNames = ["Magic Staff 2", "Ice Sword", "Wind Dagger"]
+        // Build an action sheet using all equipment loaded from JSON.
         let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment", preferredStyle: .actionSheet)
         
-        for candidate in candidateNames {
-            alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
-                let newEquipment = self.createTestEquipment(name: candidate)
-                if self.toki.equipment.contains(where: { $0.name == newEquipment.name }) {
+        // Iterate over allEquipment array loaded from JSON.
+        for equipment in self.allEquipment {
+            alert.addAction(UIAlertAction(title: equipment.name, style: .default, handler: { _ in
+                // Check if this equipment is already part of the Toki's equipments.
+                if self.toki.equipment.contains(where: { $0.id == equipment.id }) {
                     let existsAlert = UIAlertController(title: "Already Exists",
-                                                        message: "Equipment \(newEquipment.name) already exists.",
+                                                        message: "Equipment \(equipment.name) already exists.",
                                                         preferredStyle: .alert)
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
                     if indexPath.row < self.toki.equipment.count {
-                        self.toki.equipment[indexPath.row] = newEquipment
+                        self.toki.equipment[indexPath.row] = equipment
                     } else {
-                        self.toki.equipment.append(newEquipment)
+                        self.toki.equipment.append(equipment)
                     }
                     self.updateUI(control)
                 }
@@ -279,13 +506,14 @@ class TokiDisplay {
         }
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
         if let popoverController = alert.popoverPresentationController {
             popoverController.sourceView = sender
             popoverController.sourceRect = sender.bounds
         }
         control.present(alert, animated: true)
     }
-    
+
     func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {
             let noSelectionAlert = UIAlertController(title: "No Selection",
@@ -296,23 +524,24 @@ class TokiDisplay {
             return
         }
         
-        let candidateNames = ["Thunder Strike 2", "Blaze Kick", "Aqua Jet"]
+        // Build an action sheet using all skills loaded from JSON.
         let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
         
-        for candidate in candidateNames {
-            alert.addAction(UIAlertAction(title: candidate, style: .default, handler: { _ in
-                let newSkill = self.createTestSkill(name: candidate)
-                if self.toki.skills.contains(where: { $0.name == newSkill.name }) {
+        // Iterate over allSkills array loaded from JSON.
+        for skill in self.allSkills {
+            alert.addAction(UIAlertAction(title: skill.name, style: .default, handler: { _ in
+                // Check if this skill is already part of the Toki's skills.
+                if self.toki.skills.contains(where: { $0.id == skill.id }) {
                     let existsAlert = UIAlertController(title: "Already Exists",
-                                                        message: "Skill \(newSkill.name) already exists.",
+                                                        message: "Skill \(skill.name) already exists.",
                                                         preferredStyle: .alert)
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
                     if indexPath.row < self.toki.skills.count {
-                        self.toki.skills[indexPath.row] = newSkill
+                        self.toki.skills[indexPath.row] = skill
                     } else {
-                        self.toki.skills.append(newSkill)
+                        self.toki.skills.append(skill)
                     }
                     self.updateUI(control)
                 }
@@ -320,6 +549,7 @@ class TokiDisplay {
         }
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
         if let popoverController = alert.popoverPresentationController {
             popoverController.sourceView = sender
             popoverController.sourceRect = sender.bounds
@@ -355,4 +585,7 @@ class TokiDisplay {
         }
     }
 }
+
+// TODO: Create a entry display to show all the tokis (get tokis from json). On entry into TokiDisplay, load the toki, the equipment and skills from json.
+// TODO: Remove the test constructor and load the data from json.
 
