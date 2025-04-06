@@ -17,7 +17,7 @@ struct Player {
     var lastLoginDate: Date
     var ownedTokis: [Toki]
     var ownedSkills: [Skill]
-    var ownedEquipments: [Equipment]
+    var ownedEquipments: EquipmentComponent
     var pullsSinceRare: Int
 
     struct PlayerStatistics {
@@ -66,7 +66,7 @@ struct Player {
             statistics.battlesWon += 1
         }
     }
-    
+
     // MARK: - Item Management
     mutating func addItem(_ item: any IGachaItem) {
         switch item {
@@ -75,9 +75,13 @@ struct Player {
         case let skill as BaseSkill:
             ownedSkills.append(skill)
         case let equipment as Equipment:
-            ownedEquipments.append(equipment)
+            ownedEquipments.inventory.append(equipment)
         default:
             print("Unknown item type: \(type(of: item))")
         }
+    }
+
+    func countConsumables() -> [ConsumableGroupings] {
+        EquipmentSystem.shared.countConsumables()
     }
 }

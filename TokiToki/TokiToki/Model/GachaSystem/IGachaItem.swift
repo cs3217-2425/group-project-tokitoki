@@ -10,7 +10,7 @@ protocol IGachaItem: Identifiable {
     var name: String { get }
     var rarity: ItemRarity { get }
     var elementType: [ElementType] { get }
-    
+
     // Optional owner properties
     var ownerId: UUID? { get set }
     var dateAcquired: Date? { get set }

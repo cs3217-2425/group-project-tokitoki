@@ -12,17 +12,16 @@ extension TokiDisplay {
     func loadSampleEquipment() {
         let repository = EquipmentRepository.shared
 
-        let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 5)
-        let healthPotion = repository.createConsumableEquipment(name: "Health Potion",
-                                                                description: "Restores health temporarily.",
-                                                                rarity: 1,
-                                                                effectStrategy: potionStrategy, usageContext: .battleOnly)
+        let healCalculator = HealCalculator(healPower: 100)
+        let healthPotion = Potion(name: "Health Potion",
+                                  description: "Restores health temporarily.",
+                                  rarity: 1,
+                                  effectCalculators: [healCalculator])
 
-        let upgradeCandyStrategy = UpgradeCandyEffectStrategy(bonusExp: 50)
-        let upgradeCandy = repository.createConsumableEquipment(name: "Upgrade Candy",
-                                                                description: "Grants bonus EXP permanently.",
-                                                                rarity: 1,
-                                                                effectStrategy: upgradeCandyStrategy, usageContext: .outOfBattleOnly)
+        let upgradeCandy = Candy(name: "Upgrade Candy",
+                                 description: "Grants bonus EXP permanently.",
+                                 rarity: 1,
+                                 bonusExp: 50)
 
         let swordBuff = EquipmentBuff(value: 15, description: "Increases attack power", affectedStat: "attack")
         let sword = repository.createNonConsumableEquipment(name: "Sword",
@@ -62,13 +61,14 @@ extension TokiDisplay {
             equipmentFacade.equipItem(item: weapon)
         }
     }
-    
+
     func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath,
                        equipmentTableView: UITableView?, control: TokiDisplayViewController) {
         // 1. Use it on the real Toki so that Toki’s exp updates
         TokiDisplay.shared.equipmentFacade.useConsumable(
             consumable: consumable,
-            on: TokiDisplay.shared.toki
+            on: TokiDisplay.shared.toki,
+            nil
         )
 
         // 2. Remove from the facade’s inventory so it no longer appears in the table
@@ -87,7 +87,7 @@ extension TokiDisplay {
         equipmentTableView?.reloadData()
         self.updateUI(control)
     }
-    
+
     func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {
             let noSelectionAlert = UIAlertController(title: "No Selection",
@@ -97,10 +97,10 @@ extension TokiDisplay {
             control.present(noSelectionAlert, animated: true)
             return
         }
-        
+
         // Build an action sheet using all skills loaded from JSON.
         let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
-        
+
         // Iterate over allSkills array loaded from JSON.
         for skill in self.allSkills {
             alert.addAction(UIAlertAction(title: skill.name, style: .default, handler: { _ in
@@ -121,16 +121,16 @@ extension TokiDisplay {
                 }
             }))
         }
-        
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
+
         if let popoverController = alert.popoverPresentationController {
             popoverController.sourceView = sender
             popoverController.sourceRect = sender.bounds
         }
         control.present(alert, animated: true)
     }
-    
+
     func levelUp(_ sender: UIButton, _ control: TokiDisplayViewController) {
         if toki.baseStats.exp >= 100 {
             let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)

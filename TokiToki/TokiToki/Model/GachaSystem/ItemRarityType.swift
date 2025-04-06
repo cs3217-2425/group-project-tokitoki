@@ -10,7 +10,7 @@ enum ItemRarity: String, Codable, CaseIterable {
     case common = "common"
     case rare = "rare"
     case epic = "epic"
-    
+
     var value: Int {
         switch self {
         case .common: return 0
@@ -18,7 +18,7 @@ enum ItemRarity: String, Codable, CaseIterable {
         case .epic: return 2
         }
     }
-    
+
     init?(intValue: Int) {
         switch intValue {
         case 0: self = .common

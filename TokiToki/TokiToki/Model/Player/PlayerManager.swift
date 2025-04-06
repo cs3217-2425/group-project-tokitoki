@@ -31,18 +31,19 @@ class PlayerManager {
         if let player = getPlayer() {
             return player
         }
-        
+
         let player = Player(
                     id: UUID(),
                     name: name,
                     level: 1,
                     experience: 0,
-                    currency: 1000,
+                    currency: 1_000,
                     statistics: Player.PlayerStatistics(totalBattles: 0, battlesWon: 0),
                     lastLoginDate: Date(),
                     ownedTokis: [],
                     ownedSkills: [],
-                    ownedEquipments: [],
+                    ownedEquipments: EquipmentComponent(
+                        inventory: [healthPotion, healthPotion, buffPotion, critPotion]),
                     pullsSinceRare: 0
                 )
         currentPlayer = player
@@ -97,7 +98,7 @@ class PlayerManager {
         currentPlayer = player
         savePlayer()
     }
-    
+
     // MARK: - Item Management
 
     /// Adds a single item to the player's collection
@@ -123,16 +124,16 @@ class PlayerManager {
         let player = getOrCreatePlayer()
         return player.ownedTokis
     }
-    
+
     /// Retrieve all Skills owned by the player
     func getOwnedSkills() -> [Skill] {
         let player = getOrCreatePlayer()
         return player.ownedSkills
     }
-    
+
     /// Retrieve all Equipment owned by the player
     func getOwnedEquipment() -> [Equipment] {
         let player = getOrCreatePlayer()
-        return player.ownedEquipments
+        return player.ownedEquipments.inventory
     }
 }

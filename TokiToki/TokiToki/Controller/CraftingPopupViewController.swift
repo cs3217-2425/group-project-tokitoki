@@ -53,7 +53,7 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
 
     // MARK: - TableView DataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return availableItems.count
+        availableItems.count
     }
 
     func tableView(_ tableView: UITableView,

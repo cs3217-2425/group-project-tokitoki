@@ -30,20 +30,20 @@ class BaseSkill: Skill {
     func use(from source: GameStateEntity, _ playerTeam: [GameStateEntity],
              _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity]) -> [EffectResult] {
         var results: [EffectResult] = []
-        
+
         for effectDefinition in effectDefinitions {
             let targets: [GameStateEntity]
             if targetSelectionFactory.checkIfRequireTargetSelection(effectDefinition.targetType)
-                && !singleTargets.isEmpty  {
+                && !singleTargets.isEmpty {
                 targets = singleTargets
             } else {
                 targets = targetSelectionFactory.generateTargets(source, playerTeam, opponentTeam,
                                                                  effectDefinition.targetType)
             }
-            
+
             for target in targets {
                 for effectCalculator in effectDefinition.effectCalculators {
-                    let result = effectCalculator.calculate(skill: self, source: source, target: target)
+                    let result = effectCalculator.calculate(moveName: self.name, source: source, target: target)
                     guard let result = result else {
                         continue
                     }
