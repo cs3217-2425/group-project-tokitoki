@@ -26,8 +26,16 @@ struct StatusEffect {
         }
         return strategy.apply(to: entity, effect: self)
     }
-    
+
     mutating func updateActionMeter(by multiplier: Float) {
         self.actionMeter += speedOfDmgOverTime * multiplier
+    }
+}
+
+extension StatusEffect: Equatable {
+    static func == (lhs: StatusEffect, rhs: StatusEffect) -> Bool {
+        lhs.type == rhs.type &&
+        lhs.remainingDuration == rhs.remainingDuration && lhs.strength == rhs.strength
+        && lhs.sourceId == rhs.sourceId && lhs.target === rhs.target
     }
 }

@@ -24,7 +24,7 @@ extension TokiDisplay {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TokiTableCell", for: indexPath) as? TokiTableCell else {
             return UITableViewCell()
         }
-        
+
         if tableView == control.equipmentTableView {
             if indexPath.row < toki.equipments.count {
                 let equipmentItem = toki.equipments[indexPath.row]
@@ -52,10 +52,10 @@ extension TokiDisplay {
                 cell.addGestureRecognizer(longPress)
             }
         }
-        
+
         return cell
     }
-    
+
     // Provide the trailing swipe configuration.
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath,
@@ -99,4 +99,3 @@ extension TokiDisplay {
         return UISwipeActionsConfiguration(actions: actions)
     }
 }
-

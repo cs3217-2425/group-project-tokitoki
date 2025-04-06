@@ -218,16 +218,26 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="8996200.png" translatesAutoresizingMaskIntoConstraints="NO" id="cNq-Fy-XaA">
+                                <rect key="frame" x="108" y="1103" width="100" height="100"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="noAction-removebg-preview.png" translatesAutoresizingMaskIntoConstraints="NO" id="01F-Di-sOr">
+                                <rect key="frame" x="11" y="1103" width="100" height="100"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Hsf-jc-Ddq"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <connections>
                         <outlet property="battleLogDisplay" destination="ABI-nx-LRy" id="bOq-XI-CJg"/>
+                        <outlet property="consumables" destination="cNq-Fy-XaA" id="ayU-lf-6vL"/>
                         <outlet property="logBackground" destination="td8-IS-Jhb" id="PuO-AQ-QAM"/>
                         <outlet property="mainOppHealthBar" destination="5sn-vA-AFb" id="KCL-d1-cvF"/>
                         <outlet property="mainOppHealthBarContainer" destination="Cwc-gl-h36" id="qci-Mx-qO6"/>
                         <outlet property="mainOpponentView" destination="oLe-BL-bNx" id="Ssr-xJ-v5f"/>
+                        <outlet property="noAction" destination="01F-Di-sOr" id="X6I-X3-LWd"/>
                         <outlet property="opponent1" destination="qM6-73-32T" id="I4f-1M-wxE"/>
                         <outlet property="opponent2" destination="QNx-OJ-9ua" id="u98-dB-wRn"/>
                         <outlet property="opponent2HealthBar" destination="vHx-me-ye8" id="dyO-iB-25f"/>
@@ -268,6 +278,7 @@
         <image name="bowman.png" width="428" height="582"/>
         <image name="hydra.png" width="487" height="513"/>
         <image name="knightt.png" width="2500" height="2500"/>
+        <image name="noAction-removebg-preview.png" width="360" height="360"/>
         <image name="slitherer.png" width="360" height="531"/>
         <image name="wizard.png" width="2500" height="2500"/>
         <systemColor name="linkColor">

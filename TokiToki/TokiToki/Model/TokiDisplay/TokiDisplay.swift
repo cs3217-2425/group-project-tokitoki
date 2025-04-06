@@ -96,33 +96,32 @@ struct EquipmentsWrapper: Decodable {
 // MARK: - TokiDisplay Class
 
 class TokiDisplay {
-    
+
     // Singleton or shared reference if needed.
     static let shared = TokiDisplay()
-    
+
     // Private storage for “currently viewed” Toki.
     // We need some Toki to attach to the UI, but we’re no longer
     // constructing a test Toki. Instead, we’ll pick one from JSON.
     private var _toki: Toki
-    
+
     // Expose the “current” Toki.
     var toki: Toki {
         get { _toki }
         set { _toki = newValue }
     }
-    
+
     // Optionally keep an array of *all* Tokis loaded from JSON so you can pick which one to display.
     var allTokis: [Toki] = []
-    
     var allSkills: [Skill] = []
-    
+
     // The advanced facade and other system references remain.
     internal var equipmentFacade = AdvancedEquipmentFacade()
-    
+
     // MARK: - Init
     // We remove the “test constructor” that previously set a “Default Toki”.
     // Instead, we load data from JSON, then pick the first Toki as the “current Toki.”
-    
+
     init() {
         // Temporary placeholder. We’ll override it once we load from JSON.
         let placeholderStats = TokiBaseStats(hp: 1, attack: 1, defense: 1, speed: 1, heal: 1, exp: 0)
@@ -133,10 +132,10 @@ class TokiDisplay {
                      equipments: [],
                      elementType: [.fire],
                      level: 1)
-        
+
         // Load from JSON
         loadAllData()
-        
+
         // If we have at least one Toki, pick the first as the “current Toki”
         if let firstToki = allTokis.first {
             _toki = firstToki
@@ -154,11 +153,11 @@ class TokiDisplay {
             .joined(separator: ", ")
         return (inventoryNames, equippedNames)
     }
-    
+
     func undoLastAction() {
         equipmentFacade.undoLastAction()
     }
-    
+
     private func totalEquipmentBuff(for stat: String) -> Float {
         var total: Float = 0
         for equip in toki.equipments {
@@ -178,7 +177,7 @@ class TokiDisplay {
         }
         return total
     }
-    
+
     private func updateProgressBar(_ progressView: UIProgressView, baseValue: Float,
                                    buffValue: Float, maxValue: Float, baseColor: UIColor, buffColor: UIColor) {
         progressView.subviews.forEach { $0.removeFromSuperview() }
@@ -196,7 +195,7 @@ class TokiDisplay {
         buffView.backgroundColor = buffColor
         progressView.addSubview(buffView)
     }
-    
+
     func updateUI(_ control: TokiDisplayViewController) {
         control.tokiImageView?.image = UIImage(named: toki.name)
         control.nameLabel?.text = toki.name
@@ -208,42 +207,40 @@ class TokiDisplay {
         control.healLabel?.text = "Heal: \(toki.baseStats.heal)"
         control.speedLabel?.text = "Speed: \(toki.baseStats.speed + Int(totalEquipmentBuff(for: "speed")))"
         control.rarityLabel?.text = "Rarity: \(toki.rarity)"
+
         control.elementLabel?.text = "Element: \(toki.elementType.map(\.description).joined(separator: ", "))"
-        
+      
         let hpMax: Float = 420.0
         let expMax: Float = 100.0
         let statMax: Float = 100.0
-        
+
         control.hpProgressView?.progress = Float(toki.baseStats.hp) / hpMax
         control.expProgressView?.progress = Float(toki.baseStats.exp) / expMax
-        
+
         if let attackPV = control.attackProgressView {
             let baseAttack = Float(toki.baseStats.attack)
             let buffAttack = totalEquipmentBuff(for: "attack")
             updateProgressBar(attackPV, baseValue: baseAttack, buffValue: buffAttack,
                               maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
-        
+
         if let defensePV = control.defenseProgressView {
             let baseDefense = Float(toki.baseStats.defense)
             let buffDefense = totalEquipmentBuff(for: "defense")
             updateProgressBar(defensePV, baseValue: baseDefense, buffValue: buffDefense,
                               maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
-        
+
         if let speedPV = control.speedProgressView {
             let baseSpeed = Float(toki.baseStats.speed)
             let buffSpeed = totalEquipmentBuff(for: "speed")
             updateProgressBar(speedPV, baseValue: baseSpeed, buffValue: buffSpeed,
                               maxValue: statMax, baseColor: .systemBlue, buffColor: .systemGreen)
         }
-        
+
         control.healProgressView?.progress = Float(toki.baseStats.heal) / statMax
         control.hpProgressView?.progressTintColor = .systemRed
         control.equipmentTableView?.reloadData()
         control.skillsTableView?.reloadData()
     }
-    
 }
-
-

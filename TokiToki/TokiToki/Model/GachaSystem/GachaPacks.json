@@ -16,11 +16,6 @@
           "baseRate": 0.30
         },
         {
-          "itemId": "FireballAttack",
-          "itemType": "skill",
-          "baseRate": 0.20
-        },
-        {
           "itemId": "WoodenShield",
           "itemType": "equipment",
           "baseRate": 0.20
@@ -43,17 +38,7 @@
           "baseRate": 0.10
         },
         {
-          "itemId": "ThunderBolt",
-          "itemType": "skill",
-          "baseRate": 0.30
-        },
-        {
-          "itemId": "HealingMist",
-          "itemType": "skill",
-          "baseRate": 0.20
-        },
-        {
-          "itemId": "DragonArmor",
+          "itemId": "Dragon Scale Armor",
           "itemType": "equipment",
           "baseRate": 0.30
         }

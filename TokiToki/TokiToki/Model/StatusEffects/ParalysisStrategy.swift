@@ -14,6 +14,7 @@ class ParalysisStrategy: StatusEffectStrategy {
                 description: "\(entity.getName()) is paralyzed and can't move!"
             )
         }
+        StatusEffectsSystem.shared.removeEffect(effect, entity)
         return EffectResult(
             entity: entity,
             value: 0,

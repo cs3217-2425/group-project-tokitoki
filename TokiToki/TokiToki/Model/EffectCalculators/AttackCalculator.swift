@@ -8,15 +8,15 @@
 class AttackCalculator: EffectCalculator {
     private let elementsSystem = ElementsSystem()
     private let statsSystem = StatsSystem()
-    private let elementType: ElementType
-    private let basePower: Int
+    let elementType: ElementType
+    let basePower: Int
 
     init(elementType: ElementType, basePower: Int) {
         self.elementType = elementType
         self.basePower = basePower
     }
 
-    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
+    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self),
               let targetStats = target.getComponent(ofType: StatsComponent.self) else {
             return EffectResult(entity: target, value: 0, description: "Failed to get stats")
@@ -40,7 +40,7 @@ class AttackCalculator: EffectCalculator {
 
         statsSystem.inflictDamage(amount: damage, [target])
 
-        var description = "\(source.getName()) used \(skill.name) on \(target.getName()) for \(damage) damage"
+        var description = "\(source.getName()) used \(moveName) on \(target.getName()) for \(damage) damage"
 
         if elementMultiplier > 1.0 {
             description += " (super effective!)"

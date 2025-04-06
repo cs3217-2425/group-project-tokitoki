@@ -11,7 +11,7 @@ class ServiceLocator {
     static let shared = ServiceLocator()
     private init() {}
 
-    lazy var equipmentSystem = EquipmentSystem()
+    lazy var equipmentSystem = EquipmentSystem.shared
     lazy var craftingManager: CraftingManager = {
         let manager = CraftingManager(recipes: [])
         return manager

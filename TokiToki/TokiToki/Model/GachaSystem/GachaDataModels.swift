@@ -5,7 +5,6 @@
 //  Created by Pawan Kishor Patil on 31/3/25.
 //
 
-
 struct EquipmentsData: Codable {
     let equipment: [EquipmentData]
 }
@@ -45,26 +44,44 @@ struct TokisData: Codable {
     let tokis: [TokiData]
 }
 
-// Skill Data for loading from JSON
+// Updated Skill Data for loading from JSON
 struct SkillData: Codable {
     let id: String
     let name: String
     let description: String
-    let rarity: Int
-    let skillType: String
-    let targetType: String
-    let elementType: String
-    let basePower: Int
     let cooldown: Int
+    let effectDefinitions: [EffectDefinitionData]
+}
+
+struct EffectDefinitionData: Codable {
+    let targetType: String
+    let calculators: [CalculatorData]
+}
+
+struct CalculatorData: Codable {
+    let calculatorType: String
+    
+    // Attack calculator fields
+    let elementType: String?
+    let basePower: Int?
+    
+    // Status effect calculator fields
     let statusEffectChance: Double?
     let statusEffect: String?
     let statusEffectDuration: Int?
+    let statusEffectStrength: Double?
+    
+    // Stats modifier calculator fields
+    let statsModifierDuration: Int?
+    let attackModifier: Double?
+    let defenseModifier: Double?
+    let speedModifier: Double?
+    let healModifier: Double?
 }
 
 struct SkillsData: Codable {
     let skills: [SkillData]
 }
-
 
 // Gacha Item Data within a pack
 struct GachaItemData: Codable {
@@ -74,7 +91,6 @@ struct GachaItemData: Codable {
     let rarity: Int?
     let elementType: String?
 }
-
 
 // Gacha Pack Data for loading from JSON
 struct GachaPackData: Codable {
@@ -88,9 +104,8 @@ struct GachaPacksData: Codable {
     let packs: [GachaPackData]
 }
 
-
 // Gacha Pack
-struct GachaPack{
+struct GachaPack {
     let name: String
     let description: String
     let cost: Int
@@ -114,28 +129,27 @@ struct EquipmentData: Codable {
     let buff: BuffData?          // Optional because consumables might not have buffs
     let slot: String?            // Optional because consumables don't have slots
     let effectStrategy: EffectStrategyData?  // Optional because nonConsumables don't have effects
+
     let inBattleOnly: Bool? // Optional -> Null = Anywhere, False = Outside, True = InBattle
-    
+
     struct BuffData: Codable {
         let value: Int
         let description: String
         let affectedStat: String
     }
-    
+
     struct EffectStrategyData: Codable {
         let type: String          // "healing", "potion", "upgradeCandy", etc.
-        
+
         // For healing effects
         let healAmount: Int?
-        
+
         // For potion effects
         let buffValue: Int?
         let duration: Double?
         let statType: String?
-        
+
         // For upgrade candy effects
         let bonusExp: Int?
     }
 }
-
-

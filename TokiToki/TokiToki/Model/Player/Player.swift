@@ -17,8 +17,10 @@ struct Player {
     var lastLoginDate: Date
     var ownedTokis: [Toki]
     var ownedSkills: [Skill]
-    var ownedEquipments: [Equipment]
+    var ownedEquipments: EquipmentComponent
     var pullsSinceRare: Int
+    var dailyPullsCount: Int
+    var dailyPullsLastReset: Date?
 
     struct PlayerStatistics {
         var totalBattles: Int
@@ -66,18 +68,50 @@ struct Player {
             statistics.battlesWon += 1
         }
     }
-    
+
     // MARK: - Item Management
     mutating func addItem(_ item: any IGachaItem) {
         switch item {
-        case let toki as Toki:
-            ownedTokis.append(toki)
-        case let skill as BaseSkill:
-            ownedSkills.append(skill)
-        case let equipment as Equipment:
-            ownedEquipments.append(equipment)
+        case let toki as TokiGachaItem:
+            ownedTokis.append(toki.getToki())
+//        case let skill as SkillGachaItem:
+//            ownedSkills.append(skill.getSkill())
+        case let equipment as EquipmentGachaItem:
+            ownedEquipments.inventory.append(equipment.getEquipment())
         default:
             print("Unknown item type: \(type(of: item))")
         }
+    }
+    
+    // MARK: - Gacha Pull Management
+        
+    /// Check if the player has reached their daily pull limit
+    func hasReachedDailyPullLimit(limit: Int) -> Bool {
+        return dailyPullsCount >= limit
+    }
+    
+    /// Reset daily pulls count if a new day has started
+    mutating func checkAndResetDailyPulls() {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // If this is the first pull ever or we have a reset date
+        if let lastReset = dailyPullsLastReset {
+            // Check if the current date is a different day than the last reset
+            if !calendar.isDate(today, inSameDayAs: lastReset) {
+                // It's a new day, reset the counter
+                dailyPullsCount = 0
+                dailyPullsLastReset = today
+            }
+        } else {
+            // First time pulling, initialize the reset date
+            dailyPullsLastReset = today
+        }
+    }
+    
+    /// Increment daily pulls count after a successful pull
+    mutating func incrementDailyPullsCount(by count: Int = 1) {
+        checkAndResetDailyPulls() // Check if we need to reset first
+        dailyPullsCount += count
     }
 }
