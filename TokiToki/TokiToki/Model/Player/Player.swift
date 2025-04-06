@@ -19,7 +19,7 @@ struct Player {
     var ownedSkills: [Skill]
     var ownedEquipments: [Equipment]
     var pullsSinceRare: Int
-    
+
     struct PlayerStatistics {
         var totalBattles: Int
         var battlesWon: Int
@@ -81,4 +81,3 @@ struct Player {
         }
     }
 }
-

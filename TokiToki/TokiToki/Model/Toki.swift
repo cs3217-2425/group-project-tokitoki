@@ -15,27 +15,27 @@ class Toki {
     let rarity: ItemRarity
     var baseStats: TokiBaseStats
     var skills: [Skill]
-    var equipment: [Equipment]
-    let elementType: ElementType
+    var equipments: [Equipment]
+    let elementType: [ElementType]
 
     init(id: UUID = UUID(), name: String, rarity: ItemRarity,
          baseStats: TokiBaseStats, skills: [Skill], equipments: [Equipment],
-         elementType: ElementType, level: Int) {
+         elementType: [ElementType], level: Int) {
         self.id = id
         self.name = name
         self.rarity = rarity
         self.baseStats = baseStats
         self.skills = skills
-        self.equipment = equipments
+        self.equipments = equipments
         self.elementType = elementType
         self.level = level
     }
-    
+
     func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
         print("Toki receives a temporary buff: \(stat) +\(value) for \(duration) sec")
         // In a full implementation, integrate with a buff manager.
     }
-    
+
     func gainExperience(_ exp: Int) {
         print("Toki gains \(exp) EXP")
         // Update experience
@@ -52,30 +52,29 @@ class Toki {
     func createBattleEntity() -> GameStateEntity {
         let entity = GameStateEntity(name)
 
-        // Add components
-        let statsComponent = StatsComponent(
-            entityId: entity.id,
-            maxHealth: baseStats.hp,
-            attack: baseStats.attack,
-            defense: baseStats.defense,
-            speed: baseStats.speed,
+        var statsComponent = StatsComponent(
+            entity: entity,
+            baseStats: baseStats,
             elementType: elementType
         )
 
-        let skillsComponent = SkillsComponent(entityId: entity.id, skills: skills)
-        let statusEffectsComponent = StatusEffectsComponent(entityId: entity.id)
-        
-//        for e in equipment {
-//            e.applyBuffs(to: &statsComponent)
+        let skillsComponent = SkillsComponent(entity: entity, skills: skills)
+        let statusEffectsComponent = StatusEffectsComponent(entity: entity)
+        let statsModifiersComponent = StatsModifiersComponent(entity: entity)
+
+        // TODO: Why does equipment not have the method
+//        for equipment in equipments {
+//            equipment.applyBuffs(to: &statsComponent)
 //        }
 
         entity.addComponent(statsComponent)
         entity.addComponent(skillsComponent)
         entity.addComponent(statusEffectsComponent)
+        entity.addComponent(statsModifiersComponent)
 
         return entity
     }
-    
+
     func levelUp(stat: TokiBaseStats) {
         self.baseStats = TokiBaseStats(
             hp: self.baseStats.hp + stat.hp,
@@ -83,18 +82,22 @@ class Toki {
             defense: self.baseStats.defense + stat.defense,
             speed: self.baseStats.speed + stat.speed,
             heal: self.baseStats.heal + stat.heal,
-            exp: self.baseStats.exp - 100
-            )
+            exp: self.baseStats.exp - 100,
+            critHitChance: self.baseStats.critHitChance,
+            critHitDamage: self.baseStats.critHitDamage
+        )
         self.level += 1
     }
 }
 
 struct TokiBaseStats {
-    let hp: Int
-    let attack: Int
-    let defense: Int
-    let speed: Int
-    let heal: Int
-    let exp: Int
+    var hp: Int
+    var attack: Int
+    var defense: Int
+    var speed: Int
+    var heal: Int
+    var exp: Int
+    var critHitChance: Int = 15
+    var critHitDamage: Int = 150
 }
 

@@ -14,7 +14,7 @@ extension TokiDisplay {
         let extraSlots = toki.level / 5
         let totalSlots = baseSlots + extraSlots
         if tableView == control.equipmentTableView {
-            return max(totalSlots, toki.equipment.count)
+            return max(totalSlots, toki.equipments.count)
         } else {
             return max(totalSlots, toki.skills.count)
         }
@@ -26,8 +26,8 @@ extension TokiDisplay {
         }
         
         if tableView == control.equipmentTableView {
-            if indexPath.row < toki.equipment.count {
-                let equipmentItem = toki.equipment[indexPath.row]
+            if indexPath.row < toki.equipments.count {
+                let equipmentItem = toki.equipments[indexPath.row]
                 cell.nameLabel.text = equipmentItem.name
                 cell.itemImageView.image = UIImage(named: equipmentItem.name)
                 let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleEquipmentLongPress(_:)))

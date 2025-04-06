@@ -6,40 +6,40 @@
 //
 
 class AttackCalculator: EffectCalculator {
-    private let elementsSystem: ElementsSystem
+    private let elementsSystem = ElementsSystem()
+    private let statsSystem = StatsSystem()
+    private let elementType: ElementType
+    private let basePower: Int
 
-    init(elementsSystem: ElementsSystem) {
-        self.elementsSystem = elementsSystem
+    init(elementType: ElementType, basePower: Int) {
+        self.elementType = elementType
+        self.basePower = basePower
     }
 
-    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult {
+    func calculate(skill: Skill, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self),
               let targetStats = target.getComponent(ofType: StatsComponent.self) else {
-            return EffectResult(entity: target, type: .none, value: 0, description: "Failed to get stats")
+            return EffectResult(entity: target, value: 0, description: "Failed to get stats")
         }
 
         // Base formula
-        var damage = (sourceStats.attack * skill.basePower / 100) - (targetStats.defense / 4)
+        var damage = (statsSystem.getAttack(source) * basePower / 100)
+        - (statsSystem.getDefense(target) / 4)
 
-        // Element effectiveness
-        let elementMultiplier = elementsSystem.getEffectiveness(of: sourceStats.elementType,
+        let elementMultiplier = elementsSystem.getEffectiveness(of: elementType,
                                                                 against: targetStats.elementType)
         damage = Int(Double(damage) * elementMultiplier)
 
-        // Critical hit (10% chance)
         var isCritical = false
-        if Double.random(in: 0...1) < 0.1 {
-            damage = Int(Double(damage) * 1.5)
+        if Double.random(in: 0...1) < Double(statsSystem.getCritChance(source)) / 100 {
+            damage = Int(Double(damage) * Double(statsSystem.getCritDmg(source)) / 100)
             isCritical = true
         }
 
-        // Ensure minimum damage
         damage = max(1, damage)
 
-        // Apply damage
-        target.takeDamage(amount: damage)
+        statsSystem.inflictDamage(amount: damage, [target])
 
-        // Create result
         var description = "\(source.getName()) used \(skill.name) on \(target.getName()) for \(damage) damage"
 
         if elementMultiplier > 1.0 {
@@ -57,7 +57,7 @@ class AttackCalculator: EffectCalculator {
             value: damage,
             description: description,
             isCritical: isCritical,
-            elementType: sourceStats.elementType
+            elementType: elementType
         )
     }
 }

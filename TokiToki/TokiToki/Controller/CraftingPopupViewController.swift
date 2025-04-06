@@ -102,11 +102,11 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         }
 
         // Crafting succeeded. Now remove the old items from Toki's equipment (the facade already removed them from inventory).
-        if let eqIdx1 = TokiDisplay.shared.toki.equipment.firstIndex(where: { $0.id == original.id }) {
-            TokiDisplay.shared.toki.equipment.remove(at: eqIdx1)
+        if let eqIdx1 = TokiDisplay.shared.toki.equipments.firstIndex(where: { $0.id == original.id }) {
+            TokiDisplay.shared.toki.equipments.remove(at: eqIdx1)
         }
-        if let eqIdx2 = TokiDisplay.shared.toki.equipment.firstIndex(where: { $0.id == secondItem.id }) {
-            TokiDisplay.shared.toki.equipment.remove(at: eqIdx2)
+        if let eqIdx2 = TokiDisplay.shared.toki.equipments.firstIndex(where: { $0.id == secondItem.id }) {
+            TokiDisplay.shared.toki.equipments.remove(at: eqIdx2)
         }
 
         // Insert the newly crafted item at the original slot
@@ -118,10 +118,10 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         }
 
         // Also insert in Toki's equipment array
-        if originalItemIndex >= TokiDisplay.shared.toki.equipment.count {
-            TokiDisplay.shared.toki.equipment.append(craftedItem)
+        if originalItemIndex >= TokiDisplay.shared.toki.equipments.count {
+            TokiDisplay.shared.toki.equipments.append(craftedItem)
         } else {
-            TokiDisplay.shared.toki.equipment.insert(craftedItem, at: originalItemIndex)
+            TokiDisplay.shared.toki.equipments.insert(craftedItem, at: originalItemIndex)
         }
 
         // Save + refresh UI

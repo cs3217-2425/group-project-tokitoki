@@ -8,58 +8,46 @@
 import Foundation
 
 class BaseSkill: Skill {
-    let id = UUID()
     let name: String
     let description: String
-    let type: SkillType
-    let targetType: TargetType
-    let elementType: ElementType
-    let basePower: Int
     let cooldown: Int
     var currentCooldown: Int = 0
-    let statusEffectChance: Double
-    let statusEffect: StatusEffectType?
-    let statusEffectDuration: Int
-    let rarity: ItemRarity
+    let effectDefinitions: [EffectDefinition]
+    let targetSelectionFactory = TargetSelectionFactory()
 
-    private let effectCalculator: EffectCalculator
-
-    init(name: String, description: String, type: SkillType, targetType: TargetType,
-         elementType: ElementType, basePower: Int, cooldown: Int, statusEffectChance: Double,
-         statusEffect: StatusEffectType?, statusEffectDuration: Int = 0, effectCalculator: EffectCalculator, rarity: ItemRarity = .common) {
+    init(name: String, description: String,
+         cooldown: Int, effectDefinitions: [EffectDefinition]) {
         self.name = name
         self.description = description
-        self.type = type
-        self.targetType = targetType
-        self.elementType = elementType
-        self.basePower = basePower
         self.cooldown = cooldown
-        self.statusEffectChance = statusEffectChance
-        self.statusEffect = statusEffect
-        self.statusEffectDuration = statusEffectDuration
-        self.effectCalculator = effectCalculator
-        self.rarity = rarity
+        self.effectDefinitions = effectDefinitions
     }
 
     func canUse() -> Bool {
         currentCooldown == 0
     }
 
-    func use(from source: GameStateEntity, on targets: [GameStateEntity]) -> [EffectResult] {
+    func use(from source: GameStateEntity, _ playerTeam: [GameStateEntity],
+             _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity]) -> [EffectResult] {
         var results: [EffectResult] = []
-
-        for target in targets {
-            // Calculate the effect
-            let result = effectCalculator.calculate(skill: self, source: source, target: target)
-            results.append(result)
-
-            // Apply status effect if applicable
-            if let effectType = statusEffect, Double.random(in: 0...1) < statusEffectChance {
-                let effect = StatusEffect(type: effectType, remainingDuration: statusEffectDuration, strength: 1.0, sourceId: source.id)
-                if let statusComponent = target.getComponent(ofType: StatusEffectsComponent.self) {
-                    statusComponent.addEffect(effect)
-                    results.append(EffectResult(entity: target, type: .statusApplied, value: 0,
-                                                description: "\(target.name) is affected by \(effectType)!"))
+        
+        for effectDefinition in effectDefinitions {
+            let targets: [GameStateEntity]
+            if targetSelectionFactory.checkIfRequireTargetSelection(effectDefinition.targetType)
+                && !singleTargets.isEmpty  {
+                targets = singleTargets
+            } else {
+                targets = targetSelectionFactory.generateTargets(source, playerTeam, opponentTeam,
+                                                                 effectDefinition.targetType)
+            }
+            
+            for target in targets {
+                for effectCalculator in effectDefinition.effectCalculators {
+                    let result = effectCalculator.calculate(skill: self, source: source, target: target)
+                    guard let result = result else {
+                        continue
+                    }
+                    results.append(result)
                 }
             }
         }
@@ -76,5 +64,9 @@ class BaseSkill: Skill {
         if currentCooldown > 0 {
             currentCooldown -= 1
         }
+    }
+
+    func resetCooldown() {
+        currentCooldown = 0
     }
 }

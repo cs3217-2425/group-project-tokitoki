@@ -7,31 +7,12 @@
 
 import Foundation
 
-class StatusEffectsComponent: BaseComponent {
+class StatusEffectsComponent: Component {
     var activeEffects: [StatusEffect]
+    let entity: Entity
 
-    override init(entityId: UUID) {
+    init(entity: Entity) {
         self.activeEffects = []
-        super.init(entityId: entityId)
-    }
-
-    func addEffect(_ effect: StatusEffect) {
-        activeEffects.append(effect)
-    }
-
-    func removeEffect(id: UUID) {
-        activeEffects.removeAll { $0.id == id }
-    }
-
-    func updateEffects() {
-        activeEffects = activeEffects.map { effect in
-            var updatedEffect = effect
-            updatedEffect.remainingDuration -= 1
-            return updatedEffect
-        }.filter { $0.remainingDuration > 0 }
-    }
-
-    func hasEffect(ofType type: StatusEffectType) -> Bool {
-        activeEffects.contains { $0.type == type }
+        self.entity = entity
     }
 }

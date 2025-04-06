@@ -9,7 +9,6 @@ class FrozenStrategy: StatusEffectStrategy {
     func apply(to entity: GameStateEntity, effect: StatusEffect) -> EffectResult {
         EffectResult(
             entity: entity,
-            type: .statusApplied,
             value: 0,
             description: "\(entity.getName()) is frozen and cannot move!"
         )

@@ -63,7 +63,8 @@ extension TokiDisplay {
         }
     }
     
-    func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath, equipmentTableView: UITableView?, control: TokiDisplayViewController) {
+    func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath,
+                       equipmentTableView: UITableView?, control: TokiDisplayViewController) {
         // 1. Use it on the real Toki so that Toki’s exp updates
         TokiDisplay.shared.equipmentFacade.useConsumable(
             consumable: consumable,
@@ -78,12 +79,83 @@ extension TokiDisplay {
         }
 
         // 3. Also remove from Toki’s equipment array to keep them in sync (if Toki had it).
-        if let tokiIndex = TokiDisplay.shared.toki.equipment.firstIndex(where: { $0.id == consumable.id }) {
-            TokiDisplay.shared.toki.equipment.remove(at: tokiIndex)
+        if let tokiIndex = TokiDisplay.shared.toki.equipments.firstIndex(where: { $0.id == consumable.id }) {
+            TokiDisplay.shared.toki.equipments.remove(at: tokiIndex)
         }
 
         // 4. Reload the table to reflect the changes
         equipmentTableView?.reloadData()
         self.updateUI(control)
+    }
+    
+    func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
+        guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {
+            let noSelectionAlert = UIAlertController(title: "No Selection",
+                                                     message: "Please select a skill cell to change.",
+                                                     preferredStyle: .alert)
+            noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            control.present(noSelectionAlert, animated: true)
+            return
+        }
+        
+        // Build an action sheet using all skills loaded from JSON.
+        let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
+        
+        // Iterate over allSkills array loaded from JSON.
+        for skill in self.allSkills {
+            alert.addAction(UIAlertAction(title: skill.name, style: .default, handler: { _ in
+                // Check if this skill is already part of the Toki's skills.
+                if self.toki.skills.contains(where: { $0.name == skill.name }) {
+                    let existsAlert = UIAlertController(title: "Already Exists",
+                                                        message: "Skill \(skill.name) already exists.",
+                                                        preferredStyle: .alert)
+                    existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                    control.present(existsAlert, animated: true)
+                } else {
+                    if indexPath.row < self.toki.skills.count {
+                        self.toki.skills[indexPath.row] = skill
+                    } else {
+                        self.toki.skills.append(skill)
+                    }
+                    self.updateUI(control)
+                }
+            }))
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+        }
+        control.present(alert, animated: true)
+    }
+    
+    func levelUp(_ sender: UIButton, _ control: TokiDisplayViewController) {
+        if toki.baseStats.exp >= 100 {
+            let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "Attack", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 1, defense: 0, speed: 0, heal: 0, exp: 0))
+                self.updateUI(control)
+            }))
+            alert.addAction(UIAlertAction(title: "Defense", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 1, speed: 0, heal: 0, exp: 0))
+                self.updateUI(control)
+            }))
+            alert.addAction(UIAlertAction(title: "Speed", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 1, heal: 0, exp: 0))
+                self.updateUI(control)
+            }))
+            alert.addAction(UIAlertAction(title: "Heal", style: .default, handler: { _ in
+                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 0, heal: 1, exp: 0))
+                self.updateUI(control)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            if let popoverController = alert.popoverPresentationController {
+                popoverController.sourceView = sender
+                popoverController.sourceRect = sender.bounds
+            }
+            control.present(alert, animated: true, completion: nil)
+        }
     }
 }

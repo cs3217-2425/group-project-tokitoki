@@ -7,10 +7,9 @@
 import Foundation
 
 protocol IGachaItem: Identifiable {
-    var id: UUID { get }
     var name: String { get }
     var rarity: ItemRarity { get }
-    var elementType: ElementType { get }
+    var elementType: [ElementType] { get }
     
     // Optional owner properties
     var ownerId: UUID? { get set }

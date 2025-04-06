@@ -20,7 +20,7 @@ class HealthBelowPercentageRule: AIRule {
     func condition(_ entity: GameStateEntity) -> Bool {
         // Check if entity's health is below the specified percentage
         if let statsComponent = entity.getComponent(ofType: StatsComponent.self) {
-            let healthPercentage = Double(statsComponent.currentHealth) / Double(statsComponent.maxHealth) * 100
+            let healthPercentage = Double(statsComponent.currentHealth) / Double(statsComponent.baseStats.hp) * 100
             return healthPercentage < percentage
         }
         return false

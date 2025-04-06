@@ -6,24 +6,19 @@
 //
 
 class TargetSelectionFactory {
-    private var playerEntities: [GameStateEntity] = []
-    private var opponentEntities: [GameStateEntity] = []
-    private var targetTypeToTargets: [TargetType: [GameStateEntity]] = [:]
     private var targetTypesThatRequireSelection: Set<TargetType> = [.singleAlly, .singleEnemy]
 
-    func generateTargets(_ playerEntities: [GameStateEntity], _ opponentEntities: [GameStateEntity],
+    // switch case used here as the number of cases is small and fixed, targetType isn't expected to grow massively.
+    func generateTargets(_ user: GameStateEntity, _ playerEntities: [GameStateEntity], _ opponentEntities: [GameStateEntity],
                          _ targetType: TargetType) -> [GameStateEntity] {
-        self.playerEntities = playerEntities
-        self.opponentEntities = opponentEntities
-        self.targetTypeToTargets = [
-            .all: playerEntities + opponentEntities,
-            .allAllies: playerEntities,
-            .allEnemies: opponentEntities,
-            .ownself: playerEntities,
-            .singleEnemy: chooseRandomEntity(opponentEntities),
-            .singleAlly: chooseRandomEntity(playerEntities)
-        ]
-        return targetTypeToTargets[targetType] ?? []
+        switch targetType {
+        case .all: return playerEntities + opponentEntities
+        case .allAllies: return playerEntities
+        case .allEnemies: return opponentEntities
+        case .ownself: return [user]
+        case .singleEnemy: return chooseRandomEntity(opponentEntities)
+        case .singleAlly: return chooseRandomEntity(playerEntities)
+        }
     }
 
     func chooseRandomEntity(_ entities: [GameStateEntity]) -> [GameStateEntity] {
@@ -32,13 +27,6 @@ class TargetSelectionFactory {
             return []
         }
         return [entity]
-    }
-
-    func makeTargetSelection(_ targetType: TargetType) -> [GameStateEntity] {
-        guard let targets = targetTypeToTargets[targetType] else {
-            return []
-        }
-        return targets
     }
 
     func checkIfRequireTargetSelection(_ targetType: TargetType) -> Bool {

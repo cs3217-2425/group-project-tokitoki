@@ -5,7 +5,6 @@
 //  Created by Wh Kang on 31/3/25.
 //
 
-
 import Foundation
 
 enum ConsumableUsageContext {
@@ -15,7 +14,7 @@ enum ConsumableUsageContext {
 }
 
 struct ConsumableEquipment: Equipment {
-    let id: UUID = UUID()
+    let id = UUID()
     let name: String
     let description: String
     let equipmentType: EquipmentType = .consumable

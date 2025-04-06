@@ -119,7 +119,7 @@ class TokiDisplay {
                      baseStats: placeholderStats,
                      skills: [],
                      equipments: [],
-                     elementType: .fire,
+                     elementType: [.fire],
                      level: 1)
         
         // Load from JSON
@@ -167,7 +167,7 @@ class TokiDisplay {
         do {
             let data = try Data(contentsOf: url)
             let decoded = try JSONDecoder().decode(SkillsWrapper.self, from: data)
-            self.allSkills = decoded.skills.map { convertToSkill($0) }
+            //self.allSkills = decoded.skills.map { convertToSkill($0) }
             print("Skills loaded: \(self.allSkills.count)")
         } catch {
             print("Failed to parse Skills.json: \(error)")
@@ -210,61 +210,60 @@ class TokiDisplay {
                      baseStats: stats,
                      skills: [],
                      equipments: [],
-                     elementType: elementEnum,
+                     elementType: [elementEnum],
                      level: 1)
      }
     
-    private func convertToSkill(_ json: SkillJSON) -> Skill {
-         // Use the new ElementType conversion.
-         let elemType = ElementType.fromString(json.elementType) ?? .neutral
-         
-         let factory = SkillFactory()
-         
-         switch json.skillType.lowercased() {
-         case "attack":
-             return factory.createAttackSkill(
-                 name: json.name,
-                 description: json.description,
-                 elementType: elemType,
-                 basePower: json.basePower,
-                 cooldown: json.cooldown,
-                 targetType: convertTargetType(json.targetType),
-                 statusEffect: convertStatusEffect(json.statusEffect),
-                 statusEffectChance: Double(json.statusEffectChance),
-                 statusEffectDuration: json.statusEffectDuration
-             )
-         case "heal":
-             return factory.createHealSkill(
-                 name: json.name,
-                 description: json.description,
-                 basePower: json.basePower,
-                 cooldown: json.cooldown,
-                 targetType: convertTargetType(json.targetType)
-             )
-         case "defend":
-             return factory.createDefenseSkill(
-                name: json.name,
-                description: json.description,
-                basePower: json.basePower,
-                cooldown: json.cooldown,
-                targetType: convertTargetType(json.targetType)
-             )
-         default:
-             return factory.createAttackSkill(
-                 name: json.name,
-                 description: json.description,
-                 elementType: elemType,
-                 basePower: json.basePower,
-                 cooldown: json.cooldown,
-                 targetType: .singleEnemy,
-                 statusEffect: .none,
-                 statusEffectChance: 0.0,
-                 statusEffectDuration: 0
-             )
-         }
-     }
+//    private func convertToSkill(_ json: SkillJSON) -> Skill {
+//         // Use the new ElementType conversion.
+//         let elemType = ElementType.fromString(json.elementType) ?? .neutral
+//         
+//         let factory = SkillFactory()
+//         
+//         switch json.skillType.lowercased() {
+//         case "attack":
+//             return factory.createAttackSkill(
+//                 name: json.name,
+//                 description: json.description,
+//                 elementType: elemType,
+//                 basePower: json.basePower,
+//                 cooldown: json.cooldown,
+//                 targetType: convertTargetType(json.targetType),
+//                 statusEffect: convertStatusEffect(json.statusEffect),
+//                 statusEffectChance: Double(json.statusEffectChance),
+//                 statusEffectDuration: json.statusEffectDuration
+//             )
+//         case "heal":
+//             return factory.createHealSkill(
+//                 name: json.name,
+//                 description: json.description,
+//                 basePower: json.basePower,
+//                 cooldown: json.cooldown,
+//                 targetType: convertTargetType(json.targetType)
+//             )
+//         case "defend":
+//             return factory.createDefenseSkill(
+//                name: json.name,
+//                description: json.description,
+//                basePower: json.basePower,
+//                cooldown: json.cooldown,
+//                targetType: convertTargetType(json.targetType)
+//             )
+//         default:
+//             return factory.createAttackSkill(
+//                 name: json.name,
+//                 description: json.description,
+//                 elementType: elemType,
+//                 basePower: json.basePower,
+//                 cooldown: json.cooldown,
+//                 targetType: .singleEnemy,
+//                 statusEffect: .none,
+//                 statusEffectChance: 0.0,
+//                 statusEffectDuration: 0
+//             )
+//         }
+//     }
      
-    
     private func convertToEquipment(_ json: EquipmentJSON) -> Equipment? {
          let repo = EquipmentRepository.shared
          let rarity = json.rarity
@@ -320,12 +319,11 @@ class TokiDisplay {
     }
     
     private func convertStatusEffect(_ raw: String?) -> StatusEffectType {
-        guard let raw = raw else { return .attackBuff }
+        guard let raw = raw else { return .stun }
         switch raw.lowercased() {
         case "burn": return .burn
         case "paralysis": return .paralysis
-        case "defensebuff": return .defenseBuff
-        default: return .attackBuff
+        default: return .stun
         }
     }
 
@@ -388,7 +386,7 @@ class TokiDisplay {
     
     private func totalEquipmentBuff(for stat: String) -> Float {
         var total: Float = 0
-        for equip in toki.equipment {
+        for equip in toki.equipments {
             // Use the extension property 'components' from NonConsumableEquipment
             if let comp = (equip as? NonConsumableEquipment)?.components.first as? CombinedBuffComponent {
                 switch stat {
@@ -488,17 +486,17 @@ class TokiDisplay {
         for equipment in self.allEquipment {
             alert.addAction(UIAlertAction(title: equipment.name, style: .default, handler: { _ in
                 // Check if this equipment is already part of the Toki's equipments.
-                if self.toki.equipment.contains(where: { $0.id == equipment.id }) {
+                if self.toki.equipments.contains(where: { $0.id == equipment.id }) {
                     let existsAlert = UIAlertController(title: "Already Exists",
                                                         message: "Equipment \(equipment.name) already exists.",
                                                         preferredStyle: .alert)
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
-                    if indexPath.row < self.toki.equipment.count {
-                        self.toki.equipment[indexPath.row] = equipment
+                    if indexPath.row < self.toki.equipments.count {
+                        self.toki.equipments[indexPath.row] = equipment
                     } else {
-                        self.toki.equipment.append(equipment)
+                        self.toki.equipments.append(equipment)
                     }
                     self.updateUI(control)
                 }
@@ -512,80 +510,11 @@ class TokiDisplay {
             popoverController.sourceRect = sender.bounds
         }
         control.present(alert, animated: true)
-    }
-
-    func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
-        guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {
-            let noSelectionAlert = UIAlertController(title: "No Selection",
-                                                     message: "Please select a skill cell to change.",
-                                                     preferredStyle: .alert)
-            noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
-            control.present(noSelectionAlert, animated: true)
-            return
-        }
-        
-        // Build an action sheet using all skills loaded from JSON.
-        let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
-        
-        // Iterate over allSkills array loaded from JSON.
-        for skill in self.allSkills {
-            alert.addAction(UIAlertAction(title: skill.name, style: .default, handler: { _ in
-                // Check if this skill is already part of the Toki's skills.
-                if self.toki.skills.contains(where: { $0.id == skill.id }) {
-                    let existsAlert = UIAlertController(title: "Already Exists",
-                                                        message: "Skill \(skill.name) already exists.",
-                                                        preferredStyle: .alert)
-                    existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
-                    control.present(existsAlert, animated: true)
-                } else {
-                    if indexPath.row < self.toki.skills.count {
-                        self.toki.skills[indexPath.row] = skill
-                    } else {
-                        self.toki.skills.append(skill)
-                    }
-                    self.updateUI(control)
-                }
-            }))
-        }
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
-        if let popoverController = alert.popoverPresentationController {
-            popoverController.sourceView = sender
-            popoverController.sourceRect = sender.bounds
-        }
-        control.present(alert, animated: true)
-    }
-    
-    func levelUp(_ sender: UIButton, _ control: TokiDisplayViewController) {
-        if toki.baseStats.exp >= 100 {
-            let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)
-            alert.addAction(UIAlertAction(title: "Attack", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 1, defense: 0, speed: 0, heal: 0, exp: 0))
-                self.updateUI(control)
-            }))
-            alert.addAction(UIAlertAction(title: "Defense", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 1, speed: 0, heal: 0, exp: 0))
-                self.updateUI(control)
-            }))
-            alert.addAction(UIAlertAction(title: "Speed", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 1, heal: 0, exp: 0))
-                self.updateUI(control)
-            }))
-            alert.addAction(UIAlertAction(title: "Heal", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 0, heal: 1, exp: 0))
-                self.updateUI(control)
-            }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            if let popoverController = alert.popoverPresentationController {
-                popoverController.sourceView = sender
-                popoverController.sourceRect = sender.bounds
-            }
-            control.present(alert, animated: true, completion: nil)
-        }
     }
 }
 
-// TODO: Create a entry display to show all the tokis (get tokis from json). On entry into TokiDisplay, load the toki, the equipment and skills from json.
+// TODO: Create a entry display to show all the tokis (get tokis from json).
+// On entry into TokiDisplay, load the toki, the equipment and skills from json.
 // TODO: Remove the test constructor and load the data from json.
+
 

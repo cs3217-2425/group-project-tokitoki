@@ -5,7 +5,6 @@
 //  Created by Wh Kang on 31/3/25.
 //
 
-
 import Foundation
 
 protocol EquipmentLogger {
@@ -25,11 +24,11 @@ enum EquipmentEvent {
 class DefaultEquipmentLogger: EquipmentLogger {
     static let shared = DefaultEquipmentLogger()
     private init() {}
-    
+
     func log(_ message: String) {
         print("[EquipmentLogger] \(message)")
     }
-    
+
     func logEvent(_ event: EquipmentEvent) {
         switch event {
         case .equipped(let item):

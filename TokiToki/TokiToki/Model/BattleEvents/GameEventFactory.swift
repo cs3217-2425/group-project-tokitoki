@@ -12,7 +12,6 @@ class GameEventFactory {
         SkillUsedEvent(
             entityId: user.id,
             skillName: skill.name,
-            elementType: skill.elementType,
             targetIds: targets.map { $0.id }
         )
     }

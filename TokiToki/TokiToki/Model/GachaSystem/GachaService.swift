@@ -44,13 +44,13 @@ class GachaService {
                             let createdToki = itemRepository.createToki(from: toki)
                             gachaItem = GachaItemFactory.createTokiGachaItem(toki: createdToki)
                         }
-                    case "skill":
-                        if let skill = itemRepository.getSkillTemplate(name: itemName) {
-                            let createdSkill = itemRepository.createSkill(from: skill)
-                            let rarity = itemData.rarity != nil ?
-                                convertIntToItemRarity(itemData.rarity!) : .common
-                            gachaItem = GachaItemFactory.createSkillGachaItem(skill: createdSkill, rarity: rarity)
-                        }
+//                    case "skill":
+//                        if let skill = itemRepository.getSkillTemplate(name: itemName) {
+//                            let createdSkill = itemRepository.createSkill(from: skill)
+//                            let rarity = itemData.rarity != nil ?
+//                                convertIntToItemRarity(itemData.rarity!) : .common
+//                            gachaItem = GachaItemFactory.createSkillGachaItem(skill: createdSkill, rarity: rarity)
+//                        }
                     case "equipment":
                         if let equipment = itemRepository.getEquipmentTemplate(name: itemName) {
                             let createdEquipment = itemRepository.createEquipment(from: equipment)
@@ -127,9 +127,9 @@ class GachaService {
                 if let tokiGachaItem = itemWithOwnership as? TokiGachaItem {
                     player.ownedTokis.append(tokiGachaItem.getToki())
                 }
-                else if let skillGachaItem = itemWithOwnership as? SkillGachaItem {
-                    player.ownedSkills.append(skillGachaItem.getSkill())
-                }
+//                else if let skillGachaItem = itemWithOwnership as? SkillGachaItem {
+//                    player.ownedSkills.append(skillGachaItem.getSkill())
+//                }
                 else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
                     player.ownedEquipments.append(equipmentGachaItem.getEquipment())
                 }
@@ -226,4 +226,5 @@ class GachaService {
         }
     }
 }
+
 

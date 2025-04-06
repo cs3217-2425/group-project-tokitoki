@@ -17,9 +17,9 @@ class GachaViewController: UIViewController {
     private let playerManager = PlayerManager.shared
     private var eventService: EventService?
     private var gachaService: GachaService?
-    
+
     private var selectedGachaPack: GachaPack?
-    
+
     private let colorData: [UIColor] = [.red, .purple]
     
     override func viewDidLoad() {
@@ -52,7 +52,7 @@ class GachaViewController: UIViewController {
             "Selected Pack: \($0.name) (Cost: \($0.cost))"
         } ?? "No Pack Selected"
     }
-    
+
     @IBAction func gachaDrawButtonTapped(_ sender: UIButton) {
         guard let gachaService = gachaService else {
             showErrorMessage("Gacha Service not initialized")
@@ -101,7 +101,7 @@ extension GachaViewController: UICollectionViewDataSource, UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return gachaService?.getAllPacks().count ?? 0
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         
@@ -110,7 +110,7 @@ extension GachaViewController: UICollectionViewDataSource, UICollectionViewDeleg
         
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let packs = gachaService?.getAllPacks() else { return }
         
@@ -141,5 +141,3 @@ extension GachaViewController: UICollectionViewDataSource, UICollectionViewDeleg
         }, completion: nil)
     }
 }
-
-

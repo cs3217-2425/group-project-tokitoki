@@ -17,7 +17,7 @@ class TokiGachaItem: IGachaItem {
     var id: UUID { return toki.id }
     var name: String { return toki.name }
     var rarity: ItemRarity { return toki.rarity }
-    var elementType: ElementType { return toki.elementType }
+    var elementType: [ElementType] { return toki.elementType }
     var ownerId: UUID?
     var dateAcquired: Date?
     
@@ -37,29 +37,28 @@ class TokiGachaItem: IGachaItem {
 // MARK: - Skill Adapter
 
 /// Adapter to make Skill conform to IGachaItem
-class SkillGachaItem: IGachaItem {
-    private let skill: Skill
-    
-    // IGachaItem properties
-    var id: UUID { return skill.id }
-    var name: String { return skill.name }
-    var rarity: ItemRarity
-    var elementType: ElementType { return skill.elementType }
-    var ownerId: UUID?
-    var dateAcquired: Date?
-    
-    init(skill: Skill, rarity: ItemRarity = .common, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
-        self.skill = skill
-        self.rarity = rarity
-        self.ownerId = ownerId
-        self.dateAcquired = dateAcquired
-    }
-    
-    /// Get the wrapped Skill object
-    func getSkill() -> Skill {
-        return skill
-    }
-}
+//class SkillGachaItem: IGachaItem {
+//    private let skill: Skill
+//    
+//    // IGachaItem properties
+//    var name: String { return skill.name }
+//    var rarity: ItemRarity
+//    var elementType: [ElementType?] { return skill.elementType }
+//    var ownerId: UUID?
+//    var dateAcquired: Date?
+//    
+//    init(skill: Skill, rarity: ItemRarity = .common, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
+//        self.skill = skill
+//        self.rarity = rarity
+//        self.ownerId = ownerId
+//        self.dateAcquired = dateAcquired
+//    }
+//    
+//    /// Get the wrapped Skill object
+//    func getSkill() -> Skill {
+//        return skill
+//    }
+//}
 
 // MARK: - Equipment Adapter
 
@@ -71,14 +70,14 @@ class EquipmentGachaItem: IGachaItem {
     var id: UUID { return equipment.id }
     var name: String { return equipment.name }
     var rarity: ItemRarity
-    var elementType: ElementType
+    var elementType: [ElementType]
     var ownerId: UUID?
     var dateAcquired: Date?
     
     init(equipment: Equipment, elementType: ElementType = .neutral, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
         self.equipment = equipment
         self.rarity = .common
-        self.elementType = elementType
+        self.elementType = [elementType]
         self.ownerId = ownerId
         self.dateAcquired = dateAcquired
         self.rarity = convertEquipmentRarityToItemRarity(equipment.rarity)
@@ -122,10 +121,10 @@ class GachaItemFactory {
     }
 
     /// Create a GachaItem adapter for a Skill
-    static func createSkillGachaItem(skill: Skill, rarity: ItemRarity = .common,
-                                     ownerId: UUID? = nil, dateAcquired: Date? = nil) -> SkillGachaItem {
-        SkillGachaItem(skill: skill, rarity: rarity, ownerId: ownerId, dateAcquired: dateAcquired)
-    }
+//    static func createSkillGachaItem(skill: Skill, rarity: ItemRarity = .common,
+//                                     ownerId: UUID? = nil, dateAcquired: Date? = nil) -> SkillGachaItem {
+//        SkillGachaItem(skill: skill, rarity: rarity, ownerId: ownerId, dateAcquired: dateAcquired)
+//    }
 
     /// Create a GachaItem adapter for Equipment
     static func createEquipmentGachaItem(equipment: Equipment, elementType: ElementType = .neutral,
