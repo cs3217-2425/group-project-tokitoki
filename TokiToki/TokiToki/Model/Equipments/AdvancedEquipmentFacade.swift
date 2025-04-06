@@ -37,7 +37,6 @@ class AdvancedEquipmentFacade {
         serviceLocator.dataStore.save()
     }
 
-    
     func craftItems(items: [Equipment]) -> Equipment? {
         let command = CraftCommand(items: items,
                                    component: equipmentComponent,

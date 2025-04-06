@@ -261,7 +261,7 @@ class GameEngine {
             self?.startGameLoop()
         }
     }
-    
+
     private func updateEntityForNewTurn(_ entity: GameStateEntity) {
         updateSkillCooldowns(entity)
         statusEffectsSystem.update([entity], logMessage)

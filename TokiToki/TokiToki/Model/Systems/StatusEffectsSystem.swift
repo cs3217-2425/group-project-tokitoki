@@ -112,12 +112,12 @@ class StatusEffectsSystem: System {
             statusComponent.activeEffects.append(effect)
         }
     }
-    
+
     func removeEffect(_ effect: StatusEffect, _ entity: GameStateEntity) {
         guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
             return
         }
-        
+
         statusComponent.activeEffects.removeAll { $0.type == effect.type }
     }
 

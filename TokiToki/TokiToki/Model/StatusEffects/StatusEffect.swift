@@ -34,7 +34,7 @@ struct StatusEffect {
 
 extension StatusEffect: Equatable {
     static func == (lhs: StatusEffect, rhs: StatusEffect) -> Bool {
-        return lhs.type == rhs.type &&
+        lhs.type == rhs.type &&
         lhs.remainingDuration == rhs.remainingDuration && lhs.strength == rhs.strength
         && lhs.sourceId == rhs.sourceId && lhs.target === rhs.target
     }

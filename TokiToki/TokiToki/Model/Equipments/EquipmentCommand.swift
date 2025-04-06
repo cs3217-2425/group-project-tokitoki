@@ -77,12 +77,11 @@ class CraftCommand: EquipmentCommand {
     private let craftingManager: CraftingManager
     private let logger: EquipmentLogger
     private(set) var craftedItem: Equipment?
-    
+
     init(items: [Equipment],
          component: EquipmentComponent,
          craftingManager: CraftingManager,
-         logger: EquipmentLogger)
-    {
+         logger: EquipmentLogger) {
         self.items = items
         self.component = component
         self.craftingManager = craftingManager

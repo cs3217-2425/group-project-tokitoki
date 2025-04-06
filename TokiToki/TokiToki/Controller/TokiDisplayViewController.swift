@@ -92,7 +92,7 @@ extension TokiDisplayViewController {
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
                    -> UISwipeActionsConfiguration? {
 
-        return TokiDisplay.shared.tableView(tableView,
+        TokiDisplay.shared.tableView(tableView,
                                                 trailingSwipeActionsConfigurationForRowAt: indexPath,
                                                 self)
     }
@@ -103,7 +103,7 @@ extension TokiDisplayViewController {
 
     func showCraftingPopup(for item: Equipment, at originalIndex: Int) {
         let craftVC = CraftingPopupViewController()
-        
+
         // Pass along the original item and its index in the inventory
         craftVC.originalItem = item
         craftVC.originalItemIndex = originalIndex
@@ -116,7 +116,7 @@ extension TokiDisplayViewController {
             popover.sourceRect = CGRect(x: 100, y: 100, width: 1, height: 1)
             popover.permittedArrowDirections = []
         }
-        
+
         // Optionally, set a callback so we can reload Toki UI after crafting
         craftVC.onCraftComplete = { [weak self] in
             // Reload your table and other UI

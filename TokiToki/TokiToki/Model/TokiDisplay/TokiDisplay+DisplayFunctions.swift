@@ -61,7 +61,7 @@ extension TokiDisplay {
             equipmentFacade.equipItem(item: weapon)
         }
     }
-    
+
     func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath,
                        equipmentTableView: UITableView?, control: TokiDisplayViewController) {
         // 1. Use it on the real Toki so that Toki’s exp updates
@@ -87,7 +87,7 @@ extension TokiDisplay {
         equipmentTableView?.reloadData()
         self.updateUI(control)
     }
-    
+
     func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {
             let noSelectionAlert = UIAlertController(title: "No Selection",
@@ -97,10 +97,10 @@ extension TokiDisplay {
             control.present(noSelectionAlert, animated: true)
             return
         }
-        
+
         // Build an action sheet using all skills loaded from JSON.
         let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
-        
+
         // Iterate over allSkills array loaded from JSON.
         for skill in self.allSkills {
             alert.addAction(UIAlertAction(title: skill.name, style: .default, handler: { _ in
@@ -121,16 +121,16 @@ extension TokiDisplay {
                 }
             }))
         }
-        
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
+
         if let popoverController = alert.popoverPresentationController {
             popoverController.sourceView = sender
             popoverController.sourceRect = sender.bounds
         }
         control.present(alert, animated: true)
     }
-    
+
     func levelUp(_ sender: UIButton, _ control: TokiDisplayViewController) {
         if toki.baseStats.exp >= 100 {
             let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)
