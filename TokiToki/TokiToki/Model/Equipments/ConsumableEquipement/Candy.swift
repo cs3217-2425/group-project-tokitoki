@@ -14,6 +14,7 @@ class Candy: ConsumableEquipment {
     var equipmentType: EquipmentType = .consumable
     var rarity: Int
     let bonusExp: Int
+    var usageContext: ConsumableUsageContext = .outOfBattleOnly
 
     init(name: String, description: String, rarity: Int, bonusExp: Int) {
         self.name = name

@@ -220,8 +220,9 @@ class ItemRepository {
     // Create an Equipment object from template
     func createEquipment(from template: EquipmentData) -> Equipment {
         // Check equipment type
-//        if template.equipmentType.lowercased() == "consumable" {
-//            // For consumable equipment
+
+        if template.equipmentType.lowercased() == "consumable" {
+            // For consumable equipment
 //            guard let effectData = template.effectStrategy else {
 //                // Fallback for consumable with no effect strategy
 //                let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 30.0)
@@ -229,7 +230,14 @@ class ItemRepository {
 //                    name: template.name,
 //                    description: template.description,
 //                    rarity: template.rarity,
-//                    effectStrategy: potionStrategy
+//                    effectStrategy: potionStrategy,
+//                    usageContext: {
+//                        if let inBattleOnly = template.inBattleOnly {
+//                            return inBattleOnly ? .battleOnly : .outOfBattleOnly
+//                        } else {
+//                            return .anywhere
+//                        }
+//                    }()
 //                )
 //            }
 //            
@@ -239,9 +247,16 @@ class ItemRepository {
 //                name: template.name,
 //                description: template.description,
 //                rarity: template.rarity,
-//                effectStrategy: effectStrategy
+//                effectStrategy: effectStrategy,
+//                usageContext: {
+//                    if let inBattleOnly = template.inBattleOnly {
+//                        return inBattleOnly ? .battleOnly : .outOfBattleOnly
+//                    } else {
+//                        return .anywhere
+//                    }
+//                }()
 //            )
-//        } else {
+        } else {
             // For non-consumable equipment
             guard let buffData = template.buff, let slot = template.slot else {
                 // Fallback for non-consumable with no buff or slot
@@ -277,7 +292,7 @@ class ItemRepository {
                 buff: statBuff,
                 slot: equipmentSlot
             )
-       // }
+       }
     }
 
     // MARK: - Helper Methods for Creating Random Collections
@@ -299,7 +314,7 @@ class ItemRepository {
 //    }
 
     // Select random equipment for a newly drawn Toki
-    private func selectRandomEquipment(count: Int) -> [Equipment] {
+    func selectRandomEquipment(count: Int) -> [Equipment] {
         let templates = Array(equipmentTemplates.values)
         guard !templates.isEmpty else { return [] }
 
@@ -388,5 +403,4 @@ class ItemRepository {
         default: return .weapon
         }
     }
-
 }

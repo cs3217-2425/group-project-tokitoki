@@ -14,6 +14,7 @@ class Potion: ConsumableEquipment {
     var equipmentType: EquipmentType = .consumable
     var rarity: Int
     let effectCalculators: [EffectCalculator]
+    var usageContext: ConsumableUsageContext = .battleOnly
 
     init(name: String, description: String, rarity: Int, effectCalculators: [EffectCalculator]) {
         self.name = name

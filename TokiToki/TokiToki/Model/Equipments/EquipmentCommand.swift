@@ -76,9 +76,13 @@ class CraftCommand: EquipmentCommand {
     private let component: EquipmentComponent
     private let craftingManager: CraftingManager
     private let logger: EquipmentLogger
-    private var craftedItem: Equipment?
-
-    init(items: [Equipment], component: EquipmentComponent, craftingManager: CraftingManager, logger: EquipmentLogger) {
+    private(set) var craftedItem: Equipment?
+    
+    init(items: [Equipment],
+         component: EquipmentComponent,
+         craftingManager: CraftingManager,
+         logger: EquipmentLogger)
+    {
         self.items = items
         self.component = component
         self.craftingManager = craftingManager
@@ -87,6 +91,7 @@ class CraftCommand: EquipmentCommand {
 
     func execute() {
         if let newItem = craftingManager.craft(with: items) {
+            // Valid recipe – remove old items, add new item
             for item in items {
                 if let index = component.inventory.firstIndex(where: { $0.id == item.id }) {
                     component.inventory.remove(at: index)
@@ -96,6 +101,7 @@ class CraftCommand: EquipmentCommand {
             component.inventory.append(newItem)
             logger.logEvent(.crafted(item: newItem))
         } else {
+            // Invalid recipe
             logger.logEvent(.craftingFailed(reason: "Invalid recipe for items: \(items.map { $0.name }.joined(separator: ", "))"))
         }
     }

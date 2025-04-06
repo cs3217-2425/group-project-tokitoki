@@ -8,6 +8,7 @@
 import Foundation
 
 protocol ConsumableEquipment: Equipment {
+    var usageContext: ConsumableUsageContext { get }
     func applyEffect(to toki: Toki?,
                      _ entity: GameStateEntity?, completion: (() -> Void)?) -> [EffectResult]?
 }
