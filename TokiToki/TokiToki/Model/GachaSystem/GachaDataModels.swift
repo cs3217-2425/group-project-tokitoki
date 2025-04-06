@@ -114,6 +114,7 @@ struct EquipmentData: Codable {
     let buff: BuffData?          // Optional because consumables might not have buffs
     let slot: String?            // Optional because consumables don't have slots
     let effectStrategy: EffectStrategyData?  // Optional because nonConsumables don't have effects
+    let inBattleOnly: Bool? // Optional -> Null = Anywhere, False = Outside, True = InBattle
     
     struct BuffData: Codable {
         let value: Int

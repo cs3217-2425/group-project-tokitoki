@@ -16,7 +16,7 @@ class MainMenuViewController: UIViewController {
 
     @IBAction func tokiCustomizerButtonTapped(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "TokiDisplay", bundle: nil)
-        let viewController = storyboard.instantiateViewController(withIdentifier: "TokiDisplayVC")
+        let viewController = storyboard.instantiateViewController(withIdentifier: "TokiSelectionVC")
         viewController.modalPresentationStyle = .fullScreen
         // navigationController?.pushViewController(viewController, animated: true)
         present(viewController, animated: true, completion: nil)

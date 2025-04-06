@@ -12,8 +12,10 @@ extension TokiDisplay {
         if gesture.state == .began {
             guard let cell = gesture.view as? UITableViewCell,
                   let indexPath = control.equipmentTableView?.indexPath(for: cell) else { return }
+
             let equipment = toki.equipments[indexPath.row]
-            var message = "No buff details available."
+            var message = equipment.description
+
             if let buffComponent = (equipment as? NonConsumableEquipment)?.components.first as? CombinedBuffComponent {
                 message = "Attack Buff: \(buffComponent.buff.attack)\n" +
                 "Defense Buff: \(buffComponent.buff.defense)\nSpeed Buff: \(buffComponent.buff.speed)"

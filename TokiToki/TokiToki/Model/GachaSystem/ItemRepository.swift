@@ -229,7 +229,14 @@ class ItemRepository {
                     name: template.name,
                     description: template.description,
                     rarity: template.rarity,
-                    effectStrategy: potionStrategy
+                    effectStrategy: potionStrategy,
+                    usageContext: {
+                        if let inBattleOnly = template.inBattleOnly {
+                            return inBattleOnly ? .battleOnly : .outOfBattleOnly
+                        } else {
+                            return .anywhere
+                        }
+                    }()
                 )
             }
             
@@ -239,7 +246,14 @@ class ItemRepository {
                 name: template.name,
                 description: template.description,
                 rarity: template.rarity,
-                effectStrategy: effectStrategy
+                effectStrategy: effectStrategy,
+                usageContext: {
+                    if let inBattleOnly = template.inBattleOnly {
+                        return inBattleOnly ? .battleOnly : .outOfBattleOnly
+                    } else {
+                        return .anywhere
+                    }
+                }()
             )
         } else {
             // For non-consumable equipment
