@@ -57,7 +57,8 @@ extension TokiSelectionViewController: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowTokiDisplay" {
             if let destVC = segue.destination as? TokiDisplayViewController {
-
+                // Set the modal presentation style to full screen
+                destVC.modalPresentationStyle = .fullScreen
             }
         }
     }
