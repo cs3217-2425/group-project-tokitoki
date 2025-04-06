@@ -75,7 +75,7 @@ class GameEngine {
             }
 
             if statusEffectsSystem.checkIfImmobilised(currentGameStateEntity) {
-                updateEntityForNewTurnAndAllEntities(currentGameStateEntity)
+                updateEntityForNewTurn(currentGameStateEntity)
                 continue
             }
 
@@ -260,6 +260,13 @@ class GameEngine {
             self?.checkIfEntitiesAreDead()
             self?.startGameLoop()
         }
+    }
+    
+    private func updateEntityForNewTurn(_ entity: GameStateEntity) {
+        updateSkillCooldowns(entity)
+        statusEffectsSystem.update([entity], logMessage)
+        statsModifiersSystem.update([entity])
+        turnSystem.endTurn(for: entity)
     }
 
     fileprivate func updateSkillCooldowns(_ entity: GameStateEntity) {

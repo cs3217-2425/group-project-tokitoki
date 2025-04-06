@@ -112,6 +112,14 @@ class StatusEffectsSystem: System {
             statusComponent.activeEffects.append(effect)
         }
     }
+    
+    func removeEffect(_ effect: StatusEffect, _ entity: GameStateEntity) {
+        guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
+            return
+        }
+        
+        statusComponent.activeEffects.removeAll { $0.type == effect.type }
+    }
 
     private func checkIfStatusEffectIsDmgOverTime(_ effect: StatusEffect) -> Bool {
         allDmgOverTimeStatusEffects.contains(effect.type)
@@ -126,6 +134,7 @@ class StatusEffectsSystem: System {
 
     func checkIfImmobilised(_ entity: GameStateEntity) -> Bool {
         checkHasEffect(ofType: .stun, entity) ||
-            checkHasEffect(ofType: .frozen, entity)
+        checkHasEffect(ofType: .frozen, entity) ||
+        checkHasEffect(ofType: .paralysis, entity)
     }
 }
