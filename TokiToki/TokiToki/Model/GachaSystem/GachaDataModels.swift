@@ -44,20 +44,39 @@ struct TokisData: Codable {
     let tokis: [TokiData]
 }
 
-// Skill Data for loading from JSON
+// Updated Skill Data for loading from JSON
 struct SkillData: Codable {
     let id: String
     let name: String
     let description: String
-    let rarity: Int
-    let skillType: String
-    let targetType: String
-    let elementType: String
-    let basePower: Int
     let cooldown: Int
+    let effectDefinitions: [EffectDefinitionData]
+}
+
+struct EffectDefinitionData: Codable {
+    let targetType: String
+    let calculators: [CalculatorData]
+}
+
+struct CalculatorData: Codable {
+    let calculatorType: String
+    
+    // Attack calculator fields
+    let elementType: String?
+    let basePower: Int?
+    
+    // Status effect calculator fields
     let statusEffectChance: Double?
     let statusEffect: String?
     let statusEffectDuration: Int?
+    let statusEffectStrength: Double?
+    
+    // Stats modifier calculator fields
+    let statsModifierDuration: Int?
+    let attackModifier: Double?
+    let defenseModifier: Double?
+    let speedModifier: Double?
+    let healModifier: Double?
 }
 
 struct SkillsData: Codable {

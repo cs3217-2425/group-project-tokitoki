@@ -6,22 +6,41 @@
 //
 
 import Foundation
+import CoreData
 
 class PlayerManager {
     static let shared = PlayerManager()
+    static let DEFAULT_DAILY_PULL_LIMIT = 3
 
-    // private let playerRepository: PlayerRepository
+    private let playerRepository: PlayerRepository
     private var currentPlayer: Player?
 
     private init() {
+        // Use CoreData context from DataManager
         let context = DataManager.shared.viewContext
+        self.playerRepository = CoreDataPlayerRepository(context: context)
+        loadPlayerData()
+    }
+    
+    // Load player data when initializing the manager
+    private func loadPlayerData() {
+        if let loadedPlayer = playerRepository.getPlayer() {
+            currentPlayer = loadedPlayer
+        } else {
+            print("No saved player found in Core Data")
+        }
     }
 
-    // MARK: Player Access
+    // MARK: - Player Access
 
     func getPlayer() -> Player? {
         if let player = currentPlayer {
             return player
+        }
+        
+        if let loadedPlayer = playerRepository.getPlayer() {
+            currentPlayer = loadedPlayer
+            return loadedPlayer
         }
 
         return nil
@@ -31,32 +50,19 @@ class PlayerManager {
         if let player = getPlayer() {
             return player
         }
-
-        let player = Player(
-                    id: UUID(),
-                    name: name,
-                    level: 1,
-                    experience: 0,
-                    currency: 1_000,
-                    statistics: Player.PlayerStatistics(totalBattles: 0, battlesWon: 0),
-                    lastLoginDate: Date(),
-                    ownedTokis: [],
-                    ownedSkills: [],
-                    ownedEquipments: EquipmentComponent(
-                        inventory: [healthPotion, healthPotion, buffPotion, critPotion]),
-                    pullsSinceRare: 0
-                )
+        
+        let player = playerRepository.createDefaultPlayer(name: name)
         currentPlayer = player
         return player
     }
 
     private func savePlayer() {
-//        if let player = currentPlayer {
-//            playerRepository.savePlayer(player)
-//        }
+        if let player = currentPlayer {
+            playerRepository.savePlayer(player)
+        }
     }
 
-    // MARK: Player Operations
+    // MARK: - Player Operations
 
     func addExperience(_ amount: Int) {
         var player = getOrCreatePlayer()
@@ -98,7 +104,41 @@ class PlayerManager {
         currentPlayer = player
         savePlayer()
     }
-
+    
+    // MARK: - Daily Pull Limit Management
+    
+    /// Check if player has reached their daily pull limit
+    func hasReachedDailyPullLimit() -> Bool {
+        var player = getOrCreatePlayer()
+        
+        // First check if we need to reset based on the date
+        player.checkAndResetDailyPulls()
+        
+        let result = player.hasReachedDailyPullLimit(limit: PlayerManager.DEFAULT_DAILY_PULL_LIMIT)
+        
+        // Save any date reset that might have occurred
+        currentPlayer = player
+        savePlayer()
+        
+        return result
+    }
+    
+    /// Get remaining pulls for today
+    func getRemainingDailyPulls() -> Int {
+        var player = getOrCreatePlayer()
+        
+        // Check if we need to reset based on the date
+        player.checkAndResetDailyPulls()
+        
+        let remainingPulls = max(0, PlayerManager.DEFAULT_DAILY_PULL_LIMIT - player.dailyPullsCount)
+        
+        // Save any date reset that might have occurred
+        currentPlayer = player
+        savePlayer()
+        
+        return remainingPulls
+    }
+    
     // MARK: - Item Management
 
     /// Adds a single item to the player's collection
@@ -118,22 +158,96 @@ class PlayerManager {
         currentPlayer = player
         savePlayer()
     }
-
-    /// Retrieve all Tokis owned by the player
-    func getOwnedTokis() -> [Toki] {
-        let player = getOrCreatePlayer()
-        return player.ownedTokis
+    
+    /// Adds a skill directly to the player's collection
+    func addSkill(_ skill: Skill) {
+        var player = getOrCreatePlayer()
+        player.ownedSkills.append(skill)
+        currentPlayer = player
+        savePlayer()
     }
-
-    /// Retrieve all Skills owned by the player
-    func getOwnedSkills() -> [Skill] {
-        let player = getOrCreatePlayer()
-        return player.ownedSkills
+    
+    /// Adds a toki directly to the player's collection
+    func addToki(_ toki: Toki) {
+        var player = getOrCreatePlayer()
+        player.ownedTokis.append(toki)
+        currentPlayer = player
+        savePlayer()
     }
-
-    /// Retrieve all Equipment owned by the player
-    func getOwnedEquipment() -> [Equipment] {
-        let player = getOrCreatePlayer()
-        return player.ownedEquipments.inventory
+    
+    /// Adds equipment directly to the player's collection
+    func addEquipment(_ equipment: Equipment) {
+        var player = getOrCreatePlayer()
+        player.ownedEquipments.inventory.append(equipment)
+        currentPlayer = player
+        savePlayer()
+    }
+    
+    // MARK: - Gacha Operations
+    
+    /// Draw from a gacha pack, handling all player updates internally
+    func drawFromGachaPack(packName: String, count: Int, gachaService: GachaService) -> [any IGachaItem] {
+        // Get current player state
+        var player = getOrCreatePlayer()
+        
+        // First check if we need to reset based on the date
+        player.checkAndResetDailyPulls()
+        
+        // Check daily pull limit
+        let remainingPulls = PlayerManager.DEFAULT_DAILY_PULL_LIMIT - player.dailyPullsCount
+        if remainingPulls <= 0 {
+            print("Player has reached the daily pull limit")
+            return []
+        }
+        
+        // Adjust count if it exceeds remaining pulls
+        let actualCount = min(count, remainingPulls)
+        
+        // Find the pack
+        guard let pack = gachaService.findPack(byName: packName) else {
+            print("No pack found with name \(packName)")
+            return []
+        }
+        
+        // Check if player has enough currency
+        let totalCost = pack.cost * actualCount
+        guard player.canSpendCurrency(totalCost) else {
+            print("Player doesn't have enough currency to draw")
+            return []
+        }
+        
+        // Draw from the pack
+        let drawnItems = gachaService.drawFromPack(packName: packName, count: actualCount, for: &player)
+        
+        // Increment the daily pull count
+        player.incrementDailyPullsCount(by: actualCount)
+        
+        currentPlayer = player
+        
+        // Save player to Core Data
+        savePlayer()
+        
+        return drawnItems
+    }
+    
+    // MARK: - Data Management
+    
+    /// Reset player data (for testing or user request)
+    func resetPlayerData() -> Bool {
+        if playerRepository.deletePlayerData() {
+            currentPlayer = nil
+            return true
+        }
+        return false
+    }
+    
+    /// Save player data manually (normally handled automatically)
+    func savePlayerData() {
+        savePlayer()
+    }
+    
+    /// Force refresh player data from Core Data
+    func refreshPlayerData() {
+        currentPlayer = playerRepository.getPlayer()
     }
 }

@@ -51,7 +51,7 @@ class ElementEvent: GachaEvent {
 
         // Apply boost to all items of the target element type
         let tokiTemplates = itemRepository.getAllTokiTemplates()
-        let skillTemplates = itemRepository.getAllSkillTemplates()
+//        let skillTemplates = itemRepository.getAllSkillTemplates()
         let equipmentTemplates = itemRepository.getAllEquipmentTemplates()
 
         // Tokis
@@ -62,11 +62,11 @@ class ElementEvent: GachaEvent {
             }
 
         // Skills
-        let skillModifiers = skillTemplates
-            .filter { convertStringToElement($0.elementType) == elementType }
-            .reduce(into: [String: Double]()) { result, skill in
-                result[skill.name] = rateMultiplier
-            }
+//        let skillModifiers = skillTemplates
+//            .filter { convertStringToElement($0.elementType) == elementType }
+//            .reduce(into: [String: Double]()) { result, skill in
+//                result[skill.name] = rateMultiplier
+//            }
 
         // Equipment
         let equipmentModifiers = equipmentTemplates
@@ -74,11 +74,11 @@ class ElementEvent: GachaEvent {
             .reduce(into: [String: Double]()) { result, equipment in
                 result[equipment.name] = rateMultiplier
             }
-
-        modifiers.merge(tokiModifiers) { _, new in new }
-        modifiers.merge(skillModifiers) { _, new in new }
-        modifiers.merge(equipmentModifiers) { _, new in new }
-
+        
+        modifiers.merge(tokiModifiers) { (_, new) in new }
+//        modifiers.merge(skillModifiers) { (_, new) in new }
+        modifiers.merge(equipmentModifiers) { (_, new) in new }
+        
         return modifiers
     }
 

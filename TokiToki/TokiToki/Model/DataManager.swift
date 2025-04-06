@@ -33,8 +33,14 @@ class DataManager {
     private init() {}
 
     // MARK: - Core Data Saving Support
+    
+    /// Save the main view context
     func saveContext() {
-        let context = persistentContainer.viewContext
+        saveContext(viewContext)
+    }
+    
+    /// Save a specific managed object context
+    func saveContext(_ context: NSManagedObjectContext) {
         if context.hasChanges {
             do {
                 try context.save()
@@ -48,7 +54,11 @@ class DataManager {
 
     // MARK: - Generic Fetch Methods
     func fetch<T: NSManagedObject>(_ entityType: T.Type, predicate: NSPredicate? = nil,
-                                   sortDescriptors: [NSSortDescriptor]? = nil) -> [T] {
+                                   sortDescriptors: [NSSortDescriptor]? = nil,
+                                   context: NSManagedObjectContext? = nil) -> [T] {
+        // Use provided context or default to view context
+        let ctx = context ?? viewContext
+        
         let entityName = String(describing: entityType)
         let fetchRequest = NSFetchRequest<T>(entityName: entityName)
 
@@ -56,14 +66,18 @@ class DataManager {
         fetchRequest.sortDescriptors = sortDescriptors
 
         do {
-            return try viewContext.fetch(fetchRequest)
+            return try ctx.fetch(fetchRequest)
         } catch {
             print("Error fetching \(entityName): \(error)")
             return []
         }
     }
 
-    func fetchOne<T: NSManagedObject>(_ entityType: T.Type, predicate: NSPredicate) -> T? {
+    func fetchOne<T: NSManagedObject>(_ entityType: T.Type, predicate: NSPredicate,
+                                      context: NSManagedObjectContext? = nil) -> T? {
+        // Use provided context or default to view context
+        let ctx = context ?? viewContext
+        
         let entityName = String(describing: entityType)
         let fetchRequest = NSFetchRequest<T>(entityName: entityName)
 
@@ -71,7 +85,7 @@ class DataManager {
         fetchRequest.fetchLimit = 1
 
         do {
-            let results = try viewContext.fetch(fetchRequest)
+            let results = try ctx.fetch(fetchRequest)
             return results.first
         } catch {
             print("Error fetching single \(entityName): \(error)")
@@ -80,28 +94,35 @@ class DataManager {
     }
 
     // MARK: - Create and Delete Methods
-    func createEntity<T: NSManagedObject>(_ entityType: T.Type) -> T? {
+    func createEntity<T: NSManagedObject>(_ entityType: T.Type,
+                                          context: NSManagedObjectContext? = nil) -> T? {
+        // Use provided context or default to view context
+        let ctx = context ?? viewContext
+        
         let entityName = String(describing: entityType)
 
-        guard let entityDescription = NSEntityDescription.entity(forEntityName: entityName, in: viewContext) else {
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: entityName, in: ctx) else {
             print("Error: Could not find entity description for \(entityName)")
             return nil
         }
 
-        let entity = NSManagedObject(entity: entityDescription, insertInto: viewContext)
+        let entity = NSManagedObject(entity: entityDescription, insertInto: ctx)
 
         if let typedEntity = entity as? T {
             return typedEntity
         } else {
             print("Error: Could not cast entity to \(entityName)")
-            viewContext.delete(entity)
+            ctx.delete(entity)
             return nil
         }
     }
 
-    func delete(_ object: NSManagedObject) {
-        viewContext.delete(object)
-        saveContext()
+    func delete(_ object: NSManagedObject, context: NSManagedObjectContext? = nil) {
+        // Use provided context or default to view context
+        let ctx = context ?? viewContext
+        
+        ctx.delete(object)
+        saveContext(ctx)
     }
 
     // MARK: - Transaction Support
@@ -117,5 +138,14 @@ class DataManager {
                 }
             }
         }
+    }
+    
+    // MARK: - Context Creation
+    
+    /// Create a new background context for operations that should not block the UI
+    func createBackgroundContext() -> NSManagedObjectContext {
+        let context = persistentContainer.newBackgroundContext()
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
     }
 }
