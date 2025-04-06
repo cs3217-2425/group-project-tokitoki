@@ -8,60 +8,6 @@
 import UIKit
 
 extension TokiDisplay {
-    /// Loads sample equipment into the system.
-    func loadSampleEquipment() {
-        let repository = EquipmentRepository.shared
-
-        let healCalculator = HealCalculator(healPower: 100)
-        let healthPotion = Potion(name: "Health Potion",
-                                  description: "Restores health temporarily.",
-                                  rarity: 1,
-                                  effectCalculators: [healCalculator])
-
-        let upgradeCandy = Candy(name: "Upgrade Candy",
-                                 description: "Grants bonus EXP permanently.",
-                                 rarity: 1,
-                                 bonusExp: 50)
-
-        let swordBuff = EquipmentBuff(value: 15, description: "Increases attack power", affectedStat: "attack")
-        let sword = repository.createNonConsumableEquipment(name: "Sword",
-                                                            description: "A sharp blade.",
-                                                            rarity: 2,
-                                                            buff: swordBuff,
-                                                            slot: .weapon)
-
-        let shieldBuff = EquipmentBuff(value: 5, description: "Increases defense", affectedStat: "defense")
-        let shield = repository.createNonConsumableEquipment(name: "Shield",
-                                                             description: "A sturdy shield.",
-                                                             rarity: 2,
-                                                             buff: shieldBuff,
-                                                             slot: .armor)
-
-        let component = equipmentFacade.equipmentComponent
-
-        let equipmentItems: [Equipment] = [healthPotion, upgradeCandy, sword, shield, healthPotion]
-        component.inventory.append(contentsOf: equipmentItems)
-        equipmentFacade.equipmentComponent = component
-    }
-
-    /// Crafts equipment using the first two items from the inventory.
-    func craftEquipment() {
-        let component = equipmentFacade.equipmentComponent
-        guard component.inventory.count >= 2 else { return }
-        let itemsToCraft = Array(component.inventory.prefix(2))
-        equipmentFacade.craftItems(items: itemsToCraft)
-    }
-
-    /// Equips the first available weapon in the inventory.
-    func equipWeapon() {
-        let component = equipmentFacade.equipmentComponent
-        if let weapon = component.inventory.first(where: {
-            $0.equipmentType == .nonConsumable && ($0 as? NonConsumableEquipment)?.slot == .weapon
-        }) as? NonConsumableEquipment {
-            equipmentFacade.equipItem(item: weapon)
-        }
-    }
-
     func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath,
                        equipmentTableView: UITableView?, control: TokiDisplayViewController) {
         // 1. Use it on the real Toki so that Toki’s exp updates
@@ -101,7 +47,6 @@ extension TokiDisplay {
         // Build an action sheet using all skills loaded from JSON.
         let alert = UIAlertController(title: "Change Skill", message: "Select a new skill", preferredStyle: .actionSheet)
 
-        // Iterate over allSkills array loaded from JSON.
         for skill in self.allSkills {
             alert.addAction(UIAlertAction(title: skill.name, style: .default, handler: { _ in
                 // Check if this skill is already part of the Toki's skills.
@@ -112,6 +57,7 @@ extension TokiDisplay {
                     existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
                     control.present(existsAlert, animated: true)
                 } else {
+                    // Update the Toki model.
                     if indexPath.row < self.toki.skills.count {
                         self.toki.skills[indexPath.row] = skill
                     } else {

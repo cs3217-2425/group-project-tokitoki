@@ -61,10 +61,12 @@ extension TokiDisplay {
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath,
                    _ control: TokiDisplayViewController) -> UISwipeActionsConfiguration? {
 
-        let inventory = self.equipmentFacade.equipmentComponent.inventory
+        let inventory = self.toki.equipments
 
         // Make sure the row is valid for the current inventory
-        guard indexPath.row < inventory.count else { return nil }
+        guard indexPath.row < inventory.count else {
+            return nil
+        }
 
         let item = inventory[indexPath.row]
         var actions = [UIContextualAction]()

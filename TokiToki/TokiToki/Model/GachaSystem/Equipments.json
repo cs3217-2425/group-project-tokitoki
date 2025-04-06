@@ -54,7 +54,23 @@
         "buffValue": 15,
         "duration": 30,
         "statType": "attack"
-      }
+      },
+      "usageContext": "battleOnly"
+    },
+    {
+      "id": "attack-potion-2",
+      "name": "Attack Potion",
+      "description": "Temporarily boosts a Toki's attack.",
+      "equipmentType": "consumable",
+      "rarity": 1,
+      "elementType": "neutral",
+      "effectStrategy": {
+        "type": "potion",
+        "buffValue": 15,
+        "duration": 30,
+        "statType": "attack"
+      },
+      "usageContext": "battleOnly"
     },
     {
       "id": "speed-elixir",
@@ -80,7 +96,8 @@
       "effectStrategy": {
         "type": "upgradeCandy",
         "bonusExp": 100
-      }
+      },
+      "usageContext": "outofbattleonly"
     }
   ]
 }

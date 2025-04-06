@@ -45,7 +45,7 @@
         "baseDefense": 25,
         "baseSpeed": 20,
         "baseHeal": 80,
-        "baseExp": 100,
+        "baseExp": 500,
         "elementType": "air"
       }
     ]
