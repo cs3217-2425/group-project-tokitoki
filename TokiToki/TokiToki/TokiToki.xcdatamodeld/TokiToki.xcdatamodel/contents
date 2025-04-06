@@ -44,6 +44,8 @@
     <entity name="PlayerCD" representedClassName="PlayerCD" syncable="YES" codeGenerationType="class">
         <attribute name="battlesWon" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="currency" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="dailyPullsCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="dailyPullsLastReset" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="experience" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="lastLoginDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

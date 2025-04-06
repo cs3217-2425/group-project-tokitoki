@@ -10,6 +10,7 @@ import CoreData
 
 class PlayerManager {
     static let shared = PlayerManager()
+    static let DEFAULT_DAILY_PULL_LIMIT = 3
 
     private let playerRepository: PlayerRepository
     private var currentPlayer: Player?
@@ -108,6 +109,40 @@ class PlayerManager {
         savePlayer()
     }
     
+    // MARK: - Daily Pull Limit Management
+    
+    /// Check if player has reached their daily pull limit
+    func hasReachedDailyPullLimit() -> Bool {
+        var player = getOrCreatePlayer()
+        
+        // First check if we need to reset based on the date
+        player.checkAndResetDailyPulls()
+        
+        let result = player.hasReachedDailyPullLimit(limit: PlayerManager.DEFAULT_DAILY_PULL_LIMIT)
+        
+        // Save any date reset that might have occurred
+        currentPlayer = player
+        savePlayer()
+        
+        return result
+    }
+    
+    /// Get remaining pulls for today
+    func getRemainingDailyPulls() -> Int {
+        var player = getOrCreatePlayer()
+        
+        // Check if we need to reset based on the date
+        player.checkAndResetDailyPulls()
+        
+        let remainingPulls = max(0, PlayerManager.DEFAULT_DAILY_PULL_LIMIT - player.dailyPullsCount)
+        
+        // Save any date reset that might have occurred
+        currentPlayer = player
+        savePlayer()
+        
+        return remainingPulls
+    }
+    
     // MARK: - Item Management
 
     /// Adds a single item to the player's collection
@@ -159,6 +194,19 @@ class PlayerManager {
         // Get current player state
         var player = getOrCreatePlayer()
         
+        // First check if we need to reset based on the date
+        player.checkAndResetDailyPulls()
+        
+        // Check daily pull limit
+        let remainingPulls = PlayerManager.DEFAULT_DAILY_PULL_LIMIT - player.dailyPullsCount
+        if remainingPulls <= 0 {
+            print("Player has reached the daily pull limit")
+            return []
+        }
+        
+        // Adjust count if it exceeds remaining pulls
+        let actualCount = min(count, remainingPulls)
+        
         // Find the pack
         guard let pack = gachaService.findPack(byName: packName) else {
             print("No pack found with name \(packName)")
@@ -166,14 +214,17 @@ class PlayerManager {
         }
         
         // Check if player has enough currency
-        let totalCost = pack.cost * count
+        let totalCost = pack.cost * actualCount
         guard player.canSpendCurrency(totalCost) else {
             print("Player doesn't have enough currency to draw")
             return []
         }
         
         // Draw from the pack
-        let drawnItems = gachaService.drawFromPack(packName: packName, count: count, for: &player)
+        let drawnItems = gachaService.drawFromPack(packName: packName, count: actualCount, for: &player)
+        
+        // Increment the daily pull count
+        player.incrementDailyPullsCount(by: actualCount)
         
         currentPlayer = player
         

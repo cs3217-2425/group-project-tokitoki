@@ -17,6 +17,7 @@ class GachaViewController: UIViewController {
     @IBOutlet private var gachaPackLabel: UILabel!
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var playerCurrencyLabel: UILabel!
+    @IBOutlet private var dailyPullsCountLabel: UILabel!  // New label for daily pulls remaining
     private var gachaPackCollectionViewController: CollectionViewController!
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -62,11 +63,13 @@ class GachaViewController: UIViewController {
         selectedGachaPack = gachaService?.getAllPacks().first
         updatePackSelectorLabel()
         updatePlayerCurrencyLabel()
+        updateDailyPullsLabel()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updatePlayerCurrencyLabel()
+        updateDailyPullsLabel()
     }
     
     private func loadGachaPacks() {
@@ -97,6 +100,20 @@ class GachaViewController: UIViewController {
             playerCurrencyLabel.textColor = .white
         }
     }
+    
+    private func updateDailyPullsLabel() {
+        let remainingPulls = playerManager.getRemainingDailyPulls()
+        dailyPullsCountLabel.text = "Daily Pulls Available: \(remainingPulls)"
+        
+        // Change color based on remaining pulls
+        if remainingPulls == 0 {
+            dailyPullsCountLabel.textColor = .systemRed
+        } else if remainingPulls <= 1 {
+            dailyPullsCountLabel.textColor = .white
+        } else {
+            dailyPullsCountLabel.textColor = .white
+        }
+    }
 
     @IBAction func gachaDrawButtonPressed(_ sender: UIButton) {
         guard let gachaService = gachaService else {
@@ -106,6 +123,12 @@ class GachaViewController: UIViewController {
         
         guard let selectedPack = selectedGachaPack else {
             showErrorMessage("No pack selected")
+            return
+        }
+        
+        // Check if player has reached daily limit
+        if playerManager.hasReachedDailyPullLimit() {
+            showErrorMessage("Daily pull limit reached. Try again tomorrow!")
             return
         }
         
@@ -126,8 +149,17 @@ class GachaViewController: UIViewController {
             gachaService: gachaService
         )
         
+        // If no items were drawn, it could be due to the daily limit
+        if drawnItems.isEmpty {
+            showErrorMessage("No items drawn. Daily limit may have been reached.")
+            return
+        }
+        
         // Update currency display immediately after purchase
         updatePlayerCurrencyLabel()
+        
+        // Update daily pulls display
+        updateDailyPullsLabel()
         
         // Display drawn items
         displayDrawnItems(drawnItems)

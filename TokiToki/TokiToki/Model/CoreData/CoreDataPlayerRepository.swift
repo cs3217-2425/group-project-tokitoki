@@ -76,7 +76,9 @@ class CoreDataPlayerRepository: PlayerRepository {
             ownedTokis: [],
             ownedSkills: [],
             ownedEquipments: [],
-            pullsSinceRare: 0
+            pullsSinceRare: 0,
+            dailyPullsCount: 0,
+            dailyPullsLastReset: Date()
         )
         savePlayer(player)
         return player
@@ -129,7 +131,9 @@ class CoreDataPlayerRepository: PlayerRepository {
             ownedTokis: tokis,
             ownedSkills: skills,
             ownedEquipments: equipment,
-            pullsSinceRare: Int(entity.pullsSinceRare)
+            pullsSinceRare: Int(entity.pullsSinceRare),
+            dailyPullsCount: Int(entity.dailyPullsCount),
+            dailyPullsLastReset: entity.dailyPullsLastReset
         )
     }
     
@@ -146,6 +150,10 @@ class CoreDataPlayerRepository: PlayerRepository {
         entity.battlesWon = Int32(player.statistics.battlesWon)
         entity.lastLoginDate = player.lastLoginDate
         entity.pullsSinceRare = Int32(player.pullsSinceRare)
+        
+        // Update daily pull limit properties
+        entity.dailyPullsCount = Int32(player.dailyPullsCount)
+        entity.dailyPullsLastReset = player.dailyPullsLastReset
         
         // Clear existing relationships to avoid duplicates
         if let existingTokis = entity.tokis as? Set<TokiCD> {
@@ -237,4 +245,3 @@ class CoreDataPlayerRepository: PlayerRepository {
         return false
     }
 }
-

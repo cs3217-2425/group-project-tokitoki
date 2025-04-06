@@ -19,6 +19,8 @@ struct Player {
     var ownedSkills: [Skill]
     var ownedEquipments: [Equipment]
     var pullsSinceRare: Int
+    var dailyPullsCount: Int
+    var dailyPullsLastReset: Date?
 
     struct PlayerStatistics {
         var totalBattles: Int
@@ -79,5 +81,37 @@ struct Player {
         default:
             print("Unknown item type: \(type(of: item))")
         }
+    }
+    
+    // MARK: - Gacha Pull Management
+        
+    /// Check if the player has reached their daily pull limit
+    func hasReachedDailyPullLimit(limit: Int) -> Bool {
+        return dailyPullsCount >= limit
+    }
+    
+    /// Reset daily pulls count if a new day has started
+    mutating func checkAndResetDailyPulls() {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // If this is the first pull ever or we have a reset date
+        if let lastReset = dailyPullsLastReset {
+            // Check if the current date is a different day than the last reset
+            if !calendar.isDate(today, inSameDayAs: lastReset) {
+                // It's a new day, reset the counter
+                dailyPullsCount = 0
+                dailyPullsLastReset = today
+            }
+        } else {
+            // First time pulling, initialize the reset date
+            dailyPullsLastReset = today
+        }
+    }
+    
+    /// Increment daily pulls count after a successful pull
+    mutating func incrementDailyPullsCount(by count: Int = 1) {
+        checkAndResetDailyPulls() // Check if we need to reset first
+        dailyPullsCount += count
     }
 }

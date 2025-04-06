@@ -83,6 +83,12 @@
                                     <constraint firstItem="Rcz-9f-mAC" firstAttribute="leading" secondItem="xCn-cg-soS" secondAttribute="trailing" constant="10" id="Sp9-Ll-g6k"/>
                                 </constraints>
                             </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Daily Pulls Available: 3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KGe-4Y-YvU" userLabel="Daily Pulls Label">
+                                <rect key="frame" x="333" y="1027.5" width="168.5" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="systemBackgroundColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Cl7-eF-psp"/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -96,14 +102,17 @@
                             <constraint firstItem="iLP-Vw-mzh" firstAttribute="top" secondItem="Cl7-eF-psp" secondAttribute="top" constant="20" id="P3l-bk-QsZ"/>
                             <constraint firstItem="j7D-eN-ECM" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="Qzr-Vd-nZj"/>
                             <constraint firstItem="Cl7-eF-psp" firstAttribute="bottom" secondItem="pNs-il-NeD" secondAttribute="bottom" constant="400" id="W3K-Ki-gPQ"/>
+                            <constraint firstItem="KGe-4Y-YvU" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="jfc-ga-mW9"/>
                             <constraint firstItem="pNs-il-NeD" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="oBQ-cP-02R"/>
                             <constraint firstItem="pNs-il-NeD" firstAttribute="leading" secondItem="Cl7-eF-psp" secondAttribute="leading" id="pyg-Na-pDE"/>
+                            <constraint firstItem="Dyc-zK-pxa" firstAttribute="top" secondItem="KGe-4Y-YvU" secondAttribute="bottom" constant="8" symbolic="YES" id="t0v-b3-tEa"/>
                             <constraint firstItem="Dyc-zK-pxa" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="vFM-ax-NIA"/>
                             <constraint firstItem="Xe8-TX-3ER" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="xdK-t1-Hiy"/>
                             <constraint firstItem="j7D-eN-ECM" firstAttribute="centerY" secondItem="9Lc-7d-iiZ" secondAttribute="centerY" id="yh4-q0-Pn0"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="dailyPullsCountLabel" destination="KGe-4Y-YvU" id="xVf-v3-Hv6"/>
                         <outlet property="gachaDrawButton" destination="Dyc-zK-pxa" id="SWC-Az-HBJ"/>
                         <outlet property="gachaPackLabel" destination="Xe8-TX-3ER" id="E3Q-Ht-0J4"/>
                         <outlet property="packSelectorLabel" destination="ArJ-pr-ZXc" id="LlY-c7-GUW"/>
