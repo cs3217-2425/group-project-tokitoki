@@ -58,7 +58,7 @@ class CoreDataPlayerRepository: PlayerRepository {
     func createDefaultPlayer(name: String) -> Player {
         // Create a default equipment component with initial items
         // Note: You'll need to ensure these items are defined somewhere accessible
-        let equipmentComponent = EquipmentComponent(inventory: [])
+        let equipmentComponent = EquipmentComponent(inventory: [healthPotion, healthPotion, buffPotion, critPotion])
         
         let player = Player(
             id: UUID(),

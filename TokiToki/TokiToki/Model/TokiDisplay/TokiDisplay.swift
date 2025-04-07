@@ -114,6 +114,7 @@ class TokiDisplay {
     // Optionally keep an array of *all* Tokis loaded from JSON so you can pick which one to display.
     var allTokis: [Toki] = []
     var allSkills: [Skill] = []
+    var allEquipment: [Equipment] = []
 
     // The advanced facade and other system references remain.
     internal var equipmentFacade = AdvancedEquipmentFacade()
@@ -242,5 +243,48 @@ class TokiDisplay {
         control.hpProgressView?.progressTintColor = .systemRed
         control.equipmentTableView?.reloadData()
         control.skillsTableView?.reloadData()
+    }
+    
+    func changeEquipmentTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
+        guard let indexPath = control.equipmentTableView?.indexPathForSelectedRow else {
+            let noSelectionAlert = UIAlertController(title: "No Selection",
+                                                     message: "Please select an equipment cell to change.",
+                                                     preferredStyle: .alert)
+            noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
+            control.present(noSelectionAlert, animated: true)
+            return
+        }
+        
+        // Build an action sheet using all equipment loaded from JSON.
+        let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment", preferredStyle: .actionSheet)
+        
+        // Iterate over allEquipment array loaded from JSON.
+        for equipment in self.allEquipment {
+            alert.addAction(UIAlertAction(title: equipment.name, style: .default, handler: { _ in
+                // Check if this equipment is already part of the Toki's equipments.
+                if self.toki.equipments.contains(where: { $0.id == equipment.id }) {
+                    let existsAlert = UIAlertController(title: "Already Exists",
+                                                        message: "Equipment \(equipment.name) already exists.",
+                                                        preferredStyle: .alert)
+                    existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                    control.present(existsAlert, animated: true)
+                } else {
+                    if indexPath.row < self.toki.equipments.count {
+                        self.toki.equipments[indexPath.row] = equipment
+                    } else {
+                        self.toki.equipments.append(equipment)
+                    }
+                    self.updateUI(control)
+                }
+            }))
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+            popoverController.sourceRect = sender.bounds
+        }
+        control.present(alert, animated: true)
     }
 }
