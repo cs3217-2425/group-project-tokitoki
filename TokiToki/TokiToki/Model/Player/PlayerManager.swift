@@ -12,11 +12,13 @@ class PlayerManager {
     static let shared = PlayerManager()
     static let DEFAULT_DAILY_PULL_LIMIT = 3
 
+    private let persistanceManager: JsonPersistenceManager
     private let playerRepository: PlayerRepository
     private var currentPlayer: Player?
 
     private init() {
-        playerRepository = PlayerRepository()
+        persistanceManager = JsonPersistenceManager()
+        playerRepository = PlayerRepository(persistenceManager: persistanceManager)
         loadPlayerData()
     }
     

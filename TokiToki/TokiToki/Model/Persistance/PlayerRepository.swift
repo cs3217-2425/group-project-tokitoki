@@ -10,7 +10,11 @@
 import Foundation
 
 class PlayerRepository {
-    private let persistenceManager = JsonPersistenceManager.shared
+    private let persistenceManager: JsonPersistenceManager
+    
+    init(persistenceManager: JsonPersistenceManager) {
+        self.persistenceManager = persistenceManager
+    }
     
     /// Get player from JSON storage
     func getPlayer() -> Player? {

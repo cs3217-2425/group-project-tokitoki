@@ -10,7 +10,6 @@
 import Foundation
 
 class JsonPersistenceManager {
-    static let shared = JsonPersistenceManager()
     
     // File names
     private let playersFileName = "players"
