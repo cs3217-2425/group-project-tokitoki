@@ -1,0 +1,122 @@
+[
+  {
+    "id": "e8b5a51d-3a2f-4bf6-8e4c-123456789abc",
+    "name": "FireFox",
+    "level": 7,
+    "rarity": 0,
+    "elementType": ["fire"],
+    "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "baseStats": {
+      "hp": 95,
+      "attack": 18,
+      "defense": 12,
+      "speed": 15,
+      "heal": 80,
+      "exp": 320,
+      "critHitChance": 15,
+      "critHitDamage": 150
+    },
+    "skillNames": [
+      "Fireball",
+      "Flame Slash"
+    ],
+    "equipmentIds": [
+      "a7c5e913-d4f8-4e0a-92c7-7d8b9e5a7e3d"
+    ]
+  },
+  {
+    "id": "f92d6b4e-7a31-4c19-bd6a-876543210def",
+    "name": "WaterSerpent",
+    "level": 5,
+    "rarity": 0,
+    "elementType": ["water"],
+    "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "baseStats": {
+      "hp": 110,
+      "attack": 20,
+      "defense": 15,
+      "speed": 14,
+      "heal": 85,
+      "exp": 180,
+      "critHitChance": 10,
+      "critHitDamage": 150
+    },
+    "skillNames": [
+      "Water Blast",
+      "Ice Spear"
+    ],
+    "equipmentIds": []
+  },
+  {
+    "id": "c4e7b9a2-1d3f-5e6d-9f8a-135792468bcd",
+    "name": "EarthDragon",
+    "level": 3,
+    "rarity": 2,
+    "elementType": ["earth"],
+    "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "baseStats": {
+      "hp": 210,
+      "attack": 45,
+      "defense": 35,
+      "speed": 18,
+      "heal": 90,
+      "exp": 75,
+      "critHitChance": 5,
+      "critHitDamage": 200
+    },
+    "skillNames": [
+      "Earthquake",
+      "Earth Shield"
+    ],
+    "equipmentIds": [
+      "b8d6c4a2-3e1f-4a7b-8c5d-7e8f9a0b1c2d"
+    ]
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+    "name": "WaterSerpent",
+    "level": 3,
+    "rarity": 0,
+    "elementType": ["water"],
+    "ownerId": "a81bc23d-45ef-67ab-89cd-ef0123456789",
+    "baseStats": {
+      "hp": 100,
+      "attack": 15,
+      "defense": 10,
+      "speed": 12,
+      "heal": 80,
+      "exp": 120,
+      "critHitChance": 10,
+      "critHitDamage": 150
+    },
+    "skillNames": [
+      "Water Blast",
+      "Healing Wind"
+    ],
+    "equipmentIds": [
+      "e5d4c3b2-a1f9-4b7c-95d6-4a3b2c1d0e9f"
+    ]
+  },
+  {
+    "id": "a0b1c2d3-e4f5-6a7b-8c9d-0e1f2a3b4c5d",
+    "name": "FireFox",
+    "level": 4,
+    "rarity": 0,
+    "elementType": ["fire"],
+    "ownerId": "a81bc23d-45ef-67ab-89cd-ef0123456789",
+    "baseStats": {
+      "hp": 85,
+      "attack": 12,
+      "defense": 7,
+      "speed": 13,
+      "heal": 80,
+      "exp": 160,
+      "critHitChance": 15,
+      "critHitDamage": 150
+    },
+    "skillNames": [
+      "Fireball"
+    ],
+    "equipmentIds": []
+  }
+]

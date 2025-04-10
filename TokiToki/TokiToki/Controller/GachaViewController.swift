@@ -17,13 +17,12 @@ class GachaViewController: UIViewController {
     @IBOutlet private var gachaPackLabel: UILabel!
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var playerCurrencyLabel: UILabel!
-    @IBOutlet private var dailyPullsCountLabel: UILabel!  // New label for daily pulls remaining
+    @IBOutlet private var dailyPullsCountLabel: UILabel!
     private var gachaPackCollectionViewController: CollectionViewController!
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let collectionVC = segue.destination as? CollectionViewController {
             self.gachaPackCollectionViewController = collectionVC
-            // Set delegate for communication
             collectionVC.delegate = self
             
             // If packs already loaded, update the collection view
@@ -44,16 +43,13 @@ class GachaViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Initialize services
-        let context = DataManager.shared.viewContext
         let itemRepository = ItemRepository()
-        let eventService = EventService(itemRepository: itemRepository, context: context)
+        let eventService = EventService(itemRepository: itemRepository)
 
         // Initialize Gacha Service
         gachaService = GachaService(
             itemRepository: itemRepository,
-            eventService: eventService,
-            context: context
+            eventService: eventService
         )
         
         // Load packs

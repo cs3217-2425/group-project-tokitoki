@@ -11,14 +11,11 @@ import CoreData
 class GachaService {
     private let itemRepository: ItemRepository
     private let eventService: EventService
-    private let context: NSManagedObjectContext
     private var gachaPacks: [String: GachaPack] = [:]
 
-    init(itemRepository: ItemRepository, eventService: EventService, context: NSManagedObjectContext) {
+    init(itemRepository: ItemRepository, eventService: EventService) {
         self.itemRepository = itemRepository
         self.eventService = eventService
-        self.context = context
-
         loadGachaPacks()
     }
 

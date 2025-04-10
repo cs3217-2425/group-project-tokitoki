@@ -16,18 +16,15 @@ class PlayerManager {
     private var currentPlayer: Player?
 
     private init() {
-        // Use CoreData context from DataManager
-        let context = DataManager.shared.viewContext
-        self.playerRepository = CoreDataPlayerRepository(context: context)
+        playerRepository = PlayerRepository()
         loadPlayerData()
     }
     
-    // Load player data when initializing the manager
     private func loadPlayerData() {
         if let loadedPlayer = playerRepository.getPlayer() {
             currentPlayer = loadedPlayer
         } else {
-            print("No saved player found in Core Data")
+            print("No saved player found in JSON storage")
         }
     }
 
@@ -116,7 +113,6 @@ class PlayerManager {
         
         let result = player.hasReachedDailyPullLimit(limit: PlayerManager.DEFAULT_DAILY_PULL_LIMIT)
         
-        // Save any date reset that might have occurred
         currentPlayer = player
         savePlayer()
         
@@ -132,7 +128,6 @@ class PlayerManager {
         
         let remainingPulls = max(0, PlayerManager.DEFAULT_DAILY_PULL_LIMIT - player.dailyPullsCount)
         
-        // Save any date reset that might have occurred
         currentPlayer = player
         savePlayer()
         
@@ -177,7 +172,7 @@ class PlayerManager {
     
     /// Adds equipment directly to the player's collection
     func addEquipment(_ equipment: Equipment) {
-        var player = getOrCreatePlayer()
+        let player = getOrCreatePlayer()
         player.ownedEquipments.inventory.append(equipment)
         currentPlayer = player
         savePlayer()
