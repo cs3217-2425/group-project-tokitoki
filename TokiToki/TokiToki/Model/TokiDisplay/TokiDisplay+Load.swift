@@ -98,15 +98,14 @@ extension TokiDisplay {
                 
                 if type == "consumable" {
                     recipe = CraftingRecipe(requiredEquipmentIdentifiers: recipeJson.requiredEquipmentIdentifiers) { (equipments: [Equipment]) in
-                        if let potion1 = equipments[0] as? Potion,
-                           let potion2 = equipments[1] as? Potion {
-                            let calculator1 = potion1.effectCalculators
-                            let calculator2 = potion2.effectCalculators
-
-                            return Potion(name: "Super Health Potion",
-                                                       description: "A crafted potion with enhanced effects.",
-                                                       rarity: max(potion1.rarity, potion2.rarity) + 1,
-                                                       effectCalculators: calculator1 + calculator2)
+                        if let eq1 = equipments[0] as? ConsumableEquipment,
+                           let eq2 = equipments[1] as? ConsumableEquipment,
+                           let strat1 = eq1.effectStrategy as? PotionEffectStrategy,
+                           let strat2 = eq2.effectStrategy as? PotionEffectStrategy {
+                            
+                            let newBuff = strat1.buffValue + strat2.buffValue
+                            let newDuration = (strat1.duration + strat2.duration) / 2
+                            let newStrategy = PotionEffectStrategy(buffValue: newBuff, duration: newDuration)
                             
                             // Convert usageContext; default to .anywhere if missing.
                             let usage: ConsumableUsageContext = {
@@ -118,11 +117,11 @@ extension TokiDisplay {
                                 }
                             }()
                             
-//                            return repo.createConsumableEquipment(name: recipeJson.resultName,
-//                                                                  description: recipeJson.description,
-//                                                                  rarity: max(eq1.rarity, eq2.rarity) + recipeJson.rarityIncrement,
-//                                                                  effectStrategy: newStrategy,
-//                                                                  usageContext: usage)
+                            return repo.createConsumableEquipment(name: recipeJson.resultName,
+                                                                  description: recipeJson.description,
+                                                                  rarity: max(eq1.rarity, eq2.rarity) + recipeJson.rarityIncrement,
+                                                                  effectStrategy: newStrategy,
+                                                                  usageContext: usage)
                         }
                         return nil
                     }
@@ -181,55 +180,55 @@ extension TokiDisplay {
                      level: 1)
      }
     
-    private func convertToSkill(_ json: SkillJSON) -> Skill {
-         // Use the new ElementType conversion.
-         let elemType = ElementType.fromString(json.elementType) ?? .neutral
-
-         let factory = SkillFactory()
-
-         switch json.skillType.lowercased() {
-         case "attack":
-             return factory.createAttackSkill(
-                 name: json.name,
-                 description: json.description,
-                 elementType: elemType,
-                 basePower: json.basePower,
-                 cooldown: json.cooldown,
-                 targetType: convertTargetType(json.targetType),
-                 statusEffect: convertStatusEffect(json.statusEffect),
-                 statusEffectChance: Double(json.statusEffectChance),
-                 statusEffectDuration: json.statusEffectDuration
-             )
-         case "heal":
-             return factory.createHealSkill(
-                 name: json.name,
-                 description: json.description,
-                 basePower: json.basePower,
-                 cooldown: json.cooldown,
-                 targetType: convertTargetType(json.targetType)
-             )
-         case "defend":
-             return factory.createDefenseSkill(
-                name: json.name,
-                description: json.description,
-                basePower: json.basePower,
-                cooldown: json.cooldown,
-                targetType: convertTargetType(json.targetType)
-             )
-         default:
-             return factory.createAttackSkill(
-                 name: json.name,
-                 description: json.description,
-                 elementType: elemType,
-                 basePower: json.basePower,
-                 cooldown: json.cooldown,
-                 targetType: .singleEnemy,
-                 statusEffect: .none,
-                 statusEffectChance: 0.0,
-                 statusEffectDuration: 0
-             )
-         }
-     }
+//    private func convertToSkill(_ json: SkillJSON) -> Skill {
+//         // Use the new ElementType conversion.
+//         let elemType = ElementType.fromString(json.elementType) ?? .neutral
+//
+//         let factory = SkillFactory()
+//
+//         switch json.skillType.lowercased() {
+//         case "attack":
+//             return factory.createAttackSkill(
+//                 name: json.name,
+//                 description: json.description,
+//                 elementType: elemType,
+//                 basePower: json.basePower,
+//                 cooldown: json.cooldown,
+//                 targetType: convertTargetType(json.targetType),
+//                 statusEffect: convertStatusEffect(json.statusEffect),
+//                 statusEffectChance: Double(json.statusEffectChance),
+//                 statusEffectDuration: json.statusEffectDuration
+//             )
+//         case "heal":
+//             return factory.createHealSkill(
+//                 name: json.name,
+//                 description: json.description,
+//                 basePower: json.basePower,
+//                 cooldown: json.cooldown,
+//                 targetType: convertTargetType(json.targetType)
+//             )
+//         case "defend":
+//             return factory.createDefenseSkill(
+//                name: json.name,
+//                description: json.description,
+//                basePower: json.basePower,
+//                cooldown: json.cooldown,
+//                targetType: convertTargetType(json.targetType)
+//             )
+//         default:
+//             return factory.createAttackSkill(
+//                 name: json.name,
+//                 description: json.description,
+//                 elementType: elemType,
+//                 basePower: json.basePower,
+//                 cooldown: json.cooldown,
+//                 targetType: .singleEnemy,
+//                 statusEffect: .none,
+//                 statusEffectChance: 0.0,
+//                 statusEffectDuration: 0
+//             )
+//         }
+//     }
      
     private func convertToEquipment(_ json: EquipmentJSON) -> Equipment? {
          let repo = EquipmentRepository.shared
@@ -258,7 +257,6 @@ extension TokiDisplay {
                  effectStrategy: strategy,
                  usageContext: convertUsageContext(usageContext ?? "anywhere") ?? .anywhere
              )
-             return nil
          } else if json.equipmentType == "nonConsumable", let buffInfo = json.buff, let slotName = json.slot {
              let buff = EquipmentBuff(value: buffInfo.value,
                                       description: buffInfo.description,
@@ -296,5 +294,3 @@ extension TokiDisplay {
         }
     }
 }
-
-

@@ -7,14 +7,18 @@
 
 import Foundation
 
-protocol ConsumableEquipment: Equipment {
-    var usageContext: ConsumableUsageContext { get }
-    func applyEffect(to toki: Toki?,
-                     _ entity: GameStateEntity?, completion: (() -> Void)?) -> [EffectResult]?
-}
-
 enum ConsumableUsageContext {
     case battleOnly
     case outOfBattleOnly
     case anywhere
+}
+
+struct ConsumableEquipment: Equipment {
+    let id = UUID()
+    let name: String
+    let description: String
+    let equipmentType: EquipmentType = .consumable
+    let rarity: Int
+    let effectStrategy: ConsumableEffectStrategy
+    let usageContext: ConsumableUsageContext
 }

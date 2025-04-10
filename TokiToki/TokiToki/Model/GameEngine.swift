@@ -34,7 +34,7 @@ class GameEngine {
     private let resetSystem = ResetSystem()
     private let statsSystem = StatsSystem()
     private let statsModifiersSystem = StatsModifiersSystem()
-    private let equipmentSystem = EquipmentSystem.shared
+//    private let equipmentSystem = EquipmentSystem.shared
 
     private var savedPlayersPlusOpponents: [GameStateEntity] = []
     private var savedPlayerTeam: [GameStateEntity] = []
@@ -48,7 +48,7 @@ class GameEngine {
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
         self.statusEffectsSystem.setGameEngine(self)
-        self.equipmentSystem.saveEquipments()
+//        self.equipmentSystem.saveEquipments()
     }
 
     func startBattle() {
@@ -159,17 +159,17 @@ class GameEngine {
     }
 
     func useConsumable(_ consumableName: String) {
-        let consumable = equipmentSystem.getConsumable(consumableName)
-        guard let currentGameStateEntity = currentGameStateEntity,
-              let consumable = consumable as? ConsumableEquipment else {
-            return
-        }
-        let action = UseConsumableAction(user: currentGameStateEntity, consumable: consumable)
-        queueAction(action)
-        let results = executeNextAction()
-        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
-            self?.updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
-        }
+//        let consumable = equipmentSystem.getConsumable(consumableName)
+//        guard let currentGameStateEntity = currentGameStateEntity,
+//              let consumable = consumable as? ConsumableEquipment else {
+//            return
+//        }
+//        let action = UseConsumableAction(user: currentGameStateEntity, consumable: consumable)
+//        queueAction(action)
+//        let results = executeNextAction()
+//        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
+//            self?.updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
+//        }
     }
 
     func takeNoAction() {

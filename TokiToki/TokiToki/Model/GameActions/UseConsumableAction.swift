@@ -17,8 +17,8 @@ class UseConsumableAction: Action {
     }
 
     func execute() -> [EffectResult] {
-        let results = EquipmentSystem.shared.useConsumable(consumable, on: nil, user)
+//        let results = EquipmentSystem.shared.useConsumable(consumable, on: nil, user)
 
-        return results ?? []
+        return /*results ?? */[]
     }
 }
