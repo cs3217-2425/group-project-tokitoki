@@ -181,55 +181,55 @@ extension TokiDisplay {
                      level: 1)
      }
     
-//    private func convertToSkill(_ json: SkillJSON) -> Skill {
-//         // Use the new ElementType conversion.
-//         let elemType = ElementType.fromString(json.elementType) ?? .neutral
-//
-//         let factory = SkillFactory()
-//
-//         switch json.skillType.lowercased() {
-//         case "attack":
-//             return factory.createAttackSkill(
-//                 name: json.name,
-//                 description: json.description,
-//                 elementType: elemType,
-//                 basePower: json.basePower,
-//                 cooldown: json.cooldown,
-//                 targetType: convertTargetType(json.targetType),
-//                 statusEffect: convertStatusEffect(json.statusEffect),
-//                 statusEffectChance: Double(json.statusEffectChance),
-//                 statusEffectDuration: json.statusEffectDuration
-//             )
-//         case "heal":
-//             return factory.createHealSkill(
-//                 name: json.name,
-//                 description: json.description,
-//                 basePower: json.basePower,
-//                 cooldown: json.cooldown,
-//                 targetType: convertTargetType(json.targetType)
-//             )
-//         case "defend":
-//             return factory.createDefenseSkill(
-//                name: json.name,
-//                description: json.description,
-//                basePower: json.basePower,
-//                cooldown: json.cooldown,
-//                targetType: convertTargetType(json.targetType)
-//             )
-//         default:
-//             return factory.createAttackSkill(
-//                 name: json.name,
-//                 description: json.description,
-//                 elementType: elemType,
-//                 basePower: json.basePower,
-//                 cooldown: json.cooldown,
-//                 targetType: .singleEnemy,
-//                 statusEffect: .none,
-//                 statusEffectChance: 0.0,
-//                 statusEffectDuration: 0
-//             )
-//         }
-//     }
+    private func convertToSkill(_ json: SkillJSON) -> Skill {
+         // Use the new ElementType conversion.
+         let elemType = ElementType.fromString(json.elementType) ?? .neutral
+
+         let factory = SkillFactory()
+
+         switch json.skillType.lowercased() {
+         case "attack":
+             return factory.createAttackSkill(
+                 name: json.name,
+                 description: json.description,
+                 elementType: elemType,
+                 basePower: json.basePower,
+                 cooldown: json.cooldown,
+                 targetType: convertTargetType(json.targetType),
+                 statusEffect: convertStatusEffect(json.statusEffect),
+                 statusEffectChance: Double(json.statusEffectChance),
+                 statusEffectDuration: json.statusEffectDuration
+             )
+         case "heal":
+             return factory.createHealSkill(
+                 name: json.name,
+                 description: json.description,
+                 basePower: json.basePower,
+                 cooldown: json.cooldown,
+                 targetType: convertTargetType(json.targetType)
+             )
+         case "defend":
+             return factory.createDefenseSkill(
+                name: json.name,
+                description: json.description,
+                basePower: json.basePower,
+                cooldown: json.cooldown,
+                targetType: convertTargetType(json.targetType)
+             )
+         default:
+             return factory.createAttackSkill(
+                 name: json.name,
+                 description: json.description,
+                 elementType: elemType,
+                 basePower: json.basePower,
+                 cooldown: json.cooldown,
+                 targetType: .singleEnemy,
+                 statusEffect: .none,
+                 statusEffectChance: 0.0,
+                 statusEffectDuration: 0
+             )
+         }
+     }
      
     private func convertToEquipment(_ json: EquipmentJSON) -> Equipment? {
          let repo = EquipmentRepository.shared
@@ -238,26 +238,26 @@ extension TokiDisplay {
          let usageContext = json.usageContext
          
          if json.equipmentType == "consumable", let strategyInfo = json.effectStrategy {
-//             let strategy: ConsumableEffectStrategy
-//             switch strategyInfo.type.lowercased() {
-//             case "potion":
-//                 let buff = strategyInfo.buffValue ?? 0
-//                 let durSec = TimeInterval(strategyInfo.duration ?? 0)
-//                 strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
-//             case "upgradecandy":
-//                 let bonus = strategyInfo.bonusExp ?? 0
-//                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
-//             default:
-//                 strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
-//             }
-//             
-//             return repo.createConsumableEquipment(
-//                 name: json.name,
-//                 description: desc,
-//                 rarity: rarity,
-//                 effectStrategy: strategy,
-//                 usageContext: convertUsageContext(usageContext ?? "anywhere") ?? .anywhere
-//             )
+             let strategy: ConsumableEffectStrategy
+             switch strategyInfo.type.lowercased() {
+             case "potion":
+                 let buff = strategyInfo.buffValue ?? 0
+                 let durSec = TimeInterval(strategyInfo.duration ?? 0)
+                 strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
+             case "upgradecandy":
+                 let bonus = strategyInfo.bonusExp ?? 0
+                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
+             default:
+                 strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
+             }
+             
+             return repo.createConsumableEquipment(
+                 name: json.name,
+                 description: desc,
+                 rarity: rarity,
+                 effectStrategy: strategy,
+                 usageContext: convertUsageContext(usageContext ?? "anywhere") ?? .anywhere
+             )
              return nil
          } else if json.equipmentType == "nonConsumable", let buffInfo = json.buff, let slotName = json.slot {
              let buff = EquipmentBuff(value: buffInfo.value,
