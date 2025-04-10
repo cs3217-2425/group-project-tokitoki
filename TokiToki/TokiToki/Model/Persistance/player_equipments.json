@@ -1,0 +1,103 @@
+[
+  {
+    "type": "nonConsumable",
+    "equipment": {
+      "id": "a7c5e913-d4f8-4e0a-92c7-7d8b9e5a7e3d",
+      "name": "Wooden Sword",
+      "description": "A simple wooden sword for training",
+      "rarity": 0,
+      "equipmentType": "nonConsumable",
+      "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "isEquipped": true,
+      "slot": "weapon",
+      "buffValue": 5,
+      "buffDescription": "Basic attack boost",
+      "affectedStat": "attack"
+    }
+  },
+  {
+    "type": "nonConsumable",
+    "equipment": {
+      "id": "c9e7d5b3-a1f9-4879-b5c6-4a3b2d1e0f9a",
+      "name": "Speed Amulet",
+      "description": "A charm that enhances movement speed",
+      "rarity": 1,
+      "equipmentType": "nonConsumable",
+      "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "isEquipped": false,
+      "slot": "accessory",
+      "buffValue": 5,
+      "buffDescription": "Basic speed boost",
+      "affectedStat": "speed"
+    }
+  },
+  {
+    "type": "potion",
+    "equipment": {
+      "id": "d0f1e2c3-b4a5-4a6b-8c7d-0e1f2a3b4c5d",
+      "name": "Health Potion",
+      "description": "Restores 50 HP",
+      "rarity": 0,
+      "equipmentType": "consumable",
+      "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "consumableType": "potion",
+      "usageContext": "battleOnly"
+    }
+  },
+  {
+    "type": "potion",
+    "equipment": {
+      "id": "e5d4c3b2-a1f9-4b7c-95d6-4a3b2c1d0e9f",
+      "name": "Health Potion",
+      "description": "Restores 50 HP",
+      "rarity": 0,
+      "equipmentType": "consumable",
+      "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "consumableType": "potion",
+      "usageContext": "battleOnly"
+    }
+  },
+  {
+    "type": "candy",
+    "equipment": {
+      "id": "f7e8d9c0-b1a2-4d3e-8f5c-6a7b8c9d0e1f",
+      "name": "Experience Candy",
+      "description": "Grants 100 experience to a Toki",
+      "rarity": 1,
+      "equipmentType": "consumable",
+      "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "consumableType": "candy",
+      "bonusExp": 100,
+      "usageContext": "outOfBattleOnly"
+    }
+  },
+  {
+    "type": "nonConsumable",
+    "equipment": {
+      "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "Wooden Sword",
+      "description": "A simple wooden sword for training",
+      "rarity": 0,
+      "equipmentType": "nonConsumable",
+      "ownerId": "a81bc23d-45ef-67ab-89cd-ef0123456789",
+      "isEquipped": true,
+      "slot": "weapon",
+      "buffValue": 5,
+      "buffDescription": "Basic attack boost",
+      "affectedStat": "attack"
+    }
+  },
+  {
+    "type": "potion",
+    "equipment": {
+      "id": "b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e",
+      "name": "Health Potion",
+      "description": "Restores 50 HP",
+      "rarity": 0,
+      "equipmentType": "consumable",
+      "ownerId": "a81bc23d-45ef-67ab-89cd-ef0123456789",
+      "consumableType": "potion",
+      "usageContext": "battleOnly"
+    }
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "name": "Ash",
+    "level": 5,
+    "experience": 4250,
+    "currency": 3750,
+    "pullsSinceRare": 2,
+    "dailyPullsCount": 1,
+    "lastLoginDate": 1712625841.12453,
+    "dailyPullsLastReset": 1712604235.48932,
+    "statistics": {
+      "totalBattles": 18,
+      "battlesWon": 15
+    }
+  },
+  {
+    "id": "a81bc23d-45ef-67ab-89cd-ef0123456789",
+    "name": "Misty",
+    "level": 3,
+    "experience": 2100,
+    "currency": 2200,
+    "pullsSinceRare": 5,
+    "dailyPullsCount": 0,
+    "lastLoginDate": 1712523641.35721,
+    "dailyPullsLastReset": 1712523641.35721,
+    "statistics": {
+      "totalBattles": 10,
+      "battlesWon": 7
+    }
+  }
+]

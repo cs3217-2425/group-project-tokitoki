@@ -11,12 +11,9 @@ import CoreData
 class EventService {
     private var events: [String: any IGachaEvent] = [:]  // Using name as the key
     private let itemRepository: ItemRepository
-    private let context: NSManagedObjectContext
 
-    init(itemRepository: ItemRepository, context: NSManagedObjectContext) {
+    init(itemRepository: ItemRepository) {
         self.itemRepository = itemRepository
-        self.context = context
-
         loadEvents()
     }
 
