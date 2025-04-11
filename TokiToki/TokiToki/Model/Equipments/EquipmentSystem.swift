@@ -12,11 +12,16 @@ extension Notification.Name {
     static let EquipmentConsumed = Notification.Name("EquipmentConsumed")
 }
 
-class EquipmentSystem {
+class EquipmentSystem: System {
     var priority: Int = 0
+    var savedEquipments: [Equipment] = []
 
-    func update(deltaTime: TimeInterval) {
+    func update(_ entities: [GameStateEntity]) {
         // Future: Process temporary buff expirations, cooldowns, etc.
+    }
+    
+    func saveEquipments() {
+        self.savedEquipments = PlayerManager.shared.getEquipmentComponent().inventory
     }
 
     func useConsumable(_ equipment: ConsumableEquipment, on toki: Toki?, orOn entity: GameStateEntity?,
@@ -46,5 +51,9 @@ class EquipmentSystem {
         if let item = component.equipped.removeValue(forKey: slot) {
             component.inventory.append(item)
         }
+    }
+    
+    func reset(_ entities: [GameStateEntity]) {
+        PlayerManager.shared.getEquipmentComponent().inventory = savedEquipments
     }
 }

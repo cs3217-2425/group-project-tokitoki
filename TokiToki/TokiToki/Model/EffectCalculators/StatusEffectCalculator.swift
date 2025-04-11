@@ -8,7 +8,7 @@
 class StatusEffectCalculator: EffectCalculator {
     let type: EffectCalculatorType = .statusEffect
     private let statsSystem = StatsSystem()
-    private let statusEffectsSystem = StatusEffectsSystem.shared
+    private let statusEffectsSystem = StatusEffectsSystem()
     let statusEffectChance: Double
     let statusEffect: StatusEffectType?
     let statusEffectDuration: Int
@@ -50,7 +50,7 @@ class StatusEffectCalculator: EffectCalculator {
 
         let effect = StatusEffect(type: effectType, remainingDuration: statusEffectDuration,
                                   strength: statusEffectStrength,
-                                  sourceId: source.id, target: target)
+                                  sourceId: source.id, targetId: target.id)
 
         guard let statusComponent = target.getComponent(ofType: StatusEffectsComponent.self) else {
             return EffectResult(entity: target, value: 0,
