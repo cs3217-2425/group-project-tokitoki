@@ -27,6 +27,7 @@ extension TokiDisplay {
         // Persist the updated player state.
         playerRepository.savePlayer(player)
     }
+    
     /// Load Tokis, Skills, and Equipment from JSON persistence.
     func loadAllData() {
         // Use JsonPersistenceManager and PlayerRepository to load the current player.

@@ -41,7 +41,6 @@ extension JsonPersistenceManager {
             // Create a new, independent Toki (with empty skills)
             let toki = tokiCodable.toDomainModel()
             
-            // Build skills only from THIS tokiCodable's skillNames.
             let skillsForThisToki: [Skill] = tokiCodable.skillNames.compactMap { skillName in
                 guard let skillData = skillTemplates[skillName] else {
                     print("Skill template not found for name: \(skillName)")
