@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StatusEffect {
+struct StatusEffect: Codable {
     let type: StatusEffectType
     var remainingDuration: Int
     let strength: Double
