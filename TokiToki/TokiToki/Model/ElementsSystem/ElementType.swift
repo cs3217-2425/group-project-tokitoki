@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ElementType: String, CaseIterable {
+enum ElementType: String, CaseIterable, Codable {
     case fire
     case water
     case earth

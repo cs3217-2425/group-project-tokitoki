@@ -5,21 +5,20 @@
 //  Created by proglab on 15/3/25.
 //
 
-protocol EffectCalculator {
+protocol EffectCalculator: Codable {
     var type: EffectCalculatorType { get }
     func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult?
-    func encodeAdditionalProperties(to container: KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws
+    func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws
 }
 
-// Protocol extension for default encoding
 extension EffectCalculator {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EffectCalculatorCodingKeys.self)
         try container.encode(type, forKey: .type)
-        try encodeAdditionalProperties(to: container)
+        try encodeAdditionalProperties(to: &container)
     }
-    
-    func encodeAdditionalProperties(to container: KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
+
+    func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
         // Default empty implementation
     }
 }
