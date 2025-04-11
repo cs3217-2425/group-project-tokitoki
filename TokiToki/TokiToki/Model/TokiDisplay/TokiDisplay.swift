@@ -58,12 +58,55 @@ struct SkillsWrapper: Decodable {
     let skills: [SkillData]
 }
 
-struct ConsumableEffectStrategyJSON: Decodable {
+struct ConsumableEffectStrategyJSON: Codable {
     let type: String // e.g. "potion" or "upgradeCandy"
-    let effectCalculators: [EffectCalculator]?
-    let duration: Int?
-    let statType: String?
+    let effectCalculators: [DecodableEffectCalculator]?
     let bonusExp: Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case type
+        case effectCalculators
+        case bonusExp
+    }
+}
+
+struct DecodableEffectCalculator: Codable {
+    let type: EffectCalculatorType
+    let elementType: ElementType?
+    let basePower: Int?
+    let healPower: Int?
+    let statsModifiers: [StatsModifier]?
+    let statusEffectChance: Double?
+    let statusEffect: StatusEffectType?
+    let statusEffectDuration: Int?
+    let statusEffectStrength: Double?
+
+    func toEffectCalculator() -> EffectCalculator {
+        switch type {
+        case .attack:
+            guard let elementType = elementType, let basePower = basePower else {
+                fatalError("Invalid attack calculator data")
+            }
+            return AttackCalculator(elementType: elementType, basePower: basePower)
+            
+        case .heal:
+            guard let healPower = healPower else {
+                fatalError("Invalid heal calculator data")
+            }
+            return HealCalculator(healPower: healPower)
+            
+        case .statsModifiers:
+            return StatsModifiersCalculator(statsModifiers: statsModifiers ?? [])
+            
+        case .statusEffect:
+            return StatusEffectCalculator(
+                statusEffectChance: statusEffectChance ?? 0,
+                statusEffect: statusEffect,
+                statusEffectDuration: statusEffectDuration ?? 0,
+                statusEffectStrength: statusEffectStrength ?? 1.0
+            )
+        }
+    }
 }
 
 struct EquipmentJSON: Codable {
@@ -76,7 +119,7 @@ struct EquipmentJSON: Codable {
     let isEquipped: Bool?
     let slot: String?
     let buff: BuffJSON?
-    let effectStrategy: EffectStrategyJSON?
+    let effectStrategy: ConsumableEffectStrategyJSON?
     let usageContext: String?
 }
 
@@ -84,13 +127,6 @@ struct BuffJSON: Codable {
     let value: Int
     let description: String
     let affectedStat: String
-}
-
-struct EffectStrategyJSON: Codable {
-    let type: String
-    let buffValue: Int?
-    let duration: Double?
-    let bonusExp: Int?
 }
 
 struct CraftingRecipeJSON: Decodable {

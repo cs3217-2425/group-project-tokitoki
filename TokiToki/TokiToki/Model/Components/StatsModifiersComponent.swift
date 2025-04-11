@@ -17,7 +17,7 @@ class StatsModifiersComponent: Component {
     }
 }
 
-struct StatsModifier: Equatable {
+struct StatsModifier: Equatable, Codable {
     var remainingDuration: Int
     let attack: Double
     let defense: Double

@@ -6,12 +6,22 @@
 //
 
 class StatsModifiersCalculator: EffectCalculator {
+    let type: EffectCalculatorType = .statsModifiers
     private let statsSystem = StatsSystem()
     let statsModifiers: [StatsModifier]
     
     init(statsModifiers: [StatsModifier] = []) {
         self.statsModifiers = statsModifiers
     }
+    
+    required init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: EffectCalculatorCodingKeys.self)
+            statsModifiers = try container.decode([StatsModifier].self, forKey: .statsModifiers)
+        }
+        
+        func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
+            try container.encode(statsModifiers, forKey: .statsModifiers)
+        }
 
     func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         for modifier in statsModifiers {

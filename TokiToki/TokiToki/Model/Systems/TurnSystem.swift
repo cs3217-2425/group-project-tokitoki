@@ -6,14 +6,10 @@
 //
 
 class TurnSystem: System {
-    static let shared = TurnSystem()
     var priority: Int = 0
     let MAX_ACTION_BAR: Float = GameEngine.MAX_ACTION_BAR
-    var multiplierForActionMeter: Float = GameEngine.multiplierForActionMeter
+    var multiplierForActionMeter: Float = GameEngine.MULTIPLIER_FOR_ACTION_METER
     let statsSystem = StatsSystem()
-    var globalTurnCounter: Int = 0
-
-    private init() {}
 
     func update(_ entities: [GameStateEntity]) {
         for entity in entities {
@@ -36,9 +32,7 @@ class TurnSystem: System {
                 return statsSystem.getActionBar($0) > statsSystem.getActionBar($1)
             }
             .first
-        if readyEntity != nil {
-            globalTurnCounter += 1
-        }
+        
         return readyEntity
     }
 
@@ -50,6 +44,6 @@ class TurnSystem: System {
     }
 
     func reset(_ entities: [GameStateEntity]) {
-        globalTurnCounter = 0
+        // Does nothing
     }
 }

@@ -25,15 +25,15 @@ class GameEngine {
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
 
-    static let multiplierForActionMeter: Float = 0.1
+    static let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
     static let MAX_ACTION_BAR: Float = 100
     
     private let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
     
-    private let turnSystem = TurnSystem.shared
+    private var systems: [System] = []
+    private let turnSystem = TurnSystem()
     private let skillsSystem = SkillsSystem()
-    private let statusEffectsSystem = StatusEffectsSystem.shared
-    private let resetSystem = ResetSystem()
+    private let statusEffectsSystem = StatusEffectsSystem()
     private let statsSystem = StatsSystem()
     private let statsModifiersSystem = StatsModifiersSystem()
     private let equipmentSystem = EquipmentSystem()
@@ -50,7 +50,18 @@ class GameEngine {
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
         self.statusEffectsSystem.setGameEngine(self)
-//        self.equipmentSystem.saveEquipments()
+        
+        appendToSystemsForResetting()
+        self.equipmentSystem.saveEquipments()
+    }
+    
+    fileprivate func appendToSystemsForResetting() {
+        systems.append(skillsSystem)
+        systems.append(statsSystem)
+        systems.append(statusEffectsSystem)
+        systems.append(statsModifiersSystem)
+        systems.append(turnSystem)
+        systems.append(equipmentSystem)
     }
 
     func startBattle() {
@@ -68,7 +79,7 @@ class GameEngine {
 
     func startGameLoop() {
         while !isBattleOver() {
-            statusEffectsSystem.applyDmgOverTimeStatusEffects(logMessage, battleEffectsDelegate)
+            statusEffectsSystem.applyDmgOverTimeStatusEffects(logMessage, battleEffectsDelegate, playersPlusOpponents)
             currentGameStateEntity = getNextReadyCharacter()
 
             guard let currentGameStateEntity = currentGameStateEntity else {
@@ -329,10 +340,10 @@ class GameEngine {
     func getBattleLog() -> [String] {
         battleLog
     }
-
+    
     func restart() {
         battleLog = []
-        resetSystem.reset(savedPlayersPlusOpponents)
+        resetAll()
         playersPlusOpponents = savedPlayersPlusOpponents
         playerTeam = savedPlayerTeam
         opponentTeam = savedOpponentTeam
@@ -340,5 +351,11 @@ class GameEngine {
         pendingActions = []
         updateHealthBars()
         startBattle()
+    }
+    
+    fileprivate func resetAll() {
+        for system in systems {
+            system.reset(savedPlayersPlusOpponents)
+        }
     }
 }

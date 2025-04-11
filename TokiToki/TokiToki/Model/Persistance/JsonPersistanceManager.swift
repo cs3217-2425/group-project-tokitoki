@@ -506,7 +506,9 @@ class JsonPersistenceManager {
         
         return EquipmentComponent(inventory: inventory, equipped: equipped)
     }
-    
+}
+
+extension JsonPersistenceManager {
     /// Delete player's equipment
     func deletePlayerEquipment(playerId: UUID) -> Bool {
         guard let allEquipEntries: [PlayerEquipmentEntry] = loadFromJson(filename: playerEquipmentsFileName) else {

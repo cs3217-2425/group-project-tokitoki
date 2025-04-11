@@ -364,32 +364,32 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     }
 
     @objc func useConsumables(_ sender: UITapGestureRecognizer) {
-//        guard let tappedView = sender.view else { return }
-//
-//        let items = EquipmentSystem.shared.countConsumables()
-//
-//        let alert = UIAlertController(title: "Use Consumable", message: "Choose an item to use:", preferredStyle: .actionSheet)
-//
-//        for item in items where item.quantity > 0 {
-//            let action = UIAlertAction(title: "\(item.name) x\(item.quantity)", style: .default) { _ in
-//                self.gameEngine?.useConsumable(item.name)
-//            }
-//            alert.addAction(action)
-//        }
-//
-//        if alert.actions.isEmpty {
-//            alert.message = "You have no usable consumables."
-//        }
-//
-//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-//
-//        // Present from image view location (for iPad compatibility)
-//        if let popoverController = alert.popoverPresentationController {
-//            popoverController.sourceView = tappedView
-//            popoverController.sourceRect = tappedView.bounds
-//        }
-//
-//        self.present(alert, animated: true)
+        guard let tappedView = sender.view else { return }
+
+        let items = PlayerManager.shared.countConsumables()
+
+        let alert = UIAlertController(title: "Use Consumable", message: "Choose an item to use:", preferredStyle: .actionSheet)
+
+        for item in items where item.quantity > 0 {
+            let action = UIAlertAction(title: "\(item.name) x\(item.quantity)", style: .default) { _ in
+                self.gameEngine?.useConsumable(item.name)
+            }
+            alert.addAction(action)
+        }
+
+        if alert.actions.isEmpty {
+            alert.message = "You have no usable consumables."
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+
+        // Present from image view location (for iPad compatibility)
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = tappedView
+            popoverController.sourceRect = tappedView.bounds
+        }
+
+        self.present(alert, animated: true)
     }
 
     @objc func takeNoAction(_ sender: UITapGestureRecognizer) {
