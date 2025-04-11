@@ -6,6 +6,7 @@
 //
 
 class AttackCalculator: EffectCalculator {
+    let type: EffectCalculatorType = .attack
     private let elementsSystem = ElementsSystem()
     private let statsSystem = StatsSystem()
     let elementType: ElementType
@@ -15,7 +16,18 @@ class AttackCalculator: EffectCalculator {
         self.elementType = elementType
         self.basePower = basePower
     }
-
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: EffectCalculatorCodingKeys.self)
+        elementType = try container.decode(ElementType.self, forKey: .elementType)
+        basePower = try container.decode(Int.self, forKey: .basePower)
+    }
+    
+    func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
+        try container.encode(elementType, forKey: .elementType)
+        try container.encode(basePower, forKey: .basePower)
+    }
+    
     func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
         guard let sourceStats = source.getComponent(ofType: StatsComponent.self),
               let targetStats = target.getComponent(ofType: StatsComponent.self) else {

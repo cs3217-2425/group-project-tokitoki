@@ -86,9 +86,8 @@ extension TokiDisplay {
                            let strat1 = eq1.effectStrategy as? PotionEffectStrategy,
                            let strat2 = eq2.effectStrategy as? PotionEffectStrategy {
                             
-                            let newBuff = strat1.buffValue + strat2.buffValue
-                            let newDuration = (strat1.duration + strat2.duration) / 2
-                            let newStrategy = PotionEffectStrategy(buffValue: newBuff, duration: newDuration)
+                            let newCalculators = strat1.effectCalculators + strat2.effectCalculators
+                            let newStrategy = PotionEffectStrategy(effectCalculators: newCalculators)
                             
                             // Convert usageContext; default to .anywhere if missing.
                             let usage: ConsumableUsageContext = {
@@ -189,9 +188,8 @@ extension TokiDisplay {
             let strategy: ConsumableEffectStrategy
             switch strategyInfo.type.lowercased() {
             case "potion":
-                let buff = strategyInfo.buffValue ?? 0
-                let durSec = TimeInterval(strategyInfo.duration ?? 0)
-                strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
+                let effectCalculators = strategyInfo.effectCalculators ?? []
+                strategy = PotionEffectStrategy(effectCalculators: effectCalculators)
             case "upgradecandy":
                 let bonus = strategyInfo.bonusExp ?? 0
                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)

@@ -19,13 +19,15 @@ class EquipmentSystem {
         // Future: Process temporary buff expirations, cooldowns, etc.
     }
 
-    func useConsumable(_ equipment: ConsumableEquipment, on toki: Toki, in component: EquipmentComponent) {
-        equipment.effectStrategy.applyEffect(to: toki) {
+    func useConsumable(_ equipment: ConsumableEquipment, on toki: Toki?, orOn entity: GameStateEntity?,
+                       in component: EquipmentComponent) -> [EffectResult]? {
+        let results = equipment.effectStrategy.applyEffect(name: equipment.name, to: toki, orTo: entity) {
             NotificationCenter.default.post(name: .EquipmentConsumed, object: equipment)
         }
         if let index = component.inventory.firstIndex(where: { $0.id == equipment.id }) {
             component.inventory.remove(at: index)
         }
+        return results
     }
 
     func equipItem(_ item: NonConsumableEquipment, in component: EquipmentComponent) {

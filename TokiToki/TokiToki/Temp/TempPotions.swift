@@ -7,10 +7,13 @@
 
 let healCalculator = HealCalculator(healPower: 100)
 
-//let healthPotion = Potion(name: "Health Potion",
-//                          description: "Restores health",
-//                          rarity: 1,
-//                          effectCalculators: [healCalculator])
+let healthPotion = EquipmentRepository.shared.createConsumableEquipment(name: "Health Potion",
+                                                                        description: "Restores health",
+                                                                        rarity: 1,
+                                                                        effectStrategy:
+                                                                        PotionEffectStrategy(effectCalculators: [healCalculator]),
+                                                                        usageContext: .battleOnly
+)
 
 let statsModifiersCalculator = StatsModifiersCalculator(statsModifiers: [
     StatsModifier(remainingDuration: 2, attack: 1.5, defense: 1.5, speed: 1.5)
