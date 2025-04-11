@@ -238,14 +238,14 @@ class GameEngine {
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
             let action = aiComponent.determineAction(entity, playerTeam, opponentTeam)
             let results = action.execute()
+
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
+                for result in results {
+                    BattleEventManager.shared.publishEffectResult(result, sourceId: self?.currentGameStateEntity?.id ?? UUID())
+                }
                 self?.updateLogAfterMove(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
             }
-
-//            for result in results {
-//                BattleEventManager.shared.publishEffectResult(result, sourceId: currentGameStateEntity?.id ?? UUID())
-//            }
         }
     }
 
