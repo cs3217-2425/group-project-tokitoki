@@ -17,7 +17,7 @@ class SkillVisualFXFactory {
         return builder
             .addProjectile(
                 shape: .circle,
-                size: 30,
+                size: 40,
                 color: fireColor,
                 filled: true,
                 motionType: .linear,
@@ -57,8 +57,6 @@ class SkillVisualFXFactory {
                           lifetime: 0.4, spreadRadius: 200, color: .white, isTargetEffect: true)
             .beginConcurrentGroup()
             .addShape(type: .line, size: 250, color: .white)
-            .addParticles(type: .spark, count: 50, size: 4, speed: 20,
-                          lifetime: 0.8, color: .orange, isTargetEffect: true)
             .build()
     }
 
@@ -119,6 +117,7 @@ class SkillVisualFXFactory {
 
         return builder
             .addColorFlash(color: .red, intensity: 0.5, isTargetEffect: true)
+            .addShape(type: .x, size: 100, color: .white)
             .build()
     }
 }

@@ -242,6 +242,10 @@ class GameEngine {
                 self?.updateLogAfterMove(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
             }
+
+//            for result in results {
+//                BattleEventManager.shared.publishEffectResult(result, sourceId: currentGameStateEntity?.id ?? UUID())
+//            }
         }
     }
 
