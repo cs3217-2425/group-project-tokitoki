@@ -27,7 +27,7 @@ class BattleEffectsManager {
             StatusEffectVisualFXComponent(viewProvider: viewProvider),
 
             // Other effect components
-            CriticalHitEffectComponent(viewProvider: viewProvider)
+            DamageDealtComponent(viewProvider: viewProvider)
         ]
     }
 
