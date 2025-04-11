@@ -48,5 +48,21 @@ class SkillVisualFXRegistry {
         register(skillVisual: .fireSlash) { sourceView, targetView in
             SkillVisualFXFactory.createFireslashFX(sourceView: sourceView, targetView: targetView)
         }
+
+        register(skillVisual: .excalibur) { sourceView, targetView in
+            SkillVisualFXFactory.createExcaliburFX(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .iceShot) { sourceView, targetView in
+            SkillVisualFXFactory.createIceShotFX(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .arrowRain) { sourceView, targetView in
+            SkillVisualFXFactory.createArrowRainFX(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .lightningStorm) { sourceView, targetView in
+            SkillVisualFXFactory.createLightningStorm(sourceView: sourceView, targetView: targetView)
+        }
     }
 }

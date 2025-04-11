@@ -49,6 +49,67 @@ class SkillVisualFXFactory {
             .build()
     }
 
+    static func createExcaliburFX(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addParticles(type: .triangle, count: 50, size: 2, speed: 100,
+                          lifetime: 0.4, spreadRadius: 200, color: .white, isTargetEffect: true)
+            .beginConcurrentGroup()
+            .addShape(type: .line, size: 250, color: .white)
+            .addParticles(type: .spark, count: 50, size: 4, speed: 20,
+                          lifetime: 0.8, color: .orange, isTargetEffect: true)
+            .build()
+    }
+
+    static func createIceShotFX(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addProjectile(
+                shape: .line,
+                size: 50,
+                color: .cyan,
+                filled: true,
+                motionType: .linear,
+                duration: 0.8,
+                trailType: .triangle,
+                trailDensity: 20,
+                impactParticleType: .spark
+            )
+            .build()
+    }
+
+    static func createArrowRainFX(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addProjectile(
+                shape: .line,
+                size: 20,
+                color: .white,
+                filled: true,
+                motionType: .linear,
+                duration: 0.4
+            )
+            .beginConcurrentGroup()
+            .addParticles(type: .triangle, count: 50, size: 2, speed: 100,
+                          lifetime: 0.4, spreadRadius: 200, color: .white, isTargetEffect: true)
+            .build()
+    }
+
+    static func createLightningStorm(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addColorFlash(color: .purple, intensity: 0.2, fade: true, isTargetEffect: true)
+            .beginConcurrentGroup()
+            .addColorFlash(color: .white, intensity: 0.5, fade: true, isTargetEffect: true)
+            .beginConcurrentGroup()
+            .addColorFlash(color: .yellow, intensity: 0.3, fade: true, isTargetEffect: true)
+            .build()
+    }
+
     // Method to create default effect
     static func createDefaultSkillVisualFX(
         sourceView: UIView,
