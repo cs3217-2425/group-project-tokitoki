@@ -6,5 +6,40 @@
 //
 
 protocol EffectCalculator {
+    var type: EffectCalculatorType { get }
     func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult?
+    func encodeAdditionalProperties(to container: KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws
 }
+
+// Protocol extension for default encoding
+extension EffectCalculator {
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: EffectCalculatorCodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try encodeAdditionalProperties(to: container)
+    }
+    
+    func encodeAdditionalProperties(to container: KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
+        // Default empty implementation
+    }
+}
+
+enum EffectCalculatorType: String, Codable {
+    case attack
+    case heal
+    case statsModifiers
+    case statusEffect
+}
+
+enum EffectCalculatorCodingKeys: String, CodingKey {
+    case type
+    case elementType
+    case basePower
+    case healPower
+    case statsModifiers
+    case statusEffectChance
+    case statusEffect
+    case statusEffectDuration
+    case statusEffectStrength
+}
+

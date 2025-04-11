@@ -50,7 +50,7 @@ struct SkillsWrapper: Decodable {
 
 struct ConsumableEffectStrategyJSON: Decodable {
     let type: String // e.g. "potion" or "upgradeCandy"
-    let buffValue: Int?
+    let effectCalculators: [EffectCalculator]?
     let duration: Int?
     let statType: String?
     let bonusExp: Int?

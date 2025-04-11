@@ -10,15 +10,20 @@ import Foundation
 class UseConsumableAction: Action {
     let user: GameStateEntity
     let consumable: ConsumableEquipment
+    let equipmentSystem: EquipmentSystem
+    let equipmentComponent: EquipmentComponent
 
-    init(user: GameStateEntity, consumable: ConsumableEquipment) {
+    init(user: GameStateEntity, consumable: ConsumableEquipment, _ equipmentSystem: EquipmentSystem,
+         _ equipmentComponent: EquipmentComponent) {
         self.user = user
         self.consumable = consumable
+        self.equipmentSystem = equipmentSystem
+        self.equipmentComponent = equipmentComponent
     }
 
     func execute() -> [EffectResult] {
-//        let results = EquipmentSystem.shared.useConsumable(consumable, on: nil, user)
+        let results = equipmentSystem.useConsumable(consumable, on: nil, orOn: user, in: equipmentComponent)
 
-        return /*results ?? */[]
+        return results ?? []
     }
 }
