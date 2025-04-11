@@ -29,7 +29,10 @@ class PlayerManager {
             print("No saved player found in JSON storage")
         }
     }
-
+    
+    func getEquipmentComponent() -> EquipmentComponent {
+        return getOrCreatePlayer().ownedEquipments
+    }
     // MARK: - Player Access
 
     func getPlayer() -> Player? {

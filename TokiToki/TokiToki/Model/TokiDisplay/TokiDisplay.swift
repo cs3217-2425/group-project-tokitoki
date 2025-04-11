@@ -12,17 +12,27 @@ import UIKit
 // These structs mirror the fields in Tokis.json, Skills.json, and Equipments.json,
 // just enough to parse raw JSON into intermediate model objects. Then we'll map them to your actual Toki, Skill, and Equipment.
 
-struct TokiJSON: Decodable {
+struct TokiJSON: Codable {
     let id: String
     let name: String
+    let level: Int
     let rarity: Int
-    let baseHealth: Int
-    let baseAttack: Int
-    let baseDefense: Int
-    let baseSpeed: Int
-    let baseHeal: Int
-    let baseExp: Int
-    let elementType: String
+    let elementType: [String]
+    let ownerId: String
+    let baseStats: BaseStatsJSON
+    let skillNames: [String]
+    let equipmentIds: [String]
+}
+
+struct BaseStatsJSON: Codable {
+    let hp: Int
+    let attack: Int
+    let defense: Int
+    let speed: Int
+    let heal: Int
+    let exp: Int
+    let critHitChance: Int
+    let critHitDamage: Int
 }
 
 struct TokisWrapper: Decodable {
@@ -45,34 +55,42 @@ struct SkillJSON: Decodable {
 }
 
 struct SkillsWrapper: Decodable {
-    let skills: [SkillJSON]
+    let skills: [SkillData]
 }
 
 struct ConsumableEffectStrategyJSON: Decodable {
     let type: String // e.g. "potion" or "upgradeCandy"
-    let buffValue: Int?
+    let effectCalculators: [EffectCalculator]?
     let duration: Int?
     let statType: String?
     let bonusExp: Int?
 }
 
-struct EquipmentBuffJSON: Decodable {
+struct EquipmentJSON: Codable {
+    let id: String
+    let name: String
+    let description: String
+    let rarity: Int
+    let equipmentType: String
+    let ownerId: String
+    let isEquipped: Bool?
+    let slot: String?
+    let buff: BuffJSON?
+    let effectStrategy: EffectStrategyJSON?
+    let usageContext: String?
+}
+
+struct BuffJSON: Codable {
     let value: Int
     let description: String
     let affectedStat: String
 }
 
-struct EquipmentJSON: Decodable {
-    let id: String
-    let name: String
-    let description: String
-    let equipmentType: String  // "consumable" or "nonConsumable"
-    let rarity: Int
-    let elementType: String
-    let buff: EquipmentBuffJSON?            // Only if nonConsumable
-    let effectStrategy: ConsumableEffectStrategyJSON? // Only if consumable
-    let slot: String?                       // Only if nonConsumable
-    let usageContext: String?
+struct EffectStrategyJSON: Codable {
+    let type: String
+    let buffValue: Int?
+    let duration: Double?
+    let bonusExp: Int?
 }
 
 struct CraftingRecipeJSON: Decodable {
