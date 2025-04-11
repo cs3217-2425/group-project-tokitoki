@@ -75,7 +75,7 @@ struct TokiCodable: Codable {
     var ownerId: UUID
     var baseStats: StatsCodable
     var skillNames: [String]
-    var equipmentIds: [UUID]  // Not always used if you store Toki-level equipment differently
+    var equipmentIds: [UUID]
     
     struct StatsCodable: Codable {
         var hp: Int
@@ -106,14 +106,15 @@ struct TokiCodable: Codable {
             critHitChance: toki.baseStats.critHitChance,
             critHitDamage: toki.baseStats.critHitDamage
         )
-        self.skillNames = toki.skills.map { $0.name }
+        self.skillNames = toki.skills.map { $0.name } // If you do Toki-level attachments
         self.equipmentIds = toki.equipments.map { $0.id } // If you do Toki-level attachments
     }
     
     // Convert to domain model (skills & real equipment are attached later)
     func toDomainModel() -> Toki {
         let elementTypes = elementType.compactMap { ElementType(rawValue: $0) }
-        return Toki(
+        // Create a new Toki with freshly allocated arrays.
+        let toki = Toki(
             id: id,
             name: name,
             rarity: ItemRarity(intValue: rarity) ?? .common,
@@ -127,11 +128,12 @@ struct TokiCodable: Codable {
                 critHitChance: baseStats.critHitChance,
                 critHitDamage: baseStats.critHitDamage
             ),
-            skills: [],
-            equipments: [],
+            skills: [],      // NEW: ensure a new, empty skills array
+            equipments: [],  // NEW: ensure a new, empty equipments array
             elementType: elementTypes,
             level: level
         )
+        return toki
     }
 }
 

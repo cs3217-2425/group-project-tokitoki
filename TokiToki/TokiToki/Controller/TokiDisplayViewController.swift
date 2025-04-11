@@ -65,6 +65,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         if gesture.direction == .right {
             // Dismiss the view controller when a right swipe is detected
             // TODO: Save the current state of Toki
+            TokiDisplay.shared.saveTokiState()
             dismiss(animated: true, completion: nil)
         }
     }

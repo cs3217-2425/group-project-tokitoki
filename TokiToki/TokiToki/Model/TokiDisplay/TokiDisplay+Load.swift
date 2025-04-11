@@ -10,6 +10,23 @@ import Foundation
 struct PlayerEquipmentWrapper: Decodable { let type: String; let equipment: EquipmentJSON }
 
 extension TokiDisplay {
+    func saveTokiState() {
+        // Save the current state of Toki using JsonPersistenceManager
+        let jsonPersistenceManager = JsonPersistenceManager()
+        let playerRepository = PlayerRepository(persistenceManager: jsonPersistenceManager)
+        var player = PlayerManager.shared.getOrCreatePlayer()
+        
+        // Update the player's state with the current in-memory data from TokiDisplay.
+        // This includes the currently loaded Tokis and Equipment.
+        player.ownedTokis = TokiDisplay.shared.allTokis
+        player.ownedEquipments = TokiDisplay.shared.equipmentFacade.equipmentComponent
+        
+        // Optionally, update additional properties like owned skills if needed:
+        // player.ownedSkills = TokiDisplay.shared.allSkills
+        
+        // Persist the updated player state.
+        playerRepository.savePlayer(player)
+    }
     /// Load Tokis, Skills, and Equipment from JSON persistence.
     func loadAllData() {
         // Use JsonPersistenceManager and PlayerRepository to load the current player.
