@@ -7,35 +7,38 @@
 
 import Foundation
 
+struct PlayerEquipmentWrapper: Decodable { let type: String; let equipment: EquipmentJSON }
+
 extension TokiDisplay {
-    // MARK: - JSON Loading
-    
-    /// Load Tokis, Skills, and Equipment from local JSON files.
-    /// Adapt the file paths or decoding strategy as appropriate.
+    /// Load Tokis, Skills, and Equipment from JSON persistence.
     func loadAllData() {
-        loadTokisFromJSON()
-        loadSkillsFromJSON()
-        loadCraftingRecipesFromJSON()
-    }
-    
-    private func loadTokisFromJSON() {
-        guard let url = Bundle.main.url(forResource: "Tokis", withExtension: "json") else {
-            print("Tokis.json not found in bundle.")
+        // Use JsonPersistenceManager and PlayerRepository to load the current player.
+        let persistenceManager = JsonPersistenceManager()
+        let playerRepository = PlayerRepository(persistenceManager: persistenceManager)
+        guard let player = playerRepository.getPlayer() else {
+            print("No player data found in JsonPersistenceManager.")
             return
         }
-        do {
-            let data = try Data(contentsOf: url)
-            let decoded = try JSONDecoder().decode(TokisWrapper.self, from: data)
-            self.allTokis = decoded.tokis.map { convertToToki($0) }
-            // Update the current Toki if available.
-            if let firstToki = self.allTokis.first {
+        
+        loadTokisFromJSON(using: persistenceManager, for: player)
+        loadSkillsFromJSON()
+        loadEquipmentsFromJSON(using: persistenceManager, for: player)
+        loadCraftingRecipesFromJSON()
+    }
+
+    // Load Tokis from the JSON file using the persistence manager.
+    private func loadTokisFromJSON(using persistenceManager: JsonPersistenceManager, for player: Player) {
+        if let loadedTokis = persistenceManager.loadPlayerTokis(playerId: player.id) {
+            self.allTokis = loadedTokis
+            if let firstToki = loadedTokis.first {
                 self.toki = firstToki
             }
-        } catch {
-            print("Failed to parse Tokis.json: \(error)")
+        } else {
+            print("Failed to load tokis for player \(player.name)")
         }
     }
-    
+
+    // The skills file remains the same and is loaded from bundle.
     private func loadSkillsFromJSON() {
         guard let url = Bundle.main.url(forResource: "Skills", withExtension: "json") else {
             print("Skills.json not found in bundle.")
@@ -44,44 +47,24 @@ extension TokiDisplay {
         do {
             let data = try Data(contentsOf: url)
             let decoded = try JSONDecoder().decode(SkillsWrapper.self, from: data)
-            //            self.allSkills = decoded.skills.map { convertToSkill($0) }
-            //            // Update the current Toki's skills inventory.
-            //            self.toki.skills = self.allSkills
+            let factory = SkillsFactory()
+            self.allSkills = decoded.skills.compactMap { factory.createSkill(from: $0) }
+            // Update the current Toki's skills inventory.
+            self.toki.skills = self.allSkills
         } catch {
             print("Failed to parse Skills.json: \(error)")
         }
     }
-    
-    func loadEquipmentsFromJSON() {
-        guard let url = Bundle.main.url(forResource: "Equipments", withExtension: "json") else {
-            print("Equipments.json not found in bundle.")
-            return
-        }
-        do {
-            let data = try Data(contentsOf: url)
-            let decoded = try JSONDecoder().decode(EquipmentsWrapper.self, from: data)
-            let component = TokiDisplay.shared.equipmentFacade.equipmentComponent
-            component.inventory = decoded.equipment.compactMap { convertToEquipment($0) }
-            
-            self.equipmentFacade.equipmentComponent = component
-        } catch {
-            print("Failed to parse Equipments.json: \(error)")
+
+    // Load Equipment from JSON using the persistence manager.
+    func loadEquipmentsFromJSON(using persistenceManager: JsonPersistenceManager, for player: Player) {
+        if let equipmentComponent = persistenceManager.loadPlayerEquipment(playerId: player.id) {
+            self.equipmentFacade.equipmentComponent = equipmentComponent
+        } else {
+            print("Failed to load equipments for player \(player.name)")
         }
     }
-    
-    private func convertUsageContext(_ raw: String) -> ConsumableUsageContext? {
-        switch raw.lowercased() {
-        case "battleonly", "battle only":
-            return .battleOnly
-        case "outofbattleonly", "out of battle only":
-            return .outOfBattleOnly
-        case "anywhere":
-            return .anywhere
-        default:
-            return nil
-        }
-    }
-    
+
     private func loadCraftingRecipesFromJSON() {
         guard let url = Bundle.main.url(forResource: "CraftingRecipes", withExtension: "json") else {
             print("CraftingRecipes.json not found in bundle.")
@@ -156,125 +139,93 @@ extension TokiDisplay {
             print("Failed to load crafting recipes: \(error)")
         }
     }
-    
+
+    // --- Helper converter functions ---
+
+    private func convertUsageContext(_ raw: String) -> ConsumableUsageContext? {
+        switch raw.lowercased() {
+        case "battleonly", "battle only":
+            return .battleOnly
+        case "outofbattleonly", "out of battle only":
+            return .outOfBattleOnly
+        case "anywhere":
+            return .anywhere
+        default:
+            return nil
+        }
+    }
+
     private func convertToToki(_ json: TokiJSON) -> Toki {
-         // Use the new ItemRarity initializer.
-         let rarityEnum = ItemRarity(intValue: json.rarity) ?? .common
-         // Convert string to ElementType using fromString.
-         let elementEnum = ElementType.fromString(json.elementType) ?? .fire
-         
-         let stats = TokiBaseStats(hp: json.baseHealth,
-                                   attack: json.baseAttack,
-                                   defense: json.baseDefense,
-                                   speed: json.baseSpeed,
-                                   heal: json.baseHeal,
-                                   exp: json.baseExp)
-         
-         // Create a Toki with empty skills and equipment; attach later as needed.
-         return Toki(name: json.name,
-                     rarity: rarityEnum,
-                     baseStats: stats,
-                     skills: [],
-                     equipments: [],
-                     elementType: [elementEnum],
-                     level: 1)
-     }
-    
-//    private func convertToSkill(_ json: SkillJSON) -> Skill {
-//         // Use the new ElementType conversion.
-//         let elemType = ElementType.fromString(json.elementType) ?? .neutral
-//
-//         let factory = SkillFactory()
-//
-//         switch json.skillType.lowercased() {
-//         case "attack":
-//             return factory.createAttackSkill(
-//                 name: json.name,
-//                 description: json.description,
-//                 elementType: elemType,
-//                 basePower: json.basePower,
-//                 cooldown: json.cooldown,
-//                 targetType: convertTargetType(json.targetType),
-//                 statusEffect: convertStatusEffect(json.statusEffect),
-//                 statusEffectChance: Double(json.statusEffectChance),
-//                 statusEffectDuration: json.statusEffectDuration
-//             )
-//         case "heal":
-//             return factory.createHealSkill(
-//                 name: json.name,
-//                 description: json.description,
-//                 basePower: json.basePower,
-//                 cooldown: json.cooldown,
-//                 targetType: convertTargetType(json.targetType)
-//             )
-//         case "defend":
-//             return factory.createDefenseSkill(
-//                name: json.name,
-//                description: json.description,
-//                basePower: json.basePower,
-//                cooldown: json.cooldown,
-//                targetType: convertTargetType(json.targetType)
-//             )
-//         default:
-//             return factory.createAttackSkill(
-//                 name: json.name,
-//                 description: json.description,
-//                 elementType: elemType,
-//                 basePower: json.basePower,
-//                 cooldown: json.cooldown,
-//                 targetType: .singleEnemy,
-//                 statusEffect: .none,
-//                 statusEffectChance: 0.0,
-//                 statusEffectDuration: 0
-//             )
-//         }
-//     }
-     
+        let rarityEnum = ItemRarity(intValue: json.rarity) ?? .common
+        let elementTypes = json.elementType.compactMap { ElementType.fromString($0) }
+        
+        let stats = TokiBaseStats(
+            hp: json.baseStats.hp,
+            attack: json.baseStats.attack,
+            defense: json.baseStats.defense,
+            speed: json.baseStats.speed,
+            heal: json.baseStats.heal,
+            exp: json.baseStats.exp
+        )
+        
+        return Toki(
+            name: json.name,
+            rarity: rarityEnum,
+            baseStats: stats,
+            skills: [],
+            equipments: [],
+            elementType: elementTypes,
+            level: json.level
+        )
+    }
+
     private func convertToEquipment(_ json: EquipmentJSON) -> Equipment? {
-         let repo = EquipmentRepository.shared
-         let rarity = json.rarity
-         let desc = json.description
-         let usageContext = json.usageContext
-         
-         if json.equipmentType == "consumable", let strategyInfo = json.effectStrategy {
-             let strategy: ConsumableEffectStrategy
-             switch strategyInfo.type.lowercased() {
-             case "potion":
-                 let buff = strategyInfo.buffValue ?? 0
-                 let durSec = TimeInterval(strategyInfo.duration ?? 0)
-                 strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
-             case "upgradecandy":
-                 let bonus = strategyInfo.bonusExp ?? 0
-                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
-             default:
-                 strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
-             }
-             
-             return repo.createConsumableEquipment(
-                 name: json.name,
-                 description: desc,
-                 rarity: rarity,
-                 effectStrategy: strategy,
-                 usageContext: convertUsageContext(usageContext ?? "anywhere") ?? .anywhere
-             )
-         } else if json.equipmentType == "nonConsumable", let buffInfo = json.buff, let slotName = json.slot {
-             let buff = EquipmentBuff(value: buffInfo.value,
-                                      description: buffInfo.description,
-                                      affectedStat: buffInfo.affectedStat)
-             let slotEnum = EquipmentSlot(rawValue: slotName) ?? .custom
-             
-             return repo.createNonConsumableEquipment(
-                 name: json.name,
-                 description: desc,
-                 rarity: rarity,
-                 buff: buff,
-                 slot: slotEnum
-             )
-         }
-         return nil
-     }
-    
-    /// Example converters for skill target type and status effect
+        let repo = EquipmentRepository.shared
+        let rarity = json.rarity
+        let desc = json.description
+        let usageContext = json.usageContext
+        
+        if json.equipmentType == "consumable", let strategyInfo = json.effectStrategy {
+            let strategy: ConsumableEffectStrategy
+            switch strategyInfo.type.lowercased() {
+            case "potion":
+                let buff = strategyInfo.buffValue ?? 0
+                let durSec = TimeInterval(strategyInfo.duration ?? 0)
+                strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
+            case "upgradecandy":
+                let bonus = strategyInfo.bonusExp ?? 0
+                strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
+            default:
+                strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
+            }
+            
+            return repo.createConsumableEquipment(
+                name: json.name,
+                description: desc,
+                rarity: rarity,
+                effectStrategy: strategy,
+                usageContext: convertUsageContext(usageContext ?? "anywhere") ?? .anywhere
+            )
+        } else if json.equipmentType == "nonConsumable", let buffInfo = json.buff, let slotName = json.slot {
+            let buff = EquipmentBuff(
+                value: buffInfo.value,
+                description: buffInfo.description,
+                affectedStat: buffInfo.affectedStat
+            )
+            let slotEnum = EquipmentSlot(rawValue: slotName) ?? .custom
+            
+            return repo.createNonConsumableEquipment(
+                name: json.name,
+                description: desc,
+                rarity: rarity,
+                buff: buff,
+                slot: slotEnum
+            )
+        }
+        return nil
+    }
+
+    // Example converters for skill target type and status effect.
     private func convertTargetType(_ raw: String) -> TargetType {
         switch raw.lowercased() {
         case "singleenemy": return .singleEnemy
@@ -284,7 +235,7 @@ extension TokiDisplay {
         default: return .singleEnemy
         }
     }
-    
+
     private func convertStatusEffect(_ raw: String?) -> StatusEffectType {
         guard let raw = raw else { return .stun }
         switch raw.lowercased() {
@@ -293,4 +244,5 @@ extension TokiDisplay {
         default: return .stun
         }
     }
+
 }
