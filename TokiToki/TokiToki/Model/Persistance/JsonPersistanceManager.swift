@@ -330,7 +330,8 @@ class JsonPersistenceManager {
         //        // Load existing equipment for all players
         //        var allEquipment: [AnyEquipment] = []
         //
-        //        if fileExists(filename: playerEquipmentsFileName), let existingEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) {
+        //        if fileExists(filename: playerEquipmentsFileName),
+        // let existingEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) {
         //            // Keep equipment from other players
         //            allEquipment = existingEquipment.equipments.filter {
         //                switch $0.equipment {
