@@ -72,10 +72,12 @@ class VisualFXBuilder {
         filled: Bool = true,
         motionType: ProjectileType = .linear,
         duration: TimeInterval = 0.8,
+        
         hasTrail: Bool = true,
         trailType: ParticleType? = .spark,
         trailDensity: Int = 50,
         trailColor: UIColor? = nil,
+        
         hasImpactEffects: Bool = true,
         impactParticleType: ParticleType? = .spark,
         impactParticleCount: Int = 25,

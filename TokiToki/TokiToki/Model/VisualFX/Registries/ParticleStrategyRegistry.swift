@@ -31,5 +31,6 @@ class ParticleStrategyRegistry {
         register(type: .spark, strategy: SparkParticleStrategy())
         register(type: .smoke, strategy: SmokeParticleStrategy())
         register(type: .bubble, strategy: BubbleParticleStrategy())
+        register(type: .star, strategy: StarParticleStrategy())
     }
 }

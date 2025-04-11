@@ -28,7 +28,18 @@ class StatusEffectVisualFXRegistry {
         register(effectType: .burn) { targetView in
             BurnVisualFX(targetView: targetView)
         }
-        // TODO: Add other StatusEffect VisualFXs
+        register(effectType: .frozen) { targetView in
+            FrozenVisualFX(targetView: targetView)
+        }
+        register(effectType: .stun) { targetView in
+            StunVisualFX(targetView: targetView)
+        }
+        register(effectType: .paralysis) { targetView in
+            ParalysisVisualFX(targetView: targetView)
+        }
+        register(effectType: .poison) { targetView in
+            PoisonVisualFX(targetView: targetView)
+        }
     }
 }
 
