@@ -38,7 +38,7 @@ class JsonPersistenceManager {
     func loadSkillTemplates() {
         do {
             let skillsData: SkillsData = try ResourceLoader.loadJSON(fromFile: "Skills")
-
+            
             for skillData in skillsData.skills {
                 skillTemplates[skillData.name] = skillData
             }
@@ -161,9 +161,9 @@ class JsonPersistenceManager {
         let tokisSaved = savePlayerTokis(player.ownedTokis, playerId: player.id)
         
         // Save player's equipment
-        let equipmentSaved = savePlayerEquipment(player.ownedEquipments, playerId: player.id)
+//        let equipmentSaved = savePlayerEquipment(player.ownedEquipments, playerId: player.id)
         
-        return playersSaved && tokisSaved && equipmentSaved
+        return playersSaved && tokisSaved /*&& equipmentSaved*/
     }
     
     /// Load all players from JSON
@@ -181,7 +181,7 @@ class JsonPersistenceManager {
             player.ownedTokis = loadPlayerTokis(playerId: player.id) ?? []
             
             // Load player's equipment
-            player.ownedEquipments = loadPlayerEquipment(playerId: player.id) ?? EquipmentComponent()
+            //            player.ownedEquipments = loadPlayerEquipment(playerId: player.id) ?? EquipmentComponent()
             
             players.append(player)
         }
@@ -203,7 +203,7 @@ class JsonPersistenceManager {
         player.ownedTokis = loadPlayerTokis(playerId: player.id) ?? []
         
         // Load player's equipment
-        player.ownedEquipments = loadPlayerEquipment(playerId: player.id) ?? EquipmentComponent()
+        //        player.ownedEquipments = loadPlayerEquipment(playerId: player.id) ?? EquipmentComponent()
         
         return player
     }
@@ -230,9 +230,9 @@ class JsonPersistenceManager {
         let tokisDeleted = deletePlayerTokis(playerId: id)
         
         // Delete player's equipment
-        let equipmentDeleted = deletePlayerEquipment(playerId: id)
+        //        let equipmentDeleted = deletePlayerEquipment(playerId: id)
         
-        return playersSaved && tokisDeleted && equipmentDeleted
+        return playersSaved && tokisDeleted /*&& equipmentDeleted*/
     }
     
     // MARK: - Toki Methods
@@ -269,8 +269,8 @@ class JsonPersistenceManager {
         
         
         // Load player's equipment
-        let playerEquipmentComponent = loadPlayerEquipment(playerId: playerId) ?? EquipmentComponent()
-        let allPlayerEquipment = playerEquipmentComponent.inventory + Array(playerEquipmentComponent.equipped.values)
+        //        let playerEquipmentComponent = loadPlayerEquipment(playerId: playerId) ?? EquipmentComponent()
+        //        let allPlayerEquipment = playerEquipmentComponent.inventory + Array(playerEquipmentComponent.equipped.values)
         
         // Convert Codable tokis to domain models
         var tokis: [Toki] = []
@@ -292,9 +292,9 @@ class JsonPersistenceManager {
             )
             
             // Add equipment based on equipment IDs
-            toki.equipments = tokiCodable.equipmentIds.compactMap { equipmentId in
-                allPlayerEquipment.first { $0.id == equipmentId }
-            }
+//            toki.equipments = tokiCodable.equipmentIds.compactMap { equipmentId in
+//                allPlayerEquipment.first { $0.id == equipmentId }
+//            }
             
             tokis.append(toki)
         }
@@ -319,122 +319,123 @@ class JsonPersistenceManager {
     // MARK: - Equipment Methods
     
     /// Save player's equipment to JSON
-    func savePlayerEquipment(_ equipmentComponent: EquipmentComponent, playerId: UUID) -> Bool {
+//    func savePlayerEquipment(_ equipmentComponent: EquipmentComponent, playerId: UUID) -> Bool {
         // Create equipment container with all equipment (both inventory and equipped)
-        let equipmentContainer = EquipmentContainer(
-            from: equipmentComponent.inventory,
-            ownerId: playerId,
-            equipped: equipmentComponent.equipped
-        )
+        //        let equipmentContainer = EquipmentContainer(
+        //            from: equipmentComponent.inventory,
+        //            ownerId: playerId,
+        //            equipped: equipmentComponent.equipped
+        //        )
         
-        // Load existing equipment for all players
-        var allEquipment: [AnyEquipment] = []
-        
-        if fileExists(filename: playerEquipmentsFileName), let existingEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) {
-            // Keep equipment from other players
-            allEquipment = existingEquipment.equipments.filter {
-                switch $0.equipment {
-                case .nonConsumable(let eq): return eq.ownerId != playerId
-                case .potion(let eq): return eq.ownerId != playerId
-                case .candy(let eq): return eq.ownerId != playerId
-                }
-            }
-        }
+        //        // Load existing equipment for all players
+        //        var allEquipment: [AnyEquipment] = []
+        //
+        //        if fileExists(filename: playerEquipmentsFileName), let existingEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) {
+        //            // Keep equipment from other players
+        //            allEquipment = existingEquipment.equipments.filter {
+        //                switch $0.equipment {
+        //                case .nonConsumable(let eq): return eq.ownerId != playerId
+        //                case .potion(let eq): return eq.ownerId != playerId
+        //                case .candy(let eq): return eq.ownerId != playerId
+        //                }
+        //            }
+        //        }
         
         // Add current player's equipment
-        allEquipment.append(contentsOf: equipmentContainer.equipments)
+        //        allEquipment.append(contentsOf: equipmentContainer.equipments)
         
         // Save all equipment
-        return saveToJson(EquipmentContainer(equipments: allEquipment), filename: playerEquipmentsFileName)
-    }
+        //        return saveToJson(EquipmentContainer(equipments: allEquipment), filename: playerEquipmentsFileName)
+//    }
     
     /// Load player's equipment from JSON
-    func loadPlayerEquipment(playerId: UUID) -> EquipmentComponent? {
-        // Load all equipment
-        guard let allEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) else {
-            return EquipmentComponent()
-        }
-        
-        // Filter equipment for this player
-        let playerEquipment = allEquipment.equipments.filter {
-            switch $0.equipment {
-            case .nonConsumable(let eq): return eq.ownerId == playerId
-            case .potion(let eq): return eq.ownerId == playerId
-            case .candy(let eq): return eq.ownerId == playerId
-            }
-        }
-        
-        // Create equipment component
-        var inventory: [Equipment] = []
-        var equipped: [EquipmentSlot: NonConsumableEquipment] = [:]
-        
-        for anyEquipment in playerEquipment {
-            switch anyEquipment.equipment {
-            case .nonConsumable(let eq):
-                let equipment = eq.toDomainModel() as! NonConsumableEquipment
-                if eq.isEquipped {
-                    equipped[EquipmentSlot(rawValue: eq.slot) ?? .weapon] = equipment
-                } else {
-                    inventory.append(equipment)
-                }
-            case .potion(let eq):
-                inventory.append(eq.toDomainModel())
-            case .candy(let eq):
-                inventory.append(eq.toDomainModel())
-            }
-        }
-        
-        return EquipmentComponent(inventory: inventory, equipped: equipped)
-    }
-    
-    /// Delete player's equipment
-    func deletePlayerEquipment(playerId: UUID) -> Bool {
-        // Load all equipment
-        guard let allEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) else {
-            return true
-        }
-        
-        // Keep equipment from other players
-        let updatedEquipment = allEquipment.equipments.filter {
-            switch $0.equipment {
-            case .nonConsumable(let eq): return eq.ownerId != playerId
-            case .potion(let eq): return eq.ownerId != playerId
-            case .candy(let eq): return eq.ownerId != playerId
-            }
-        }
-        
-        // Save updated equipment
-        return saveToJson(EquipmentContainer(equipments: updatedEquipment), filename: playerEquipmentsFileName)
-    }
-    
-
-    
-    // MARK: - Initialization
-    
-    /// Initialize the persistence system with default data if needed
-    func initializeIfNeeded() {
-        // Check if players file exists
-        if !fileExists(filename: playersFileName) {
-            // Create an empty players array
-            let emptyPlayers: [PlayerCodable] = []
-            _ = saveToJson(emptyPlayers, filename: playersFileName)
-        }
-        
-        // Check if player tokis file exists
-        if !fileExists(filename: playerTokisFileName) {
-            // Create an empty tokis array
-            let emptyTokis: [TokiCodable] = []
-            _ = saveToJson(emptyTokis, filename: playerTokisFileName)
-        }
-        
-        // Check if player equipments file exists
-        if !fileExists(filename: playerEquipmentsFileName) {
-            // Create an empty equipment container
-            let emptyEquipment = EquipmentContainer(equipments: [])
-            _ = saveToJson(emptyEquipment, filename: playerEquipmentsFileName)
-        }
-        
-        
-        // Note: We don't initialize skills.json as it's a template file that should be included in the app bundle
-    }
+    //    func loadPlayerEquipment(playerId: UUID) -> EquipmentComponent? {
+    //        // Load all equipment
+    ////        guard let allEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) else {
+    //            return EquipmentComponent()
+    //        }
+    //
+    //        // Filter equipment for this player
+    //        let playerEquipment = allEquipment.equipments.filter {
+    //            switch $0.equipment {
+    //            case .nonConsumable(let eq): return eq.ownerId == playerId
+    //            case .potion(let eq): return eq.ownerId == playerId
+    //            case .candy(let eq): return eq.ownerId == playerId
+    //            }
+    //        }
+    //
+    //        // Create equipment component
+    //        var inventory: [Equipment] = []
+    //        var equipped: [EquipmentSlot: NonConsumableEquipment] = [:]
+    //
+    //        for anyEquipment in playerEquipment {
+    //            switch anyEquipment.equipment {
+    //            case .nonConsumable(let eq):
+    //                let equipment = eq.toDomainModel() as! NonConsumableEquipment
+    //                if eq.isEquipped {
+    //                    equipped[EquipmentSlot(rawValue: eq.slot) ?? .weapon] = equipment
+    //                } else {
+    //                    inventory.append(equipment)
+    //                }
+    //            case .potion(let eq):
+    //                inventory.append(eq.toDomainModel())
+    //            case .candy(let eq):
+    //                inventory.append(eq.toDomainModel())
+    //            }
+    //        }
+    //
+    //        return EquipmentComponent(inventory: inventory, equipped: equipped)
+    //    }
+    //
+    //    /// Delete player's equipment
+    //    func deletePlayerEquipment(playerId: UUID) -> Bool {
+    //        // Load all equipment
+    ////        guard let allEquipment: EquipmentContainer = loadFromJson(filename: playerEquipmentsFileName) else {
+    ////            return true
+    ////        }
+    //
+    //        // Keep equipment from other players
+    ////        let updatedEquipment = allEquipment.equipments.filter {
+    ////            switch $0.equipment {
+    ////            case .nonConsumable(let eq): return eq.ownerId != playerId
+    ////            case .potion(let eq): return eq.ownerId != playerId
+    ////            case .candy(let eq): return eq.ownerId != playerId
+    ////            }
+    ////        }
+    //
+    //        // Save updated equipment
+    ////        return saveToJson(EquipmentContainer(equipments: updatedEquipment), filename: playerEquipmentsFileName)
+    //    }
+    //
+    //
+    //
+    //    // MARK: - Initialization
+    //
+    //    /// Initialize the persistence system with default data if needed
+    //    func initializeIfNeeded() {
+    //        // Check if players file exists
+    //        if !fileExists(filename: playersFileName) {
+    //            // Create an empty players array
+    //            let emptyPlayers: [PlayerCodable] = []
+    //            _ = saveToJson(emptyPlayers, filename: playersFileName)
+    //        }
+    //
+    //        // Check if player tokis file exists
+    //        if !fileExists(filename: playerTokisFileName) {
+    //            // Create an empty tokis array
+    //            let emptyTokis: [TokiCodable] = []
+    //            _ = saveToJson(emptyTokis, filename: playerTokisFileName)
+    //        }
+    //
+    //        // Check if player equipments file exists
+    //        if !fileExists(filename: playerEquipmentsFileName) {
+    //            // Create an empty equipment container
+    ////            let emptyEquipment = EquipmentContainer(equipments: [])
+    //            _ = saveToJson(emptyEquipment, filename: playerEquipmentsFileName)
+    //        }
+    //
+    //
+    //        // Note: We don't initialize skills.json as it's a template file that should be included in the app bundle
+    //    }
+    //}
 }

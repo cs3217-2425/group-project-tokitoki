@@ -15,7 +15,7 @@ class ResetSystem: System {
         systems.append(StatusEffectsSystem.shared)
         systems.append(StatsModifiersSystem())
         systems.append(TurnSystem.shared)
-        systems.append(EquipmentSystem.shared)
+//        systems.append(EquipmentSystem.shared)
     }
 
     func reset(_ entities: [GameStateEntity]) {

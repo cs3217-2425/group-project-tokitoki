@@ -98,15 +98,14 @@ extension TokiDisplay {
                 
                 if type == "consumable" {
                     recipe = CraftingRecipe(requiredEquipmentIdentifiers: recipeJson.requiredEquipmentIdentifiers) { (equipments: [Equipment]) in
-                        if let potion1 = equipments[0] as? Potion,
-                           let potion2 = equipments[1] as? Potion {
-                            let calculator1 = potion1.effectCalculators
-                            let calculator2 = potion2.effectCalculators
-
-                            return Potion(name: "Super Health Potion",
-                                                       description: "A crafted potion with enhanced effects.",
-                                                       rarity: max(potion1.rarity, potion2.rarity) + 1,
-                                                       effectCalculators: calculator1 + calculator2)
+                        if let eq1 = equipments[0] as? ConsumableEquipment,
+                           let eq2 = equipments[1] as? ConsumableEquipment,
+                           let strat1 = eq1.effectStrategy as? PotionEffectStrategy,
+                           let strat2 = eq2.effectStrategy as? PotionEffectStrategy {
+                            
+                            let newBuff = strat1.buffValue + strat2.buffValue
+                            let newDuration = (strat1.duration + strat2.duration) / 2
+                            let newStrategy = PotionEffectStrategy(buffValue: newBuff, duration: newDuration)
                             
                             // Convert usageContext; default to .anywhere if missing.
                             let usage: ConsumableUsageContext = {
@@ -118,11 +117,11 @@ extension TokiDisplay {
                                 }
                             }()
                             
-//                            return repo.createConsumableEquipment(name: recipeJson.resultName,
-//                                                                  description: recipeJson.description,
-//                                                                  rarity: max(eq1.rarity, eq2.rarity) + recipeJson.rarityIncrement,
-//                                                                  effectStrategy: newStrategy,
-//                                                                  usageContext: usage)
+                            return repo.createConsumableEquipment(name: recipeJson.resultName,
+                                                                  description: recipeJson.description,
+                                                                  rarity: max(eq1.rarity, eq2.rarity) + recipeJson.rarityIncrement,
+                                                                  effectStrategy: newStrategy,
+                                                                  usageContext: usage)
                         }
                         return nil
                     }
@@ -238,27 +237,26 @@ extension TokiDisplay {
          let usageContext = json.usageContext
          
          if json.equipmentType == "consumable", let strategyInfo = json.effectStrategy {
-//             let strategy: ConsumableEffectStrategy
-//             switch strategyInfo.type.lowercased() {
-//             case "potion":
-//                 let buff = strategyInfo.buffValue ?? 0
-//                 let durSec = TimeInterval(strategyInfo.duration ?? 0)
-//                 strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
-//             case "upgradecandy":
-//                 let bonus = strategyInfo.bonusExp ?? 0
-//                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
-//             default:
-//                 strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
-//             }
-//             
-//             return repo.createConsumableEquipment(
-//                 name: json.name,
-//                 description: desc,
-//                 rarity: rarity,
-//                 effectStrategy: strategy,
-//                 usageContext: convertUsageContext(usageContext ?? "anywhere") ?? .anywhere
-//             )
-             return nil
+             let strategy: ConsumableEffectStrategy
+             switch strategyInfo.type.lowercased() {
+             case "potion":
+                 let buff = strategyInfo.buffValue ?? 0
+                 let durSec = TimeInterval(strategyInfo.duration ?? 0)
+                 strategy = PotionEffectStrategy(buffValue: buff, duration: durSec)
+             case "upgradecandy":
+                 let bonus = strategyInfo.bonusExp ?? 0
+                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
+             default:
+                 strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
+             }
+             
+             return repo.createConsumableEquipment(
+                 name: json.name,
+                 description: desc,
+                 rarity: rarity,
+                 effectStrategy: strategy,
+                 usageContext: convertUsageContext(usageContext ?? "anywhere") ?? .anywhere
+             )
          } else if json.equipmentType == "nonConsumable", let buffInfo = json.buff, let slotName = json.slot {
              let buff = EquipmentBuff(value: buffInfo.value,
                                       description: buffInfo.description,
@@ -296,5 +294,3 @@ extension TokiDisplay {
         }
     }
 }
-
-
