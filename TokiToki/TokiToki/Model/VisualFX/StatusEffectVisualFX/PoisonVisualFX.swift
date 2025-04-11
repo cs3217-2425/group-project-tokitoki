@@ -44,17 +44,16 @@ class PoisonVisualFX: StatusEffectVisualFX {
         // Add toxic bubble particles
         var bubbleParams = ParticleParameters(
             type: .bubble,
-            count: 20,
-            size: 8,
+            count: 40,
+            size: 6,
             speed: 20,
-            lifetime: 1.2,
-            spreadRadius: targetView.bounds.width * 0.8
+            lifetime: 1.5,
+            spreadRadius: targetView.bounds.width
         ).toDictionary()
         bubbleParams["color"] = poisonColor
         bubbleParams["isTargetEffect"] = true
-        bubbleParams["riseFactor"] = 1.5
         compositeEffect.addPrimitive(ParticleEmitterPrimitive(), with: bubbleParams)
-        
+
         var smokeParams = ParticleParameters(
             type: .smoke,
             count: 25,
