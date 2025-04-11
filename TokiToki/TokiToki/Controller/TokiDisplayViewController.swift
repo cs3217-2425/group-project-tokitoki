@@ -48,8 +48,11 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         attackProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
         defenseProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
         speedProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
+        
+        let jsonPersistenceManager = JsonPersistenceManager()
+        let player = PlayerManager.shared.getOrCreatePlayer()
 
-        TokiDisplay.shared.loadEquipmentsFromJSON()
+        TokiDisplay.shared.loadEquipmentsFromJSON(using: jsonPersistenceManager, for: player)
         TokiDisplay.shared.updateUI(self)
         
         // Create and add a right swipe gesture recognizer
@@ -61,6 +64,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
     @objc func handleSwipe(_ gesture: UISwipeGestureRecognizer) {
         if gesture.direction == .right {
             // Dismiss the view controller when a right swipe is detected
+            // TODO: Save the current state of Toki
             dismiss(animated: true, completion: nil)
         }
     }
