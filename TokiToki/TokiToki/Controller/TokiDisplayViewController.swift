@@ -49,10 +49,6 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         defenseProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
         speedProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
         
-        let jsonPersistenceManager = JsonPersistenceManager()
-        let player = PlayerManager.shared.getOrCreatePlayer()
-
-        TokiDisplay.shared.loadEquipmentsFromJSON(using: jsonPersistenceManager, for: player)
         TokiDisplay.shared.updateUI(self)
         
         // Create and add a right swipe gesture recognizer
