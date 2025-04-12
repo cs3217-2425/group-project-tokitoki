@@ -6,6 +6,7 @@
 //
 
 class HealCalculator: EffectCalculator {
+    let type: EffectCalculatorType = .heal
     private let statsSystem = StatsSystem()
     private let healPower: Int
 
@@ -18,7 +19,7 @@ class HealCalculator: EffectCalculator {
         healPower = try container.decode(Int.self, forKey: .healPower)
     }
     
-    func encodeAdditionalProperties(to container: KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
+    func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
         try container.encode(healPower, forKey: .healPower)
     }
 

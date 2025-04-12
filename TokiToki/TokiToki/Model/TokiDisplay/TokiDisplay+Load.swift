@@ -188,8 +188,8 @@ extension TokiDisplay {
             let strategy: ConsumableEffectStrategy
             switch strategyInfo.type.lowercased() {
             case "potion":
-                let effectCalculators = strategyInfo.effectCalculators ?? []
-                strategy = PotionEffectStrategy(effectCalculators: effectCalculators)
+                let calculators = strategyInfo.effectCalculators?.map { $0.toEffectCalculator() } ?? []
+                strategy = PotionEffectStrategy(effectCalculators: calculators)
             case "upgradecandy":
                 let bonus = strategyInfo.bonusExp ?? 0
                 strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
