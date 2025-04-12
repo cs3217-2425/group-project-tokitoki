@@ -35,7 +35,7 @@ enum TargetType {
     case singleAlly
 }
 
-enum StatusEffectType {
+enum StatusEffectType: Codable {
     case stun
     case poison
     case burn
@@ -47,6 +47,10 @@ enum StatusEffectType {
 enum SkillVisual: String, CaseIterable {
     case fireball = "fireball"
     case fireSlash = "fireslash"
+    case excalibur = "excalibur"
+    case iceShot = "ice shot"
+    case arrowRain = "arrow rain"
+    case lightningStorm = "lightning storm"
 
     // Fallback for string-based lookup when needed
     static func fromString(_ string: String) -> SkillVisual? {

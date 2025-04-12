@@ -8,18 +8,15 @@
 import Foundation
 
 class StatusEffectsSystem: System {
-    static let shared = StatusEffectsSystem()
     let statsSystem = StatsSystem()
     var priority = 1
     private let strategyFactory = StatusEffectStrategyFactory()
     private let allDmgOverTimeStatusEffects: [StatusEffectType] = [.burn, .poison]
     var currentDmgOverTimeStatusEffects: [StatusEffect] = []
-    private let multiplierForActionMeter: Float = GameEngine.multiplierForActionMeter
+    private let multiplierForActionMeter: Float = GameEngine.MULTIPLIER_FOR_ACTION_METER
     private let MAX_ACTION_BAR: Float = GameEngine.MAX_ACTION_BAR
     private var gameEngine: GameEngine?
-
-    private init() {}
-
+    
     func setGameEngine(_ gameEngine: GameEngine) {
         self.gameEngine = gameEngine
     }
@@ -64,14 +61,18 @@ class StatusEffectsSystem: System {
     }
 
     func applyDmgOverTimeStatusEffects(_ logMessage: (String) -> Void,
-                                       _ battleEffectsDelegate: BattleEffectsDelegate?) {
+                                       _ battleEffectsDelegate: BattleEffectsDelegate?,
+                                       _ entities: [GameStateEntity]) {
         for currentDmgOverTimeStatusEffect in currentDmgOverTimeStatusEffects
             where currentDmgOverTimeStatusEffect.actionMeter >= MAX_ACTION_BAR {
+            let target = entities.first { $0.id == currentDmgOverTimeStatusEffect.targetId }
+            guard let target = target else {
+                return
+            }
             applyStatusEffectAndPublishResult(currentDmgOverTimeStatusEffect,
-                                              currentDmgOverTimeStatusEffect.target, logMessage, battleEffectsDelegate)
+                                              target, logMessage, battleEffectsDelegate)
             updateDmgOverTimeStatusEffect(currentDmgOverTimeStatusEffect)
         }
-
     }
 
     private func updateDmgOverTimeStatusEffect(_ statusEffect: StatusEffect) {

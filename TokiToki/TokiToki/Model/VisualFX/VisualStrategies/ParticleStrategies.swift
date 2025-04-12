@@ -13,7 +13,7 @@ protocol ParticleCreationStrategy {
 }
 
 enum ParticleType: String {
-    case circle, square, triangle, spark, smoke, bubble
+    case circle, square, triangle, spark, smoke, bubble, star
 }
 
 // Default fallback strategy
@@ -133,6 +133,41 @@ class BubbleParticleStrategy: ParticleCreationStrategy {
             let highlightPath = UIBezierPath(ovalIn: CGRect(x: size.width * 0.25, y: size.width * 0.25,
                                                             width: size.width * 0.25, height: size.height * 0.25))
             highlightPath.fill()
+        }
+    }
+}
+
+class StarParticleStrategy: ParticleCreationStrategy {
+    func createImage(size: CGSize, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            let path = UIBezierPath()
+            let centerX = size.width / 2
+            let centerY = size.height / 2
+            let radius = min(size.width, size.height) / 2
+            let innerRadius = radius * 0.4
+
+            for i in 0..<5 {
+                let angle = CGFloat(i) * .pi * 2 / 5 - .pi / 2
+                let point = CGPoint(x: centerX + cos(angle) * radius,
+                                    y: centerY + sin(angle) * radius)
+
+                if i == 0 {
+                    path.move(to: point)
+                } else {
+                    path.addLine(to: point)
+                }
+
+                let innerAngle = angle + .pi / 5
+                let innerPoint = CGPoint(x: centerX + cos(innerAngle) * innerRadius,
+                                         y: centerY + sin(innerAngle) * innerRadius)
+                path.addLine(to: innerPoint)
+            }
+
+            path.close()
+            
+            color.setFill()
+            path.fill()
         }
     }
 }

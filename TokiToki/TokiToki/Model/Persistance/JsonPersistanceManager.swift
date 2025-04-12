@@ -121,7 +121,6 @@ class JsonPersistenceManager {
         }
     }
     
-    
     // MARK: - Initialization
     
     func initializeIfNeeded() {

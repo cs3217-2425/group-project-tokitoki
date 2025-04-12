@@ -225,7 +225,7 @@ struct ConsumableEquipmentCodable: EquipmentCodable {
                 name: name,
                 description: description,
                 rarity: rarity,
-                effectStrategy: PotionEffectStrategy(buffValue: 50, duration: 0),
+                effectStrategy: PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)]),
                 usageContext: ctx
             )
         }

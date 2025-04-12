@@ -25,16 +25,18 @@ class GameEngine {
     private var battleLogObserver: BattleLogObserver?
     private var battleEffectsDelegate: BattleEffectsDelegate?
 
-    static let multiplierForActionMeter: Float = 0.1
+    static let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
     static let MAX_ACTION_BAR: Float = 100
-
-    private let turnSystem = TurnSystem.shared
+    
+    private let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
+    
+    private var systems: [System] = []
+    private let turnSystem = TurnSystem()
     private let skillsSystem = SkillsSystem()
-    private let statusEffectsSystem = StatusEffectsSystem.shared
-    private let resetSystem = ResetSystem()
+    private let statusEffectsSystem = StatusEffectsSystem()
     private let statsSystem = StatsSystem()
     private let statsModifiersSystem = StatsModifiersSystem()
-//    private let equipmentSystem = EquipmentSystem.shared
+    private let equipmentSystem = EquipmentSystem()
 
     private var savedPlayersPlusOpponents: [GameStateEntity] = []
     private var savedPlayerTeam: [GameStateEntity] = []
@@ -48,7 +50,18 @@ class GameEngine {
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
         self.statusEffectsSystem.setGameEngine(self)
-//        self.equipmentSystem.saveEquipments()
+        
+        appendToSystemsForResetting()
+        self.equipmentSystem.saveEquipments()
+    }
+    
+    fileprivate func appendToSystemsForResetting() {
+        systems.append(skillsSystem)
+        systems.append(statsSystem)
+        systems.append(statusEffectsSystem)
+        systems.append(statsModifiersSystem)
+        systems.append(turnSystem)
+        systems.append(equipmentSystem)
     }
 
     func startBattle() {
@@ -66,7 +79,7 @@ class GameEngine {
 
     func startGameLoop() {
         while !isBattleOver() {
-            statusEffectsSystem.applyDmgOverTimeStatusEffects(logMessage, battleEffectsDelegate)
+            statusEffectsSystem.applyDmgOverTimeStatusEffects(logMessage, battleEffectsDelegate, playersPlusOpponents)
             currentGameStateEntity = getNextReadyCharacter()
 
             guard let currentGameStateEntity = currentGameStateEntity else {
@@ -159,17 +172,19 @@ class GameEngine {
     }
 
     func useConsumable(_ consumableName: String) {
-//        let consumable = equipmentSystem.getConsumable(consumableName)
-//        guard let currentGameStateEntity = currentGameStateEntity,
-//              let consumable = consumable as? ConsumableEquipment else {
-//            return
-//        }
-//        let action = UseConsumableAction(user: currentGameStateEntity, consumable: consumable)
-//        queueAction(action)
-//        let results = executeNextAction()
-//        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
-//            self?.updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
-//        }
+        let consumable = playerEquipmentComponent.inventory.first
+        { $0.equipmentType == .consumable && $0.name == consumableName }
+        guard let currentGameStateEntity = currentGameStateEntity,
+              let consumable = consumable as? ConsumableEquipment else {
+            return
+        }
+        let action = UseConsumableAction(user: currentGameStateEntity, consumable: consumable, equipmentSystem,
+                                         playerEquipmentComponent)
+        queueAction(action)
+        let results = executeNextAction()
+        battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
+            self?.updateLogAndEntityAfterActionTaken(results, currentGameStateEntity)
+        }
     }
 
     func takeNoAction() {
@@ -238,7 +253,11 @@ class GameEngine {
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
             let action = aiComponent.determineAction(entity, playerTeam, opponentTeam)
             let results = action.execute()
+
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
+                for result in results {
+                    BattleEventManager.shared.publishEffectResult(result, sourceId: self?.currentGameStateEntity?.id ?? UUID())
+                }
                 self?.updateLogAfterMove(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
             }
@@ -321,10 +340,10 @@ class GameEngine {
     func getBattleLog() -> [String] {
         battleLog
     }
-
+    
     func restart() {
         battleLog = []
-        resetSystem.reset(savedPlayersPlusOpponents)
+        resetAll()
         playersPlusOpponents = savedPlayersPlusOpponents
         playerTeam = savedPlayerTeam
         opponentTeam = savedOpponentTeam
@@ -332,5 +351,11 @@ class GameEngine {
         pendingActions = []
         updateHealthBars()
         startBattle()
+    }
+    
+    fileprivate func resetAll() {
+        for system in systems {
+            system.reset(savedPlayersPlusOpponents)
+        }
     }
 }

@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct StatusEffect {
+struct StatusEffect: Codable {
     let type: StatusEffectType
     var remainingDuration: Int
     let strength: Double
     let sourceId: UUID
     var actionMeter: Float = 0
     var speedOfDmgOverTime: Float = 100 // TODO: vary the speeds
-    let target: GameStateEntity
+    let targetId: UUID
 
     func apply(to entity: GameStateEntity, strategyFactory: StatusEffectStrategyFactory) -> EffectResult {
         guard let strategy = strategyFactory.getStrategy(for: type) else {
@@ -36,6 +36,6 @@ extension StatusEffect: Equatable {
     static func == (lhs: StatusEffect, rhs: StatusEffect) -> Bool {
         lhs.type == rhs.type &&
         lhs.remainingDuration == rhs.remainingDuration && lhs.strength == rhs.strength
-        && lhs.sourceId == rhs.sourceId && lhs.target === rhs.target
+        && lhs.sourceId == rhs.sourceId && lhs.targetId == rhs.targetId
     }
 }
