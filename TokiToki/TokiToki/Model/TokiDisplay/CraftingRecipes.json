@@ -2,8 +2,8 @@
   "recipes": [
     {
       "type": "consumable",
-      "requiredEquipmentIdentifiers": ["Attack Potion", "Attack Potion"],
-      "resultName": "Super Attack Potion",
+      "requiredEquipmentIdentifiers": ["Health Potion", "Health Potion"],
+      "resultName": "Super Health Potion",
       "description": "A crafted potion with enhanced effects.",
       "rarityIncrement": 1,
       "usageContext": "battleOnly"
