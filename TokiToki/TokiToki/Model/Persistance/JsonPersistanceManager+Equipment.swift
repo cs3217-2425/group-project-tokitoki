@@ -181,6 +181,7 @@ extension JsonPersistenceManager {
                 let slotEnum = EquipmentSlot(rawValue: eqInfo.slot ?? "weapon") ?? .weapon
                 
                 let nc = NonConsumableEquipment(
+                    id: eqInfo.id,
                     name: eqInfo.name,
                     description: eqInfo.description,
                     rarity: eqInfo.rarity,
@@ -199,8 +200,11 @@ extension JsonPersistenceManager {
                 // If isEquipped = true, put it in equipped. Otherwise, inventory.
                 if eqInfo.isEquipped == true {
                     equipped[slotEnum] = nc
+                    inventory.append(nc) // still part of inventory
+                    print("[JsonPersistenceManager] Equipped: \(nc.name) in slot \(slotEnum)")
                 } else {
                     inventory.append(nc)
+                    print("[JsonPersistenceManager] Added to inventory: \(nc.name)")
                 }
                 
             } else {
@@ -222,6 +226,7 @@ extension JsonPersistenceManager {
                 }
                 
                 let con = ConsumableEquipment(
+                    id: eqInfo.id,
                     name: eqInfo.name,
                     description: eqInfo.description,
                     rarity: eqInfo.rarity,
@@ -230,6 +235,7 @@ extension JsonPersistenceManager {
                 )
                 // Consumables always go to inventory (no concept of “equipped”)
                 inventory.append(con)
+                print("[JsonPersistenceManager] Added to inventory: \(con.name)")
             }
         }
         

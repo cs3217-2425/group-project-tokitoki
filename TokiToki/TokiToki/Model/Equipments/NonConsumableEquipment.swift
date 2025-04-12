@@ -8,7 +8,7 @@
 import Foundation
 
 struct NonConsumableEquipment: Equipment {
-    let id = UUID()
+    let id: UUID
     let name: String
     let description: String
     let equipmentType: EquipmentType = .nonConsumable

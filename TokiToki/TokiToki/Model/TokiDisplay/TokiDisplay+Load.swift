@@ -67,8 +67,6 @@ extension TokiDisplay {
             let decoded = try JSONDecoder().decode(SkillsWrapper.self, from: data)
             let factory = SkillsFactory()
             self.allSkills = decoded.skills.compactMap { factory.createSkill(from: $0) }
-            // Update the current Toki's skills inventory.
-            self.toki.skills = self.allSkills
         } catch {
             print("Failed to parse Skills.json: \(error)")
         }
@@ -136,7 +134,7 @@ extension TokiDisplay {
                             let combinedBuff = EquipmentBuff(value: eq1.buff.value + eq2.buff.value,
                                                              description: "Combined buff",
                                                              affectedStat: "attack")
-                            return NonConsumableEquipment(name: recipeJson.resultName,
+                            return NonConsumableEquipment(id: UUID(), name: recipeJson.resultName,
                                                           description: recipeJson.description,
                                                           rarity: max(eq1.rarity, eq2.rarity) + recipeJson.rarityIncrement,
                                                           buff: combinedBuff,

@@ -25,6 +25,7 @@ extension JsonPersistenceManager {
     }
     
     func loadPlayerTokis(playerId: UUID) -> [Toki]? {
+        // Load all tokis from JSON.
         guard let allTokisCodable: [TokiCodable] = loadFromJson(filename: playerTokisFileName) else {
             return []
         }
@@ -32,15 +33,22 @@ extension JsonPersistenceManager {
         // Filter only the tokis for this player.
         let playerTokisCodable = allTokisCodable.filter { $0.ownerId == playerId }
         
+        // Load the player's equipment component.
+        guard let equipmentComponent = loadPlayerEquipment(playerId: playerId) else {
+            print("No equipment component found for player \(playerId)")
+            return nil
+        }
+        
+        // Build a lookup dictionary keyed by UUID.
+        let equipmentLookup = Dictionary(uniqueKeysWithValues: equipmentComponent.inventory.map { ($0.id, $0) })
+        
         var tokis: [Toki] = []
         
         for tokiCodable in playerTokisCodable {
-            // Debug: print the raw skillNames stored for this toki.
-            print("TokiCodable \(tokiCodable.name) raw skillNames: \(tokiCodable.skillNames)")
-            
-            // Create a new, independent Toki (with empty skills)
+            // Convert the TokiCodable to a domain model.
             let toki = tokiCodable.toDomainModel()
             
+            // Load the matching skills from the stored skill names.
             let skillsForThisToki: [Skill] = tokiCodable.skillNames.compactMap { skillName in
                 guard let skillData = skillTemplates[skillName] else {
                     print("Skill template not found for name: \(skillName)")
@@ -50,14 +58,19 @@ extension JsonPersistenceManager {
             }
             toki.skills = skillsForThisToki
             
+            // Use the toki's equipmentIds (of type UUID) to retrieve Equipment from the lookup dictionary.
+            let equipmentsForThisToki: [Equipment] = tokiCodable.equipmentIds.compactMap { equipmentId in
+                return equipmentLookup[equipmentId]
+            }
+            toki.equipments = equipmentsForThisToki
+            print("[JsonPersistentManager] Loaded Toki: \(toki.name) with \(toki.equipments.count) equipments and \(toki.skills.count) skills.")
+            
             tokis.append(toki)
         }
         
         return tokis
     }
-    
-    
-    
+
     
     func deletePlayerTokis(playerId: UUID) -> Bool {
         guard let allTokisCodable: [TokiCodable] = loadFromJson(filename: playerTokisFileName) else {

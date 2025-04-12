@@ -176,6 +176,7 @@ struct NonConsumableEquipmentCodable: EquipmentCodable {
         
         // NonConsumableEquipment’s real struct always generates a new ID internally:
         return NonConsumableEquipment(
+            id: UUID(),
             name: name,
             description: description,
             rarity: rarity,
@@ -213,6 +214,7 @@ struct ConsumableEquipmentCodable: EquipmentCodable {
         if consumableType.lowercased() == "candy" {
             let expValue = bonusExp ?? 100
             return ConsumableEquipment(
+                id: UUID(),
                 name: name,
                 description: description,
                 rarity: rarity,
@@ -222,6 +224,7 @@ struct ConsumableEquipmentCodable: EquipmentCodable {
         } else {
             // fallback "potion"
             return ConsumableEquipment(
+                id: UUID(),
                 name: name,
                 description: description,
                 rarity: rarity,

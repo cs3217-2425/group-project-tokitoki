@@ -14,7 +14,7 @@ enum ConsumableUsageContext {
 }
 
 struct ConsumableEquipment: Equipment {
-    let id = UUID()
+    let id: UUID
     let name: String
     let description: String
     let equipmentType: EquipmentType = .consumable
