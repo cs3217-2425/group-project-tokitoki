@@ -29,6 +29,7 @@ class GameEngine {
     static let MAX_ACTION_BAR: Float = 100
     
     private let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
+    private let globalStatusEffectsManaging: GlobalStatusEffectsManaging
     
     private var systems: [System] = []
     private let turnSystem = TurnSystem()
@@ -49,6 +50,7 @@ class GameEngine {
         self.savedPlayerTeam = playerTeam
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
+        self.globalStatusEffectsManaging = GlobalStatusEffectsManager(statusEffectsSystem)
         self.statusEffectsSystem.setGameEngine(self)
         
         appendToSystemsForResetting()
