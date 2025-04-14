@@ -8,81 +8,24 @@
 import Foundation
 
 class StatusEffectsSystem: System {
-    let statsSystem = StatsSystem()
-    var priority = 1
-    private let strategyFactory = StatusEffectStrategyFactory()
-    private let allDmgOverTimeStatusEffects: [StatusEffectType] = [.burn, .poison]
-    var currentDmgOverTimeStatusEffects: [StatusEffect] = []
-    private let multiplierForActionMeter: Float = GameEngine.MULTIPLIER_FOR_ACTION_METER
-    private let MAX_ACTION_BAR: Float = GameEngine.MAX_ACTION_BAR
-    private var gameEngine: GameEngine?
-    
-    func setGameEngine(_ gameEngine: GameEngine) {
-        self.gameEngine = gameEngine
+    private var statusEffectApplierAndPublisherDelegate: StatusEffectApplierAndPublisherDelegate?
+
+    func setDelegate(_ delegate: StatusEffectApplierAndPublisherDelegate) {
+        self.statusEffectApplierAndPublisherDelegate = delegate
     }
 
-    fileprivate func applyStatusEffectAndPublishResult(_ effect: StatusEffect,
-                                                       _ entity: GameStateEntity,
-                                                       _ logMessage: (String) -> Void,
-                                                       _ battleEffectsDelegate: BattleEffectsDelegate?
-    ) {
-        let result = effect.apply(to: entity, strategyFactory: strategyFactory)
-        logMessage(result.description)
-        battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
-                                               statsSystem.getMaxHealth(entity)) { [weak self] in
-            self?.gameEngine?.checkIfEntitiesAreDead()
-        }
-
-        BattleEventManager.shared.publishEffectResult(result, sourceId: effect.sourceId)
-    }
-
-    func update(_ entities: [GameStateEntity], _ logMessage: (String) -> Void) {
+    func update(_ entities: [GameStateEntity]) {
         for entity in entities {
             guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
                 return
             }
 
             for effect in statusComponent.activeEffects {
-                applyStatusEffectAndPublishResult(effect, entity, logMessage, nil)
+                statusEffectApplierAndPublisherDelegate?.applyStatusEffectAndPublishResult(effect, entity)
             }
 
             updateEffects(statusComponent)
         }
-    }
-
-    func update(_ entities: [GameStateEntity]) {
-
-    }
-
-    func updateDmgOverTimeEffectsActionMeter() {
-        for i in currentDmgOverTimeStatusEffects.indices {
-            currentDmgOverTimeStatusEffects[i].updateActionMeter(by: multiplierForActionMeter)
-        }
-    }
-
-    func applyDmgOverTimeStatusEffects(_ logMessage: (String) -> Void,
-                                       _ battleEffectsDelegate: BattleEffectsDelegate?,
-                                       _ entities: [GameStateEntity]) {
-        for currentDmgOverTimeStatusEffect in currentDmgOverTimeStatusEffects
-            where currentDmgOverTimeStatusEffect.actionMeter >= MAX_ACTION_BAR {
-            let target = entities.first { $0.id == currentDmgOverTimeStatusEffect.targetId }
-            guard let target = target else {
-                return
-            }
-            applyStatusEffectAndPublishResult(currentDmgOverTimeStatusEffect,
-                                              target, logMessage, battleEffectsDelegate)
-            updateDmgOverTimeStatusEffect(currentDmgOverTimeStatusEffect)
-        }
-    }
-
-    private func updateDmgOverTimeStatusEffect(_ statusEffect: StatusEffect) {
-        var updatedEffect = statusEffect
-        updatedEffect.remainingDuration -= 1
-        updatedEffect.actionMeter -= MAX_ACTION_BAR
-
-        currentDmgOverTimeStatusEffects = currentDmgOverTimeStatusEffects
-            .map { $0.type == updatedEffect.type ? updatedEffect : $0 }
-            .filter { $0.remainingDuration > 0 }
     }
 
     private func updateEffects(_ statusComponent: StatusEffectsComponent) {
@@ -100,18 +43,17 @@ class StatusEffectsSystem: System {
             }
             statusComponent.activeEffects = []
         }
-        currentDmgOverTimeStatusEffects = []
     }
 
-    func addEffect(_ effect: StatusEffect, _ entity: GameStateEntity) {
+    func addEffect(_ effect: StatusEffect,
+                   _ entity: GameStateEntity,
+                   _ modifyStatusEffects: (_ statusEffect: StatusEffect,
+                                           _ entity: GameStateEntity,
+                                           _ statusEffects: inout [StatusEffect]) -> Void) {
         guard let statusComponent = entity.getComponent(ofType: StatusEffectsComponent.self) else {
             return
         }
-        if checkIfStatusEffectIsDmgOverTime(effect) {
-            self.currentDmgOverTimeStatusEffects.append(effect)
-        } else {
-            statusComponent.activeEffects.append(effect)
-        }
+        modifyStatusEffects(effect, entity, &(statusComponent.activeEffects))
     }
 
     func removeEffect(_ effect: StatusEffect, _ entity: GameStateEntity) {
@@ -120,10 +62,6 @@ class StatusEffectsSystem: System {
         }
 
         statusComponent.activeEffects.removeAll { $0.type == effect.type }
-    }
-
-    private func checkIfStatusEffectIsDmgOverTime(_ effect: StatusEffect) -> Bool {
-        allDmgOverTimeStatusEffects.contains(effect.type)
     }
 
     func checkHasEffect(ofType type: StatusEffectType, _ entity: GameStateEntity) -> Bool {

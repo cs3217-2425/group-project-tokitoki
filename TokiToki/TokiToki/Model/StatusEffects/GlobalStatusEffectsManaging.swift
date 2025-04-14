@@ -6,6 +6,10 @@
 //
 
 protocol GlobalStatusEffectsManaging {
-    func addGlobalStatusEffect(_ statusEffect: StatusEffect)
-    func removeGlobalStatusEffect(_ statusEffect: StatusEffect)
+    func setDelegate(_ delegate: StatusEffectApplierAndPublisherDelegate)
+    func addStatusEffect(_ statusEffect: StatusEffect, _ entity: GameStateEntity)
+    func removeGlobalStatusEffectsOfDeadEntity(_ entity: GameStateEntity)
+    func applyGlobalStatusEffects(_ entities: [GameStateEntity])
+    func updateGlobalStatusEffectsActionMeter()
+    func reset()
 }

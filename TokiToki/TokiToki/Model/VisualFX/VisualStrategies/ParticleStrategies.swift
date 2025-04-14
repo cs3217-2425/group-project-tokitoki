@@ -165,7 +165,7 @@ class StarParticleStrategy: ParticleCreationStrategy {
             }
 
             path.close()
-            
+
             color.setFill()
             path.fill()
         }

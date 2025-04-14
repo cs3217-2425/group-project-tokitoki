@@ -8,7 +8,9 @@
 struct PotionEffectStrategy: ConsumableEffectStrategy {
     let effectCalculators: [EffectCalculator]
 
-    func applyEffect(name: String, to toki: Toki?, orTo entity: GameStateEntity?, completion: (() -> Void)? = nil)
+    func applyEffect(name: String, to toki: Toki?, orTo entity: GameStateEntity?,
+                     _ globalStatusEffectsManager: GlobalStatusEffectsManaging?,
+                     completion: (() -> Void)? = nil)
     -> [EffectResult]? {
         guard let entity = entity else {
             return nil
@@ -16,7 +18,9 @@ struct PotionEffectStrategy: ConsumableEffectStrategy {
         var results: [EffectResult] = []
         for effectCalculator in effectCalculators {
             let result = effectCalculator.calculate(moveName: name,
-                                                    source: entity, target: entity)
+                                                    source: entity, target: entity,
+                                                    context: EffectCalculationContext(
+                                                        globalStatusEffectsManager: globalStatusEffectsManager))
             guard let result = result else {
                 continue
             }

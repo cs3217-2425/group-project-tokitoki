@@ -6,16 +6,21 @@
 //
 
 class TurnSystem: System {
-    var priority: Int = 0
-    let MAX_ACTION_BAR: Float = GameEngine.MAX_ACTION_BAR
-    var multiplierForActionMeter: Float = GameEngine.MULTIPLIER_FOR_ACTION_METER
-    let statsSystem = StatsSystem()
+    let MAX_ACTION_BAR: Float
+    let MULTIPLIER_FOR_ACTION_METER: Float
+    let statsSystem: StatsSystem
+    
+    init(_ statsSystem: StatsSystem, _ max_action_bar: Float, _ multiplier_for_action_meter: Float) {
+        self.statsSystem = statsSystem
+        self.MAX_ACTION_BAR = max_action_bar
+        self.MULTIPLIER_FOR_ACTION_METER = multiplier_for_action_meter
+    }
 
     func update(_ entities: [GameStateEntity]) {
         for entity in entities {
             guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else { continue }
 
-            statsComponent.actionMeter += multiplierForActionMeter * Float(statsSystem.getSpeed(entity))
+            statsComponent.actionMeter += MULTIPLIER_FOR_ACTION_METER * Float(statsSystem.getSpeed(entity))
             statsComponent.actionMeter = min(statsComponent.actionMeter, MAX_ACTION_BAR)
         }
     }
@@ -32,7 +37,7 @@ class TurnSystem: System {
                 return statsSystem.getActionBar($0) > statsSystem.getActionBar($1)
             }
             .first
-        
+
         return readyEntity
     }
 

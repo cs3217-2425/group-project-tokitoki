@@ -29,7 +29,7 @@ class HorizontalScrollViewController: UICollectionViewController {
     }
 
     func calculateSectionInset() -> CGFloat { // should be overridden
-        return 100
+        100
     }
 
     private func configureCollectionViewLayoutItemSize() {
@@ -75,7 +75,6 @@ class HorizontalScrollViewController: UICollectionViewController {
             let snapToIndex = indexOfCellBeforeDragging + (hasEnoughVelocityToSlideToTheNextCell ? 1 : -1)
             let toValue = collectionViewFlowLayout.itemSize.width * CGFloat(snapToIndex)
 
-
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1,
                            initialSpringVelocity: velocity.x,
                            options: .allowUserInteraction, animations: {
@@ -88,6 +87,5 @@ class HorizontalScrollViewController: UICollectionViewController {
             collectionViewLayout.collectionView!.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
     }
-    
-    
+
 }

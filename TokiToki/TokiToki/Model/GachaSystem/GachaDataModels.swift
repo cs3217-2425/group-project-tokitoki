@@ -60,17 +60,17 @@ struct EffectDefinitionData: Codable {
 
 struct CalculatorData: Codable {
     let calculatorType: String
-    
+
     // Attack calculator fields
     let elementType: String?
     let basePower: Int?
-    
+
     // Status effect calculator fields
     let statusEffectChance: Double?
     let statusEffect: String?
     let statusEffectDuration: Int?
     let statusEffectStrength: Double?
-    
+
     // Stats modifier calculator fields
     let statsModifierDuration: Int?
     let attackModifier: Double?

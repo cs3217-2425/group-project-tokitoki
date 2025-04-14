@@ -8,8 +8,6 @@
 import Foundation
 
 class StatsModifiersSystem: System {
-    var priority = 1
-
     func update(_ entities: [GameStateEntity]) {
         entities.forEach { updateModifiers($0) }
     }

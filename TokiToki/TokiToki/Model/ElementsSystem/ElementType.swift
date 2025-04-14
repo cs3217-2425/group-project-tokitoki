@@ -21,7 +21,7 @@ enum ElementType: String, CaseIterable, Codable {
     static func fromString(_ string: String) -> ElementType? {
         ElementType.allCases.first { $0.rawValue == string.lowercased() }
     }
-    
+
     var description: String {
         switch self {
         case .fire: return "Fire"

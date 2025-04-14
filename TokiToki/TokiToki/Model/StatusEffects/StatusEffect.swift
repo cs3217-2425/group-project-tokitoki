@@ -13,7 +13,9 @@ struct StatusEffect: Codable {
     let strength: Double
     let sourceId: UUID
     var actionMeter: Float = 0
-    var speedOfDmgOverTime: Float = 100 // TODO: vary the speeds
+    var speedOfDmgOverTime: Float {
+        type.defaultSpeedOfDmgOverTime
+    }
     let targetId: UUID
 
     func apply(to entity: GameStateEntity, strategyFactory: StatusEffectStrategyFactory) -> EffectResult {

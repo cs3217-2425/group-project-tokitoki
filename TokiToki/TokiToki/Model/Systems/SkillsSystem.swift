@@ -6,8 +6,6 @@
 //
 
 class SkillsSystem: System {
-    var priority = 1
-
     func update(_ entities: [GameStateEntity]) {
         for entity in entities {
             guard let skillsComponent = entity.getComponent(ofType: SkillsComponent.self) else { continue }

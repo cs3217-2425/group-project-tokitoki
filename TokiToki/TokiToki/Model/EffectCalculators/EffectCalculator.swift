@@ -42,4 +42,3 @@ enum EffectCalculatorCodingKeys: String, CodingKey {
     case statusEffectDuration
     case statusEffectStrength
 }
-

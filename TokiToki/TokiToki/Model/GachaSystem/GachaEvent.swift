@@ -74,11 +74,11 @@ class ElementEvent: GachaEvent {
             .reduce(into: [String: Double]()) { result, equipment in
                 result[equipment.name] = rateMultiplier
             }
-        
-        modifiers.merge(tokiModifiers) { (_, new) in new }
+
+        modifiers.merge(tokiModifiers) { _, new in new }
 //        modifiers.merge(skillModifiers) { (_, new) in new }
-        modifiers.merge(equipmentModifiers) { (_, new) in new }
-        
+        modifiers.merge(equipmentModifiers) { _, new in new }
+
         return modifiers
     }
 

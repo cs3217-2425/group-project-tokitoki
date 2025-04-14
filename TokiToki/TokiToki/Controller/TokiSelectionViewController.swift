@@ -58,7 +58,7 @@ extension TokiSelectionViewController: UITableViewDelegate {
             }
         }
     }
-    
+
     @IBAction func unwindToMaster(_ segue: UIStoryboardSegue) {
         // save toki
     }

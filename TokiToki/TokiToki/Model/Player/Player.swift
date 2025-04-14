@@ -82,19 +82,19 @@ struct Player {
             print("Unknown item type: \(type(of: item))")
         }
     }
-    
+
     // MARK: - Gacha Pull Management
-        
+
     /// Check if the player has reached their daily pull limit
     func hasReachedDailyPullLimit(limit: Int) -> Bool {
-        return dailyPullsCount >= limit
+        dailyPullsCount >= limit
     }
-    
+
     /// Reset daily pulls count if a new day has started
     mutating func checkAndResetDailyPulls() {
         let calendar = Calendar.current
         let today = Date()
-        
+
         // If this is the first pull ever or we have a reset date
         if let lastReset = dailyPullsLastReset {
             // Check if the current date is a different day than the last reset
@@ -108,7 +108,7 @@ struct Player {
             dailyPullsLastReset = today
         }
     }
-    
+
     /// Increment daily pulls count after a successful pull
     mutating func incrementDailyPullsCount(by count: Int = 1) {
         checkAndResetDailyPulls() // Check if we need to reset first

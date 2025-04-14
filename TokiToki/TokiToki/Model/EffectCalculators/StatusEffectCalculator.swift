@@ -7,8 +7,6 @@
 
 class StatusEffectCalculator: EffectCalculator {
     let type: EffectCalculatorType = .statusEffect
-    private let statsSystem = StatsSystem()
-    private let statusEffectsSystem = StatusEffectsSystem()
     let statusEffectChance: Double
     let statusEffect: StatusEffectType?
     let statusEffectDuration: Int
@@ -22,7 +20,7 @@ class StatusEffectCalculator: EffectCalculator {
         self.statusEffectDuration = statusEffectDuration
         self.statusEffectStrength = statusEffectStrength
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: EffectCalculatorCodingKeys.self)
         statusEffectChance = try container.decode(Double.self, forKey: .statusEffectChance)
@@ -30,7 +28,7 @@ class StatusEffectCalculator: EffectCalculator {
         statusEffectDuration = try container.decode(Int.self, forKey: .statusEffectDuration)
         statusEffectStrength = try container.decode(Double.self, forKey: .statusEffectStrength)
     }
-    
+
     func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
         try container.encode(statusEffectChance, forKey: .statusEffectChance)
         try container.encodeIfPresent(statusEffect, forKey: .statusEffect)
@@ -38,7 +36,8 @@ class StatusEffectCalculator: EffectCalculator {
         try container.encode(statusEffectStrength, forKey: .statusEffectStrength)
     }
 
-    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
+    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity,
+                   context: EffectCalculationContext) -> EffectResult? {
         guard let effectType = statusEffect else {
             return EffectResult(entity: target, value: 0,
                                 description: "No status effect found!")
@@ -57,7 +56,7 @@ class StatusEffectCalculator: EffectCalculator {
                                 description: "No status component found!")
         }
 
-        statusEffectsSystem.addEffect(effect, target)
+        context.globalStatusEffectsManager?.addStatusEffect(effect, target)
         return EffectResult(entity: target, value: 0,
                                     description: "\(target.name) is affected by \(effectType)!")
     }

@@ -8,7 +8,6 @@
 import Foundation
 
 protocol System {
-    var priority: Int { get }
     func update(_ entities: [GameStateEntity])
     func reset(_ entities: [GameStateEntity])
 }
