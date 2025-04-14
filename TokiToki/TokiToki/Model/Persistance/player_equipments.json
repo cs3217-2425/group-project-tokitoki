@@ -36,7 +36,7 @@
     "equipment": {
       "id": "d0f1e2c3-b4a5-4a6b-8c7d-0e1f2a3b4c5d",
       "name": "Health Potion",
-      "description": "Restores 50 HP",
+      "description": "Restores 100 HP",
       "rarity": 0,
       "equipmentType": "consumable",
       "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -49,7 +49,7 @@
     "equipment": {
       "id": "e5d4c3b2-a1f9-4b7c-95d6-4a3b2c1d0e9f",
       "name": "Health Potion",
-      "description": "Restores 50 HP",
+      "description": "Restores 100 HP",
       "rarity": 0,
       "equipmentType": "consumable",
       "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -92,7 +92,7 @@
     "equipment": {
       "id": "b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e",
       "name": "Health Potion",
-      "description": "Restores 50 HP",
+      "description": "Restores 100 HP",
       "rarity": 0,
       "equipmentType": "consumable",
       "ownerId": "a81bc23d-45ef-67ab-89cd-ef0123456789",

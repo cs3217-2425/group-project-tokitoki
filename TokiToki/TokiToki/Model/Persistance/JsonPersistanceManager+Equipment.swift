@@ -217,7 +217,6 @@ extension JsonPersistenceManager {
                 }
 
                 // Provide a default effect strategy
-                // For potions, we can do something like +50 attack for 0s if not truly modeled
                 // For candy, read bonusExp
                 var strategy: ConsumableEffectStrategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
                 if eqInfo.consumableType == "candy" {

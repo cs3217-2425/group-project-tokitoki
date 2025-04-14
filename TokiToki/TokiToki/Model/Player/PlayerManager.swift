@@ -36,10 +36,14 @@ class PlayerManager {
 
     func countConsumables() -> [ConsumableGroupings] {
         let countsDict = getEquipmentComponent().inventory
-           .filter { $0.equipmentType == .consumable }
-           .reduce(into: [String: Int]()) { counts, item in
-               counts[item.name, default: 0] += 1
-           }
+            .filter { item in
+                guard item.equipmentType == .consumable,
+                      let consumable = item as? ConsumableEquipment else { return false }
+                return consumable.usageContext == .battleOnly || consumable.usageContext == .anywhere
+            }
+            .reduce(into: [String: Int]()) { counts, item in
+                counts[item.name, default: 0] += 1
+            }
 
        return countsDict.map { ConsumableGroupings(name: $0.key, quantity: $0.value) }
     }
