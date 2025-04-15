@@ -11,21 +11,21 @@ extension TokiDisplay {
     func useConsumable(_ consumable: ConsumableEquipment, at indexPath: IndexPath,
                        equipmentTableView: UITableView?, control: TokiDisplayViewController) {
         // 1. Use it on the real Toki so that Toki’s exp updates
-        TokiDisplay.shared.equipmentFacade.useConsumable(
+        self.equipmentFacade.useConsumable(
             consumable: consumable,
-            on: TokiDisplay.shared.toki
+            on: self.toki
         )
 
         // 2. Remove from the facade’s inventory so it no longer appears in the table
-        let component = TokiDisplay.shared.equipmentFacade.equipmentComponent
+        let component = self.equipmentFacade.equipmentComponent
         if let idx = component.inventory.firstIndex(where: { $0.id == consumable.id }) {
             component.inventory.remove(at: idx)
-            TokiDisplay.shared.equipmentFacade.equipmentComponent = component
+            self.equipmentFacade.equipmentComponent = component
         }
 
         // 3. Also remove from Toki’s equipment array to keep them in sync (if Toki had it).
-        if let tokiIndex = TokiDisplay.shared.toki.equipments.firstIndex(where: { $0.id == consumable.id }) {
-            TokiDisplay.shared.toki.equipments.remove(at: tokiIndex)
+        if let tokiIndex = self.toki.equipments.firstIndex(where: { $0.id == consumable.id }) {
+            self.toki.equipments.remove(at: tokiIndex)
         }
 
         // 4. Reload the table to reflect the changes
@@ -150,5 +150,37 @@ extension TokiDisplay {
             }
             control.present(alert, animated: true, completion: nil)
         }
+    }
+    
+    func showCraftingPopup(for item: Equipment, at originalIndex: Int, _ vcont: TokiDisplayViewController) {
+        let craftVC = CraftingPopupViewController()
+
+        // Pass along the original item and its index in the inventory.
+        craftVC.originalItem = item
+        craftVC.originalItemIndex = originalIndex
+        
+        // Pass the TokiDisplay instance (or any other dependency) from the parent view controller.
+        craftVC.tokiDisplay = vcont.tokiDisplay
+
+        // Present as a popover or modal.
+        craftVC.modalPresentationStyle = .popover
+
+        if let popover = craftVC.popoverPresentationController {
+            popover.sourceView = vcont.view
+            popover.sourceRect = CGRect(x: 100, y: 100, width: 1, height: 1)
+            popover.permittedArrowDirections = []
+        }
+
+        // Optionally, set a callback so we can reload Toki UI after crafting.
+        craftVC.onCraftComplete = { [weak vcont] in
+            guard let strongSelf = vcont else {
+                // The view controller no longer exists; just return.
+                return
+            }
+            strongSelf.equipmentTableView?.reloadData()
+            strongSelf.tokiDisplay?.updateUI(strongSelf)
+        }
+
+        vcont.present(craftVC, animated: true, completion: nil)
     }
 }

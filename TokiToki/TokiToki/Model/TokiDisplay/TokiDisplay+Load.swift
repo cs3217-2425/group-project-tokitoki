@@ -16,7 +16,8 @@ extension TokiDisplay {
         let player = PlayerManager.shared.getOrCreatePlayer()
 
         // Persist the updated player state.
-        _ = jsonPersistenceManager.savePlayerTokis(TokiDisplay.shared.allTokis, playerId: player.id)
+        _ = jsonPersistenceManager.savePlayerTokis(self.allTokis, playerId: player.id)
+        _ = jsonPersistenceManager.savePlayerEquipment(self.equipmentFacade.equipmentComponent, playerId: player.id)
     }
 
     /// Load Tokis, Skills, and Equipment from JSON persistence.
