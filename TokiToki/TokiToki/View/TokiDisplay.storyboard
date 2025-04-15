@@ -29,15 +29,15 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a13-As-QBG">
-                                                    <rect key="frame" x="16" y="0.0" width="945" height="52"/>
+                                                    <rect key="frame" x="16" y="0.0" width="945" height="51.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gsz-XE-2Qj">
-                                                    <rect key="frame" x="969" y="10" width="49" height="31"/>
+                                                    <rect key="frame" x="969" y="10" width="51" height="31.5"/>
                                                     <connections>
-                                                        <action selector="switchChanged:" destination="Dfe-YI-xVh" eventType="valueChanged" id="Vip-yS-eaV"/>
+                                                        <action selector="switchChanged:" destination="Dfe-YI-xVh" eventType="valueChanged" id="jQO-9c-b8S"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>

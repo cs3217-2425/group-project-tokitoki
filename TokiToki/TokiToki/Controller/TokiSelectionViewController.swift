@@ -73,10 +73,12 @@ extension TokiSelectionViewController: UITableViewDataSource {
             if isOn {
                 if !self.selectedTokis.contains(where: { $0.id == toki.id }) {
                     self.selectedTokis.append(toki)
+                    print("[TokiSelection] Added Toki: \(toki.name) to selectedTokis")
                 }
             } else {
                 if let index = self.selectedTokis.firstIndex(where: { $0.id == toki.id }) {
                     self.selectedTokis.remove(at: index)
+                    print("[TokiSelection] Removed Toki: \(toki.name) from selectedTokis")
                 }
             }
         }
