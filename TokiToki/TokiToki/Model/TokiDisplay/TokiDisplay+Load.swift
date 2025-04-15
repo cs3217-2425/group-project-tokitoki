@@ -17,6 +17,7 @@ extension TokiDisplay {
 
         // Persist the updated player state.
         _ = jsonPersistenceManager.savePlayerTokis(self.allTokis, playerId: player.id)
+        _ = jsonPersistenceManager.savePlayerEquipment(self.equipmentFacade.equipmentComponent, playerId: player.id)
     }
 
     /// Load Tokis, Skills, and Equipment from JSON persistence.
