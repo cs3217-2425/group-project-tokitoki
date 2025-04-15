@@ -10,16 +10,34 @@ import Foundation
 extension JsonPersistenceManager {
     func savePlayerTokis(_ tokis: [Toki], playerId: UUID) -> Bool {
         let tokisCodable = tokis.map { TokiCodable(from: $0, ownerId: playerId) }
-
         var allTokis: [TokiCodable] = []
+        
         if fileExists(filename: playerTokisFileName),
            let existingTokis: [TokiCodable] = loadFromJson(filename: playerTokisFileName) {
             // Keep tokis from other players
-            allTokis = existingTokis.filter { $0.ownerId != playerId }
-        }
+            let otherPlayerTokis = existingTokis.filter { $0.ownerId != playerId }
 
-        // Add current player's tokis
-        allTokis.append(contentsOf: tokisCodable)
+            // Create a dictionary for the current player's tokis keyed by their id
+            var currentPlayerTokiDict = Dictionary(uniqueKeysWithValues: existingTokis.filter { $0.ownerId == playerId }.map { ($0.id, $0) })
+
+            // For each toki being saved, update the existing entry if present by modifying it, or add a new one if it doesn't exist
+            for newToki in tokisCodable {
+                if var existingToki = currentPlayerTokiDict[newToki.id] {
+                    // Modify the existing toki's fields with new values. For example, update the skill names and equipment IDs.
+                    existingToki.skillNames = newToki.skillNames
+                    existingToki.equipmentIds = newToki.equipmentIds
+                    // If there are additional fields to update, they can be merged here.
+                    currentPlayerTokiDict[newToki.id] = existingToki
+                } else {
+                    currentPlayerTokiDict[newToki.id] = newToki
+                }
+            }
+
+            // Combine tokis from other players with the updated/current player's tokis
+            allTokis = otherPlayerTokis + Array(currentPlayerTokiDict.values)
+        } else {
+            allTokis = tokisCodable
+        }
 
         return saveToJson(allTokis, filename: playerTokisFileName)
     }
@@ -40,7 +58,7 @@ extension JsonPersistenceManager {
         }
 
         // Build a lookup dictionary keyed by UUID.
-        let equipmentLookup = Dictionary(uniqueKeysWithValues: equipmentComponent.inventory.map { ($0.id, $0) })
+        let equipmentLookup = Dictionary(equipmentComponent.inventory.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
 
         var tokis: [Toki] = []
 

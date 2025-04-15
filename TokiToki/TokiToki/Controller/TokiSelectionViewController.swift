@@ -9,57 +9,42 @@ import UIKit
 
 class TokiSelectionViewController: UIViewController {
     @IBOutlet var tokiTableView: UITableView?
-
-    private let tokis = TokiDisplay.shared.allTokis
-
+    @IBOutlet var startButton: UIButton?
+    
+    private let tokiSelection = TokiSelection()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         tokiTableView?.dataSource = self
         tokiTableView?.delegate = self
     }
+    
+    // Called when the player taps the Start button
+    @IBAction func startBattleTapped(_ sender: UIButton) {
+        tokiSelection.startBattleTapped(self)
+    }
+    
+    // Preserve this segue when the cell (excluding the switch area) is tapped.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        tokiSelection.prepare(for: segue, sender: sender)
+    }
 }
-
-// MARK: - UITableViewDataSource
 
 extension TokiSelectionViewController: UITableViewDataSource {
-    // Number of rows = total number of Tokis loaded
+    // Returns the total number of Tokis.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tokis.count
+        tokiSelection.tableView(tableView, numberOfRowsInSection: section)
     }
-
-    // Create each cell with the Toki name
+    
+    // Dequeues and configures each cell.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Use the same reuse identifier you set in the storyboard (“TokiCell”)
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TokiCell", for: indexPath)
-        let toki = tokis[indexPath.row]
-        cell.textLabel?.text = toki.name
-        return cell
+        tokiSelection.tableView(tableView, cellForRowAt: indexPath)
     }
 }
 
-// MARK: - UITableViewDelegate
-
 extension TokiSelectionViewController: UITableViewDelegate {
-    // When the user taps on a row, select that Toki and navigate or dismiss
+    // When the cell (outside of the switch) is tapped, display the Toki details.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedToki = tokis[indexPath.row]
-
-        TokiDisplay.shared.toki = selectedToki
-
-        performSegue(withIdentifier: "ShowTokiDisplay", sender: self)
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowTokiDisplay" {
-            if let destVC = segue.destination as? TokiDisplayViewController {
-                // Set the modal presentation style to full screen
-                destVC.modalPresentationStyle = .fullScreen
-            }
-        }
-    }
-
-    @IBAction func unwindToMaster(_ segue: UIStoryboardSegue) {
-        // save toki
+        tokiSelection.tableView(tableView, didSelectRowAt: indexPath, self)
     }
 }

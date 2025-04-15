@@ -157,10 +157,6 @@ struct EquipmentsWrapper: Decodable {
 // MARK: - TokiDisplay Class
 
 class TokiDisplay {
-
-    // Singleton or shared reference if needed.
-    static let shared = TokiDisplay()
-
     // Private storage for “currently viewed” Toki.
     // We need some Toki to attach to the UI, but we’re no longer
     // constructing a test Toki. Instead, we’ll pick one from JSON.

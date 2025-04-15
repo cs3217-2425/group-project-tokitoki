@@ -45,9 +45,13 @@ extension JsonPersistenceManager {
             allEquipment = existing.filter { $0.equipment.ownerId != playerId }
         }
 
-        // 2) Combine inventory + equipped items
-        let allPlayerEquipment = equipmentComponent.inventory
-        + equipmentComponent.equipped.values.map { $0 as Equipment }
+        // 2) Combine inventory and equipped items, removing duplicates
+        let combinedEquipment = equipmentComponent.inventory + equipmentComponent.equipped.values.map { $0 as Equipment }
+        let allPlayerEquipment = combinedEquipment.reduce(into: [Equipment]()) { result, eq in
+            if !result.contains(where: { $0.id == eq.id }) {
+                result.append(eq)
+            }
+        }
 
         // 3) Convert each to PlayerEquipmentEntry
         let newEntries: [PlayerEquipmentEntry] = allPlayerEquipment.map { eq in
@@ -152,8 +156,11 @@ extension JsonPersistenceManager {
             )
         }
 
-        // 4) Append new equipment and save
-        allEquipment.append(contentsOf: newEntries)
+        // 4) Filter duplicate entries based on equipment id
+        let filteredNewEntries = newEntries.filter { newEntry in
+            return !allEquipment.contains(where: { $0.equipment.id == newEntry.equipment.id })
+        }
+        allEquipment.append(contentsOf: filteredNewEntries)
         return saveToJson(allEquipment, filename: playerEquipmentsFileName)
     }
 
