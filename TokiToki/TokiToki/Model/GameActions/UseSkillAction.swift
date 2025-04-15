@@ -14,17 +14,17 @@ class UseSkillAction: Action {
     let singleTargets: [GameStateEntity]
     let playerTeam: [GameStateEntity]
     let opponentTeam: [GameStateEntity]
-    let globalStatusEffectsManager: GlobalStatusEffectsManaging
+    let context: EffectCalculationContext
 
     init(user: GameStateEntity, skill: Skill, _ playerTeam: [GameStateEntity],
          _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity],
-         _ globalStatusEffectsManager: GlobalStatusEffectsManaging) {
+         _ context: EffectCalculationContext) {
         self.user = user
         self.skill = skill
         self.singleTargets = singleTargets
         self.playerTeam = playerTeam
         self.opponentTeam = opponentTeam
-        self.globalStatusEffectsManager = globalStatusEffectsManager
+        self.context = context
     }
 
     func execute() -> [EffectResult] {
@@ -32,6 +32,6 @@ class UseSkillAction: Action {
             return [EffectResult(entity: user, value: 0, description: "\(skill.name) is on cooldown")]
         }
 
-        return skill.use(from: user, playerTeam, opponentTeam, singleTargets, globalStatusEffectsManager)
+        return skill.use(from: user, playerTeam, opponentTeam, singleTargets, context)
     }
 }

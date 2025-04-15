@@ -7,12 +7,13 @@
 
 import Foundation
 
-// Base Entity Implementation
 class GameStateEntity: BaseEntity {
     var name: String
+    var toki: Toki
 
-    init(_ name: String) {
+    init(_ name: String, _ toki: Toki) {
         self.name = name
+        self.toki = toki
         super.init()
     }
 

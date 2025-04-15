@@ -15,4 +15,5 @@ protocol BattleEffectsDelegate {
     func removeDeadBody(_ id: UUID)
     func allowOpponentTargetSelection()
     func allowAllyTargetSelection()
+    func showRevive(_ id: UUID)
 }

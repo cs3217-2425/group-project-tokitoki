@@ -74,7 +74,7 @@ extension TokiDisplay {
         // If item is consumable, check usage context
         if let consumable = item as? ConsumableEquipment {
             switch consumable.usageContext {
-            case .battleOnly:
+            case .battleOnly, .battleOnlyPassive:
                 // Do NOT show the "Use" action if it's only for battle
                 break
 

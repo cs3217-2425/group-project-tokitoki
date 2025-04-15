@@ -7,7 +7,7 @@
 
 import Foundation
 
-class GameEngine: StatusEffectApplierAndPublisherDelegate {
+class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal var playerTeam: [GameStateEntity]
     internal var opponentTeam: [GameStateEntity]
     internal var playersPlusOpponents: [GameStateEntity] = []
@@ -30,6 +30,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate {
 
     internal let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
     internal var globalStatusEffectsManager: GlobalStatusEffectsManaging
+    internal var effectContext = EffectCalculationContext()
 
     internal var systems: [System] = []
     internal let statsSystem = StatsSystem()
@@ -55,6 +56,9 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate {
         
         self.globalStatusEffectsManager = GlobalStatusEffectsManager(statusEffectsSystem, MAX_ACTION_BAR,
                                                                      MULTIPLIER_FOR_ACTION_METER)
+        self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
+                                                      battleEffectsDelegate: battleEffectsDelegate,
+                                                      reviverDelegate: self)
         self.globalStatusEffectsManager.setDelegate(self)
         self.statusEffectsSystem.setDelegate(self)
         
@@ -68,6 +72,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate {
         systems.append(statusEffectsSystem)
         systems.append(statsModifiersSystem)
         systems.append(turnSystem)
+        systems.append(equipmentSystem)
     }
 
     func startBattle() {
@@ -81,6 +86,9 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate {
 
     func addDelegate(_ battleEffectsDelegate: BattleEffectsDelegate) {
         self.battleEffectsDelegate = battleEffectsDelegate
+        self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
+                                                      battleEffectsDelegate: self.battleEffectsDelegate,
+                                                      reviverDelegate: self)
     }
 
     internal func saveEquipments() {
@@ -92,23 +100,13 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate {
         logMessage(result.description)
         battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
                                                statsSystem.getMaxHealth(entity)) { [weak self] in
-            self?.checkIfEntitiesAreDead()
+            self?.handleDeadBodiesInSequence()
         }
 
         BattleEventManager.shared.publishEffectResult(result, sourceId: effect.sourceId)
     }
 
-    func checkIfEntitiesAreDead() {
-        for entity in playersPlusOpponents {
-            if statsSystem.checkIsEntityDead(entity) {
-                globalStatusEffectsManager.removeGlobalStatusEffectsOfDeadEntity(entity)
-                playersPlusOpponents.removeAll { $0.id == entity.id }
-                playerTeam.removeAll { $0.id == entity.id }
-                opponentTeam.removeAll { $0.id == entity.id }
-                battleEffectsDelegate?.removeDeadBody(entity.id)
-            }
-        }
-    }
+    
 
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty {
@@ -124,6 +122,12 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate {
             return
         }
         self.battleLog.append(message)
+    }
+    
+    internal func logMultipleResults(_ results: [EffectResult]) {
+        for result in results {
+            logMessage(result.description)
+        }
     }
 
     func getBattleLog() -> [String] {

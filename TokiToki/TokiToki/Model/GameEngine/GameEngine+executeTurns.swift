@@ -19,9 +19,12 @@ extension GameEngine {
     }
 
     internal func createAndExecuteSkillAction(_ currentGameStateEntity: GameStateEntity,
-                                             _ skillSelected: any Skill, _ targets: [GameStateEntity]) {
+                                              _ skillSelected: any Skill, _ targets: [GameStateEntity]) {
+//        let context = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
+//                                               battleEffectsDelegate: battleEffectsDelegate,
+//                                               reviverDelegate: self)
         let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected, playerTeam,
-                                    opponentTeam, targets, globalStatusEffectsManager)
+                                    opponentTeam, targets, effectContext)
         queueAction(action)
         let results = executeNextAction()
         battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
@@ -30,9 +33,7 @@ extension GameEngine {
     }
 
     internal func updateLogAndEntityAfterActionTaken(_ results: [EffectResult], _ currentGameStateEntity: GameStateEntity) {
-        for result in results {
-            logMessage(result.description)
-        }
+        logMultipleResults(results)
         updateEntityForNewTurnAndAllEntities(currentGameStateEntity)
     }
 
@@ -62,33 +63,30 @@ extension GameEngine {
 
     internal func executeOpponentTurn(_ entity: GameStateEntity) {
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
-            let action = aiComponent.determineAction(entity, playerTeam, opponentTeam, globalStatusEffectsManager)
+            let action = aiComponent.determineAction(entity, playerTeam, opponentTeam, effectContext)
             let results = action.execute()
 
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
                 for result in results {
-                    BattleEventManager.shared.publishEffectResult(result, sourceId: self?.currentGameStateEntity?.id ?? UUID())
+                    BattleEventManager.shared.publishEffectResult(result,
+                                                                  sourceId: self?.currentGameStateEntity?.id ?? UUID())
                 }
-                self?.updateLogAfterMove(results)
+                self?.logMultipleResults(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
             }
-        }
-    }
-
-    internal func updateLogAfterMove(_ results: [EffectResult]) {
-        for result in results {
-            logMessage(result.description)
         }
     }
 
     func updateEntityForNewTurnAndAllEntities(_ entity: GameStateEntity) {
         updateEntityForNewTurn(entity)
         updateHealthBars { [weak self] in
-            self?.checkIfEntitiesAreDead()
+            self?.handleDeadBodiesInSequence()
             self?.startGameLoop()
         }
     }
-
+    
+    // Assume that this function which is only called in isolation when toki is immobilised, will not
+    // activate any passives of passive equipments equipped on a toki
     internal func updateEntityForNewTurn(_ entity: GameStateEntity) {
         updateSkillCooldowns(entity)
         statusEffectsSystem.update([entity])
@@ -114,6 +112,52 @@ extension GameEngine {
                     completion()
                 }
             }
+        }
+    }
+    
+    internal func handleDeadBodiesInSequence() {
+        removeDeadBodies()
+        applyPassiveEquipmentEffects()
+        removeDeadEntitiesFromModel()
+    }
+    
+    internal func removeDeadBodies() {
+        for entity in playersPlusOpponents {
+            if statsSystem.checkIsEntityDead(entity) {
+                globalStatusEffectsManager.removeGlobalStatusEffectsOfDeadEntity(entity)
+                battleEffectsDelegate?.removeDeadBody(entity.id)
+            }
+        }
+    }
+    
+    internal func removeDeadEntitiesFromModel() {
+        for entity in playersPlusOpponents {
+            if statsSystem.checkIsEntityDead(entity) {
+                playersPlusOpponents.removeAll { $0.id == entity.id }
+                playerTeam.removeAll { $0.id == entity.id }
+                opponentTeam.removeAll { $0.id == entity.id }
+            }
+        }
+    }
+    
+    internal func applyPassiveEquipmentEffects() {
+        playersPlusOpponents.forEach { entity in
+            let results = equipmentSystem.applyPassiveConsumable(entity, effectContext)
+            logMultipleResults(results)
+        }
+    }
+    
+    func handleRevive(_ entity: GameStateEntity) {
+        if !playersPlusOpponents.contains(where: { $0.id == entity.id }) {
+            playersPlusOpponents.append(entity)
+        }
+        if savedPlayerTeam.contains(where: { $0.id == entity.id })
+            && !playerTeam.contains(where: { $0.id == entity.id }) {
+            playerTeam.append(entity)
+        }
+        if savedOpponentTeam.contains(where: { $0.id == entity.id })
+            && !opponentTeam.contains(where: { $0.id == entity.id }) {
+            opponentTeam.append(entity)
         }
     }
 }

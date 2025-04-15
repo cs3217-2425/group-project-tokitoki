@@ -16,7 +16,7 @@ protocol Skill {
     func canUse() -> Bool
     func use(from source: GameStateEntity, _ playerTeam: [GameStateEntity],
              _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity],
-             _ globalStatusEffectsManager: GlobalStatusEffectsManaging) -> [EffectResult]
+             _ context: EffectCalculationContext) -> [EffectResult]
     func startCooldown()
     func reduceCooldown()
     func resetCooldown()

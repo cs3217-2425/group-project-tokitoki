@@ -75,6 +75,7 @@ struct DecodableEffectCalculator: Codable {
     let elementType: ElementType?
     let basePower: Int?
     let healPower: Int?
+    let revivePower: Float?
     let statsModifiers: [StatsModifier]?
     let statusEffectChance: Double?
     let statusEffect: StatusEffectType?
@@ -105,8 +106,14 @@ struct DecodableEffectCalculator: Codable {
                 statusEffectDuration: statusEffectDuration ?? 0,
                 statusEffectStrength: statusEffectStrength ?? 1.0
             )
+        case .revive:
+            guard let revivePower = revivePower else {
+                fatalError("Invalid revive calculator data")
+            }
+            return ReviveCalculator(revivePower: revivePower)
         }
-    }
+        }
+    
 }
 
 struct EquipmentJSON: Codable {

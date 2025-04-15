@@ -29,6 +29,7 @@ enum EffectCalculatorType: String, Codable {
     case heal
     case statsModifiers
     case statusEffect
+    case revive
 }
 
 enum EffectCalculatorCodingKeys: String, CodingKey {
@@ -41,4 +42,5 @@ enum EffectCalculatorCodingKeys: String, CodingKey {
     case statusEffect
     case statusEffectDuration
     case statusEffectStrength
+    case revivePower
 }

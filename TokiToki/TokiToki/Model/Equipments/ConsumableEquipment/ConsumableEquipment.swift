@@ -11,6 +11,7 @@ enum ConsumableUsageContext {
     case battleOnly
     case outOfBattleOnly
     case anywhere
+    case battleOnlyPassive
 }
 
 struct ConsumableEquipment: Equipment {
