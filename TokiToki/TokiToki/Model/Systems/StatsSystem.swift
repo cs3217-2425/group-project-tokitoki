@@ -24,6 +24,16 @@ class StatsSystem: System {
 
         }
     }
+    
+    func revive(amount: Float, _ entities: [GameStateEntity]) {
+        for entity in entities {
+            guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
+                return
+            }
+            let healthToRestore = Float(getMaxHealth(entity)) * amount
+            statsComponent.currentHealth = min(statsComponent.baseStats.hp, Int(healthToRestore))
+        }
+    }
 
     func update(_ entities: [GameStateEntity]) {
         // does nothing

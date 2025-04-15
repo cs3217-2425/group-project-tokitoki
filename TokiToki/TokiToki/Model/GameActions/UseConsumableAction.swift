@@ -12,20 +12,20 @@ class UseConsumableAction: Action {
     let consumable: ConsumableEquipment
     let equipmentSystem: EquipmentSystem
     let equipmentComponent: EquipmentComponent
-    let globalEffectsManager: GlobalStatusEffectsManaging
+    let context: EffectCalculationContext
 
     init(user: GameStateEntity, consumable: ConsumableEquipment, _ equipmentSystem: EquipmentSystem,
-         _ equipmentComponent: EquipmentComponent, _ globalStatusEffectsManager: GlobalStatusEffectsManaging) {
+         _ equipmentComponent: EquipmentComponent, _ context: EffectCalculationContext) {
         self.user = user
         self.consumable = consumable
         self.equipmentSystem = equipmentSystem
         self.equipmentComponent = equipmentComponent
-        self.globalEffectsManager = globalStatusEffectsManager
+        self.context = context
     }
 
     func execute() -> [EffectResult] {
         let results = equipmentSystem.useConsumable(consumable, on: nil, orOn: user, in: equipmentComponent,
-                                                    globalEffectsManager)
+                                                    context)
 
         return results ?? []
     }

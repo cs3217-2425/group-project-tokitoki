@@ -16,6 +16,7 @@ class Toki {
     var baseStats: TokiBaseStats
     var skills: [Skill]
     var equipments: [Equipment]
+    var savedEquipments: [Equipment] = []
     let elementType: [ElementType]
 
     init(id: UUID = UUID(), name: String, rarity: ItemRarity,
@@ -29,6 +30,7 @@ class Toki {
         self.equipments = equipments
         self.elementType = elementType
         self.level = level
+        self.savedEquipments = equipments
     }
 
     func addTemporaryBuff(value: Int, duration: TimeInterval, stat: String) {
@@ -49,7 +51,7 @@ class Toki {
     }
 
     func createBattleEntity() -> GameStateEntity {
-        let entity = GameStateEntity(name)
+        let entity = GameStateEntity(name, self)
 
         var statsComponent = StatsComponent(
             entity: entity,
@@ -60,6 +62,11 @@ class Toki {
         let skillsComponent = SkillsComponent(entity: entity, skills: skills)
         let statusEffectsComponent = StatusEffectsComponent(entity: entity)
         let statsModifiersComponent = StatsModifiersComponent(entity: entity)
+        let passiveEquipments = equipments.filter { equipment in
+            guard let equipment = equipment as? ConsumableEquipment else { return false }
+            return equipment.usageContext == .battleOnlyPassive
+        }
+        let equipmentComponent = EquipmentComponent(inventory: passiveEquipments, entity: entity)
 
         // TODO: Why does equipment not have the method
 //        for equipment in equipments {
@@ -70,6 +77,7 @@ class Toki {
         entity.addComponent(skillsComponent)
         entity.addComponent(statusEffectsComponent)
         entity.addComponent(statsModifiersComponent)
+        entity.addComponent(equipmentComponent)
 
         return entity
     }

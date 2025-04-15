@@ -9,6 +9,6 @@ import Foundation
 
 protocol ConsumableEffectStrategy {
     func applyEffect(name: String, to toki: Toki?, orTo entity: GameStateEntity?,
-                     _ globalStatusEffectsManager: GlobalStatusEffectsManaging?,
+                     _ context: EffectCalculationContext,
                      completion: (() -> Void)?) -> [EffectResult]?
 }

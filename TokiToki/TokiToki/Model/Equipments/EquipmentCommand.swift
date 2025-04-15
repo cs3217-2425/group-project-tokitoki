@@ -28,7 +28,8 @@ class UseConsumableCommand: EquipmentCommand {
     }
 
     func execute() {
-        equipmentSystem.useConsumable(consumable, on: toki, orOn: nil, in: component, nil)
+        equipmentSystem.useConsumable(consumable, on: toki, orOn: nil, in: component,
+                                      EffectCalculationContext())
         logger.logEvent(.consumed(item: consumable))
     }
 

@@ -106,6 +106,7 @@ extension JsonPersistenceManager {
                 case .battleOnly: usageCtxString = "battleOnly"
                 case .outOfBattleOnly: usageCtxString = "outOfBattleOnly"
                 case .anywhere: usageCtxString = "anywhere"
+                case .battleOnlyPassive: usageCtxString = "battleOnlyPassive"
                 }
 
                 return PlayerEquipmentEntry(

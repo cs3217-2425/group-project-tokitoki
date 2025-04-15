@@ -34,7 +34,7 @@ class BaseSkill: Skill {
 
     func use(from source: GameStateEntity, _ playerTeam: [GameStateEntity],
              _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity],
-             _ globalStatusEffectsManager: GlobalStatusEffectsManaging) -> [EffectResult] {
+             _ context: EffectCalculationContext) -> [EffectResult] {
         var results: [EffectResult] = []
 
         for effectDefinition in effectDefinitions {
@@ -49,7 +49,6 @@ class BaseSkill: Skill {
 
             for target in targets {
                 for effectCalculator in effectDefinition.effectCalculators {
-                    let context = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager)
                     let result = effectCalculator.calculate(moveName: self.name, source: source,
                                                             target: target, context: context)
                     guard let result = result else {

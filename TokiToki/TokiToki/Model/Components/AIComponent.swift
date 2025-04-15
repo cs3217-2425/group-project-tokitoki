@@ -21,10 +21,7 @@ class AIComponent: Component {
 
     func determineAction(_ userEntity: GameStateEntity, _ playerEntities: [GameStateEntity],
                          _ opponentEntities: [GameStateEntity],
-                         _ globalStatusEffectsManager: GlobalStatusEffectsManaging) -> Action {
-//        guard let skillsComponent = userEntity.getComponent(ofType: SkillsComponent.self) else {
-//            return NoAction(entity: userEntity)
-//        }
+                         _ context: EffectCalculationContext) -> Action {
         var skillToUse: Skill?
         for rule in rules where rule.condition(userEntity) {
             skillToUse = rule.skill
@@ -39,6 +36,6 @@ class AIComponent: Component {
         }
 
         return UseSkillAction(user: userEntity, skill: skillToUse, opponentEntities,
-                              playerEntities, [], globalStatusEffectsManager)
+                              playerEntities, [], context)
     }
 }

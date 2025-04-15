@@ -36,7 +36,7 @@ let archerToki = Toki(
     rarity: .rare,
     baseStats: archerBaseStats,
     skills: [basicArrow, iceShot, arrowRain],
-    equipments: [],
+    equipments: [revivalRing],
     elementType: [.earth],
     level: 0
 )

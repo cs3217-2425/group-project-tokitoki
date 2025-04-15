@@ -62,7 +62,7 @@ extension GameEngine {
             return
         }
         let action = UseConsumableAction(user: currentGameStateEntity, consumable: consumable, equipmentSystem,
-                                         playerEquipmentComponent, globalStatusEffectsManager)
+                                         playerEquipmentComponent, effectContext)
         queueAction(action)
         let results = executeNextAction()
         battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in
