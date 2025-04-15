@@ -159,19 +159,19 @@ class SkillsFactory {
             ]
         )
     }
-    
+
     func createSkill(from skillData: SkillData) -> Skill? {
         // Create an array to hold effect definitions
         var effectDefinitions: [EffectDefinition] = []
-        
+
         // Process each effect definition in the skill data
         for effectDefData in skillData.effectDefinitions {
             // Determine the target type
             let targetType = convertStringToTargetType(effectDefData.targetType)
-            
+
             // Array to hold effect calculators for this definition
             var effectCalculators: [EffectCalculator] = []
-            
+
             // Process each calculator in the effect definition
             for calcData in effectDefData.calculators {
                 switch calcData.calculatorType.lowercased() {
@@ -182,7 +182,7 @@ class SkillsFactory {
                        let elementType = ElementType(rawValue: elementTypeStr) {
                         effectCalculators.append(AttackCalculator(elementType: elementType, basePower: basePower))
                     }
-                    
+
                 case "statuseffect":
                     // Handle status effect calculator
                     if let statusEffectChance = calcData.statusEffectChance,
@@ -197,7 +197,7 @@ class SkillsFactory {
                             statusEffectStrength: strength
                         ))
                     }
-                    
+
                 case "statsmodifier":
                     // Handle stats modifier calculator
                     let duration = calcData.statsModifierDuration ?? 1
@@ -205,7 +205,7 @@ class SkillsFactory {
                     let defenseMod = calcData.defenseModifier ?? 1.0
                     let speedMod = calcData.speedModifier ?? 1.0
                     let healMod = calcData.healModifier ?? 1.0
-                    
+
                     effectCalculators.append(StatsModifiersCalculator(statsModifiers: [
                         StatsModifier(
                             remainingDuration: duration,
@@ -215,23 +215,23 @@ class SkillsFactory {
                             heal: healMod
                         )
                     ]))
-                    
+
                 case "heal":
                     // Handle heal calculator
                     let healPower = calcData.basePower ?? 10
                     effectCalculators.append(HealCalculator(healPower: healPower))
-                    
+
                 default:
                     print("Unknown calculator type: \(calcData.calculatorType)")
                 }
             }
-            
+
             // Add the completed effect definition if we have calculators
             if !effectCalculators.isEmpty {
                 effectDefinitions.append(EffectDefinition(targetType: targetType, effectCalculators: effectCalculators))
             }
         }
-        
+
         // Create and return the skill if we have at least one effect definition
         if !effectDefinitions.isEmpty {
             return BaseSkill(
@@ -241,7 +241,7 @@ class SkillsFactory {
                 effectDefinitions: effectDefinitions
             )
         }
-        
+
         return nil
     }
 

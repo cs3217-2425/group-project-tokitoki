@@ -8,8 +8,10 @@
 struct UpgradeCandyEffectStrategy: ConsumableEffectStrategy {
     let bonusExp: Int
 
-    func applyEffect(name: String, to toki: Toki?, orTo entity: GameStateEntity?, completion: (() -> Void)? = nil)
-    -> [EffectResult]?{
+    func applyEffect(name: String, to toki: Toki?, orTo entity: GameStateEntity?,
+                     _ globalStatusEffectsManager: GlobalStatusEffectsManaging?,
+                     completion: (() -> Void)? = nil)
+    -> [EffectResult]? {
         print("Applying Upgrade Candy: +\(bonusExp) EXP permanently")
         toki?.gainExperience(bonusExp)
         completion?()

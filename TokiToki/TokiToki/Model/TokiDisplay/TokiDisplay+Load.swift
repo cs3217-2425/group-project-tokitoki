@@ -15,19 +15,19 @@ extension TokiDisplay {
         let jsonPersistenceManager = JsonPersistenceManager()
         let playerRepository = PlayerRepository(persistenceManager: jsonPersistenceManager)
         var player = PlayerManager.shared.getOrCreatePlayer()
-        
+
         // Update the player's state with the current in-memory data from TokiDisplay.
         // This includes the currently loaded Tokis and Equipment.
         player.ownedTokis = TokiDisplay.shared.allTokis
         player.ownedEquipments = TokiDisplay.shared.equipmentFacade.equipmentComponent
-        
+
         // Optionally, update additional properties like owned skills if needed:
         // player.ownedSkills = TokiDisplay.shared.allSkills
-        
+
         // Persist the updated player state.
         playerRepository.savePlayer(player)
     }
-    
+
     /// Load Tokis, Skills, and Equipment from JSON persistence.
     func loadAllData() {
         // Use JsonPersistenceManager and PlayerRepository to load the current player.
@@ -37,7 +37,7 @@ extension TokiDisplay {
             print("No player data found in JsonPersistenceManager.")
             return
         }
-        
+
         loadTokisFromJSON(using: persistenceManager, for: player)
         loadSkillsFromJSON()
         loadEquipmentsFromJSON(using: persistenceManager, for: player)
@@ -90,21 +90,21 @@ extension TokiDisplay {
             let data = try Data(contentsOf: url)
             let decoded = try JSONDecoder().decode(CraftingRecipesWrapper.self, from: data)
             let repo = EquipmentRepository.shared
-            
+
             for recipeJson in decoded.recipes {
                 var recipe: CraftingRecipe?
                 let type = recipeJson.type.lowercased()
-                
+
                 if type == "consumable" {
                     recipe = CraftingRecipe(requiredEquipmentIdentifiers: recipeJson.requiredEquipmentIdentifiers) { (equipments: [Equipment]) in
                         if let eq1 = equipments[0] as? ConsumableEquipment,
                            let eq2 = equipments[1] as? ConsumableEquipment,
                            let strat1 = eq1.effectStrategy as? PotionEffectStrategy,
                            let strat2 = eq2.effectStrategy as? PotionEffectStrategy {
-                            
+
                             let newCalculators = strat1.effectCalculators + strat2.effectCalculators
                             let newStrategy = PotionEffectStrategy(effectCalculators: newCalculators)
-                            
+
                             // Convert usageContext; default to .anywhere if missing.
                             let usage: ConsumableUsageContext = {
                                 if let usageStr = recipeJson.usageContext,
@@ -114,7 +114,7 @@ extension TokiDisplay {
                                     return .anywhere
                                 }
                             }()
-                            
+
                             return repo.createConsumableEquipment(name: recipeJson.resultName,
                                                                   description: recipeJson.description,
                                                                   rarity: max(eq1.rarity, eq2.rarity) + recipeJson.rarityIncrement,
@@ -145,7 +145,7 @@ extension TokiDisplay {
                 } else {
                     print("Unknown equipment type in recipe: \(recipeJson.type)")
                 }
-                
+
                 if let recipe = recipe {
                     ServiceLocator.shared.craftingManager.register(recipe: recipe)
                 }
@@ -173,7 +173,7 @@ extension TokiDisplay {
     private func convertToToki(_ json: TokiJSON) -> Toki {
         let rarityEnum = ItemRarity(intValue: json.rarity) ?? .common
         let elementTypes = json.elementType.compactMap { ElementType.fromString($0) }
-        
+
         let stats = TokiBaseStats(
             hp: json.baseStats.hp,
             attack: json.baseStats.attack,
@@ -182,7 +182,7 @@ extension TokiDisplay {
             heal: json.baseStats.heal,
             exp: json.baseStats.exp
         )
-        
+
         return Toki(
             name: json.name,
             rarity: rarityEnum,
@@ -199,7 +199,7 @@ extension TokiDisplay {
         let rarity = json.rarity
         let desc = json.description
         let usageContext = json.usageContext
-        
+
         if json.equipmentType == "consumable", let strategyInfo = json.effectStrategy {
             let strategy: ConsumableEffectStrategy
             switch strategyInfo.type.lowercased() {
@@ -212,7 +212,7 @@ extension TokiDisplay {
             default:
                 strategy = UpgradeCandyEffectStrategy(bonusExp: 0)
             }
-            
+
             return repo.createConsumableEquipment(
                 name: json.name,
                 description: desc,
@@ -227,7 +227,7 @@ extension TokiDisplay {
                 affectedStat: buffInfo.affectedStat
             )
             let slotEnum = EquipmentSlot(rawValue: slotName) ?? .custom
-            
+
             return repo.createNonConsumableEquipment(
                 name: json.name,
                 description: desc,

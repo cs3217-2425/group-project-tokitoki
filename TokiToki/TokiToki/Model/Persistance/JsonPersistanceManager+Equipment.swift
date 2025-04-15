@@ -11,7 +11,7 @@ import Foundation
 struct PlayerEquipmentEntry: Codable {
     let type: String  // e.g., "nonConsumable", "potion", "candy"
     let equipment: EquipmentInfo
-    
+
     struct EquipmentInfo: Codable {
         let id: UUID
         let name: String
@@ -19,14 +19,14 @@ struct PlayerEquipmentEntry: Codable {
         let rarity: Int
         let equipmentType: String // "nonConsumable" or "consumable"
         let ownerId: UUID
-        
+
         // For nonConsumable
         let isEquipped: Bool?
         let slot: String?
         let buffValue: Int?
         let buffDescription: String?
         let affectedStat: String?
-        
+
         // For consumable
         let consumableType: String?
         let usageContext: String?
@@ -44,11 +44,11 @@ extension JsonPersistenceManager {
             // Keep equipment owned by other players
             allEquipment = existing.filter { $0.equipment.ownerId != playerId }
         }
-        
+
         // 2) Combine inventory + equipped items
         let allPlayerEquipment = equipmentComponent.inventory
         + equipmentComponent.equipped.values.map { $0 as Equipment }
-        
+
         // 3) Convert each to PlayerEquipmentEntry
         let newEntries: [PlayerEquipmentEntry] = allPlayerEquipment.map { eq in
             // We treat NonConsumable vs Consumable
@@ -62,25 +62,25 @@ extension JsonPersistenceManager {
                         rarity: nc.rarity,
                         equipmentType: "nonConsumable",
                         ownerId: playerId,
-                        
+
                         isEquipped: equipmentComponent.equipped[nc.slot]?.id == nc.id,
                         slot: nc.slot.rawValue,
                         buffValue: nc.buff.value,
                         buffDescription: nc.buff.description,
                         affectedStat: nc.buff.affectedStat,
-                        
+
                         consumableType: nil,
                         usageContext: nil,
                         bonusExp: nil
                     )
                 )
-                
+
             } else if let c = eq as? ConsumableEquipment {
                 // Distinguish if it’s a “potion” or “candy” (based on name or effect strategy)
                 var typeString = "consumable"
                 var consumableType = "potion"  // default
-                var bonusExp: Int? = nil
-                
+                var bonusExp: Int?
+
                 if c.name.lowercased().contains("candy") {
                     typeString = "candy"
                     consumableType = "candy"
@@ -88,14 +88,14 @@ extension JsonPersistenceManager {
                     typeString = "potion"
                     consumableType = "potion"
                 }
-                
+
                 // If the effectStrategy is an UpgradeCandyEffectStrategy, capture its bonusExp
                 if let candyStrategy = c.effectStrategy as? UpgradeCandyEffectStrategy {
                     bonusExp = candyStrategy.bonusExp
                     typeString = "candy"
                     consumableType = "candy"
                 }
-                
+
                 // usageContext as a string
                 let usageCtxString: String
                 switch c.usageContext {
@@ -103,7 +103,7 @@ extension JsonPersistenceManager {
                 case .outOfBattleOnly: usageCtxString = "outOfBattleOnly"
                 case .anywhere: usageCtxString = "anywhere"
                 }
-                
+
                 return PlayerEquipmentEntry(
                     type: typeString,
                     equipment: .init(
@@ -113,20 +113,20 @@ extension JsonPersistenceManager {
                         rarity: c.rarity,
                         equipmentType: "consumable",
                         ownerId: playerId,
-                        
+
                         isEquipped: nil, // Not used for consumables
                         slot: nil,
                         buffValue: nil,
                         buffDescription: nil,
                         affectedStat: nil,
-                        
+
                         consumableType: consumableType,
                         usageContext: usageCtxString,
                         bonusExp: bonusExp
                     )
                 )
             }
-            
+
             // Fallback, though in practice we only have these two types
             return PlayerEquipmentEntry(
                 type: "nonConsumable",
@@ -137,40 +137,40 @@ extension JsonPersistenceManager {
                     rarity: eq.rarity,
                     equipmentType: "nonConsumable",
                     ownerId: playerId,
-                    
+
                     isEquipped: false,
                     slot: "weapon",
                     buffValue: 0,
                     buffDescription: "Unknown",
                     affectedStat: "attack",
-                    
+
                     consumableType: nil,
                     usageContext: nil,
                     bonusExp: nil
                 )
             )
         }
-        
+
         // 4) Append new equipment and save
         allEquipment.append(contentsOf: newEntries)
         return saveToJson(allEquipment, filename: playerEquipmentsFileName)
     }
-    
+
     /// Load player's equipment from JSON
     func loadPlayerEquipment(playerId: UUID) -> EquipmentComponent? {
         guard let allEquipEntries: [PlayerEquipmentEntry] = loadFromJson(filename: playerEquipmentsFileName) else {
             return EquipmentComponent()
         }
-        
+
         let playerEntries = allEquipEntries.filter { $0.equipment.ownerId == playerId }
-        
+
         var inventory: [Equipment] = []
         var equipped: [EquipmentSlot: NonConsumableEquipment] = [:]
-        
+
         // 2) Convert each entry to the actual Equipment object
         for entry in playerEntries {
             let eqInfo = entry.equipment
-            
+
             if entry.type == "nonConsumable" {
                 // Build NonConsumableEquipment
                 let buff = EquipmentBuff(
@@ -179,7 +179,7 @@ extension JsonPersistenceManager {
                     affectedStat: eqInfo.affectedStat ?? "attack"
                 )
                 let slotEnum = EquipmentSlot(rawValue: eqInfo.slot ?? "weapon") ?? .weapon
-                
+
                 let nc = NonConsumableEquipment(
                     id: eqInfo.id,
                     name: eqInfo.name,
@@ -188,7 +188,7 @@ extension JsonPersistenceManager {
                     buff: buff,
                     slot: slotEnum
                 )
-                
+
                 // We want the same UUID
                 // Because NonConsumableEquipment’s `id` is let id = UUID() in the struct,
                 // you can’t set it from outside.
@@ -206,7 +206,7 @@ extension JsonPersistenceManager {
                     inventory.append(nc)
                     print("[JsonPersistenceManager] Added to inventory: \(nc.name)")
                 }
-                
+
             } else {
                 // type is “potion” or “candy” => ConsumableEquipment
                 let usage: ConsumableUsageContext
@@ -215,16 +215,15 @@ extension JsonPersistenceManager {
                 case "outofbattleonly": usage = .outOfBattleOnly
                 default: usage = .anywhere
                 }
-                
+
                 // Provide a default effect strategy
-                // For potions, we can do something like +50 attack for 0s if not truly modeled
                 // For candy, read bonusExp
                 var strategy: ConsumableEffectStrategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
                 if eqInfo.consumableType == "candy" {
                     let bonus = eqInfo.bonusExp ?? 100
                     strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
                 }
-                
+
                 let con = ConsumableEquipment(
                     id: eqInfo.id,
                     name: eqInfo.name,
@@ -238,19 +237,19 @@ extension JsonPersistenceManager {
                 print("[JsonPersistenceManager] Added to inventory: \(con.name)")
             }
         }
-        
+
         return EquipmentComponent(inventory: inventory, equipped: equipped)
     }
-    
+
     /// Delete player's equipment
     func deletePlayerEquipment(playerId: UUID) -> Bool {
         guard let allEquipEntries: [PlayerEquipmentEntry] = loadFromJson(filename: playerEquipmentsFileName) else {
             return true
         }
-        
+
         // Keep only equipment not belonging to this player
         let updated = allEquipEntries.filter { $0.equipment.ownerId != playerId }
-        
+
         return saveToJson(updated, filename: playerEquipmentsFileName)
     }
 }

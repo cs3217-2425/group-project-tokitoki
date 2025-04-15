@@ -62,7 +62,7 @@ struct ConsumableEffectStrategyJSON: Codable {
     let type: String // e.g. "potion" or "upgradeCandy"
     let effectCalculators: [DecodableEffectCalculator]?
     let bonusExp: Int?
-    
+
     enum CodingKeys: String, CodingKey {
         case type
         case effectCalculators
@@ -88,16 +88,16 @@ struct DecodableEffectCalculator: Codable {
                 fatalError("Invalid attack calculator data")
             }
             return AttackCalculator(elementType: elementType, basePower: basePower)
-            
+
         case .heal:
             guard let healPower = healPower else {
                 fatalError("Invalid heal calculator data")
             }
             return HealCalculator(healPower: healPower)
-            
+
         case .statsModifiers:
             return StatsModifiersCalculator(statsModifiers: statsModifiers ?? [])
-            
+
         case .statusEffect:
             return StatusEffectCalculator(
                 statusEffectChance: statusEffectChance ?? 0,
@@ -264,7 +264,7 @@ class TokiDisplay {
         control.rarityLabel?.text = "Rarity: \(toki.rarity)"
 
         control.elementLabel?.text = "Element: \(toki.elementType.map(\.description).joined(separator: ", "))"
-      
+
         let hpMax: Float = 420.0
         let expMax: Float = 100.0
         let statMax: Float = 100.0

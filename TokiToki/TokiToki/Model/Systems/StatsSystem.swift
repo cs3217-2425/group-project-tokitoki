@@ -6,8 +6,6 @@
 //
 
 class StatsSystem: System {
-    var priority = 1
-
     func inflictDamage(amount: Int, _ entities: [GameStateEntity]) {
         for entity in entities {
             guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {

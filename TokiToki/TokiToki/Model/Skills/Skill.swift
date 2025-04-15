@@ -15,7 +15,8 @@ protocol Skill {
     var effectDefinitions: [EffectDefinition] { get }
     func canUse() -> Bool
     func use(from source: GameStateEntity, _ playerTeam: [GameStateEntity],
-             _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity]) -> [EffectResult]
+             _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity],
+             _ globalStatusEffectsManager: GlobalStatusEffectsManaging) -> [EffectResult]
     func startCooldown()
     func reduceCooldown()
     func resetCooldown()
@@ -42,6 +43,17 @@ enum StatusEffectType: Codable {
     case frozen
     case paralysis
     case statsModifier
+    
+    var defaultSpeedOfDmgOverTime: Float {
+        switch self {
+        case .burn:
+            return 120
+        case .poison:
+            return 80
+        default:
+            return 100
+        }
+    }
 }
 
 enum SkillVisual: String, CaseIterable {

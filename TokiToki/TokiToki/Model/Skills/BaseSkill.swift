@@ -26,9 +26,15 @@ class BaseSkill: Skill {
     func canUse() -> Bool {
         currentCooldown == 0
     }
+    
+    func clone() -> Skill {
+        return BaseSkill(name: name, description: description, cooldown: cooldown,
+                         effectDefinitions: effectDefinitions)
+    }
 
     func use(from source: GameStateEntity, _ playerTeam: [GameStateEntity],
-             _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity]) -> [EffectResult] {
+             _ opponentTeam: [GameStateEntity], _ singleTargets: [GameStateEntity],
+             _ globalStatusEffectsManager: GlobalStatusEffectsManaging) -> [EffectResult] {
         var results: [EffectResult] = []
 
         for effectDefinition in effectDefinitions {
@@ -43,7 +49,9 @@ class BaseSkill: Skill {
 
             for target in targets {
                 for effectCalculator in effectDefinition.effectCalculators {
-                    let result = effectCalculator.calculate(moveName: self.name, source: source, target: target)
+                    let context = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager)
+                    let result = effectCalculator.calculate(moveName: self.name, source: source,
+                                                            target: target, context: context)
                     guard let result = result else {
                         continue
                     }

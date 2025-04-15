@@ -13,17 +13,18 @@ class HealCalculator: EffectCalculator {
     init(healPower: Int) {
         self.healPower = healPower
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: EffectCalculatorCodingKeys.self)
         healPower = try container.decode(Int.self, forKey: .healPower)
     }
-    
+
     func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws {
         try container.encode(healPower, forKey: .healPower)
     }
 
-    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult? {
+    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity,
+                   context: EffectCalculationContext) -> EffectResult? {
         let healAmount = (healPower + statsSystem.getHeal(source) / 2)
 
         statsSystem.heal(amount: healAmount, [target])

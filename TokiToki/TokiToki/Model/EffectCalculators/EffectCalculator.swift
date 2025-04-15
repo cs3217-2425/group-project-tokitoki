@@ -7,7 +7,8 @@
 
 protocol EffectCalculator: Codable {
     var type: EffectCalculatorType { get }
-    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity) -> EffectResult?
+    func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity,
+                   context: EffectCalculationContext) -> EffectResult?
     func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws
 }
 
@@ -41,4 +42,3 @@ enum EffectCalculatorCodingKeys: String, CodingKey {
     case statusEffectDuration
     case statusEffectStrength
 }
-

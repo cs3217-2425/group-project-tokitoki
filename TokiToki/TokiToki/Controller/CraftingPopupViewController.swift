@@ -108,7 +108,7 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         if let eqIdx2 = TokiDisplay.shared.toki.equipments.firstIndex(where: { $0.id == secondItem.id }) {
             TokiDisplay.shared.toki.equipments.remove(at: eqIdx2)
         }
-        
+
         // Also insert in Toki's equipment array
         if originalItemIndex >= TokiDisplay.shared.toki.equipments.count {
             TokiDisplay.shared.toki.equipments.append(craftedItem)

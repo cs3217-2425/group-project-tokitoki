@@ -84,21 +84,21 @@ class GachaService {
     func getAllPacks() -> [GachaPack] {
         Array(gachaPacks.values)
     }
-    
+
     // Pull from a gacha pack (now just handles the draw logic, not player state)
     func drawFromPack(packName: String, count: Int, for player: inout Player) -> [any IGachaItem] {
         guard let pack = findPack(byName: packName) else {
             print("No pack found with name \(packName)")
             return []
         }
-        
+
         // Check if player has enough currency
         let totalCost = pack.cost * count
         guard player.canSpendCurrency(totalCost) else {
             print("Player doesn't have enough currency to draw")
             return []
         }
-        
+
         // Get event rate modifiers
         let rateModifiers = eventService.getRateModifiers(packName: packName)
 
@@ -111,13 +111,12 @@ class GachaService {
                 itemWithOwnership.dateAcquired = Date()
 
                 drawnItems.append(itemWithOwnership)
-                
+
                 // Add the drawn item to player's inventory
                 // Note: This modifies the passed player reference
                 if let tokiGachaItem = itemWithOwnership as? TokiGachaItem {
                     player.ownedTokis.append(tokiGachaItem.getToki())
-                }
-                else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
+                } else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
                     player.ownedEquipments.inventory.append(equipmentGachaItem.getEquipment())
                 }
             }
@@ -125,7 +124,7 @@ class GachaService {
 
         // Deduct currency
         _ = player.spendCurrency(totalCost)
-        
+
         // The modified player instance is returned via the inout parameter
         return drawnItems
     }
@@ -134,12 +133,12 @@ class GachaService {
     private func drawSingleItem(from pack: GachaPack, with rateModifiers: [String: Double], for player: inout Player) -> (any IGachaItem)? {
         var totalWeight: Double = 0
         var weightedItems: [(item: any IGachaItem, weight: Double)] = []
-        
+
         for packItem in pack.items {
             let item = packItem.item
             let itemName = packItem.itemName
             var rate = packItem.baseRate
-            
+
             if let modifier = rateModifiers[itemName] {
                 rate *= modifier
             }
@@ -154,7 +153,7 @@ class GachaService {
                 totalWeight += rate
             }
         }
-        
+
         guard !weightedItems.isEmpty, totalWeight > 0 else {
             print("No valid items in pack or all rates are zero")
             return pack.items.first?.item
