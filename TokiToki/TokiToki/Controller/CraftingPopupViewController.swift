@@ -8,6 +8,7 @@
 import UIKit
 
 class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    var tokiDisplay: TokiDisplay?  // New dependency property
 
     // The item we swiped "Craft" on
     var originalItem: Equipment!
@@ -32,9 +33,13 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
 
         view.backgroundColor = .white
         preferredContentSize = CGSize(width: 320, height: 400)
+        
+        guard let tokiDisplay = tokiDisplay else {
+            return
+        }
 
         // 1) Build a table of all inventory items except the original
-        let component = TokiDisplay.shared.equipmentFacade.equipmentComponent
+        let component = tokiDisplay.equipmentFacade.equipmentComponent
         availableItems = component.inventory.filter { $0.id != originalItem.id }
 
         // 2) Set up table
@@ -80,12 +85,15 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
             // Possibly alert: 'Please select an item to craft with.'
             return
         }
+        guard let tokiDisplay = tokiDisplay else {
+            return
+        }
 
-        let component = TokiDisplay.shared.equipmentFacade.equipmentComponent
+        let component = tokiDisplay.equipmentFacade.equipmentComponent
         let itemsToCraft = [original, secondItem]
 
         // This returns the new item if crafting was successful, otherwise nil
-        let newlyCraftedItem = TokiDisplay.shared.equipmentFacade.craftItems(items: itemsToCraft)
+        let newlyCraftedItem = tokiDisplay.equipmentFacade.craftItems(items: itemsToCraft)
 
         // If no item was produced, it's an invalid recipe. Show alert and stop.
         guard let craftedItem = newlyCraftedItem else {
@@ -102,22 +110,22 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         }
 
         // Crafting succeeded. Now remove the old items from Toki's equipment (the facade already removed them from inventory).
-        if let eqIdx1 = TokiDisplay.shared.toki.equipments.firstIndex(where: { $0.id == original.id }) {
-            TokiDisplay.shared.toki.equipments.remove(at: eqIdx1)
+        if let eqIdx1 = tokiDisplay.toki.equipments.firstIndex(where: { $0.id == original.id }) {
+            tokiDisplay.toki.equipments.remove(at: eqIdx1)
         }
-        if let eqIdx2 = TokiDisplay.shared.toki.equipments.firstIndex(where: { $0.id == secondItem.id }) {
-            TokiDisplay.shared.toki.equipments.remove(at: eqIdx2)
+        if let eqIdx2 = tokiDisplay.toki.equipments.firstIndex(where: { $0.id == secondItem.id }) {
+            tokiDisplay.toki.equipments.remove(at: eqIdx2)
         }
 
         // Also insert in Toki's equipment array
-        if originalItemIndex >= TokiDisplay.shared.toki.equipments.count {
-            TokiDisplay.shared.toki.equipments.append(craftedItem)
+        if originalItemIndex >= tokiDisplay.toki.equipments.count {
+            tokiDisplay.toki.equipments.append(craftedItem)
         } else {
-            TokiDisplay.shared.toki.equipments.insert(craftedItem, at: originalItemIndex)
+            tokiDisplay.toki.equipments.insert(craftedItem, at: originalItemIndex)
         }
 
         // Save + refresh UI
-        TokiDisplay.shared.equipmentFacade.equipmentComponent = component
+        tokiDisplay.equipmentFacade.equipmentComponent = component
         ServiceLocator.shared.dataStore.save()
 
         onCraftComplete?()

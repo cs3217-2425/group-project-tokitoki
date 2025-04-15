@@ -32,6 +32,8 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet var speedProgressView: UIProgressView?
 
     @IBOutlet var levelUpButton: UIButton?
+    
+    var tokiDisplay: TokiDisplay?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +51,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         defenseProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
         speedProgressView?.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
 
-        TokiDisplay.shared.updateUI(self)
+        tokiDisplay?.updateUI(self)
 
         // Create and add a right swipe gesture recognizer
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
@@ -61,40 +63,61 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
         if gesture.direction == .right {
             // Dismiss the view controller when a right swipe is detected
             // TODO: Save the current state of Toki
-            TokiDisplay.shared.saveTokiState()
+            tokiDisplay?.saveTokiState()
             dismiss(animated: true, completion: nil)
         }
     }
 
     // TableView DataSource Methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        TokiDisplay.shared.tableView(tableView, numberOfRowsInSection: section, self)
+        guard let tokiDisplay = tokiDisplay else {
+            return 0
+        }
+        return tokiDisplay.tableView(tableView, numberOfRowsInSection: section, self)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        TokiDisplay.shared.tableView(tableView, cellForRowAt: indexPath, self)
+        guard let tokiDisplay = tokiDisplay else {
+            return UITableViewCell()
+        }
+        return tokiDisplay.tableView(tableView, cellForRowAt: indexPath, self)
     }
 
     @IBAction func changeEquipmentTapped(_ sender: UIButton) {
-        TokiDisplay.shared.changeEquipmentTapped(sender, self)
+        guard let tokiDisplay = tokiDisplay else {
+            return
+        }
+        tokiDisplay.changeEquipmentTapped(sender, self)
     }
 
     @IBAction func changeSkillsTapped(_ sender: UIButton) {
-        TokiDisplay.shared.changeSkillsTapped(sender, self)
+        guard let tokiDisplay = tokiDisplay else {
+            return
+        }
+        tokiDisplay.changeSkillsTapped(sender, self)
     }
 
     /// level up button - when exp is full, enable the button and level up
     /// (pop up a UIAlertAction so the player can interact and add +1 to any stats of their liking)
     @IBAction func levelUp(_ sender: UIButton) {
-        TokiDisplay.shared.levelUp(sender, self)
+        guard let tokiDisplay = tokiDisplay else {
+            return
+        }
+        tokiDisplay.levelUp(sender, self)
     }
 
     @objc func handleEquipmentLongPress(_ gesture: UILongPressGestureRecognizer) {
-        TokiDisplay.shared.handleEquipmentLongPress(gesture, self)
+        guard let tokiDisplay = tokiDisplay else {
+            return
+        }
+        tokiDisplay.handleEquipmentLongPress(gesture, self)
     }
 
     @objc func handleSkillLongPress(_ gesture: UILongPressGestureRecognizer) {
-        TokiDisplay.shared.handleSkillLongPress(gesture, self)
+        guard let tokiDisplay = tokiDisplay else {
+            return
+        }
+        tokiDisplay.handleSkillLongPress(gesture, self)
     }
 }
 
@@ -104,39 +127,19 @@ extension TokiDisplayViewController {
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
                    -> UISwipeActionsConfiguration? {
+       guard let tokiDisplay = tokiDisplay else {
+           return nil
+       }
 
-        TokiDisplay.shared.tableView(tableView,
-                                                trailingSwipeActionsConfigurationForRowAt: indexPath,
-                                                self)
+       return tokiDisplay.tableView(tableView,
+                                trailingSwipeActionsConfigurationForRowAt: indexPath,
+                                self)
     }
 }
 
 // MARK: - Crafting Popup
 extension TokiDisplayViewController {
-
     func showCraftingPopup(for item: Equipment, at originalIndex: Int) {
-        let craftVC = CraftingPopupViewController()
-
-        // Pass along the original item and its index in the inventory
-        craftVC.originalItem = item
-        craftVC.originalItemIndex = originalIndex
-
-        // Present as a popover or modal
-        craftVC.modalPresentationStyle = .popover
-
-        if let popover = craftVC.popoverPresentationController {
-            popover.sourceView = self.view
-            popover.sourceRect = CGRect(x: 100, y: 100, width: 1, height: 1)
-            popover.permittedArrowDirections = []
-        }
-
-        // Optionally, set a callback so we can reload Toki UI after crafting
-        craftVC.onCraftComplete = { [weak self] in
-            // Reload your table and other UI
-            self?.equipmentTableView?.reloadData()
-            TokiDisplay.shared.updateUI(self!)
-        }
-
-        present(craftVC, animated: true, completion: nil)
+        tokiDisplay?.showCraftingPopup(for: item, at: originalIndex, self)
     }
 }

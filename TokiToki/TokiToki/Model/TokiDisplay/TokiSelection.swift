@@ -9,10 +9,16 @@ import ObjectiveC
 import UIKit
 
 class TokiSelection {
+    let tokiDisplay = TokiDisplay()
     // All available Tokis loaded from TokiDisplay.
-    private let tokis = TokiDisplay.shared.allTokis
+    let tokis: [Toki]
     // Array to hold the tokis selected for battle.
     var selectedTokis: [Toki] = []
+    
+    init() {
+        // Initialize the TokiDisplay to load all Tokis.
+        tokis = tokiDisplay.allTokis
+    }
     
     func startBattleTapped(_ vcont: UIViewController) {
         // Update the global player's toki list.
@@ -32,6 +38,7 @@ class TokiSelection {
     func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowTokiDisplay" {
             if let destVC = segue.destination as? TokiDisplayViewController {
+                destVC.tokiDisplay = self.tokiDisplay
                 destVC.modalPresentationStyle = .fullScreen
             }
         }
@@ -79,7 +86,7 @@ extension TokiSelection {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, _ vcont: UIViewController) {
         let selectedToki = tokis[indexPath.row]
         // Set the toki for display using TokiDisplay.
-        TokiDisplay.shared.toki = selectedToki
+        tokiDisplay.toki = selectedToki
         // Perform the segue to show the toki display.
         vcont.performSegue(withIdentifier: "ShowTokiDisplay", sender: self)
         // Deselect the cell for UI clarity.
