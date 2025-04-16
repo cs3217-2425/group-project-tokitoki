@@ -33,6 +33,7 @@ class TokiSelection {
         let battleStoryboard = UIStoryboard(name: "BattleScreen", bundle: nil)
         if let battleVC = battleStoryboard.instantiateInitialViewController() {
             battleVC.modalPresentationStyle = .fullScreen
+            vcont.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
             vcont.navigationController?.pushViewController(battleVC, animated: true)
         }
     }

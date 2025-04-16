@@ -21,6 +21,13 @@ extension BattleScreenViewController {
         // Reset the battle state when returning to this screen
         resetBattleState()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Re-enable the interactive pop gesture when leaving this screen
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+    }
 
     private func resetBattleState() {
         // Put all your initialization code here
@@ -33,7 +40,7 @@ extension BattleScreenViewController {
         if tokis.isEmpty {
             tokis = [knightToki, wizardToki, archerToki]
         }
-        configure(tokis, [monsterToki, monsterToki, monsterToki])
+        configure(tokis, [dragonMonsterToki, rhinoMonsterToki, golemMonsterToki])
     }
 //    override func viewDidLoad() {
 //        super.viewDidLoad()
@@ -58,7 +65,6 @@ extension BattleScreenViewController {
         addMappingOfPlayerEntitiesToImageView(playerEntities)
 
         self.gameEngine = GameEngine(playerTeam: playerEntities, opponentTeam: opponentEntities)
-//        self.gameEngine?.restart()
         self.gameEngine?.addObserver(self)
         self.gameEngine?.addDelegate(self)
         self.gameEngine?.startBattle()
@@ -78,6 +84,8 @@ extension BattleScreenViewController {
         for (index, opponent) in opponentEntities.enumerated() {
             gameStateIdToViews[opponent.id] = opponentTokisViews[index]
             opponentImageViewsToId[opponentImageViews[index]] = opponent.id
+            opponentImageViews[index].image = UIImage(named: tokiToIconImage[opponent.name] ??
+                                                         "peg-red@1x")
         }
     }
 
