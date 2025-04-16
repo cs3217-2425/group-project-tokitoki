@@ -142,7 +142,8 @@ class GachaViewController: UIViewController {
         let eventSpacing: CGFloat = 8
         let verticalPadding: CGFloat = 16
         
-        let contentHeight = headerHeight + verticalPadding + (activeEvents.isEmpty ? 40 : (CGFloat(activeEvents.count) * (eventHeight + eventSpacing) - eventSpacing))
+        let contentHeight = headerHeight + verticalPadding +
+        (activeEvents.isEmpty ? 40 : (CGFloat(activeEvents.count) * (eventHeight + eventSpacing) - eventSpacing))
         
         // Remove existing height constraint
         eventsContainerView.constraints.filter {
