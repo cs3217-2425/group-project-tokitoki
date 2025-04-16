@@ -16,40 +16,107 @@
                         <rect key="frame" x="0.0" y="0.0" width="1032" height="1376"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="main_background" translatesAutoresizingMaskIntoConstraints="NO" id="Zct-hu-0Dq">
+                                <rect key="frame" x="4" y="5" width="1024" height="1366"/>
+                            </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="7ev-oM-ucI">
-                                <rect key="frame" x="443" y="572" width="146" height="232"/>
+                                <rect key="frame" x="426" y="863" width="180" height="291.5"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0EI-8H-Fn5">
-                                        <rect key="frame" x="0.0" y="0.0" width="146" height="50.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="180" height="67.5"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Play Game" buttonSize="large"/>
+                                        <buttonConfiguration key="configuration" style="filled" cornerStyle="large" buttonSize="large">
+                                            <backgroundConfiguration key="background" strokeWidth="4" strokeOutset="0.0">
+                                                <color key="backgroundColor" red="0.36187517281734582" green="0.29404646300175108" blue="0.14705136159278015" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <color key="strokeColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <attributedString key="attributedTitle">
+                                                <fragment content="PLAY GAME">
+                                                    <attributes>
+                                                        <font key="NSFont" size="24" name="Papyrus"/>
+                                                        <font key="NSOriginalFont" size="12" name="HoeflerText-Regular"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                        </buttonConfiguration>
                                         <connections>
                                             <action selector="playGameButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rkB-Nw-7MO"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cJ1-oq-HeZ">
-                                        <rect key="frame" x="0.0" y="60.5" width="146" height="50.5"/>
+                                        <rect key="frame" x="0.0" y="77.5" width="180" height="67.5"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Gacha" buttonSize="large"/>
+                                        <buttonConfiguration key="configuration" style="filled" cornerStyle="large" buttonSize="large">
+                                            <backgroundConfiguration key="background" strokeWidth="4">
+                                                <color key="backgroundColor" red="0.36187517279999998" green="0.29404646299999998" blue="0.14705136160000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <color key="strokeColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <attributedString key="attributedTitle">
+                                                <fragment content="GACHA">
+                                                    <attributes>
+                                                        <font key="NSFont" size="24" name="Papyrus"/>
+                                                        <font key="NSOriginalFont" size="12" name="Helvetica"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                        </buttonConfiguration>
                                         <connections>
                                             <action selector="gachaButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4D2-8d-ckw"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u45-ZZ-mQj">
-                                        <rect key="frame" x="0.0" y="121" width="146" height="50.5"/>
+                                        <rect key="frame" x="0.0" y="155" width="180" height="67.5"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Profile" buttonSize="large"/>
+                                        <buttonConfiguration key="configuration" style="filled" cornerStyle="large" buttonSize="large">
+                                            <backgroundConfiguration key="background" strokeWidth="4">
+                                                <color key="backgroundColor" red="0.36187517279999998" green="0.29404646299999998" blue="0.14705136160000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <color key="strokeColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <attributedString key="attributedTitle">
+                                                <fragment content="PROFILE">
+                                                    <attributes>
+                                                        <font key="NSFont" size="24" name="Papyrus"/>
+                                                        <font key="NSOriginalFont" size="12" name="Helvetica"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                        </buttonConfiguration>
                                         <connections>
                                             <action selector="profileButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y0G-RJ-acg"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Js2-5V-Nxb">
-                                        <rect key="frame" x="0.0" y="181.5" width="146" height="50.5"/>
+                                        <rect key="frame" x="0.0" y="241" width="180" height="50.5"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50.5" id="PPF-l1-cai"/>
                                         </constraints>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Toki Customizer"/>
+                                        <buttonConfiguration key="configuration" style="filled" cornerStyle="large">
+                                            <backgroundConfiguration key="background" strokeWidth="4">
+                                                <color key="backgroundColor" red="0.36187517279999998" green="0.29404646299999998" blue="0.14705136160000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <color key="strokeColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <attributedString key="attributedTitle">
+                                                <fragment content="TOKI">
+                                                    <attributes>
+                                                        <font key="NSFont" size="24" name=".SFNS-Regular"/>
+                                                        <font key="NSOriginalFont" size="24" name="AppleBraille-Pinpoint8Dot"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment content=" ">
+                                                    <attributes>
+                                                        <font key="NSFont" size="24" name="AppleBraille-Pinpoint8Dot"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment content="LAB">
+                                                    <attributes>
+                                                        <font key="NSFont" size="24" name=".SFNS-Regular"/>
+                                                        <font key="NSOriginalFont" size="24" name="AppleBraille-Pinpoint8Dot"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                        </buttonConfiguration>
                                         <connections>
                                             <action selector="tokiCustomizerButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="f3i-wh-65I"/>
                                         </connections>
@@ -60,8 +127,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="7ev-oM-ucI" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="OAw-oB-aB1"/>
-                            <constraint firstItem="7ev-oM-ucI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tDq-f6-YLS"/>
+                            <constraint firstItem="Zct-hu-0Dq" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2jQ-tg-U1E"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="7ev-oM-ucI" secondAttribute="bottom" constant="201.5" id="6he-g7-NqM"/>
+                            <constraint firstItem="7ev-oM-ucI" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jUW-H9-hbt"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="1NE-XY-ISt"/>
@@ -96,6 +164,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="main_background" width="1024" height="1366"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

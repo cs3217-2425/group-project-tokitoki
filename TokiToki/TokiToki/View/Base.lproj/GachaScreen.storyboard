@@ -16,13 +16,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1210"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" image="gacha_background" translatesAutoresizingMaskIntoConstraints="NO" id="j7D-eN-ECM">
-                                <rect key="frame" x="-137.5" y="-89.5" width="1109" height="1389"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="gacha_background 1" translatesAutoresizingMaskIntoConstraints="NO" id="j7D-eN-ECM">
+                                <rect key="frame" x="-95" y="-78" width="1024" height="1366"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="j7D-eN-ECM" secondAttribute="height" multiplier="123:154" id="ZpX-yg-cCz"/>
-                                    <constraint firstAttribute="height" constant="1389" id="mJh-lj-OrE"/>
-                                </constraints>
                             </imageView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pNs-il-NeD">
                                 <rect key="frame" x="0.0" y="290" width="834" height="500"/>
@@ -34,38 +30,25 @@
                                     <segue destination="WEe-lK-JLy" kind="embed" id="Kt2-iu-vvN"/>
                                 </connections>
                             </containerView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a pack" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xe8-TX-3ER" userLabel="Pack Label">
-                                <rect key="frame" x="339.5" y="186.5" width="155.5" height="32.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="27"/>
-                                <color key="textColor" systemColor="systemBackgroundColor"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SELECT GACHA PACK" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xe8-TX-3ER" userLabel="Pack Label">
+                                <rect key="frame" x="237.5" y="177" width="359.5" height="42"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="35"/>
+                                <color key="textColor" red="0.2852545326" green="0.24756924250000001" blue="0.1770770924" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dyc-zK-pxa" userLabel="Draw Button">
-                                <rect key="frame" x="385.5" y="1056" width="63.5" height="34.5"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Draw"/>
-                                <connections>
-                                    <action selector="gachaDrawButtonPressed:" destination="7dt-D5-NBw" eventType="touchUpInside" id="XNB-a7-Qc6"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ArJ-pr-ZXc" userLabel="Result Label">
-                                <rect key="frame" x="417" y="1122.5" width="0.0" height="0.0"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" systemColor="systemBackgroundColor"/>
-                                <color key="highlightedColor" systemColor="systemBackgroundColor"/>
-                            </label>
                             <stackView contentMode="scaleToFill" distribution="equalSpacing" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="iLP-Vw-mzh" userLabel="Player Currency View">
-                                <rect key="frame" x="689" y="44" width="111" height="50"/>
+                                <rect key="frame" x="649" y="44" width="151" height="66"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="currency" translatesAutoresizingMaskIntoConstraints="NO" id="xCn-cg-soS">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <rect key="frame" x="20" y="8" width="50" height="50"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="50" id="f66-Xi-gGb"/>
                                             <constraint firstAttribute="height" constant="50" id="g2T-4p-JIW"/>
                                         </constraints>
+                                        <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rcz-9f-mAC" userLabel="Currency Label">
-                                        <rect key="frame" x="60" y="0.0" width="51" height="50"/>
+                                        <rect key="frame" x="80" y="8" width="51" height="50"/>
                                         <attributedString key="attributedText">
                                             <fragment content="100">
                                                 <attributes>
@@ -77,43 +60,61 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <viewLayoutGuide key="safeArea" id="Pew-Bf-AXK"/>
+                                <color key="backgroundColor" red="0.26270481673153967" green="0.2297386824627565" blue="0.16228797151826596" alpha="0.36359168046357615" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
                                     <constraint firstItem="Rcz-9f-mAC" firstAttribute="leading" secondItem="xCn-cg-soS" secondAttribute="trailing" constant="10" id="9MH-ny-fOt"/>
                                     <constraint firstItem="Rcz-9f-mAC" firstAttribute="leading" secondItem="xCn-cg-soS" secondAttribute="trailing" constant="10" id="Sp9-Ll-g6k"/>
                                 </constraints>
+                                <directionalEdgeInsets key="directionalLayoutMargins" top="8" leading="20" bottom="8" trailing="20"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Daily Pulls Available: 3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KGe-4Y-YvU" userLabel="Daily Pulls Label">
-                                <rect key="frame" x="333" y="1027.5" width="168.5" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" systemColor="systemBackgroundColor"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3 / 3 DAILY PULLS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KGe-4Y-YvU" userLabel="Daily Pulls Label">
+                                <rect key="frame" x="333" y="841" width="168" height="24"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <directionalEdgeInsets key="directionalLayoutMargins" top="8" leading="8" bottom="8" trailing="8"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <color key="textColor" red="0.2852545326" green="0.24756924250000001" blue="0.1770770924" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ArJ-pr-ZXc" userLabel="Result Label">
+                                <rect key="frame" x="417" y="931" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                <color key="textColor" red="0.2852545326" green="0.24756924250000001" blue="0.1770770924" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="highlightedColor" systemColor="systemBackgroundColor"/>
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Cl7-eF-psp"/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Cl7-eF-psp" firstAttribute="trailing" secondItem="pNs-il-NeD" secondAttribute="trailing" id="10v-Ww-Wqc"/>
-                            <constraint firstItem="ArJ-pr-ZXc" firstAttribute="top" secondItem="Dyc-zK-pxa" secondAttribute="bottom" constant="32" id="1K4-BR-I5O"/>
                             <constraint firstItem="ArJ-pr-ZXc" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="1YK-AC-zKB"/>
-                            <constraint firstItem="Dyc-zK-pxa" firstAttribute="top" secondItem="pNs-il-NeD" secondAttribute="bottom" constant="266" id="3UF-Fm-QM5"/>
+                            <constraint firstItem="ArJ-pr-ZXc" firstAttribute="top" secondItem="KGe-4Y-YvU" secondAttribute="bottom" constant="66" id="4Pw-3L-5Ui"/>
                             <constraint firstItem="pNs-il-NeD" firstAttribute="top" secondItem="Xe8-TX-3ER" secondAttribute="bottom" constant="71" id="IHQ-y1-zAj"/>
                             <constraint firstItem="Cl7-eF-psp" firstAttribute="trailing" secondItem="iLP-Vw-mzh" secondAttribute="trailing" constant="34" id="OKt-Fl-eQv"/>
+                            <constraint firstItem="KGe-4Y-YvU" firstAttribute="top" secondItem="pNs-il-NeD" secondAttribute="bottom" constant="51" id="OoQ-Sl-c56"/>
                             <constraint firstItem="iLP-Vw-mzh" firstAttribute="top" secondItem="Cl7-eF-psp" secondAttribute="top" constant="20" id="P3l-bk-QsZ"/>
                             <constraint firstItem="j7D-eN-ECM" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="Qzr-Vd-nZj"/>
                             <constraint firstItem="Cl7-eF-psp" firstAttribute="bottom" secondItem="pNs-il-NeD" secondAttribute="bottom" constant="400" id="W3K-Ki-gPQ"/>
                             <constraint firstItem="KGe-4Y-YvU" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="jfc-ga-mW9"/>
+                            <constraint firstItem="j7D-eN-ECM" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="n6h-dO-ORA"/>
                             <constraint firstItem="pNs-il-NeD" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="oBQ-cP-02R"/>
                             <constraint firstItem="pNs-il-NeD" firstAttribute="leading" secondItem="Cl7-eF-psp" secondAttribute="leading" id="pyg-Na-pDE"/>
-                            <constraint firstItem="Dyc-zK-pxa" firstAttribute="top" secondItem="KGe-4Y-YvU" secondAttribute="bottom" constant="8" symbolic="YES" id="t0v-b3-tEa"/>
-                            <constraint firstItem="Dyc-zK-pxa" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="vFM-ax-NIA"/>
                             <constraint firstItem="Xe8-TX-3ER" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="xdK-t1-Hiy"/>
                             <constraint firstItem="j7D-eN-ECM" firstAttribute="centerY" secondItem="9Lc-7d-iiZ" secondAttribute="centerY" id="yh4-q0-Pn0"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="dailyPullsCountLabel" destination="KGe-4Y-YvU" id="xVf-v3-Hv6"/>
-                        <outlet property="gachaDrawButton" destination="Dyc-zK-pxa" id="SWC-Az-HBJ"/>
                         <outlet property="gachaPackLabel" destination="Xe8-TX-3ER" id="E3Q-Ht-0J4"/>
                         <outlet property="packSelectorLabel" destination="ArJ-pr-ZXc" id="LlY-c7-GUW"/>
                         <outlet property="playerCurrencyLabel" destination="Rcz-9f-mAC" id="DAf-g6-zEj"/>
@@ -130,6 +131,7 @@
                     <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" prefetchingEnabled="NO" id="iya-Mm-v9a">
                         <rect key="frame" x="0.0" y="0.0" width="834" height="500"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="VQN-DQ-nDj">
                             <size key="itemSize" width="459" height="100"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -184,7 +186,7 @@
     </scenes>
     <resources>
         <image name="currency" width="1200" height="1200"/>
-        <image name="gacha_background" width="861" height="1078"/>
+        <image name="gacha_background 1" width="1024" height="1366"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

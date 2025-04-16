@@ -58,8 +58,17 @@ extension JsonPersistenceManager {
         }
 
         // Build a lookup dictionary keyed by UUID.
-        let equipmentLookup = Dictionary(equipmentComponent.inventory.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+//        let equipmentLookup = Dictionary(uniqueKeysWithValues: equipmentComponent.inventory.map { ($0.id, $0) })
+        
+        var equipmentLookup = equipmentComponent.inventory.reduce(into: [UUID: Equipment]()) { dict, equipment in
+           dict[equipment.id] = equipment
+        }
 
+        // Add equipped items to ensure we have everything
+        for (_, equipment) in equipmentComponent.equipped {
+           equipmentLookup[equipment.id] = equipment
+        }
+        
         var tokis: [Toki] = []
 
         for tokiCodable in playerTokisCodable {
