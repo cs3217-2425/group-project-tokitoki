@@ -9,7 +9,7 @@ import UIKit
 
 class HorizontalScrollViewController: UICollectionViewController {
     private var indexOfCellBeforeDragging = 0
-    private var collectionViewFlowLayout: UICollectionViewFlowLayout {
+    var collectionViewFlowLayout: UICollectionViewFlowLayout {
         guard let collectionView = collectionViewLayout as? UICollectionViewFlowLayout else {
             return UICollectionViewFlowLayout()
         }
@@ -20,6 +20,7 @@ class HorizontalScrollViewController: UICollectionViewController {
         super.viewDidLoad()
 
         collectionViewFlowLayout.minimumLineSpacing = 0
+        collectionView.showsHorizontalScrollIndicator = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -32,7 +33,7 @@ class HorizontalScrollViewController: UICollectionViewController {
         100
     }
 
-    private func configureCollectionViewLayoutItemSize() {
+    func configureCollectionViewLayoutItemSize() {
         let inset: CGFloat = calculateSectionInset()
         collectionViewFlowLayout.sectionInset = UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
 
