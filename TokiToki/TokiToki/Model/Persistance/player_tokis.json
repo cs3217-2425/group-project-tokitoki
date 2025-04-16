@@ -1,24 +1,24 @@
 [
   {
     "id": "e8b5a51d-3a2f-4bf6-8e4c-123456789abc",
-    "name": "FireFox",
-    "level": 7,
-    "rarity": 0,
-    "elementType": ["fire"],
+    "name": "Knight",
+    "level": 1,
+    "rarity": 1,
+    "elementType": ["light"],
     "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "baseStats": {
-      "hp": 95,
-      "attack": 18,
-      "defense": 12,
-      "speed": 15,
-      "heal": 80,
-      "exp": 320,
+      "hp": 150,
+      "attack": 50,
+      "defense": 30,
+      "speed": 100,
+      "heal": 0,
+      "exp": 0,
       "critHitChance": 15,
       "critHitDamage": 150
     },
     "skillNames": [
-      "Fireball",
-      "Flame Slash"
+      "Basic Attack",
+      "Excalibur"
     ],
     "equipmentIds": [
       "a7c5e913-d4f8-4e0a-92c7-7d8b9e5a7e3d"
@@ -26,47 +26,49 @@
   },
   {
     "id": "f92d6b4e-7a31-4c19-bd6a-876543210def",
-    "name": "WaterSerpent",
-    "level": 5,
-    "rarity": 0,
-    "elementType": ["water"],
+    "name": "Wizard",
+    "level": 1,
+    "rarity": 1,
+    "elementType": ["fire"],
     "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "baseStats": {
-      "hp": 110,
-      "attack": 20,
-      "defense": 15,
-      "speed": 14,
-      "heal": 85,
-      "exp": 180,
-      "critHitChance": 10,
+      "hp": 80,
+      "attack": 80,
+      "defense": 30,
+      "speed": 100,
+      "heal": 0,
+      "exp": 0,
+      "critHitChance": 15,
       "critHitDamage": 150
     },
     "skillNames": [
-      "Water Blast",
-      "Ice Spear"
+      "Basic Spell",
+      "Fireball",
+      "Lightning Storm"
     ],
     "equipmentIds": []
   },
   {
     "id": "c4e7b9a2-1d3f-5e6d-9f8a-135792468bcd",
-    "name": "EarthDragon",
-    "level": 3,
+    "name": "Archer",
+    "level": 1,
     "rarity": 2,
     "elementType": ["earth"],
     "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "baseStats": {
-      "hp": 210,
-      "attack": 45,
-      "defense": 35,
-      "speed": 18,
-      "heal": 90,
-      "exp": 75,
-      "critHitChance": 5,
-      "critHitDamage": 200
+      "hp": 80,
+      "attack": 60,
+      "defense": 30,
+      "speed": 120,
+      "heal": 0,
+      "exp": 0,
+      "critHitChance": 15,
+      "critHitDamage": 150
     },
     "skillNames": [
-      "Earthquake",
-      "Earth Shield"
+      "Basic Arrow",
+      "Ice Shot",
+      "Arrow Rain"
     ],
     "equipmentIds": [
       "b8d6c4a2-3e1f-4a7b-8c5d-7e8f9a0b1c2d"

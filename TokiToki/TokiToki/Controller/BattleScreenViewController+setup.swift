@@ -15,7 +15,7 @@ extension BattleScreenViewController {
         configureLogBackground()
         addGestureRecognisers()
         effectsManager = BattleEffectsManager(viewController: self)
-        configure([knightToki, wizardToki, archerToki], [basicMonster, basicMonster2, basicMonster3])
+        configure(PlayerManager.shared.getTokisForBattle(), [basicMonster, basicMonster2, basicMonster3])
     }
     
     func configure(_ playerTokis: [Toki], _ opponentEntities: [GameStateEntity]) {

@@ -17,6 +17,7 @@ struct Player {
     var lastLoginDate: Date
     var ownedTokis: [Toki]
     var ownedSkills: [Skill]
+    var tokisForBattle: [Toki] = []
     var ownedEquipments: EquipmentComponent
     var pullsSinceRare: Int
     var dailyPullsCount: Int

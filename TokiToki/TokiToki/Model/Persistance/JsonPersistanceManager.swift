@@ -79,6 +79,7 @@ class JsonPersistenceManager {
 
     internal func loadFromJson<T: Decodable>(filename: String) -> T? {
         let fileURL = getFileURL(filename: filename)
+        print(fileURL)
 
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
             // Try loading from Bundle if it doesn’t exist in Documents

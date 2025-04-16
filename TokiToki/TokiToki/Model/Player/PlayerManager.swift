@@ -77,7 +77,10 @@ class PlayerManager {
             playerRepository.savePlayer(player)
         }
     }
-
+    
+    func getTokisForBattle() -> [Toki] {
+        getOrCreatePlayer().tokisForBattle
+    }
     // MARK: - Player Operations
 
     func addExperience(_ amount: Int) {
@@ -185,6 +188,14 @@ class PlayerManager {
     func addToki(_ toki: Toki) {
         var player = getOrCreatePlayer()
         player.ownedTokis.append(toki)
+        currentPlayer = player
+        savePlayer()
+    }
+    
+    /// Adds a toki to be used for battle
+    func addTokiToBattle(_ toki: Toki) {
+        var player = getOrCreatePlayer()
+        player.tokisForBattle.append(toki)
         currentPlayer = player
         savePlayer()
     }
