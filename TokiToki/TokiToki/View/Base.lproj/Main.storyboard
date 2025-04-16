@@ -100,7 +100,7 @@
                                             <attributedString key="attributedTitle">
                                                 <fragment content="TOKI">
                                                     <attributes>
-                                                        <font key="NSFont" size="24" name=".SFNS-Regular"/>
+                                                        <font key="NSFont" metaFont="system" size="24"/>
                                                         <font key="NSOriginalFont" size="24" name="AppleBraille-Pinpoint8Dot"/>
                                                     </attributes>
                                                 </fragment>
@@ -111,7 +111,7 @@
                                                 </fragment>
                                                 <fragment content="LAB">
                                                     <attributes>
-                                                        <font key="NSFont" size="24" name=".SFNS-Regular"/>
+                                                        <font key="NSFont" metaFont="system" size="24"/>
                                                         <font key="NSOriginalFont" size="24" name="AppleBraille-Pinpoint8Dot"/>
                                                     </attributes>
                                                 </fragment>
@@ -152,6 +152,16 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4JA-SK-GFk">
                         <rect key="frame" x="0.0" y="24" width="1032" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="textShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="textShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

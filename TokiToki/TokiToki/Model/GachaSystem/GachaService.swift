@@ -116,8 +116,16 @@ class GachaService {
                 // Add the drawn item to player's inventory
                 // Note: This modifies the passed player reference
                 if let tokiGachaItem = itemWithOwnership as? TokiGachaItem {
+                    if player.ownedTokis.contains(where: { $0.name == tokiGachaItem.getToki().name }) {
+                        print("Player already owns Toki \(tokiGachaItem.getToki().name)")
+                        continue
+                    }
                     player.ownedTokis.append(tokiGachaItem.getToki())
                 } else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
+                    if player.ownedEquipments.inventory.contains(where: { $0.name == equipmentGachaItem.getEquipment().name }) {
+                        print("Player already owns Equipment \(equipmentGachaItem.getEquipment().name)")
+                        continue
+                    }
                     player.ownedEquipments.inventory.append(equipmentGachaItem.getEquipment())
                 }
             }
