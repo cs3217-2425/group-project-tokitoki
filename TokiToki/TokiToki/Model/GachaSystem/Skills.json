@@ -4,7 +4,7 @@
       "id": "fireball",
       "name": "Fireball",
       "description": "Launches a ball of fire at the enemy.",
-      "cooldown": 2,
+      "cooldown": 3,
       "effectDefinitions": [
         {
           "targetType": "singleEnemy",
@@ -12,14 +12,165 @@
             {
               "calculatorType": "attack",
               "elementType": "fire",
+              "basePower": 50
+            },
+            {
+              "calculatorType": "statusEffect",
+              "statusEffectChance": 1.0,
+              "statusEffect": "burn",
+              "statusEffectDuration": 2,
+              "statusEffectStrength": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "basicSpell",
+      "name": "Basic Spell",
+      "description": "A basic ball of magic that deals damage to a single enemy.",
+      "cooldown": 0,
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "neutral",
+              "basePower": 20
+            },
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lightningStorm",
+      "name": "Lightning Storm",
+      "description": "A storm of lightning that deals damage to all enemies and has a chance to paralyze them.",
+      "cooldown": 5,
+      "effectDefinitions": [
+        {
+          "targetType": "allEnemies",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "lightning",
+              "basePower": 50
+            },
+            {
+              "calculatorType": "statusEffect",
+              "statusEffectChance": 0.15,
+              "statusEffect": "paralysis",
+              "statusEffectDuration": 2,
+              "statusEffectStrength": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "basicAttack",
+      "name": "Basic Attack",
+      "description": "A basic attack that deals damage to a single enemy.",
+      "cooldown": 0,
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "neutral",
+              "basePower": 40
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "excalibur",
+      "name": "Excalibur",
+      "description": "A strong attack that deals damage to a single enemy.",
+      "cooldown": 4,
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "light",
+              "basePower": 60
+            }]
+          },
+        {
+           "targetType": "ownself",
+           "calculators": [
+             {
+               "calculatorType": "statsModifier",
+               "statsModifierDuration": 2,
+               "attackModifier": 1.5,
+               "defenseModifier": 1.5,
+               "speedModifier": 1.0,
+               "healModifier": 1.0
+             }]
+            }
+          ]
+        },
+    {
+      "id": "basicArrow",
+      "name": "Basic Arrow",
+      "description": "A basic arrow attack that deals damage to a single enemy.",
+      "cooldown": 0,
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "earth",
+              "basePower": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "iceShot",
+      "name": "Ice Shot",
+      "description": "A magic arrow that deals damage to a single enemy with a chance to freeze.",
+      "cooldown": 3,
+      "effectDefinitions": [
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "ice",
               "basePower": 40
             },
             {
               "calculatorType": "statusEffect",
-              "statusEffectChance": 0.2,
-              "statusEffect": "burn",
+              "statusEffectChance": 0.15,
+              "statusEffect": "frozen",
               "statusEffectDuration": 2,
               "statusEffectStrength": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "arrowRain",
+      "name": "Arrow Rain",
+      "description": "Launches a ball of fire at the enemy.",
+      "cooldown": 2,
+      "effectDefinitions": [
+        {
+          "targetType": "allEnemies",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "earth",
+              "basePower": 40
             }
           ]
         }

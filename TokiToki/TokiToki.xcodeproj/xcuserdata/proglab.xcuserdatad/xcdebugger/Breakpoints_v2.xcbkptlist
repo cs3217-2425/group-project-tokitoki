@@ -152,7 +152,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "B0C07772-16A9-4A06-8315-DFA484B1C8EB"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TokiToki/BattleScreenViewController.swift"
@@ -273,6 +273,22 @@
             startingLineNumber = "70"
             endingLineNumber = "70"
             landmarkName = "createBattleEntity()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1EFCD778-878F-450F-B6DB-D2B58D705C49"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TokiToki/Model/Persistance/JsonPersistanceManager+Toki.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "loadPlayerTokis(playerId:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
