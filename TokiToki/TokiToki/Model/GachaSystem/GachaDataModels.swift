@@ -38,6 +38,7 @@ struct TokiData: Codable {
     let baseHeal: Int
     let baseExp: Int
     let elementType: String
+    let skills: [String]
 }
 
 struct TokisData: Codable {

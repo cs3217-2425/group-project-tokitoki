@@ -10,7 +10,8 @@
         "baseSpeed": 12,
         "baseHeal": 80,
         "baseExp": 100,
-        "elementType": "fire"
+        "elementType": "fire",
+        "skills": ["Fireball", "Flame Dance", "Basic Spell"]
       },
       {
         "id": "water-serpent",
@@ -22,7 +23,8 @@
         "baseSpeed": 12,
         "baseHeal": 80,
         "baseExp": 100,
-        "elementType": "water"
+        "elementType": "water",
+        "skills": []
       },
       {
         "id": "earth-dragon",
@@ -34,7 +36,8 @@
         "baseSpeed": 15,
         "baseHeal": 80,
         "baseExp": 100,
-        "elementType": "earth"
+        "elementType": "earth",
+        "skills": []
       },
       {
         "id": "sky-phoenix",
@@ -46,7 +49,8 @@
         "baseSpeed": 20,
         "baseHeal": 80,
         "baseExp": 500,
-        "elementType": "air"
+        "elementType": "air",
+        "skills": []
       }
     ]
 }
