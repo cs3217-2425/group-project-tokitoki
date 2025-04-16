@@ -36,8 +36,12 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g77-A9-Kax">
                                 <rect key="frame" x="594" y="664" width="240" height="174"/>
                                 <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bowman.png" translatesAutoresizingMaskIntoConstraints="NO" id="HnK-22-3b7">
+                                        <rect key="frame" x="27" y="27" width="205" height="201"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
                                     <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dpK-Ba-asP">
-                                        <rect key="frame" x="0.0" y="8" width="240" height="11"/>
+                                        <rect key="frame" x="-8" y="8" width="240" height="11"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CHh-ij-ucg">
@@ -50,10 +54,6 @@
                                         <color key="backgroundColor" systemColor="tableBackgroundColor"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                     </view>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bowman.png" translatesAutoresizingMaskIntoConstraints="NO" id="HnK-22-3b7">
-                                        <rect key="frame" x="27" y="27" width="205" height="201"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -107,8 +107,8 @@
                                         <color key="backgroundColor" systemColor="tableBackgroundColor"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                     </view>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="hydra.png" translatesAutoresizingMaskIntoConstraints="NO" id="QNx-OJ-9ua">
-                                        <rect key="frame" x="0.0" y="0.0" width="237" height="203"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="rhino.png" translatesAutoresizingMaskIntoConstraints="NO" id="QNx-OJ-9ua">
+                                        <rect key="frame" x="21" y="43" width="218" height="181"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                 </subviews>
@@ -135,8 +135,8 @@
                                         <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                     </view>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="boss-removebg-preview.png" translatesAutoresizingMaskIntoConstraints="NO" id="qM6-73-32T">
-                                        <rect key="frame" x="-177" y="-16" width="609" height="426"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="dragon.png" translatesAutoresizingMaskIntoConstraints="NO" id="qM6-73-32T">
+                                        <rect key="frame" x="-63" y="43" width="375" height="275"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                 </subviews>
@@ -163,8 +163,8 @@
                                         <color key="backgroundColor" systemColor="tableBackgroundColor"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                     </view>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="slitherer.png" translatesAutoresizingMaskIntoConstraints="NO" id="g7D-MO-1xm">
-                                        <rect key="frame" x="27" y="48" width="177" height="140"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="golem.png" translatesAutoresizingMaskIntoConstraints="NO" id="g7D-MO-1xm">
+                                        <rect key="frame" x="28" y="47" width="205" height="188"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                 </subviews>
@@ -350,12 +350,12 @@
         <image name="4334081.png" width="384" height="384"/>
         <image name="8996200.png" width="384" height="384"/>
         <image name="battle_background" width="881" height="1175"/>
-        <image name="boss-removebg-preview.png" width="727" height="343"/>
         <image name="bowman.png" width="428" height="582"/>
-        <image name="hydra.png" width="487" height="513"/>
+        <image name="dragon.png" width="460" height="512"/>
+        <image name="golem.png" width="456" height="512"/>
         <image name="knightt.png" width="2500" height="2500"/>
         <image name="noAction-removebg-preview.png" width="360" height="360"/>
-        <image name="slitherer.png" width="360" height="531"/>
+        <image name="rhino.png" width="512" height="479"/>
         <image name="wizard.png" width="2500" height="2500"/>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

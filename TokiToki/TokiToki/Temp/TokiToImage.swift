@@ -6,9 +6,12 @@
 //
 
 let tokiToIconImage: [String: String] = [
-    "Knight": "knightt.png",
-    "Wizard": "wizard.png",
-    "Archer": "bowman.png",
-    "FireFox": "ninetails.png",
-    "WaterSerpent": "milotic.png"
+    "Knight": "knight.png",
+    "Wizard": "wizard1.png",
+    "Archer": "archer.png",
+    "FireFox": "firefox1.png",
+    "WaterSerpent": "waterSerpent1.png",
+    "Dragon": "dragon.png",
+    "Rhino": "rhino.png",
+    "Golem": "golem.png",
 ]
