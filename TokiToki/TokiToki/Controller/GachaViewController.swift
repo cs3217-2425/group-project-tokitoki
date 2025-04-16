@@ -12,13 +12,19 @@ protocol GachaViewControllerDelegate: AnyObject {
 }
 
 class GachaViewController: UIViewController {
-    @IBOutlet private var gachaDrawButton: UIButton!
+    let DEFAULT_DAILY_PULL_LIMIT = 3
     @IBOutlet private var gachaPackLabel: UILabel!
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var playerCurrencyLabel: UILabel!
     @IBOutlet private var dailyPullsCountLabel: UILabel!
     private var gachaPackCollectionViewController: CollectionViewController!
-
+    
+    // Events container
+    private var eventsContainerView: UIView!
+    private var eventsStackView: EventsStackView!
+    private var eventsHeaderLabel: UILabel!
+    private var eventsRefreshTimer: Timer?
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let collectionVC = segue.destination as? CollectionViewController {
             self.gachaPackCollectionViewController = collectionVC
@@ -37,19 +43,28 @@ class GachaViewController: UIViewController {
     private var gachaService: GachaService?
 
     private var selectedGachaPack: GachaPack?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let itemRepository = ItemRepository()
         let eventService = EventService(itemRepository: itemRepository)
+        self.eventService = eventService
 
         // Initialize Gacha Service
         gachaService = GachaService(
             itemRepository: itemRepository,
             eventService: eventService
         )
-
+        
+        // Style the labels
+        packSelectorLabel.textAlignment = .center
+        playerCurrencyLabel.textAlignment = .center
+        dailyPullsCountLabel.textAlignment = .center
+        
+        // Setup events UI
+        setupEventsUI()
+        
         // Load packs
         loadGachaPacks()
 
@@ -58,12 +73,104 @@ class GachaViewController: UIViewController {
         updatePackSelectorLabel()
         updatePlayerCurrencyLabel()
         updateDailyPullsLabel()
+        
+        // Update the events display
+        updateEventsDisplay()
+        
+        // Setup refresh timer for events (every minute)
+        setupEventsRefreshTimer()
+    }
+    
+    private func setupEventsUI() {
+        // Create Events container view
+        eventsContainerView = UIView()
+        eventsContainerView.backgroundColor = UIColor(white: 0.1, alpha: 0.7)
+        eventsContainerView.layer.cornerRadius = 12
+        eventsContainerView.layer.masksToBounds = true
+        eventsContainerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(eventsContainerView)
+        
+        // Events header label
+        eventsHeaderLabel = UILabel()
+        eventsHeaderLabel.text = "ACTIVE EVENTS"
+        eventsHeaderLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        eventsHeaderLabel.textColor = .white
+        eventsHeaderLabel.textAlignment = .center
+        eventsHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+        eventsContainerView.addSubview(eventsHeaderLabel)
+        
+        // Events stack view
+        eventsStackView = EventsStackView()
+        eventsContainerView.addSubview(eventsStackView)
+        
+        // Position the events container at the bottom of the screen
+        NSLayoutConstraint.activate([
+            eventsContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            eventsContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            eventsContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            eventsHeaderLabel.topAnchor.constraint(equalTo: eventsContainerView.topAnchor, constant: 8),
+            eventsHeaderLabel.leadingAnchor.constraint(equalTo: eventsContainerView.leadingAnchor),
+            eventsHeaderLabel.trailingAnchor.constraint(equalTo: eventsContainerView.trailingAnchor),
+            
+            eventsStackView.topAnchor.constraint(equalTo: eventsHeaderLabel.bottomAnchor, constant: 8),
+            eventsStackView.leadingAnchor.constraint(equalTo: eventsContainerView.leadingAnchor, constant: 16),
+            eventsStackView.trailingAnchor.constraint(equalTo: eventsContainerView.trailingAnchor, constant: -16),
+            eventsStackView.bottomAnchor.constraint(equalTo: eventsContainerView.bottomAnchor, constant: -16)
+        ])
+    }
+    
+    private func setupEventsRefreshTimer() {
+        // Stop any existing timer
+        eventsRefreshTimer?.invalidate()
+        
+        // Create a new timer that updates every minute
+        eventsRefreshTimer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [weak self] _ in
+            self?.updateEventsDisplay()
+        }
+    }
+    
+    private func updateEventsDisplay() {
+        guard let eventService = eventService else { return }
+        
+        // Get active events
+        let activeEvents = eventService.getActiveEvents()
+        
+        // Set height constraint for events container based on number of events
+        let headerHeight: CGFloat = 40
+        let eventHeight: CGFloat = 80
+        let eventSpacing: CGFloat = 8
+        let verticalPadding: CGFloat = 16
+        
+        let contentHeight = headerHeight + verticalPadding + (activeEvents.isEmpty ? 40 : (CGFloat(activeEvents.count) * (eventHeight + eventSpacing) - eventSpacing))
+        
+        // Remove existing height constraint
+        eventsContainerView.constraints.filter {
+            $0.firstAttribute == .height && $0.firstItem === eventsContainerView
+        }.forEach {
+            eventsContainerView.removeConstraint($0)
+        }
+        
+        // Add new height constraint
+        eventsContainerView.heightAnchor.constraint(equalToConstant: contentHeight).isActive = true
+        
+        // Configure the events stack view
+        eventsStackView.configure(with: activeEvents)
+        
+        // Update layout
+        view.layoutIfNeeded()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updatePlayerCurrencyLabel()
         updateDailyPullsLabel()
+        updateEventsDisplay()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        eventsRefreshTimer?.invalidate()
     }
 
     private func loadGachaPacks() {
@@ -74,9 +181,7 @@ class GachaViewController: UIViewController {
     }
 
     private func updatePackSelectorLabel() {
-        gachaPackLabel.text = selectedGachaPack.map {
-            "Selected Pack: \($0.name) (Cost: \($0.cost))"
-        } ?? "No Pack Selected"
+        // This is now handled by the collection view
     }
 
     private func updatePlayerCurrencyLabel() {
@@ -96,28 +201,16 @@ class GachaViewController: UIViewController {
 
     private func updateDailyPullsLabel() {
         let remainingPulls = playerManager.getRemainingDailyPulls()
-        dailyPullsCountLabel.text = "Daily Pulls Available: \(remainingPulls)"
-
-        if remainingPulls == 0 {
-            dailyPullsCountLabel.textColor = .systemRed
-        } else if remainingPulls <= 1 {
-            dailyPullsCountLabel.textColor = .white
-        } else {
-            dailyPullsCountLabel.textColor = .white
-        }
+        dailyPullsCountLabel.text = "\(remainingPulls) / \(DEFAULT_DAILY_PULL_LIMIT) DAILY PULLS"
     }
-
-    @IBAction func gachaDrawButtonPressed(_ sender: UIButton) {
+    
+    // Make this method public so it can be called from the collection view
+    func performDraw(for pack: GachaPack) {
         guard let gachaService = gachaService else {
             showErrorMessage("Gacha Service not initialized")
             return
         }
-
-        guard let selectedPack = selectedGachaPack else {
-            showErrorMessage("No pack selected")
-            return
-        }
-
+        
         // Check if player has reached daily limit
         if playerManager.hasReachedDailyPullLimit() {
             showErrorMessage("Daily pull limit reached. Try again tomorrow!")
@@ -128,13 +221,13 @@ class GachaViewController: UIViewController {
         let player = playerManager.getOrCreatePlayer()
 
         // Check if player has enough currency
-        if !player.canSpendCurrency(selectedPack.cost) {
-            showErrorMessage("Not enough currency. Need \(selectedPack.cost)")
+        if !player.canSpendCurrency(pack.cost) {
+            showErrorMessage("Not enough currency. Need \(pack.cost)")
             return
         }
 
         let drawnItems = playerManager.drawFromGachaPack(
-            packName: selectedPack.name,
+            packName: pack.name,
             count: 1,
             gachaService: gachaService
         )
@@ -149,13 +242,17 @@ class GachaViewController: UIViewController {
 
         // Update daily pulls display
         updateDailyPullsLabel()
-
+        
+        // Update the draw button state
+        updatePackSelectorLabel()
+        
         // Display drawn items
         displayDrawnItems(drawnItems)
     }
 
     private func showErrorMessage(_ message: String) {
         packSelectorLabel.text = message
+        packSelectorLabel.textColor = .systemRed
         print(message)
 
         // Animate the label to draw attention
@@ -166,6 +263,12 @@ class GachaViewController: UIViewController {
                 self.packSelectorLabel.transform = .identity
             }
         })
+        
+        // Reset color after delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.packSelectorLabel.textColor = .white
+            self.updatePackSelectorLabel()
+        }
     }
 
     private func displayDrawnItems(_ items: [any IGachaItem]) {
@@ -175,18 +278,54 @@ class GachaViewController: UIViewController {
         }
 
         let itemDescriptions = items.map { item in
-            let raritySymbol: String
-            switch item.rarity {
-            case .common: raritySymbol = "⚪"
-            case .rare: raritySymbol = "🔵"
-            case .epic: raritySymbol = "🟣"
+            let itemType: String
+            let itemElementType: String
+            
+            switch item {
+            case let toki as TokiGachaItem:
+                itemType = "Toki"
+            case let equipment as EquipmentGachaItem:
+                itemType = "Equipment"
+            default:
+                itemType = "Unknown"
             }
-            return "\(raritySymbol) \(item.name) [\(item.rarity.rawValue.capitalized)]"
+            
+            switch item.elementType.first {
+            case .fire:
+                itemElementType = "🔥"
+            case .water:
+                itemElementType = "💧"
+            case .earth:
+                itemElementType = "🌍"
+            case .air:
+                itemElementType = "🌬️"
+            case .light:
+                itemElementType = "✨"
+            case .dark:
+                itemElementType = "🌑"
+            case .neutral:
+                itemElementType = "⚪️"
+            case .lightning:
+                itemElementType = "⚡️"
+            case .ice:
+                itemElementType = "❄️"
+            case .none:
+                itemElementType = "⚪️"
+            }
+                
+        
+            return "\(item.rarity.rawValue.capitalized) \(itemType): \(item.name) \(itemElementType) "
         }.joined(separator: ", ")
-
-        packSelectorLabel.text = "Drawn: \(itemDescriptions)"
-
-        // Play a short celebration animation for the drawn item
+        
+        // Show drawn item with animation
+        packSelectorLabel.text = "\(itemDescriptions)"
+        
+        // Reset color after delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+            self.updatePackSelectorLabel()
+        }
+        
+        // Play a celebration animation for the drawn item
         playCelebrationAnimation()
     }
 

@@ -17,6 +17,7 @@ class GachaService {
         self.itemRepository = itemRepository
         self.eventService = eventService
         loadGachaPacks()
+        
     }
 
     // Load gacha packs directly from JSON

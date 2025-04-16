@@ -14,7 +14,14 @@ class EventService {
 
     init(itemRepository: ItemRepository) {
         self.itemRepository = itemRepository
+        print("LOADING EVENTS")
         loadEvents()
+        // print active events
+        let activeEvents = getActiveEvents()
+        print("Active Gacha Events:")
+        for event in activeEvents {
+            print(" - \(event.name): \(event.description) (from \(event.startDate) to \(event.endDate))")
+        }
     }
 
     // Load events from JSON and create appropriate event objects
@@ -36,7 +43,7 @@ class EventService {
                 switch eventData.eventType.lowercased() {
                 case "element":
                     guard let elementTypeStr = eventData.targetElement,
-                          let elementType = ElementType(rawValue: elementTypeStr.lowercased()) else {
+                          let elementType = ElementType.fromString(elementTypeStr) else {
                         print("Invalid element type for event: \(eventData.name)")
                         continue
                     }

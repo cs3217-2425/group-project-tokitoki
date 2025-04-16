@@ -8,20 +8,21 @@
 import Foundation
 
 enum ElementType: String, CaseIterable, Codable {
-    case fire
-    case water
-    case earth
-    case air
-    case light
-    case dark
-    case neutral
-    case lightning
-    case ice
+    case fire = "fire"
+    case water = "water"
+    case earth = "earth"
+    case air = "air"
+    case light = "light"
+    case dark = "dark"
+    case neutral = "neutral"
+    case lightning = "lightning"
+    case ice = "ice"
 
     static func fromString(_ string: String) -> ElementType? {
-        ElementType.allCases.first { $0.rawValue == string.lowercased() }
+        return ElementType(rawValue: string.lowercased())
     }
-
+    
+    
     var description: String {
         switch self {
         case .fire: return "Fire"
