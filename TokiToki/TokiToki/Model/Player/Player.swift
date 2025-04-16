@@ -69,6 +69,10 @@ struct Player {
             statistics.battlesWon += 1
         }
     }
+    
+    mutating func resetTokisForBattle() {
+        tokisForBattle = []
+    }
 
     // MARK: - Item Management
     mutating func addItem(_ item: any IGachaItem) {

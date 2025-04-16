@@ -12,7 +12,8 @@ class SkillsComponent: Component {
     let entity: Entity
 
     init(entity: Entity, skills: [Skill]) {
-        self.skills = skills
+        let clonedSkills = skills.map { $0.clone() }
+        self.skills = clonedSkills
         self.entity = entity
     }
 }

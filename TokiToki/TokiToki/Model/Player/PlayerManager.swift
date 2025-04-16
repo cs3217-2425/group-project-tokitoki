@@ -81,6 +81,10 @@ class PlayerManager {
     func getTokisForBattle() -> [Toki] {
         getOrCreatePlayer().tokisForBattle
     }
+    
+    func resetTokisForBattle() {
+        currentPlayer?.resetTokisForBattle()
+    }
     // MARK: - Player Operations
 
     func addExperience(_ amount: Int) {

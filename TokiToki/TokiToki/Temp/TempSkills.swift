@@ -16,7 +16,7 @@ let basicSpell = BaseSkill(
             AttackCalculator(elementType: .neutral, basePower: 20)
         ])
     ]
-)
+).clone()
 
 let fireball = BaseSkill(
     name: "Fireball",
@@ -29,7 +29,7 @@ let fireball = BaseSkill(
                                    statusEffectDuration: 2)
         ])
     ]
-)
+).clone()
 
 let waterGun = BaseSkill(
     name: "Water Gun",
@@ -43,7 +43,7 @@ let waterGun = BaseSkill(
             ])
         ])
     ]
-)
+).clone()
 
 let lightningStorm = skillsFactory.createAoeDmgSkillWithStatusEffect(
     name: "Lightning Storm",
@@ -54,7 +54,7 @@ let lightningStorm = skillsFactory.createAoeDmgSkillWithStatusEffect(
     statusEffectChance: 0.15,
     statusEffect: .paralysis,
     statusEffectDuration: 2
-)
+).clone()
 
 let basicAttack = BaseSkill(
     name: "Basic Attack",
@@ -65,7 +65,7 @@ let basicAttack = BaseSkill(
             AttackCalculator(elementType: .neutral, basePower: 40)
         ])
     ]
-)
+).clone()
 
 let excalibur = BaseSkill(
     name: "Excalibur",
@@ -81,7 +81,7 @@ let excalibur = BaseSkill(
             ])
         ])
     ]
-)
+).clone()
 
 let basicArrow = BaseSkill(
     name: "Basic Arrow",
@@ -92,7 +92,7 @@ let basicArrow = BaseSkill(
             AttackCalculator(elementType: .earth, basePower: 30)
         ])
     ]
-)
+).clone()
 
 let iceShot = BaseSkill(
     name: "Ice Shot",
@@ -105,7 +105,7 @@ let iceShot = BaseSkill(
                                    statusEffectDuration: 2)
         ])
     ]
-)
+).clone()
 //
 // let arrowRain = BaseSkill(
 //    name: "Arrow Rain",
@@ -127,4 +127,16 @@ let arrowRain = BaseSkill(
             AttackCalculator(elementType: .earth, basePower: 40)
         ])
     ]
-)
+).clone()
+
+let flameDance = BaseSkill(
+    name: "Flame Dance",
+    description: "A dance of fire",
+    cooldown: 3,
+    effectDefinitions: [
+        EffectDefinition(targetType: .allEnemies, effectCalculators: [
+            AttackCalculator(elementType: .fire, basePower: 40)
+        ])
+    ]
+).clone()
+    
