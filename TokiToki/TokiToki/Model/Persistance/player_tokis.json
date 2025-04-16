@@ -12,7 +12,7 @@
       "defense": 30,
       "speed": 100,
       "heal": 0,
-      "exp": 0,
+      "exp": 50,
       "critHitChance": 15,
       "critHitDamage": 150
     },
@@ -37,7 +37,7 @@
       "defense": 30,
       "speed": 100,
       "heal": 0,
-      "exp": 0,
+      "exp": 100,
       "critHitChance": 15,
       "critHitDamage": 150
     },
@@ -61,7 +61,7 @@
       "defense": 30,
       "speed": 120,
       "heal": 0,
-      "exp": 0,
+      "exp": 150,
       "critHitChance": 15,
       "critHitDamage": 150
     },

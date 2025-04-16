@@ -269,8 +269,8 @@ class TokiDisplay {
         control.elementLabel?.text = "Element: \(toki.elementType.map(\.description).joined(separator: ", "))"
 
         let hpMax: Float = 420.0
-        let expMax: Float = 100.0
-        let statMax: Float = 100.0
+        let expMax: Float = Float(levelInfo[toki.level])
+        let statMax: Float = 200.0
 
         control.hpProgressView?.progress = Float(toki.baseStats.hp) / hpMax
         control.expProgressView?.progress = Float(toki.baseStats.exp) / expMax

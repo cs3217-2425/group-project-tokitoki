@@ -125,22 +125,33 @@ extension TokiDisplay {
     }
 
     func levelUp(_ sender: UIButton, _ control: TokiDisplayViewController) {
-        if toki.baseStats.exp >= 100 {
+        if toki.level == maxLevel {
+            return
+        }
+        let statIncrease = 5
+        let hpIncrease = 30
+        let tokiLevel = toki.level
+        if toki.baseStats.exp >= levelInfo[tokiLevel] {
             let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "Attack", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 1, defense: 0, speed: 0, heal: 0, exp: 0))
+                self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: statIncrease, defense: 0, speed: 0,
+                                                      heal: 0, exp: 0))
                 self.updateUI(control)
+                PlayerManager.shared.savePlayer()
             }))
             alert.addAction(UIAlertAction(title: "Defense", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 1, speed: 0, heal: 0, exp: 0))
+                self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: 0, defense: statIncrease, speed: 0,
+                                                      heal: 0, exp: 0))
                 self.updateUI(control)
             }))
             alert.addAction(UIAlertAction(title: "Speed", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 1, heal: 0, exp: 0))
+                self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: 0, defense: 0, speed: statIncrease,
+                                                      heal: 0, exp: 0))
                 self.updateUI(control)
             }))
             alert.addAction(UIAlertAction(title: "Heal", style: .default, handler: { _ in
-                self.toki.levelUp(stat: TokiBaseStats(hp: 10, attack: 0, defense: 0, speed: 0, heal: 1, exp: 0))
+                self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: 0, defense: 0, speed: 0,
+                                                      heal: statIncrease, exp: 0))
                 self.updateUI(control)
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

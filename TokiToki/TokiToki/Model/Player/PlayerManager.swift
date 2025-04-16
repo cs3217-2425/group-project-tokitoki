@@ -72,7 +72,7 @@ class PlayerManager {
         return player
     }
 
-    private func savePlayer() {
+    func savePlayer() {
         if let player = currentPlayer {
             playerRepository.savePlayer(player)
         }

@@ -89,7 +89,7 @@ class Toki {
             defense: self.baseStats.defense + stat.defense,
             speed: self.baseStats.speed + stat.speed,
             heal: self.baseStats.heal + stat.heal,
-            exp: self.baseStats.exp - 100,
+            exp: self.baseStats.exp - levelInfo[self.level],
             critHitChance: self.baseStats.critHitChance,
             critHitDamage: self.baseStats.critHitDamage
         )
