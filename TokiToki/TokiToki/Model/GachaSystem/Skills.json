@@ -26,6 +26,35 @@
       ]
     },
     {
+      "id": "flameDance",
+      "name": "Flame Dance",
+      "description": "A strong dance of flames that deals damage to all enemies and buff self",
+      "cooldown": 4,
+      "effectDefinitions": [
+        {
+          "targetType": "allEnemies",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "fire",
+              "basePower": 40
+            }]
+          },
+        {
+           "targetType": "ownself",
+           "calculators": [
+             {
+               "calculatorType": "statsModifier",
+               "statsModifierDuration": 2,
+               "attackModifier": 1.0,
+               "defenseModifier": 1.0,
+               "speedModifier": 1.5,
+               "healModifier": 1.0
+             }]
+            }
+          ]
+        },
+    {
       "id": "basicSpell",
       "name": "Basic Spell",
       "description": "A basic ball of magic that deals damage to a single enemy.",

@@ -22,6 +22,8 @@ class TokiSelection {
     
     func startBattleTapped(_ vcont: UIViewController) {
         // Update the global player's toki list.
+        PlayerManager.shared.resetTokisForBattle()
+        PlayerManager.shared.getTokisForBattle()
         for toki in selectedTokis {
             PlayerManager.shared.addTokiToBattle(toki)
             print("[TokiSelection] Added Toki: \(toki.name) to PlayerManager")
@@ -31,7 +33,7 @@ class TokiSelection {
         let battleStoryboard = UIStoryboard(name: "BattleScreen", bundle: nil)
         if let battleVC = battleStoryboard.instantiateInitialViewController() {
             battleVC.modalPresentationStyle = .fullScreen
-            vcont.present(battleVC, animated: true, completion: nil)
+            vcont.navigationController?.pushViewController(battleVC, animated: true)
         }
     }
     

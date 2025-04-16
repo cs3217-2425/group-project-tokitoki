@@ -40,3 +40,17 @@ let archerToki = Toki(
     elementType: [.earth],
     level: 0
 )
+
+let fireFoxBaseStats = TokiBaseStats(hp: 90, attack: 50, defense: 30, speed: 110, heal: 0, exp: 0)
+
+let fireFoxToki = Toki(
+    name: "FireFox",
+    rarity: .rare,
+    baseStats: fireFoxBaseStats,
+    skills: [fireball, flameDance],
+    equipments: [],
+    elementType: [.fire],
+    level: 0
+)
+
+                

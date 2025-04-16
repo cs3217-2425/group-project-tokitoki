@@ -8,5 +8,7 @@
 let tokiToIconImage: [String: String] = [
     "Knight": "knightt.png",
     "Wizard": "wizard.png",
-    "Archer": "bowman.png"
+    "Archer": "bowman.png",
+    "FireFox": "ninetails.png",
+    "WaterSerpent": "milotic.png"
 ]

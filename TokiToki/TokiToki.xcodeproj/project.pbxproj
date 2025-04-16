@@ -82,6 +82,9 @@
 				E6D48C482D846D8D00301EA7 /* Exceptions for "TokiToki" folder in "TokiToki" target */,
 				BD28697B2D898EC3002BFB53 /* Exceptions for "TokiToki" folder in "Compile Sources" phase from "TokiToki" target */,
 			);
+			explicitFolders = (
+				assets,
+			);
 			path = TokiToki;
 			sourceTree = "<group>";
 		};

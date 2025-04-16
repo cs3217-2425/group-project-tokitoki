@@ -10,6 +10,20 @@ import UIKit
 extension BattleScreenViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        // One-time setup that should only happen once
+        
+        resetBattleState()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Reset the battle state when returning to this screen
+        resetBattleState()
+    }
+
+    private func resetBattleState() {
+        // Put all your initialization code here
         configureSkillIcons()
         configureViews()
         configureLogBackground()
@@ -19,10 +33,24 @@ extension BattleScreenViewController {
         if tokis.isEmpty {
             tokis = [knightToki, wizardToki, archerToki]
         }
-        configure(tokis, [basicMonster, basicMonster2, basicMonster3])
+        configure(tokis, [monsterToki, monsterToki, monsterToki])
     }
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//        configureSkillIcons()
+//        configureViews()
+//        configureLogBackground()
+//        addGestureRecognisers()
+//        effectsManager = BattleEffectsManager(viewController: self)
+//        var tokis = PlayerManager.shared.getTokisForBattle()
+//        if tokis.isEmpty {
+//            tokis = [knightToki, wizardToki, archerToki]
+//        }
+//        configure(tokis, [basicMonster, basicMonster2, basicMonster3])
+//    }
     
-    func configure(_ playerTokis: [Toki], _ opponentEntities: [GameStateEntity]) {
+    func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
+        let opponentEntities = enemyTokis.map { createMonsterEntity($0) }
         let playerEntities = createPlayerEntitiesAndAddMappingToView(playerTokis)
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
         hideTokisIfNoTokiInThatSlot(opponentEntities, opponentTokisViews)
@@ -30,6 +58,7 @@ extension BattleScreenViewController {
         addMappingOfPlayerEntitiesToImageView(playerEntities)
 
         self.gameEngine = GameEngine(playerTeam: playerEntities, opponentTeam: opponentEntities)
+//        self.gameEngine?.restart()
         self.gameEngine?.addObserver(self)
         self.gameEngine?.addDelegate(self)
         self.gameEngine?.startBattle()

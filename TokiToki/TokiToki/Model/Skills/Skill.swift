@@ -20,6 +20,7 @@ protocol Skill {
     func startCooldown()
     func reduceCooldown()
     func resetCooldown()
+    func clone() -> Skill
 }
 
 enum SkillType {
