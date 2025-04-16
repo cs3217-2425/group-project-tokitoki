@@ -111,7 +111,7 @@ class ItemRepository {
         )
 
         // Randomly select some skills and equipment for the Toki
-        let skills = selectRandomSkills(count: 2)
+        let skills = createSkillsFromNames(template.skills)
         let equipment = selectRandomEquipment(count: 1)
 
         return Toki(
@@ -367,6 +367,18 @@ class ItemRepository {
     }
 
     // MARK: - Helper Methods for Creating Random Collections
+    
+    private func createSkillsFromNames(_ names: [String]) -> [Skill] {
+        var skills: [Skill] = []
+        for name in names {
+            if let template = skillTemplates[name] {
+                if let skill = createSkill(from: template) {
+                    skills.append(skill)
+                }
+            }
+        }
+        return skills
+    }
 
     private func selectRandomSkills(count: Int) -> [Skill] {
         let templates = Array(skillTemplates.values)
