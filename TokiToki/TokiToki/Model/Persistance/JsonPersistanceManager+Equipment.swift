@@ -209,10 +209,10 @@ extension JsonPersistenceManager {
                 if eqInfo.isEquipped == true {
                     equipped[slotEnum] = nc
                     inventory.append(nc) // still part of inventory
-                    print("[JsonPersistenceManager] Equipped: \(nc.name) in slot \(slotEnum)")
+                    logger.log("Equipped: \(nc.name) in slot \(slotEnum)")
                 } else {
                     inventory.append(nc)
-                    print("[JsonPersistenceManager] Added to inventory: \(nc.name)")
+                    logger.log("Added to inventory: \(nc.name)")
                 }
 
             } else {
@@ -242,7 +242,7 @@ extension JsonPersistenceManager {
                 )
                 // Consumables always go to inventory (no concept of “equipped”)
                 inventory.append(con)
-                print("[JsonPersistenceManager] Added to inventory: \(con.name)")
+                logger.log("Added to inventory: \(con.name)")
             }
         }
 

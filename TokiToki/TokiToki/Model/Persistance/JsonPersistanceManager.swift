@@ -10,6 +10,7 @@ import Foundation
 class JsonPersistenceManager {
 
     // File names
+    internal let logger = JsonPersistenceManagerLogger.shared
     internal let playersFileName = "players"
     internal let playerTokisFileName = "player_tokis"
     internal let playerEquipmentsFileName = "player_equipments"
@@ -41,7 +42,7 @@ class JsonPersistenceManager {
                 skillTemplates[skillData.name] = skillData
             }
         } catch {
-            print("Error loading Skill templates: \(error)")
+            logger.logError("Error loading Skill templates: \(error)")
         }
     }
 
@@ -69,10 +70,10 @@ class JsonPersistenceManager {
         do {
             let data = try encoder.encode(object)
             try data.write(to: getFileURL(filename: filename))
-            print("[JsonPersistenceManager] Successfully saved \(filename).json")
+            logger.log("Successfully saved \(filename).json")
             return true
         } catch {
-            print("Error saving \(filename).json: \(error)")
+            logger.logError("Error saving \(filename).json: \(error)")
             return false
         }
     }
@@ -83,7 +84,7 @@ class JsonPersistenceManager {
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
             // Try loading from Bundle if it doesn’t exist in Documents
             guard let bundleURL = Bundle.main.url(forResource: filename, withExtension: "json") else {
-                print("File \(filename).json not found in bundle")
+                logger.logError("File \(filename).json not found in bundle")
                 return nil
             }
             return loadDataFromURL(url: bundleURL)
@@ -96,10 +97,10 @@ class JsonPersistenceManager {
         do {
             let data = try Data(contentsOf: url)
             let object = try decoder.decode(T.self, from: data)
-            print("[JsonPersistenceManager] Successfully loaded \(url.lastPathComponent)")
+            logger.log("Successfully loaded \(url.lastPathComponent)")
             return object
         } catch {
-            print("Error loading \(url): \(error)")
+            logger.logError("Error loading \(url): \(error)")
             return nil
         }
     }
@@ -113,10 +114,10 @@ class JsonPersistenceManager {
 
         do {
             try FileManager.default.removeItem(at: fileURL)
-            print("Successfully deleted \(filename).json")
+            logger.log("Successfully deleted \(filename).json")
             return true
         } catch {
-            print("Error deleting \(filename).json: \(error)")
+            logger.logError("Error deleting \(filename).json: \(error)")
             return false
         }
     }
