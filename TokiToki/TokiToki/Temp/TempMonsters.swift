@@ -5,10 +5,6 @@
 //  Created by proglab on 20/3/25.
 //
 
-//let basicMonster = createMonsterEntity(monsterToki)
-//let basicMonster2 = createMonsterEntity(monsterToki)
-//let basicMonster3 = createMonsterEntity(monsterToki)
-
 func createMonsterEntity(_ monster: Toki) -> GameStateEntity {
     let entity = monster.createBattleEntity()
     entity.addComponent(AIComponent(entity: entity, rules: [], skills: monster.skills))

@@ -44,8 +44,8 @@ extension BattleScreenViewController {
     }
     
     func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
-        setupNameAndLevelCircle(enemyTokis, opponentTokisViews)
-        setupNameAndLevelCircle(playerTokis, playerTokisViews)
+        setupNameAndLevelCircle(enemyTokis, opponentTokisViews, false)
+        setupNameAndLevelCircle(playerTokis, playerTokisViews, true)
         let opponentEntities = enemyTokis.map { createMonsterEntity($0) }
         let playerEntities = createPlayerEntitiesAndAddMappingToView(playerTokis)
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
@@ -69,7 +69,8 @@ extension BattleScreenViewController {
         }
     }
     
-    internal func setupNameAndLevelCircle(_ tokis: [Toki], _ views: [Views]) {
+    internal func setupNameAndLevelCircle(_ tokis: [Toki], _ views: [Views],
+                                          _ isPlayerTokis: Bool) {
         tokis.enumerated().map { index, toki in
             let levelCircle = views[index].levelCircle
             levelCircle.layer.cornerRadius = levelCircle.frame.width / 2
@@ -90,21 +91,25 @@ extension BattleScreenViewController {
             
             let name = views[index].name
             name.text = toki.name
-            if index == 0 {
-                name.font = UIFont.boldSystemFont(ofSize: 24)
-                let verticalAdjustment: CGFloat = 4
-                name.center.y -= verticalAdjustment
-            } else {
-                name.font = UIFont.boldSystemFont(ofSize: 18)
-            }
             name.textColor = elementToColour[toki.elementType[0]]
             name.shadowColor = UIColor.black
             name.shadowOffset = CGSize(width: 1, height: 1)
             name.sizeToFit()
-
+            
+            let currentY = name.frame.origin.y
+            name.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 name.centerXAnchor.constraint(equalTo: views[index].overallView.centerXAnchor),
+                name.topAnchor.constraint(equalTo: views[index].overallView.topAnchor, constant: currentY)
             ])
+            
+            if index == 0 && !isPlayerTokis {
+                name.font = UIFont.boldSystemFont(ofSize: 24)
+                let verticalAdjustment: CGFloat = 8
+                name.center.y -= verticalAdjustment
+            } else {
+                name.font = UIFont.boldSystemFont(ofSize: 18)
+            }
         }
     }
 
