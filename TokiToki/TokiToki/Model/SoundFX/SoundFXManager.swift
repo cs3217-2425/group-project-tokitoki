@@ -44,10 +44,6 @@ class SoundFXManager {
         soundComponents.append(contentsOf: [
 //            SkillSoundFXComponent(soundPlayer: soundPlayer,
 //                                 skillSoundMap: configManager.configuration.skillSounds),
-//            HealingSoundFXComponent(soundPlayer: soundPlayer),
-//            StatusEffectSoundFXComponent(soundPlayer: soundPlayer,
-//                                        statusSoundMap: statusSoundMap),
-//            DefeatSoundFXComponent(soundPlayer: soundPlayer),
             DamageSoundFXComponent(soundPlayer: soundPlayer),
             BattleEndSoundFXComponent(soundPlayer: soundPlayer)
         ])
@@ -55,6 +51,7 @@ class SoundFXManager {
 
     private func setupGachaSoundComponents() {
         soundComponents.append(contentsOf: [
+//            GachaPullSoundFXComponent(soundPlayer: soundPlayer)
         ])
     }
 
