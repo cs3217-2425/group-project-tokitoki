@@ -95,16 +95,18 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
 //    internal func saveEquipments() {
 //        self.savedEquipments = playerEquipmentComponent.inventory
 //    }
-    
-    func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity) -> Bool {
-        let result = effect.apply(to: entity, strategyFactory: statusEffectStrategyFactory)
-        logMessage(result.description)
-        battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
-                                               statsSystem.getMaxHealth(entity)) { [weak self] in
-            self?.handleDeadBodiesInSequence()
-        }
 
-        BattleEventManager.shared.publishEffectResult(result, sourceId: effect.sourceId)
+    func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity) -> Bool {
+        let results = effect.apply(to: entity, strategyFactory: statusEffectStrategyFactory)
+        for result in results {
+            logMessage(result.description)
+            battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
+                                                   statsSystem.getMaxHealth(entity)) { [weak self] in
+                self?.handleDeadBodiesInSequence()
+            }
+
+            battleEventManager.publishEffectResult(result, sourceId: effect.sourceId)
+        }
         return isBattleOver()
     }
 

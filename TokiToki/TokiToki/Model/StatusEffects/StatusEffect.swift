@@ -18,13 +18,13 @@ struct StatusEffect: Codable {
     }
     let targetId: UUID
 
-    func apply(to entity: GameStateEntity, strategyFactory: StatusEffectStrategyFactory) -> EffectResult {
+    func apply(to entity: GameStateEntity, strategyFactory: StatusEffectStrategyFactory) -> [EffectResult] {
         guard let strategy = strategyFactory.getStrategy(for: type) else {
-            return EffectResult(
+            return [EffectResult(
                 entity: entity,
                 value: 0,
                 description: "No effect applied (no strategy found)"
-            )
+            )]
         }
         return strategy.apply(to: entity, effect: self)
     }
