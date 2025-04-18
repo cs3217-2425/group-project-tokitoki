@@ -18,8 +18,8 @@ struct NonConsumableEquipment: Equipment {
 }
 
 extension NonConsumableEquipment {
-    var components: [Any] {
-        let statBuff = StatBuff(attack: buff.value, defense: buff.value, speed: buff.value)
-        return [CombinedBuffComponent(buff: statBuff)]
+    /// All the ECS components this equipment contributes.
+    var components: [Component] {
+        [EquipmentBuffComponent(buff: buff)]
     }
 }

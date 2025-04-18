@@ -56,10 +56,7 @@ extension JsonPersistenceManager {
         let playerTokisCodable = allTokisCodable.filter { $0.ownerId == playerId }
 
         // Load the player's equipment component.
-        guard let equipmentComponent = loadPlayerEquipment(playerId: playerId) else {
-            logger.logError("No equipment component found for player \(playerId)")
-            return nil
-        }
+        let equipmentComponent = loadPlayerEquipment(playerId: playerId)
 
         // Build a lookup dictionary keyed by UUID.
 //        let equipmentLookup = Dictionary(uniqueKeysWithValues: equipmentComponent.inventory.map { ($0.id, $0) })
