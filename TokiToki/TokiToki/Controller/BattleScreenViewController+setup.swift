@@ -42,7 +42,7 @@ extension BattleScreenViewController {
             tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
         }
         
-        configure(tokis, [electricFoxMonsterToki, totemMonsterToki, golemMonsterToki])
+        configure(tokis, [necroMonsterToki, rhinoMonsterToki, golemMonsterToki])
     }
     
     func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {

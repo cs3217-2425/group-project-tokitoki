@@ -102,12 +102,12 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         let results = effect.apply(to: entity, strategyFactory: statusEffectStrategyFactory)
         for result in results {
             logMessage(result.description)
-            battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
-                                                   statsSystem.getMaxHealth(entity)) { [weak self] in
-                self?.handleDeadBodiesInSequence()
-            }
-
             battleEventManager.publishEffectResult(result, sourceId: effect.sourceId)
+        }
+        battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
+                                               statsSystem.getMaxHealth(entity)) { [weak self] in
+            self?.handleDeadBodiesInSequence()
+            
         }
         return isBattleOver()
     }
