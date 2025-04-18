@@ -15,16 +15,17 @@ func createMonsterEntity(_ monster: Toki) -> GameStateEntity {
     return entity
 }
 
-let monsterBaseStats = TokiBaseStats(hp: 100, attack: 100, defense: 10, speed: 90, heal: 0, exp: 0)
+let monsterBaseStats = TokiBaseStats(hp: 100, attack: 70, defense: 10, speed: 90, heal: 0, exp: 0)
+let dragonBaseStats = TokiBaseStats(hp: 200, attack: 100, defense: 10, speed: 90, heal: 0, exp: 0)
 
 let dragonMonsterToki = Toki(
     name: "Dragon",
     rarity: .rare,
-    baseStats: monsterBaseStats,
-    skills: [basicAttack],
+    baseStats: dragonBaseStats,
+    skills: [basicAttack, fireball],
     equipments: [],
     elementType: [.fire],
-    level: 0
+    level: 5
 )
 
 let rhinoMonsterToki = Toki(
@@ -34,7 +35,7 @@ let rhinoMonsterToki = Toki(
     skills: [basicAttack],
     equipments: [],
     elementType: [.water],
-    level: 0
+    level: 1
 )
 
 let golemMonsterToki = Toki(
@@ -44,5 +45,5 @@ let golemMonsterToki = Toki(
     skills: [basicAttack],
     equipments: [],
     elementType: [.earth],
-    level: 0
+    level: 1
 )

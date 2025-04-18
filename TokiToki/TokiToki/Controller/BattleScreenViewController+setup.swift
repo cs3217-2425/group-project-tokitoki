@@ -30,7 +30,7 @@ extension BattleScreenViewController {
     }
 
     private func resetBattleState() {
-        // Put all your initialization code here
+        // Put all the initialization code here
         configureSkillIcons()
         configureViews()
         configureLogBackground()
@@ -38,25 +38,14 @@ extension BattleScreenViewController {
         effectsManager = BattleEffectsManager(viewController: self)
         var tokis = PlayerManager.shared.getTokisForBattle()
         if tokis.isEmpty {
-            tokis = [knightToki, wizardToki, archerToki]
+            tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
         }
         configure(tokis, [dragonMonsterToki, rhinoMonsterToki, golemMonsterToki])
     }
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        configureSkillIcons()
-//        configureViews()
-//        configureLogBackground()
-//        addGestureRecognisers()
-//        effectsManager = BattleEffectsManager(viewController: self)
-//        var tokis = PlayerManager.shared.getTokisForBattle()
-//        if tokis.isEmpty {
-//            tokis = [knightToki, wizardToki, archerToki]
-//        }
-//        configure(tokis, [basicMonster, basicMonster2, basicMonster3])
-//    }
     
     func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
+        setupNameAndLevelCircle(enemyTokis, opponentTokisViews)
+        setupNameAndLevelCircle(playerTokis, playerTokisViews)
         let opponentEntities = enemyTokis.map { createMonsterEntity($0) }
         let playerEntities = createPlayerEntitiesAndAddMappingToView(playerTokis)
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
@@ -77,6 +66,45 @@ extension BattleScreenViewController {
             playerTokisImageViews[index].image = UIImage(named: tokiToIconImage[toki.name] ??
                                                          "peg-red@1x")
             return entity
+        }
+    }
+    
+    internal func setupNameAndLevelCircle(_ tokis: [Toki], _ views: [Views]) {
+        tokis.enumerated().map { index, toki in
+            let levelCircle = views[index].levelCircle
+            levelCircle.layer.cornerRadius = levelCircle.frame.width / 2
+            levelCircle.backgroundColor = elementToColour[toki.elementType[0]]
+            
+            let levelLabel = UILabel()
+            levelLabel.translatesAutoresizingMaskIntoConstraints = false
+            levelLabel.text = "\(toki.level)"
+            levelLabel.textAlignment = .center
+            levelLabel.font = UIFont.boldSystemFont(ofSize: levelCircle.frame.width / 2)
+            levelLabel.textColor = toki.elementType[0] == .light ? .black : .white
+            levelCircle.addSubview(levelLabel)
+            
+            NSLayoutConstraint.activate([
+                levelLabel.centerXAnchor.constraint(equalTo: levelCircle.centerXAnchor),
+                levelLabel.centerYAnchor.constraint(equalTo: levelCircle.centerYAnchor)
+            ])
+            
+            let name = views[index].name
+            name.text = toki.name
+            if index == 0 {
+                name.font = UIFont.boldSystemFont(ofSize: 24)
+                let verticalAdjustment: CGFloat = 4
+                name.center.y -= verticalAdjustment
+            } else {
+                name.font = UIFont.boldSystemFont(ofSize: 18)
+            }
+            name.textColor = elementToColour[toki.elementType[0]]
+            name.shadowColor = UIColor.black
+            name.shadowOffset = CGSize(width: 1, height: 1)
+            name.sizeToFit()
+
+            NSLayoutConstraint.activate([
+                name.centerXAnchor.constraint(equalTo: views[index].overallView.centerXAnchor),
+            ])
         }
     }
 
@@ -117,17 +145,23 @@ extension BattleScreenViewController {
     
     fileprivate func configureViews() {
         playerTokisViews = [Views(overallView: toki1View, healthBar: toki1HealthBar,
-                                  healthContainer: toki1HealthBarContainer),
+                                  healthContainer: toki1HealthBarContainer, levelCircle: toki1LevelCircle,
+                                  name: toki1Name),
                             Views(overallView: toki2View, healthBar: toki2HealthBar,
-                                  healthContainer: toki2HealthBarContainer),
+                                  healthContainer: toki2HealthBarContainer, levelCircle: toki2LevelCircle,
+                                  name: toki2Name),
                             Views(overallView: toki3View, healthBar: toki3HealthBar,
-                                  healthContainer: toki3HealthBarContainer)]
+                                  healthContainer: toki3HealthBarContainer, levelCircle: toki3LevelCircle,
+                                  name: toki3Name)]
         opponentTokisViews = [Views(overallView: mainOpponentView, healthBar: mainOppHealthBar,
-                                    healthContainer: mainOppHealthBarContainer),
+                                    healthContainer: mainOppHealthBarContainer, levelCircle: mainOppLevelCircle,
+                                    name: mainOppName),
                               Views(overallView: opponent2View, healthBar: opponent2HealthBar,
-                                    healthContainer: opponent2HealthBarContainer),
+                                    healthContainer: opponent2HealthBarContainer, levelCircle: opp2LevelCircle,
+                                    name: opp2Name),
                               Views(overallView: opponent3View, healthBar: opponent3HealthBar,
-                                    healthContainer: opponent3HealthBarContainer)]
+                                    healthContainer: opponent3HealthBarContainer, levelCircle: opp3LevelCircle,
+                                    name: opp3Name)]
 
         opponentImageViews = [opponent1, opponent2, opponent3]
         playerTokisImageViews = [toki1, toki2, toki3]
@@ -170,3 +204,15 @@ extension BattleScreenViewController {
         playerActionImageViews = skillImageViews + [consumables, noAction]
     }
 }
+
+let elementToColour: [ElementType: UIColor] = [
+    .fire: .systemRed,
+    .water: .systemBlue,
+    .ice: .systemCyan,
+    .lightning: .systemYellow,
+    .earth: .systemBrown,
+    .air: .systemGray,
+    .light: UIColor(red: 255/255, green: 259/255, blue: 253/255, alpha: 1.0),
+    .dark: .systemPurple,
+    .neutral: .systemPink
+]

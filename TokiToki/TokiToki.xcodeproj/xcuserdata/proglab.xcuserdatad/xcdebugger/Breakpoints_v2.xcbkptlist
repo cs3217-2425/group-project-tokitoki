@@ -312,7 +312,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "88829494-E98E-40EB-9762-AAC053887E7F"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TokiToki/Model/Persistance/JsonPersistanceManager+Toki.swift"
@@ -344,7 +344,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "90C83318-CEC1-4A64-97BD-451A9A3B4328"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TokiToki/Model/Persistance/JsonPersistanceManager+Toki.swift"
@@ -354,36 +354,22 @@
             endingLineNumber = "12"
             landmarkName = "savePlayerTokis(_:playerId:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "90C83318-CEC1-4A64-97BD-451A9A3B4328 - 8e285414eec11fc2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TokiToki.JsonPersistenceManager.savePlayerTokis(_: Swift.Array&lt;TokiToki.Toki&gt;, playerId: Foundation.UUID) -&gt; Swift.Bool"
-                  moduleName = "TokiToki.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/proglab/Documents/group-project-tokitoki/TokiToki/TokiToki/Model/Persistance/JsonPersistanceManager+Toki.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "12"
-                  endingLineNumber = "12">
-               </Location>
-               <Location
-                  uuid = "90C83318-CEC1-4A64-97BD-451A9A3B4328 - ed86c9d6cc798fd7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (TokiToki.Toki) -&gt; TokiToki.TokiCodable in TokiToki.JsonPersistenceManager.savePlayerTokis(_: Swift.Array&lt;TokiToki.Toki&gt;, playerId: Foundation.UUID) -&gt; Swift.Bool"
-                  moduleName = "TokiToki.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/proglab/Documents/group-project-tokitoki/TokiToki/TokiToki/Model/Persistance/JsonPersistanceManager+Toki.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "12"
-                  endingLineNumber = "12">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "93F86D58-EF1C-4AAA-A1C5-27E7ABE8456F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TokiToki/Controller/BattleScreenViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "BattleScreenViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

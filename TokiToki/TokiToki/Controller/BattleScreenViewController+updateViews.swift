@@ -54,6 +54,41 @@ extension BattleScreenViewController {
             }
         }
     }
+    
+    func showWhoseTurn(_ id: UUID) {
+        guard let view = gameStateIdToViews[id] else { return }
+        let currentView = view.overallView
+
+        // Remove all previous indicators
+        for (_, v) in gameStateIdToViews {
+            v.overallView.subviews.filter { $0.tag == 999 }.forEach { $0.removeFromSuperview() }
+        }
+
+        // Load arrow image
+        let arrowImage = UIImage(named: "downArrow.png")
+        let arrowSize = CGSize(width: 24, height: 24)
+
+        let arrowImageView = UIImageView(image: arrowImage)
+        arrowImageView.frame = CGRect(
+            x: (currentView.bounds.width - arrowSize.width) / 2,
+            y: -arrowSize.height,
+            width: arrowSize.width,
+            height: arrowSize.height
+        )
+        arrowImageView.contentMode = .scaleAspectFit
+        arrowImageView.tag = 999
+        arrowImageView.alpha = 0.95
+
+        // Optional: Add a glow effect
+        arrowImageView.layer.shadowColor = UIColor.yellow.cgColor
+        arrowImageView.layer.shadowRadius = 5
+        arrowImageView.layer.shadowOpacity = 0.8
+        arrowImageView.layer.shadowOffset = .zero
+
+        currentView.addSubview(arrowImageView)
+    }
+
+
 
     func updateHealthBar(_ id: UUID, _ currentHealth: Int, _ maxHealth: Int,
                          completion: @escaping () -> Void) {

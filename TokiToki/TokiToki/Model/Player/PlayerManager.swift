@@ -82,6 +82,10 @@ class PlayerManager {
         getOrCreatePlayer().tokisForBattle
     }
     
+    func getFirstThreeOwnedTokis() -> [Toki] {
+        Array(getOrCreatePlayer().ownedTokis.prefix(3))
+    }
+    
     func resetTokisForBattle() {
         currentPlayer?.resetTokisForBattle()
     }

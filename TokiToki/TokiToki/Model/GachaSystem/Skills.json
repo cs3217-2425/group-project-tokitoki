@@ -217,7 +217,7 @@
             {
               "calculatorType": "attack",
               "elementType": "water",
-              "basePower": 35
+              "basePower": 65
             }
           ]
         }
@@ -236,126 +236,9 @@
               "calculatorType": "statsModifier",
               "statsModifierDuration": 2,
               "attackModifier": 1.0,
-              "defenseModifier": 1.5,
+              "defenseModifier": 5.0,
               "speedModifier": 1.0,
               "healModifier": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "healing-wind",
-      "name": "Healing Wind",
-      "description": "A gentle breeze that heals allies.",
-      "cooldown": 4,
-      "effectDefinitions": [
-        {
-          "targetType": "allAllies",
-          "calculators": [
-            {
-              "calculatorType": "heal",
-              "basePower": 25
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "lightning-strike",
-      "name": "Lightning Strike",
-      "description": "Summons lightning to strike all enemies.",
-      "cooldown": 5,
-      "effectDefinitions": [
-        {
-          "targetType": "allEnemies",
-          "calculators": [
-            {
-              "calculatorType": "attack",
-              "elementType": "air",
-              "basePower": 60
-            },
-            {
-              "calculatorType": "statusEffect",
-              "statusEffectChance": 0.3,
-              "statusEffect": "paralysis",
-              "statusEffectDuration": 1,
-              "statusEffectStrength": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "flame-slash",
-      "name": "Flame Slash",
-      "description": "A powerful slash imbued with fire energy.",
-      "cooldown": 3,
-      "effectDefinitions": [
-        {
-          "targetType": "singleEnemy",
-          "calculators": [
-            {
-              "calculatorType": "attack",
-              "elementType": "fire",
-              "basePower": 50
-            }
-          ]
-        },
-        {
-          "targetType": "ownself",
-          "calculators": [
-            {
-              "calculatorType": "statsModifier",
-              "statsModifierDuration": 2,
-              "attackModifier": 1.2,
-              "defenseModifier": 1.0,
-              "speedModifier": 1.0,
-              "healModifier": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "ice-spear",
-      "name": "Ice Spear",
-      "description": "Launches a spear of ice that slows the enemy.",
-      "cooldown": 3,
-      "effectDefinitions": [
-        {
-          "targetType": "singleEnemy",
-          "calculators": [
-            {
-              "calculatorType": "attack",
-              "elementType": "water",
-              "basePower": 45
-            },
-            {
-              "calculatorType": "statsModifier",
-              "statsModifierDuration": 2,
-              "attackModifier": 1.0,
-              "defenseModifier": 1.0,
-              "speedModifier": 0.8,
-              "healModifier": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "earthquake",
-      "name": "Earthquake",
-      "description": "Creates a powerful earthquake that damages all enemies.",
-      "cooldown": 4,
-      "effectDefinitions": [
-        {
-          "targetType": "allEnemies",
-          "calculators": [
-            {
-              "calculatorType": "attack",
-              "elementType": "earth",
-              "basePower": 40
             }
           ]
         }

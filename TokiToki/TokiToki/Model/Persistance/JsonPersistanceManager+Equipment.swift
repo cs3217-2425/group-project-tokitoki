@@ -232,7 +232,7 @@ extension JsonPersistenceManager {
                     strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
                 }
 
-                let con = ConsumableEquipment(
+                var con = ConsumableEquipment(
                     id: eqInfo.id,
                     name: eqInfo.name,
                     description: eqInfo.description,
