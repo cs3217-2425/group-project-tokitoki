@@ -9,6 +9,7 @@ import ObjectiveC
 import UIKit
 
 class TokiSelection {
+    let logger = Logger(subsystem: "TokiSelection")
     let tokiDisplay = TokiDisplay()
     // All available Tokis loaded from TokiDisplay.
     let tokis: [Toki]
@@ -23,10 +24,10 @@ class TokiSelection {
     func startBattleTapped(_ vcont: UIViewController) {
         // Update the global player's toki list.
         PlayerManager.shared.resetTokisForBattle()
-        PlayerManager.shared.getTokisForBattle()
+        _ = PlayerManager.shared.getTokisForBattle()
         for toki in selectedTokis {
             PlayerManager.shared.addTokiToBattle(toki)
-            print("[TokiSelection] Added Toki: \(toki.name) to PlayerManager")
+            logger.log("Added Toki: \(toki.name) to PlayerManager")
         }
         
         // Switch to the BattleScreen storyboard.
@@ -73,12 +74,12 @@ extension TokiSelection {
             if isOn {
                 if !self.selectedTokis.contains(where: { $0.id == toki.id }) {
                     self.selectedTokis.append(toki)
-                    print("[TokiSelection] Added Toki: \(toki.name) to selectedTokis")
+                    logger.log("Added Toki: \(toki.name) to selectedTokis")
                 }
             } else {
                 if let index = self.selectedTokis.firstIndex(where: { $0.id == toki.id }) {
                     self.selectedTokis.remove(at: index)
-                    print("[TokiSelection] Removed Toki: \(toki.name) from selectedTokis")
+                    logger.log("Removed Toki: \(toki.name) from selectedTokis")
                 }
             }
         }
