@@ -26,11 +26,15 @@ extension JsonPersistenceManager {
                     // Modify the existing toki's fields with new values. For example, update the skill names and equipment IDs.
                     existingToki.skillNames = newToki.skillNames
                     existingToki.equipmentIds = newToki.equipmentIds
+                    existingToki.level = newToki.level
+                    existingToki.baseStats = newToki.baseStats
                     // If there are additional fields to update, they can be merged here.
                     currentPlayerTokiDict[newToki.id] = existingToki
                 } else {
                     currentPlayerTokiDict[newToki.id] = newToki
                 }
+                
+                print("[JsonPersistenceManager] Saved toki \(newToki.name)")
             }
 
             // Combine tokis from other players with the updated/current player's tokis
