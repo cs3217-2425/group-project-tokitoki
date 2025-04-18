@@ -17,7 +17,6 @@ class BattleLogManager {
             return
         }
 
-        print(message)
         logEntries.append(LogEntry(message: message, opacity: 1.0))
 
         updateOpacityValues()

@@ -18,6 +18,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal let targetSelectionFactory = TargetSelectionFactory()
     internal var statusEffectStrategyFactory = StatusEffectStrategyFactory()
     internal var battleEffectsDelegate: BattleEffectsDelegate?
+    internal var battleEventManager = BattleEventManager()
     private let logManager = BattleLogManager()
     var battleLogObserver: BattleLogObserver? {
         didSet {
@@ -103,16 +104,17 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
             self?.handleDeadBodiesInSequence()
         }
 
-        BattleEventManager.shared.publishEffectResult(result, sourceId: effect.sourceId)
+        battleEventManager.publishEffectResult(result, sourceId: effect.sourceId)
     }
 
     internal func isBattleOver() -> Bool {
-        if playerTeam.isEmpty {
-            logMessage("Battle ended! You lost!")
-        } else if opponentTeam.isEmpty {
-            logMessage("Battle ended! You won!")
+        if playerTeam.isEmpty || opponentTeam.isEmpty {
+            let isWin = opponentTeam.isEmpty
+            logMessage("Battle ended! You \(isWin ? "won" : "lost")!")
+            battleEventManager.publishBattleEndedEvents(isWin: isWin)
+            return true
         }
-        return playerTeam.isEmpty || opponentTeam.isEmpty
+        return false
     }
 
     internal func logMessage(_ message: String) {
@@ -126,7 +128,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     }
 
     func getBattleLog() -> [String] {
-        return logManager.getLogMessages()
+        logManager.getLogMessages()
     }
 
     func restart() {

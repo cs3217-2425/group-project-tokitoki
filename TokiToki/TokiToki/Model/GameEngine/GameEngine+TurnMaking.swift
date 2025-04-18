@@ -40,7 +40,7 @@ extension GameEngine {
     internal func getNextReadyCharacter() -> GameStateEntity? {
         turnSystem.getNextEntityToAct(playersPlusOpponents)
     }
-    
+
     internal func updateSkillIconsForCurrentEntity(_ currentGameStateEntity: GameStateEntity) {
         let skillsAvailable = currentGameStateEntity.getComponent(ofType: SkillsComponent.self)?.skills
         let skillIcons = skillsAvailable?.map { skill in

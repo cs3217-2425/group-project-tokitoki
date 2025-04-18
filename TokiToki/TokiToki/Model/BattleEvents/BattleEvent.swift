@@ -51,3 +51,7 @@ struct EntityDefeatedEvent: BattleEvent {
     let entityId: UUID
     let entityName: String
 }
+
+struct BattleEndedEvent: BattleEvent {
+    let isWin: Bool
+}

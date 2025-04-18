@@ -11,7 +11,7 @@ extension GameEngine {
     internal func createBattleEventAndPublishToEventBus(_ currentGameStateEntity: GameStateEntity,
                                                            _ skillSelected: any Skill,
                                                            _ targets: [GameStateEntity]) {
-        BattleEventManager.shared.publishSkillUsedEvent(
+        battleEventManager.publishSkillUsedEvent(
             user: currentGameStateEntity,
             skill: skillSelected,
             targets: targets
@@ -55,7 +55,7 @@ extension GameEngine {
         }
 
         for result in results {
-            BattleEventManager.shared.publishEffectResult(result, sourceId: sourceId)
+            battleEventManager.publishEffectResult(result, sourceId: sourceId)
         }
 
         return results
@@ -69,7 +69,7 @@ extension GameEngine {
 
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
                 for result in results {
-                    BattleEventManager.shared.publishEffectResult(result,
+                    self?.battleEventManager.publishEffectResult(result,
                                                                   sourceId: self?.currentGameStateEntity?.id ?? UUID())
                 }
                 self?.logMultipleResults(results)

@@ -15,10 +15,11 @@ class BattleEffectsManager {
             viewController?.getViewForEntity(id: entityId)
         }
 
-        setupVisualEffects(viewProvider)
+        setupVisualEffects(viewProvider, viewController)
     }
 
-    private func setupVisualEffects(_ viewProvider: @escaping (UUID) -> UIView?) {
+    private func setupVisualEffects(_ viewProvider: @escaping (UUID) -> UIView?,
+                                    _ viewController: BattleScreenViewController) {
         visualComponents = [
             // Main skill effect component using registry
             SkillVisualFXComponent(viewProvider: viewProvider),
@@ -27,7 +28,10 @@ class BattleEffectsManager {
             StatusEffectVisualFXComponent(viewProvider: viewProvider),
 
             // Other effect components
-            DamageDealtComponent(viewProvider: viewProvider)
+            DamageDealtComponent(viewProvider: viewProvider),
+
+            // Battle ended components
+            BattleEndComponent(viewProvider: viewProvider, viewController: viewController)
         ]
     }
 
