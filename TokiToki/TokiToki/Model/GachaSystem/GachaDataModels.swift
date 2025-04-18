@@ -136,20 +136,13 @@ struct EquipmentData: Codable {
     struct BuffData: Codable {
         let value: Int
         let description: String
-        let affectedStat: String
+        let affectedStats: [String]
     }
 }
 
 struct EffectStrategyData: Codable {
-    let type: String          // "healing", "potion", "upgradeCandy", etc.
-
-    // For healing effects
-    let healAmount: Int?
-
-    // For potion effects
-    let effectCalculators: [CalculatorData]?
-    let statType: String?
-
-    // For upgrade candy effects
-    let bonusExp: Int?
+    let type: String                  // "potion", "upgradeCandy"
+    let effectCalculators: [CalculatorData]? // for potions / mixed effects
+    let healAmount: Int?              // convenience for pure‑heal items
+    let bonusExp: Int?                // for candies
 }
