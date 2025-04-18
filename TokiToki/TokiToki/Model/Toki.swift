@@ -93,6 +93,7 @@ class Toki {
             critHitDamage: self.baseStats.critHitDamage
         )
         self.level += 1
+        Sound.play(.levelUp)
     }
 }
 

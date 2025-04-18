@@ -35,6 +35,7 @@ public enum SoundEffect: String, CaseIterable {
     case levelUp       = "level_up"
     case expUp         = "exp_up"
     case damageTaken   = "damage_taken"
+    case popUp         = "pop_up"
     
     // Add new cues → drop a *.wav (or .mp3) and append a case ‑ done.
 }
