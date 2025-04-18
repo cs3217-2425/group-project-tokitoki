@@ -24,8 +24,7 @@ protocol Skill {
 }
 
 enum SkillType {
-    case attack
-    case heal
+    case revive
 }
 
 enum TargetType {

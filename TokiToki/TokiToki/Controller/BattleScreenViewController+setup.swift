@@ -31,21 +31,29 @@ extension BattleScreenViewController {
 
     private func resetBattleState() {
         // Put all the initialization code here
+
         configureSkillIcons()
         configureViews()
         addGestureRecognisers()
         effectsManager = BattleEffectsManager(viewController: self)
+
         var tokis = PlayerManager.shared.getTokisForBattle()
         if tokis.isEmpty {
             tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
         }
-        configure(tokis, [dragonMonsterToki, rhinoMonsterToki, golemMonsterToki])
+        
+        configure(tokis, [necroMonsterToki, rhinoMonsterToki, golemMonsterToki])
     }
     
     func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
         setupNameAndLevelCircle(enemyTokis, opponentTokisViews, false)
         setupNameAndLevelCircle(playerTokis, playerTokisViews, true)
-        let opponentEntities = enemyTokis.map { createMonsterEntity($0) }
+        let opponentEntities = enemyTokis.map { toki in
+            guard let createFunction = mappingOfTokiToCreationFunction[toki.name] else {
+                return createMonsterEntity(toki)
+            }
+            return createFunction(toki)
+        }
         let playerEntities = createPlayerEntitiesAndAddMappingToView(playerTokis)
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
         hideTokisIfNoTokiInThatSlot(opponentEntities, opponentTokisViews)
@@ -55,6 +63,7 @@ extension BattleScreenViewController {
         self.gameEngine = GameEngine(playerTeam: playerEntities, opponentTeam: opponentEntities)
         self.gameEngine?.addObserver(self)
         self.gameEngine?.addDelegate(self)
+        
         self.gameEngine?.startBattle()
     }
 
@@ -94,6 +103,7 @@ extension BattleScreenViewController {
             name.shadowColor = UIColor.black
             name.shadowOffset = CGSize(width: 1, height: 1)
             name.sizeToFit()
+            view.bringSubviewToFront(name)
             
             let currentY = name.frame.origin.y
             name.translatesAutoresizingMaskIntoConstraints = false

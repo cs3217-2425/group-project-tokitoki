@@ -101,31 +101,6 @@
     ]
   },
   {
-    "id": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
-    "name": "WaterSerpent",
-    "level": 3,
-    "rarity": 0,
-    "elementType": ["water"],
-    "ownerId": "a81bc23d-45ef-67ab-89cd-ef0123456789",
-    "baseStats": {
-      "hp": 100,
-      "attack": 15,
-      "defense": 10,
-      "speed": 12,
-      "heal": 80,
-      "exp": 120,
-      "critHitChance": 10,
-      "critHitDamage": 150
-    },
-    "skillNames": [
-      "Water Blast",
-      "Healing Wind"
-    ],
-    "equipmentIds": [
-      "e5d4c3b2-a1f9-4b7c-95d6-4a3b2c1d0e9f"
-    ]
-  },
-  {
     "id": "a0b1c2d3-e4f5-6a7b-8c9d-0e1f2a3b4c5d",
     "name": "FireFox",
     "level": 4,

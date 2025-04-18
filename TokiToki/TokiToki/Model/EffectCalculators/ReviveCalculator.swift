@@ -26,7 +26,7 @@ class ReviveCalculator: EffectCalculator {
     func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity,
                    context: EffectCalculationContext) -> EffectResult? {
         
-        if statsSystem.getCurrentHealth(source) > 0 {
+        if statsSystem.getCurrentHealth(target) > 0 {
             return EffectResult(entity: target, value: 0,
                                 description: "\(source.getName()) used \(moveName) "
                                 + "but there's no effect!")

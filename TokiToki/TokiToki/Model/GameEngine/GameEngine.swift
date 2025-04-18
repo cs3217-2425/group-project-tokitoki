@@ -29,7 +29,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal let MAX_ACTION_BAR: Float = 100
     internal let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
 
-    //internal let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
+    internal let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
     internal var globalStatusEffectsManager: GlobalStatusEffectsManaging
     internal var effectContext = EffectCalculationContext()
 
@@ -59,12 +59,13 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
                                                                      MULTIPLIER_FOR_ACTION_METER)
         self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
                                                       battleEffectsDelegate: battleEffectsDelegate,
-                                                      reviverDelegate: self)
+                                                      reviverDelegate: self,
+                                                      allOpponentEntities: savedOpponentTeam)
         self.globalStatusEffectsManager.setDelegate(self)
         self.statusEffectsSystem.setDelegate(self)
         
         appendToSystemsForResetting()
-        //saveEquipments()
+        saveEquipments()
     }
 
     fileprivate func appendToSystemsForResetting() {
@@ -89,23 +90,24 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         self.battleEffectsDelegate = battleEffectsDelegate
         self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
                                                       battleEffectsDelegate: self.battleEffectsDelegate,
-                                                      reviverDelegate: self)
+                                                      reviverDelegate: self,
+                                                      allOpponentEntities: savedOpponentTeam)
     }
 
-//    internal func saveEquipments() {
-//        self.savedEquipments = playerEquipmentComponent.inventory
-//    }
+    internal func saveEquipments() {
+        self.savedEquipments = playerEquipmentComponent.inventory
+    }
 
     func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity) -> Bool {
         let results = effect.apply(to: entity, strategyFactory: statusEffectStrategyFactory)
         for result in results {
             logMessage(result.description)
-            battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
-                                                   statsSystem.getMaxHealth(entity)) { [weak self] in
-                self?.handleDeadBodiesInSequence()
-            }
-
             battleEventManager.publishEffectResult(result, sourceId: effect.sourceId)
+        }
+        battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
+                                               statsSystem.getMaxHealth(entity)) { [weak self] in
+            self?.handleDeadBodiesInSequence()
+            
         }
         return isBattleOver()
     }
@@ -113,6 +115,11 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty || opponentTeam.isEmpty {
             let isWin = opponentTeam.isEmpty
+            if isWin {
+                savedPlayerTeam.forEach {
+                    $0.toki.baseStats.exp += 10
+                }
+            }
             logMessage("Battle ended! You \(isWin ? "won" : "lost")!")
             battleEventManager.publishBattleEndedEvents(isWin: isWin)
             return true
@@ -148,7 +155,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         playersPlusOpponents = savedPlayersPlusOpponents
         playerTeam = savedPlayerTeam
         opponentTeam = savedOpponentTeam
-        //playerEquipmentComponent.inventory = savedEquipments
+        playerEquipmentComponent.inventory = savedEquipments
         mostRecentSkillSelected = nil
         pendingActions = []
         updateHealthBars()

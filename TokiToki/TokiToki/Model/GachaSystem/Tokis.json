@@ -5,52 +5,52 @@
         "name": "FireFox",
         "rarity": 0,
         "baseHealth": 80,
-        "baseAttack": 10,
-        "baseDefense": 5,
-        "baseSpeed": 12,
+        "baseAttack": 65,
+        "baseDefense": 25,
+        "baseSpeed": 120,
         "baseHeal": 80,
-        "baseExp": 100,
+        "baseExp": 0,
         "elementType": "fire",
-        "skills": ["Fireball", "Flame Dance", "Basic Spell"]
+        "skills": ["Basic Spell", "Fireball", "Flame Dance"]
       },
       {
         "id": "water-serpent",
         "name": "WaterSerpent",
         "rarity": 0,
         "baseHealth": 100,
-        "baseAttack": 15,
-        "baseDefense": 10,
-        "baseSpeed": 12,
-        "baseHeal": 80,
-        "baseExp": 100,
+        "baseAttack": 45,
+        "baseDefense": 30,
+        "baseSpeed": 110,
+        "baseHeal": 50,
+        "baseExp": 0,
         "elementType": "water",
-        "skills": []
+        "skills": ["Basic Spell", "Water Blast", "Healing Wave"]
       },
       {
         "id": "earth-dragon",
         "name": "EarthDragon",
-        "rarity": 4,
+        "rarity": 0,
         "baseHealth": 200,
         "baseAttack": 40,
-        "baseDefense": 30,
-        "baseSpeed": 15,
+        "baseDefense": 40,
+        "baseSpeed": 90,
         "baseHeal": 80,
-        "baseExp": 100,
+        "baseExp": 0,
         "elementType": "earth",
-        "skills": []
+        "skills": ["Basic Attack", "Earth Shield", "Earthquake"]
       },
       {
         "id": "sky-phoenix",
         "name": "SkyPhoenix",
-        "rarity": 3,
+        "rarity": 0,
         "baseHealth": 180,
-        "baseAttack": 35,
+        "baseAttack": 50,
         "baseDefense": 25,
-        "baseSpeed": 20,
+        "baseSpeed": 110,
         "baseHeal": 80,
-        "baseExp": 500,
+        "baseExp": 0,
         "elementType": "air",
-        "skills": []
+        "skills": ["Basic Attack"]
       }
     ]
 }

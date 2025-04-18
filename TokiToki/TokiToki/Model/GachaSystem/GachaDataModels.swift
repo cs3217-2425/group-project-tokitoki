@@ -78,6 +78,8 @@ struct CalculatorData: Codable {
     let defenseModifier: Double?
     let speedModifier: Double?
     let healModifier: Double?
+    
+    let healPower: Int?
 }
 
 struct SkillsData: Codable {

@@ -219,7 +219,7 @@ class SkillsFactory {
 
                 case "heal":
                     // Handle heal calculator
-                    let healPower = calcData.basePower ?? 10
+                    let healPower = calcData.healPower ?? 10
                     effectCalculators.append(HealCalculator(healPower: healPower))
 
                 default:
