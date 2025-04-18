@@ -38,7 +38,6 @@ class Toki {
     }
 
     func gainExperience(_ exp: Int) {
-        print("Toki gains \(exp) EXP")
         // Update experience
         self.baseStats = TokiBaseStats(
             hp: self.baseStats.hp,

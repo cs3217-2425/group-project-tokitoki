@@ -12,6 +12,7 @@ class GachaService {
     private let itemRepository: ItemRepository
     private let eventService: EventService
     private var gachaPacks: [String: GachaPack] = [:]
+    private let logger = Logger(subsystem: "GachaService")
 
     init(itemRepository: ItemRepository, eventService: EventService) {
         self.itemRepository = itemRepository
@@ -70,9 +71,9 @@ class GachaService {
                 gachaPacks[packData.packName] = gachaPack
             }
 
-            print("Loaded \(gachaPacks.count) gacha packs from JSON")
+            logger.log("Loaded \(gachaPacks.count) gacha packs from JSON")
         } catch {
-            print("Error loading gacha packs: \(error)")
+            logger.log("Error loading gacha packs: \(error)")
         }
     }
 
@@ -89,14 +90,14 @@ class GachaService {
     // Pull from a gacha pack (now just handles the draw logic, not player state)
     func drawFromPack(packName: String, count: Int, for player: inout Player) -> [any IGachaItem] {
         guard let pack = findPack(byName: packName) else {
-            print("No pack found with name \(packName)")
+            logger.log("No pack found with name \(packName)")
             return []
         }
 
         // Check if player has enough currency
         let totalCost = pack.cost * count
         guard player.canSpendCurrency(totalCost) else {
-            print("Player doesn't have enough currency to draw")
+            logger.log("Player doesn't have enough currency to draw")
             return []
         }
 
@@ -117,13 +118,13 @@ class GachaService {
                 // Note: This modifies the passed player reference
                 if let tokiGachaItem = itemWithOwnership as? TokiGachaItem {
                     if player.ownedTokis.contains(where: { $0.name == tokiGachaItem.getToki().name }) {
-                        print("Player already owns Toki \(tokiGachaItem.getToki().name)")
+                        logger.log("Player already owns Toki \(tokiGachaItem.getToki().name)")
                         continue
                     }
                     player.ownedTokis.append(tokiGachaItem.getToki())
                 } else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
                     if player.ownedEquipments.inventory.contains(where: { $0.name == equipmentGachaItem.getEquipment().name }) {
-                        print("Player already owns Equipment \(equipmentGachaItem.getEquipment().name)")
+                        logger.log("Player already owns Equipment \(equipmentGachaItem.getEquipment().name)")
                         continue
                     }
                     player.ownedEquipments.inventory.append(equipmentGachaItem.getEquipment())
@@ -164,7 +165,7 @@ class GachaService {
         }
 
         guard !weightedItems.isEmpty, totalWeight > 0 else {
-            print("No valid items in pack or all rates are zero")
+            logger.logError("No valid items in pack or all rates are zero")
             return pack.items.first?.item
         }
 

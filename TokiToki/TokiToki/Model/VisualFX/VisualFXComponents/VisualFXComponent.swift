@@ -10,6 +10,7 @@ import UIKit
 
 class VisualFXComponent<E: BattleEvent> {
     private let viewProvider: ((UUID) -> UIView?)
+    internal let logger = Logger(subsystem: "VisualFXComponent")
 
     init(viewProvider: @escaping (UUID) -> UIView?) {
         self.viewProvider = viewProvider
