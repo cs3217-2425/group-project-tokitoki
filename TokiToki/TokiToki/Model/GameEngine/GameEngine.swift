@@ -14,16 +14,16 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal var currentGameStateEntity: GameStateEntity?
     internal var mostRecentSkillSelected: Skill?
     internal var pendingActions: [Action] = []
-    internal var battleLog: [String] = [] {
-        didSet {
-            battleLogObserver?.update(log: battleLog)
-        }
-    }
     internal var elementsSystem = ElementsSystem()
     internal let targetSelectionFactory = TargetSelectionFactory()
     internal var statusEffectStrategyFactory = StatusEffectStrategyFactory()
-    internal var battleLogObserver: BattleLogObserver?
     internal var battleEffectsDelegate: BattleEffectsDelegate?
+    private let logManager = BattleLogManager()
+    var battleLogObserver: BattleLogObserver? {
+        didSet {
+            logManager.observer = battleLogObserver
+        }
+    }
 
     internal let MAX_ACTION_BAR: Float = 100
     internal let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
@@ -106,8 +106,6 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         BattleEventManager.shared.publishEffectResult(result, sourceId: effect.sourceId)
     }
 
-    
-
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty {
             logMessage("Battle ended! You lost!")
@@ -118,12 +116,9 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     }
 
     internal func logMessage(_ message: String) {
-        if message.isEmpty {
-            return
-        }
-        self.battleLog.append(message)
+        logManager.addLogMessage(message)
     }
-    
+
     internal func logMultipleResults(_ results: [EffectResult]) {
         for result in results {
             logMessage(result.description)
@@ -131,11 +126,11 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     }
 
     func getBattleLog() -> [String] {
-        battleLog
+        return logManager.getLogMessages()
     }
 
     func restart() {
-        battleLog = []
+        logManager.clearLogs()
         resetAll()
         globalStatusEffectsManager.reset()
         playersPlusOpponents = savedPlayersPlusOpponents

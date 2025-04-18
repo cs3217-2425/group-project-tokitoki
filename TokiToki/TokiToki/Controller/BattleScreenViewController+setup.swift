@@ -33,7 +33,6 @@ extension BattleScreenViewController {
         // Put all the initialization code here
         configureSkillIcons()
         configureViews()
-        configureLogBackground()
         addGestureRecognisers()
         effectsManager = BattleEffectsManager(viewController: self)
         var tokis = PlayerManager.shared.getTokisForBattle()
@@ -68,14 +67,14 @@ extension BattleScreenViewController {
             return entity
         }
     }
-    
+
     internal func setupNameAndLevelCircle(_ tokis: [Toki], _ views: [Views],
                                           _ isPlayerTokis: Bool) {
         tokis.enumerated().map { index, toki in
             let levelCircle = views[index].levelCircle
             levelCircle.layer.cornerRadius = levelCircle.frame.width / 2
             levelCircle.backgroundColor = elementToColour[toki.elementType[0]]
-            
+
             let levelLabel = UILabel()
             levelLabel.translatesAutoresizingMaskIntoConstraints = false
             levelLabel.text = "\(toki.level)"
@@ -83,12 +82,12 @@ extension BattleScreenViewController {
             levelLabel.font = UIFont.boldSystemFont(ofSize: levelCircle.frame.width / 2)
             levelLabel.textColor = toki.elementType[0] == .light ? .black : .white
             levelCircle.addSubview(levelLabel)
-            
+
             NSLayoutConstraint.activate([
                 levelLabel.centerXAnchor.constraint(equalTo: levelCircle.centerXAnchor),
                 levelLabel.centerYAnchor.constraint(equalTo: levelCircle.centerYAnchor)
             ])
-            
+
             let name = views[index].name
             name.text = toki.name
             name.textColor = elementToColour[toki.elementType[0]]
@@ -136,7 +135,7 @@ extension BattleScreenViewController {
             }
         }
     }
-    
+
     internal func configureSkillIcons() {
         skillImageViews = [skill1, skill2, skill3]
         for skillView in skillImageViews {
@@ -147,7 +146,7 @@ extension BattleScreenViewController {
             skillView.clipsToBounds = true
         }
     }
-    
+
     fileprivate func configureViews() {
         playerTokisViews = [Views(overallView: toki1View, healthBar: toki1HealthBar,
                                   healthContainer: toki1HealthBarContainer, levelCircle: toki1LevelCircle,
@@ -170,12 +169,6 @@ extension BattleScreenViewController {
 
         opponentImageViews = [opponent1, opponent2, opponent3]
         playerTokisImageViews = [toki1, toki2, toki3]
-    }
-
-    fileprivate func configureLogBackground() {
-        logBackground.layer.cornerRadius = 10
-        logBackground.layer.borderColor = UIColor.white.cgColor
-        logBackground.layer.borderWidth = 2
     }
 
     fileprivate func addGestureRecognisers() {

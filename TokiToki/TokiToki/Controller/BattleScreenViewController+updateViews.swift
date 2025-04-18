@@ -8,14 +8,30 @@
 import UIKit
 
 extension BattleScreenViewController {
-    func update(log: [String]) {
-        let numberOfLinesToDisplay = 3
-        let logToDisplay = log.count > numberOfLinesToDisplay ?
-                            Array(log[(log.count - numberOfLinesToDisplay)...]) : log
-        battleLogDisplay.text = logToDisplay.joined(separator: "\n")
-    }
+    func update(logEntries: [LogEntry]) {
+        // Create an attributed string for the log with varying opacity
+        let attributedLog = NSMutableAttributedString()
 
-    
+        for (index, entry) in logEntries.enumerated() {
+            let logString = NSAttributedString(
+                string: entry.message,
+                attributes: [NSAttributedString.Key.foregroundColor: UIColor.white.withAlphaComponent(entry.opacity)]
+            )
+            attributedLog.append(logString)
+
+            // Add a newline after each entry except the last one
+            if index < logEntries.count - 1 {
+                attributedLog.append(NSAttributedString(string: "\n"))
+            }
+        }
+
+        battleLogDisplay.attributedText = attributedLog
+
+        UIView.animate(withDuration: 0.3) {
+            self.battleLogDisplay.alpha = 0.7
+            self.battleLogDisplay.alpha = 1.0
+        }
+    }
 
     internal func removeCooldownOverlay(_ skillImageView: UIImageView) {
         skillImageView.subviews.forEach { $0.removeFromSuperview() }
@@ -56,7 +72,9 @@ extension BattleScreenViewController {
     }
     
     func showWhoseTurn(_ id: UUID) {
-        guard let view = gameStateIdToViews[id] else { return }
+        guard let view = gameStateIdToViews[id] else {
+            return
+        }
         let currentView = view.overallView
 
         // Remove all previous indicators
@@ -111,7 +129,7 @@ extension BattleScreenViewController {
             healthBar.backgroundColor = .red
         }
     }
-    
+
     func removeDeadBody(_ id: UUID) {
         gameStateIdToViews[id]?.overallView.isHidden = true
     }
