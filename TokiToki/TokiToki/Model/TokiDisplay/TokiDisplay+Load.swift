@@ -59,9 +59,13 @@ extension TokiDisplay {
     }
 
     func loadEquipmentsFromJSON(using persistence: JsonPersistenceManager, for player: Player) {
-        // loadPlayerEquipment(_:) now returns non-optional
+        // 1) Pull component straight from disk
         let component = persistence.loadPlayerEquipment(playerId: player.id)
         self.equipmentFacade.equipmentComponent = component
+
+        // 2) Reconstruct your Toki.equipments in slot order
+        let slotOrder: [EquipmentSlot] = [.weapon, .armor, .accessory, .custom]
+        self.toki.equipments = slotOrder.compactMap { component.equipped[$0] }
     }
 
     private func loadCraftingRecipesFromJSON() {
