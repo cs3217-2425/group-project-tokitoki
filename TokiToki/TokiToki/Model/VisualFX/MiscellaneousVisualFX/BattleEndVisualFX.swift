@@ -106,7 +106,7 @@ class BattleEndVisualFX {
     @objc private func updateCountdown() {
         timeRemaining -= 1
 
-        countdownLabel?.text = "Continuing in \(timeRemaining)..."
+        countdownLabel?.text = "Returning in \(timeRemaining)..."
 
         if timeRemaining <= 0 {
             timer?.invalidate()

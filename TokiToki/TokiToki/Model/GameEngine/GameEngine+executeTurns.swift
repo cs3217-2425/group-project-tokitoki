@@ -74,11 +74,11 @@ extension GameEngine {
                 createBattleEventAndPublishToEventBus(entity, skillAction.skill, targets)
             }
 
+            for result in results {
+                battleEventManager.publishEffectResult(result, sourceId: entity.id)
+            }
+
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
-                for result in results {
-                    self?.battleEventManager.publishEffectResult(result,
-                                                                 sourceId: self?.currentGameStateEntity?.id ?? UUID())
-                }
                 self?.logMultipleResults(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
             }
