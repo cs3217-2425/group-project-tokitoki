@@ -25,6 +25,10 @@ class EquipmentSystem: System {
             NotificationCenter.default.post(name: .EquipmentConsumed, object: equipment)
         }
         removeEquipment(&component.inventory, equipment)
+        if let index = entity?.toki.equipments.firstIndex(where: { $0.id == equipment.id }) {
+            entity?.toki.equipments.remove(at: index)
+        }
+
         return results
     }
     
@@ -34,8 +38,9 @@ class EquipmentSystem: System {
             return []
         }
         var overallResults: [EffectResult] = []
-        for passiveConsumable in equipmentComponent.inventory {
-            guard let passiveConsumable = passiveConsumable as? ConsumableEquipment else {
+        for consumable in equipmentComponent.inventory {
+            guard let passiveConsumable = consumable as? ConsumableEquipment,
+                    passiveConsumable.usageContext == .battleOnlyPassive else {
                 return []
             }
             let results = passiveConsumable.effectStrategy.applyEffect(name: passiveConsumable.name, to: entity.toki,
@@ -89,4 +94,27 @@ class EquipmentSystem: System {
             entity.toki.equipments = entity.toki.savedEquipments
         }
     }
+    
+    func countConsumables(_ entity: GameStateEntity) -> [ConsumableGroupings] {
+        guard let equipmentComponent = entity.getComponent(ofType: EquipmentComponent.self) else {
+            return []
+        }
+        
+        let countsDict = equipmentComponent.inventory
+            .filter { item in
+                guard item.equipmentType == .consumable,
+                      let consumable = item as? ConsumableEquipment else { return false }
+                return consumable.usageContext == .battleOnly || consumable.usageContext == .anywhere
+            }
+            .reduce(into: [String: Int]()) { counts, item in
+                counts[item.name, default: 0] += 1
+            }
+
+       return countsDict.map { ConsumableGroupings(name: $0.key, quantity: $0.value) }
+    }
+}
+
+struct ConsumableGroupings {
+    let name: String
+    let quantity: Int
 }

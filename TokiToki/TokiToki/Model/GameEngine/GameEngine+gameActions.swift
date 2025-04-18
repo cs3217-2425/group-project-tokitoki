@@ -56,13 +56,17 @@ extension GameEngine {
     }
 
     func useConsumable(_ consumableName: String) {
-        let consumable = playerEquipmentComponent.inventory.first { $0.equipmentType == .consumable && $0.name == consumableName }
         guard let currentGameStateEntity = currentGameStateEntity,
-              let consumable = consumable as? ConsumableEquipment else {
+              let equipmentComponent = currentGameStateEntity.getComponent(ofType: EquipmentComponent.self) else {
+            return
+        }
+        
+        let consumable = equipmentComponent.inventory.first { $0.equipmentType == .consumable && $0.name == consumableName }
+        guard let consumable = consumable as? ConsumableEquipment else {
             return
         }
         let action = UseConsumableAction(user: currentGameStateEntity, consumable: consumable, equipmentSystem,
-                                         playerEquipmentComponent, effectContext)
+                                         effectContext)
         queueAction(action)
         let results = executeNextAction()
         battleEffectsDelegate?.showUseSkill(currentGameStateEntity.id, true) { [weak self] in

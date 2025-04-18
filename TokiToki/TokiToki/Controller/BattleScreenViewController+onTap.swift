@@ -76,8 +76,8 @@ extension BattleScreenViewController {
     @objc func useConsumables(_ sender: UITapGestureRecognizer) {
         guard let tappedView = sender.view else { return }
 
-        let items = PlayerManager.shared.countConsumables()
-
+        let items = gameEngine?.countConsumables() ?? []
+ 
         let alert = UIAlertController(title: "Use Consumable", message: "Choose an item to use:", preferredStyle: .actionSheet)
 
         for item in items where item.quantity > 0 {

@@ -62,16 +62,20 @@ class GlobalStatusEffectsManager: GlobalStatusEffectsManaging {
         }
     }
 
-    func applyGlobalStatusEffects(_ entities: [GameStateEntity]) {
+    func applyGlobalStatusEffectsAndCheckIsBattleOver(_ entities: [GameStateEntity]) -> Bool {
+        var isBattleOver = false
         for globalStatusEffect in globalStatusEffects
             where globalStatusEffect.actionMeter >= MAX_ACTION_BAR {
             let target = entities.first { $0.id == globalStatusEffect.targetId }
-            guard let target = target else {
-                return
+            guard let target = target,
+                  let statusEffectApplierAndPublisherDelegate = statusEffectApplierAndPublisherDelegate else {
+                return false
             }
-            statusEffectApplierAndPublisherDelegate?.applyStatusEffectAndPublishResult(globalStatusEffect, target)
+            isBattleOver = statusEffectApplierAndPublisherDelegate
+                .applyStatusEffectAndPublishResult(globalStatusEffect, target)
             updateGlobalStatusEffect(globalStatusEffect)
         }
+        return isBattleOver
     }
 
     private func updateGlobalStatusEffect(_ statusEffect: StatusEffect) {
