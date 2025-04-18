@@ -295,41 +295,44 @@ class ItemRepository {
         // Check equipment type
 
 //        if template.equipmentType.lowercased() == "consumable" {
-//             For consumable equipment
-//            guard let effectData = template.effectStrategy else {
-//                // Fallback for consumable with no effect strategy
-//                let potionStrategy = PotionEffectStrategy(buffValue: 10, duration: 30.0)
+//            if template.equipmentType.lowercased() == "consumable" {
+//                guard let effectData = template.effectStrategy else {
+//                    // fallback – basic heal potion
+//                    let defaultStrat = PotionEffectStrategy(
+//                        effectCalculators: [HealCalculator(healPower: 100)]
+//                    )
+//                    return equipmentRepository.createConsumableEquipment(
+//                        name: template.name,
+//                        description: template.description,
+//                        rarity: template.rarity,
+//                        effectStrategy: defaultStrat,
+//                        usageContext: usageContext(from: template.inBattleOnly)
+//                    )
+//                }
+//
+//                let strategy: ConsumableEffectStrategy
+//                switch effectData.type.lowercased() {
+//                case "potion":
+//                    let calcs = effectData.effectCalculators?
+//                                    .map { $0.toEffectCalculator() } ?? []
+//                    strategy = PotionEffectStrategy(effectCalculators: calcs)
+//                case "upgradecandy":
+//                    strategy = UpgradeCandyEffectStrategy(
+//                                  bonusExp: effectData.bonusExp ?? 100)
+//                default:
+//                    strategy = PotionEffectStrategy(
+//                                  effectCalculators: [HealCalculator(healPower: 100)])
+//                }
+//
 //                return equipmentRepository.createConsumableEquipment(
 //                    name: template.name,
 //                    description: template.description,
 //                    rarity: template.rarity,
-//                    effectStrategy: potionStrategy,
-//                    usageContext: {
-//                        if let inBattleOnly = template.inBattleOnly {
-//                            return inBattleOnly ? .battleOnly : .outOfBattleOnly
-//                        } else {
-//                            return .anywhere
-//                        }
-//                    }()
+//                    effectStrategy: strategy,
+//                    usageContext: usageContext(from: template.inBattleOnly)
 //                )
 //            }
-//            
-//            // Create effect strategy based on type
-//            let effectStrategy = createEffectStrategy(from: effectData)
-//            return equipmentRepository.createConsumableEquipment(
-//                name: template.name,
-//                description: template.description,
-//                rarity: template.rarity,
-//                effectStrategy: effectStrategy,
-//                usageContext: {
-//                    if let inBattleOnly = template.inBattleOnly {
-//                        return inBattleOnly ? .battleOnly : .outOfBattleOnly
-//                    } else {
-//                        return .anywhere
-//                    }
-//                }()
-//            )
- //       } else {
+//        } else {
             // For non-consumable equipment:
             guard let buffData = template.buff,
                   let slotRaw = template.slot else {
@@ -348,9 +351,11 @@ class ItemRepository {
                 )
             }
 
-            // Wrap the single JSON string into our new enum array
-            let statsArray: [EquipmentBuff.Stat] = [buffData.affectedStat]
-                .compactMap { EquipmentBuff.Stat(rawValue: $0.lowercased()) }
+            // Convert the array of stat strings -> [EquipmentBuff.Stat]
+            let statsArray: [EquipmentBuff.Stat] =
+                buffData.affectedStats
+                        .compactMap { EquipmentBuff.Stat(rawValue: $0.lowercased()) }
+
 
             let buff = EquipmentBuff(
                 value:         buffData.value,
@@ -367,8 +372,14 @@ class ItemRepository {
                 buff:         buff,
                 slot:         equipmentSlot
             )
-     //  }
+//       }
     }
+    
+    private func usageContext(from inBattleOnly: Bool?) -> ConsumableUsageContext {
+        guard let flag = inBattleOnly else { return .anywhere }
+        return flag ? .battleOnly : .outOfBattleOnly
+    }
+
 
     // MARK: - Helper Methods for Creating Random Collections
     

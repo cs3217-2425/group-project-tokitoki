@@ -10,7 +10,7 @@
       "buff": {
         "value": 5,
         "description": "Basic attack boost",
-        "affectedStat": "attack"
+        "affectedStats": ["attack"]
       },
       "slot": "weapon"
     },
@@ -24,7 +24,7 @@
       "buff": {
         "value": 10,
         "description": "Fire power boost",
-        "affectedStat": "attack"
+        "affectedStats": ["attack"]
       },
       "slot": "accessory"
     },
@@ -38,7 +38,7 @@
       "buff": {
         "value": 15,
         "description": "Superior defense",
-        "affectedStat": "defense"
+        "affectedStats": ["defense"]
       },
       "slot": "armor"
     },
