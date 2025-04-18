@@ -14,6 +14,7 @@ class PlayerManager {
 
     private let persistanceManager: JsonPersistenceManager
     private let playerRepository: PlayerRepository
+    private let logger = Logger(subsystem: "PlayerManager")
     private var currentPlayer: Player?
 
     private init() {
@@ -26,7 +27,7 @@ class PlayerManager {
         if let loadedPlayer = playerRepository.getPlayer() {
             currentPlayer = loadedPlayer
         } else {
-            print("No saved player found in JSON storage")
+            logger.log("No saved player found in JSON storage")
         }
     }
 
@@ -229,7 +230,7 @@ class PlayerManager {
         // Check daily pull limit
         let remainingPulls = PlayerManager.DEFAULT_DAILY_PULL_LIMIT - player.dailyPullsCount
         if remainingPulls <= 0 {
-            print("Player has reached the daily pull limit")
+            logger.log("Player has reached the daily pull limit")
             return []
         }
 
@@ -238,14 +239,14 @@ class PlayerManager {
 
         // Find the pack
         guard let pack = gachaService.findPack(byName: packName) else {
-            print("No pack found with name \(packName)")
+            logger.logError("No pack found with name \(packName)")
             return []
         }
 
         // Check if player has enough currency
         let totalCost = pack.cost * actualCount
         guard player.canSpendCurrency(totalCost) else {
-            print("Player doesn't have enough currency to draw")
+            logger.logError("Player doesn't have enough currency to draw")
             return []
         }
 

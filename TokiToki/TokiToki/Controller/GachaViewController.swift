@@ -18,6 +18,7 @@ class GachaViewController: UIViewController {
     @IBOutlet private var playerCurrencyLabel: UILabel!
     @IBOutlet private var dailyPullsCountLabel: UILabel!
     private var gachaPackCollectionViewController: CollectionViewController!
+    private let logger = Logger(subsystem: "GachaViewController")
     
     // Events container
     private var eventsContainerView: UIView!
@@ -254,7 +255,7 @@ class GachaViewController: UIViewController {
     private func showErrorMessage(_ message: String) {
         packSelectorLabel.text = message
         packSelectorLabel.textColor = .systemRed
-        print(message)
+        logger.log(message)
 
         // Animate the label to draw attention
         UIView.animate(withDuration: 0.1, animations: {

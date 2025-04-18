@@ -9,6 +9,7 @@ import Foundation
 
 class PlayerRepository {
     private let persistenceManager: JsonPersistenceManager
+    private let logger = Logger(subsystem: "PlayerRepository")
 
     init(persistenceManager: JsonPersistenceManager) {
         self.persistenceManager = persistenceManager
@@ -19,7 +20,7 @@ class PlayerRepository {
         // Load all players
         guard let players = persistenceManager.loadPlayers(),
               let firstPlayer = players.first else {
-            print("No player data found")
+            logger.log("No player data found")
             return nil
         }
 

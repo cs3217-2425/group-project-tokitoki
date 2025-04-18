@@ -161,6 +161,7 @@ class TokiDisplay {
     // We need some Toki to attach to the UI, but we’re no longer
     // constructing a test Toki. Instead, we’ll pick one from JSON.
     private var _toki: Toki
+    internal let logger = Logger(subsystem: "TokiDisplay")
 
     // Expose the “current” Toki.
     var toki: Toki {

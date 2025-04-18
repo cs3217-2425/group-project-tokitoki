@@ -21,12 +21,11 @@ enum EquipmentEvent {
     case craftingFailed(reason: String)
 }
 
-class DefaultEquipmentLogger: EquipmentLogger {
+/// Default implementation that uses the common Logger base.
+class DefaultEquipmentLogger: Logger, EquipmentLogger {
     static let shared = DefaultEquipmentLogger()
-    private init() {}
-
-    func log(_ message: String) {
-        print("[EquipmentLogger] \(message)")
+    private init() {
+        super.init(subsystem: "EquipmentLogger")
     }
 
     func logEvent(_ event: EquipmentEvent) {

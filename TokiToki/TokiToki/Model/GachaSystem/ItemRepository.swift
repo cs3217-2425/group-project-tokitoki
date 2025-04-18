@@ -16,6 +16,8 @@ class ItemRepository {
     // Factory objects
     private let skillFactory = SkillsFactory()
     private let equipmentRepository = EquipmentRepository.shared
+    
+    private let logger = Logger(subsystem: "ItemRepository")
 
     init() {
         loadTemplatesFromJSON()
@@ -37,9 +39,9 @@ class ItemRepository {
                 tokiTemplates[tokiData.name] = tokiData
             }
 
-            print("Loaded \(tokiTemplates.count) Toki templates from JSON")
+            logger.log("Loaded \(tokiTemplates.count) Toki templates from JSON")
         } catch {
-            print("Error loading Toki templates: \(error)")
+            logger.logError("Error loading Toki templates: \(error)")
         }
     }
 
@@ -51,9 +53,9 @@ class ItemRepository {
                 skillTemplates[skillData.name] = skillData
             }
 
-            print("Loaded \(skillTemplates.count) Skill templates from JSON")
+            logger.log("Loaded \(skillTemplates.count) Skill templates from JSON")
         } catch {
-            print("Error loading Skill templates: \(error)")
+            logger.logError("Error loading Skill templates: \(error)")
         }
     }
 
@@ -65,9 +67,9 @@ class ItemRepository {
                 equipmentTemplates[equipmentData.name] = equipmentData
             }
 
-            print("Loaded \(equipmentTemplates.count) Equipment templates from JSON")
+            logger.log("Loaded \(equipmentTemplates.count) Equipment templates from JSON")
         } catch {
-            print("Error loading Equipment templates: \(error)")
+            logger.logError("Error loading Equipment templates: \(error)")
         }
     }
 

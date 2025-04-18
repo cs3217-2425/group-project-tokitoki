@@ -26,7 +26,7 @@ extension TokiDisplay {
         let persistenceManager = JsonPersistenceManager()
         let playerRepository = PlayerRepository(persistenceManager: persistenceManager)
         guard let player = playerRepository.getPlayer() else {
-            print("No player data found in JsonPersistenceManager.")
+            logger.logError("No player data found in JsonPersistenceManager.")
             return
         }
 
@@ -44,14 +44,14 @@ extension TokiDisplay {
                 self.toki = firstToki
             }
         } else {
-            print("Failed to load tokis for player \(player.name)")
+            logger.log("Failed to load tokis for player \(player.name)")
         }
     }
 
     // The skills file remains the same and is loaded from bundle.
     private func loadSkillsFromJSON() {
         guard let url = Bundle.main.url(forResource: "Skills", withExtension: "json") else {
-            print("Skills.json not found in bundle.")
+            logger.log("Skills.json not found in bundle.")
             return
         }
         do {
@@ -60,7 +60,7 @@ extension TokiDisplay {
             let factory = SkillsFactory()
             self.allSkills = decoded.skills.compactMap { factory.createSkill(from: $0) }
         } catch {
-            print("Failed to parse Skills.json: \(error)")
+            logger.log("Failed to parse Skills.json: \(error)")
         }
     }
 
@@ -69,13 +69,13 @@ extension TokiDisplay {
         if let equipmentComponent = persistenceManager.loadPlayerEquipment(playerId: player.id) {
             self.equipmentFacade.equipmentComponent = equipmentComponent
         } else {
-            print("Failed to load equipments for player \(player.name)")
+            logger.log("Failed to load equipments for player \(player.name)")
         }
     }
 
     private func loadCraftingRecipesFromJSON() {
         guard let url = Bundle.main.url(forResource: "CraftingRecipes", withExtension: "json") else {
-            print("CraftingRecipes.json not found in bundle.")
+            logger.log("CraftingRecipes.json not found in bundle.")
             return
         }
         do {
@@ -117,7 +117,7 @@ extension TokiDisplay {
                     }
                 } else if type == "nonconsumable" {
                     guard let slotStr = recipeJson.slot, let slot = EquipmentSlot(rawValue: slotStr) else {
-                        print("Invalid or missing slot for nonconsumable recipe: \(recipeJson.resultName)")
+                        logger.logError("Invalid or missing slot for nonconsumable recipe: \(recipeJson.resultName)")
                         continue
                     }
                     recipe = CraftingRecipe(requiredEquipmentIdentifiers: recipeJson.requiredEquipmentIdentifiers) { (equipments: [Equipment]) in
@@ -135,7 +135,7 @@ extension TokiDisplay {
                         return nil
                     }
                 } else {
-                    print("Unknown equipment type in recipe: \(recipeJson.type)")
+                    logger.log("Unknown equipment type in recipe: \(recipeJson.type)")
                 }
 
                 if let recipe = recipe {
@@ -143,7 +143,7 @@ extension TokiDisplay {
                 }
             }
         } catch {
-            print("Failed to load crafting recipes: \(error)")
+            logger.logError("Failed to load crafting recipes: \(error)")
         }
     }
 

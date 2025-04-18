@@ -8,6 +8,8 @@
 import Foundation
 
 class EffectResultTranslator: EffectResultVisitor {
+    private let logger = Logger(subsystem: "EffectResultTranslator")
+    
     func visit(damageResult: DamageEffectResult, sourceId: UUID) -> [BattleEvent] {
         [DamageDealtEvent(
             sourceId: sourceId,
@@ -28,7 +30,7 @@ class EffectResultTranslator: EffectResultVisitor {
 
     // Default implementation for any unhandled types
     func visitDefault(effectResult: EffectResult, sourceId: UUID) -> [BattleEvent] {
-        print("Warning: No specific handler for EffectResult type: \(type(of: effectResult))")
+        logger.log("Warning: No specific handler for EffectResult type: \(type(of: effectResult))")
         return []
     }
 
