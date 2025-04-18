@@ -7,14 +7,7 @@
 
 import Foundation
 
-protocol BattleEvent {
-    var timestamp: Date { get }
-}
-
-extension BattleEvent {
-    var timestamp: Date {
-        Date()
-    }
+protocol BattleEvent: GameEvent {
 }
 
 struct DamageDealtEvent: BattleEvent {
@@ -50,4 +43,8 @@ struct StatusEffectRemovedEvent: BattleEvent {
 struct EntityDefeatedEvent: BattleEvent {
     let entityId: UUID
     let entityName: String
+}
+
+struct BattleEndedEvent: BattleEvent {
+    let isWin: Bool
 }

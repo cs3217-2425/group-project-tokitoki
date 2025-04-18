@@ -12,8 +12,10 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        _ = SoundFXManager.shared // Initialise SoundFXManager
+
         // Override point for customization after application launch.
-        true
+        return true
     }
 
     // MARK: UISceneSession Lifecycle

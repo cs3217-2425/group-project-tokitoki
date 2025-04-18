@@ -471,22 +471,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CA8B9957-1CCE-4F82-A834-87F5A086604C"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "TokiToki/Model/GameEngine/GameEngine.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "applyStatusEffectAndPublishResult(_:_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "9CEDB5E2-0F99-463F-8F99-D8D32CFCF8AF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -574,9 +558,9 @@
             filePath = "TokiToki/Controller/BattleScreenViewController+setup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
-            landmarkName = "createPlayerEntitiesAndAddMappingToView(_:)"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "configure(_:_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -606,8 +590,8 @@
             filePath = "TokiToki/Controller/BattleScreenViewController+setup.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
             landmarkName = "configure(_:_:)"
             landmarkType = "7">
          </BreakpointContent>

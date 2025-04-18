@@ -10,18 +10,18 @@ import Foundation
 class EventBus {
     static let shared = EventBus()
 
-    private var handlers: [String: [(BattleEvent) -> Void]] = [:]
+    private var handlers: [String: [(GameEvent) -> Void]] = [:]
 
     private init() {}
 
-    func register<E: BattleEvent>(_ handler: @escaping (E) -> Void) {
+    func register<E: GameEvent>(_ handler: @escaping (E) -> Void) {
         let eventTypeName = String(describing: E.self)
 
         if handlers[eventTypeName] == nil {
             handlers[eventTypeName] = []
         }
 
-        let typeErasedHandler: (BattleEvent) -> Void = { event in
+        let typeErasedHandler: (GameEvent) -> Void = { event in
             guard let typedEvent = event as? E else {
                 return
             }
@@ -31,9 +31,10 @@ class EventBus {
         handlers[eventTypeName]?.append(typeErasedHandler)
     }
 
-    func post(_ event: BattleEvent) {
+    func post(_ event: GameEvent) {
         let eventTypeName = String(describing: type(of: event))
         handlers[eventTypeName]?.forEach { $0(event) }
+        print(eventTypeName)
     }
 
     func clear() {
