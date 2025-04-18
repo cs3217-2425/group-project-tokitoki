@@ -21,7 +21,7 @@ extension BattleScreenViewController {
         skillImageView.subviews.forEach { $0.removeFromSuperview() }
     }
 
-    func updateSkillIcons(_ icons: [SkillUiInfo]?) {
+    func updateSkillIcons(_ icons: [SkillUiInfo]?, _ entity: GameStateEntity) {
         guard let icons = icons else {
             return
         }
@@ -35,6 +35,7 @@ extension BattleScreenViewController {
         for i in 0..<icons.count {
             let skillImageView = skillImageViews[i]
             skillImageView.image = UIImage(named: icons[i].iconImgString)
+            skillImageView.backgroundColor = elementToColour[entity.toki.elementType[0]]
             skillImageView.isUserInteractionEnabled = icons[i].cooldown == 0
 
             if icons[i].cooldown > 0 {

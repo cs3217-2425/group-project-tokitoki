@@ -112,17 +112,16 @@ class ItemRepository {
             exp: template.baseExp
         )
 
-        // Randomly select some skills and equipment for the Toki
         let skills = createSkillsFromNames(template.skills)
-        let equipment = selectRandomEquipment(count: 1)
+        //let equipment = selectRandomEquipment(count: 1)
 
         return Toki(
             id: UUID(),
             name: template.name,
             rarity: convertIntToItemRarity(template.rarity),
             baseStats: baseStats,
-            skills: [], // TODO: fill up with skills
-            equipments: equipment,
+            skills: skills,
+            equipments: [],
             elementType: [convertStringToElement(template.elementType)],
             level: 1
         )
@@ -386,11 +385,13 @@ class ItemRepository {
     private func createSkillsFromNames(_ names: [String]) -> [Skill] {
         var skills: [Skill] = []
         for name in names {
-            if let template = skillTemplates[name] {
-                if let skill = createSkill(from: template) {
-                    skills.append(skill)
-                }
+            guard let skillData = skillTemplates[name] else {
+                continue
             }
+            guard let skill = skillsFactory.createSkill(from: skillData) else {
+                continue
+            }
+            skills.append(skill)
         }
         return skills
     }
@@ -464,9 +465,7 @@ class ItemRepository {
 
     private func convertStringToSkillType(_ str: String) -> SkillType {
         switch str.lowercased() {
-        case "attack": return .attack
-        case "heal": return .heal
-        default: return .attack
+        default: return .revive
         }
     }
 

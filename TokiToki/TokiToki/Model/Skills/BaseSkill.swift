@@ -14,13 +14,15 @@ class BaseSkill: Skill {
     var currentCooldown: Int = 0
     let effectDefinitions: [EffectDefinition]
     let targetSelectionFactory = TargetSelectionFactory()
+    let skillType: SkillType?
 
     init(name: String, description: String,
-         cooldown: Int, effectDefinitions: [EffectDefinition]) {
+         cooldown: Int, effectDefinitions: [EffectDefinition], skillType: SkillType? = nil) {
         self.name = name
         self.description = description
         self.cooldown = cooldown
         self.effectDefinitions = effectDefinitions
+        self.skillType = skillType
     }
 
     func canUse() -> Bool {

@@ -106,17 +106,6 @@ let iceShot = BaseSkill(
         ])
     ]
 ).clone()
-//
-// let arrowRain = BaseSkill(
-//    name: "Arrow Rain",
-//    description: "A shower of arrows that deals damage to all enemies.",
-//    type: .attack,
-//    targetType: .allEnemies,
-//    elementType: .earth,
-//    basePower: 40,
-//    cooldown: 3,
-//    effectCalculator: attackCalculator
-// )
 
 let arrowRain = BaseSkill(
     name: "Arrow Rain",
@@ -139,4 +128,19 @@ let flameDance = BaseSkill(
         ])
     ]
 ).clone()
-    
+
+let soulRevive = BaseSkill(
+    name: "Soul Revive",
+    description: "Revives a fallen ally. Debuffs all enemies",
+    cooldown: 5,
+    effectDefinitions: [
+        EffectDefinition(targetType: .singleAlly, effectCalculators: [
+            ReviveCalculator(revivePower: 0.8)
+        ]),
+        EffectDefinition(targetType: .allEnemies, effectCalculators: [
+            StatsModifiersCalculator(statsModifiers: [
+                StatsModifier(remainingDuration: 2, attack: 0.5, defense: 0.5, speed: 0.5, heal: 0.5)
+            ])
+        ])
+    ]
+).clone()

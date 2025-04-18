@@ -54,7 +54,7 @@ extension GameEngine {
             }
             return SkillUiInfo(iconImgString: skillIcon, cooldown: skill.currentCooldown)
         }
-        battleEffectsDelegate?.updateSkillIcons(skillIcons)
+        battleEffectsDelegate?.updateSkillIcons(skillIcons, currentGameStateEntity)
         battleEffectsDelegate?.showWhoseTurn(currentGameStateEntity.id)
     }
 }

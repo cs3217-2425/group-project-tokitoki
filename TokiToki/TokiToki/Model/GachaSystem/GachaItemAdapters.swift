@@ -34,32 +34,6 @@ class TokiGachaItem: IGachaItem {
 
 }
 
-// MARK: - Skill Adapter
-
-/// Adapter to make Skill conform to IGachaItem
-// class SkillGachaItem: IGachaItem {
-//    private let skill: Skill
-//    
-//    // IGachaItem properties
-//    var name: String { return skill.name }
-//    var rarity: ItemRarity
-//    var elementType: [ElementType?] { return skill.elementType }
-//    var ownerId: UUID?
-//    var dateAcquired: Date?
-//    
-//    init(skill: Skill, rarity: ItemRarity = .common, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
-//        self.skill = skill
-//        self.rarity = rarity
-//        self.ownerId = ownerId
-//        self.dateAcquired = dateAcquired
-//    }
-//    
-//    /// Get the wrapped Skill object
-//    func getSkill() -> Skill {
-//        return skill
-//    }
-// }
-
 // MARK: - Equipment Adapter
 
 /// Adapter to make Equipment conform to IGachaItem

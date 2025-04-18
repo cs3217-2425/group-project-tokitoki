@@ -264,7 +264,7 @@
           "calculators": [
             {
               "calculatorType": "heal",
-              "healPower": 25
+              "healPower": 0
             }
           ]
         }

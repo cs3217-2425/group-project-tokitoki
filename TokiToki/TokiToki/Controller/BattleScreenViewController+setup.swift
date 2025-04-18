@@ -40,13 +40,13 @@ extension BattleScreenViewController {
         if tokis.isEmpty {
             tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
         }
-        configure(tokis, [dragonMonsterToki, rhinoMonsterToki, golemMonsterToki])
+        configure(tokis, [necro, rhino, golem])
     }
     
-    func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
-        setupNameAndLevelCircle(enemyTokis, opponentTokisViews, false)
+    func configure(_ playerTokis: [Toki], _ opponentEntities: [GameStateEntity]) {
+        let opponentTokis = opponentEntities.map { $0.toki }
+        setupNameAndLevelCircle(opponentTokis, opponentTokisViews, false)
         setupNameAndLevelCircle(playerTokis, playerTokisViews, true)
-        let opponentEntities = enemyTokis.map { createMonsterEntity($0) }
         let playerEntities = createPlayerEntitiesAndAddMappingToView(playerTokis)
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
         hideTokisIfNoTokiInThatSlot(opponentEntities, opponentTokisViews)
@@ -95,6 +95,7 @@ extension BattleScreenViewController {
             name.shadowColor = UIColor.black
             name.shadowOffset = CGSize(width: 1, height: 1)
             name.sizeToFit()
+            view.bringSubviewToFront(name)
             
             let currentY = name.frame.origin.y
             name.translatesAutoresizingMaskIntoConstraints = false
