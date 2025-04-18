@@ -67,11 +67,10 @@ extension BattleScreenViewController {
         // Load arrow image
         let arrowImage = UIImage(named: "downArrow.png")
         let arrowSize = CGSize(width: 24, height: 24)
-
         let arrowImageView = UIImageView(image: arrowImage)
         arrowImageView.frame = CGRect(
             x: (currentView.bounds.width - arrowSize.width) / 2,
-            y: -arrowSize.height,
+            y: -arrowSize.height - view.name.frame.height / 2,
             width: arrowSize.width,
             height: arrowSize.height
         )
@@ -87,8 +86,6 @@ extension BattleScreenViewController {
 
         currentView.addSubview(arrowImageView)
     }
-
-
 
     func updateHealthBar(_ id: UUID, _ currentHealth: Int, _ maxHealth: Int,
                          completion: @escaping () -> Void) {
