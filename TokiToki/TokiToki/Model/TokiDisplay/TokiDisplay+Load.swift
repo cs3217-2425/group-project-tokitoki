@@ -93,9 +93,14 @@ extension TokiDisplay {
                            let eq2 = equipments[1] as? ConsumableEquipment,
                            let strat1 = eq1.effectStrategy as? PotionEffectStrategy,
                            let strat2 = eq2.effectStrategy as? PotionEffectStrategy {
+                            
+                            var newEffectCalculators: [EffectCalculator] = []
+                            for i in 0..<strat1.effectCalculators.count {
+                                newEffectCalculators
+                                    .append(strat1.effectCalculators[i].merge(strat2.effectCalculators[i]))
+                            }
 
-                            let newCalculators = strat1.effectCalculators + strat2.effectCalculators
-                            let newStrategy = PotionEffectStrategy(effectCalculators: newCalculators)
+                            let newStrategy = PotionEffectStrategy(effectCalculators: newEffectCalculators)
 
                             // Convert usageContext; default to .anywhere if missing.
                             let usage: ConsumableUsageContext = {

@@ -112,10 +112,16 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         // Crafting succeeded. Now remove the old items from Toki's equipment (the facade already removed them from inventory).
         if let eqIdx1 = tokiDisplay.toki.equipments.firstIndex(where: { $0.id == original.id }) {
             tokiDisplay.toki.equipments.remove(at: eqIdx1)
+            PlayerManager.shared.getEquipmentComponent()
+                .inventory.removeAll(where: { $0.id == original.id })
         }
         if let eqIdx2 = tokiDisplay.toki.equipments.firstIndex(where: { $0.id == secondItem.id }) {
             tokiDisplay.toki.equipments.remove(at: eqIdx2)
         }
+        PlayerManager.shared.getEquipmentComponent()
+            .inventory.removeAll(where: { $0.id == original.id })
+        PlayerManager.shared.getEquipmentComponent()
+            .inventory.removeAll(where: { $0.id == secondItem.id })
 
         // Also insert in Toki's equipment array
         if originalItemIndex >= tokiDisplay.toki.equipments.count {
@@ -123,6 +129,8 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         } else {
             tokiDisplay.toki.equipments.insert(craftedItem, at: originalItemIndex)
         }
+        PlayerManager.shared.getEquipmentComponent()
+            .inventory.append(craftedItem)
 
         // Save + refresh UI
         tokiDisplay.equipmentFacade.equipmentComponent = component

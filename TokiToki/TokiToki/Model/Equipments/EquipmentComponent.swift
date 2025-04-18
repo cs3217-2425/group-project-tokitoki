@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Used by both the player and each individual Toki
 class EquipmentComponent: Component {
     var inventory: [Equipment] = []
     var equipped: [EquipmentSlot: NonConsumableEquipment] = [:]
