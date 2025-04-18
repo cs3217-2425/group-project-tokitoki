@@ -88,7 +88,7 @@
             },
             {
               "calculatorType": "statusEffect",
-              "statusEffectChance": 0.15,
+              "statusEffectChance": 1.0,
               "statusEffect": "paralysis",
               "statusEffectDuration": 2,
               "statusEffectStrength": 1.0

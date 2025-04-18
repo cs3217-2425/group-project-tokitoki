@@ -60,4 +60,8 @@ class StatusEffectCalculator: EffectCalculator {
         return EffectResult(entity: target, value: 0,
                                     description: "\(target.name) is affected by \(effectType)!")
     }
+    
+    func merge(_ effectCalculator: EffectCalculator) -> EffectCalculator {
+        return self
+    }
 }

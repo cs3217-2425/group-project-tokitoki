@@ -44,7 +44,7 @@ enum StatusEffectType: Codable {
     case frozen
     case paralysis
     case statsModifier
-    
+
     var defaultSpeedOfDmgOverTime: Float {
         switch self {
         case .burn:

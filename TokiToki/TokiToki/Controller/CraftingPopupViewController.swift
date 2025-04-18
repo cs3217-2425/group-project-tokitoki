@@ -8,7 +8,11 @@
 import UIKit
 
 class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var tokiDisplay: TokiDisplay?  // New dependency property
+    var tokiDisplay: TokiDisplay?
+    
+    private var allTokis: [Toki] = []               // populated from tokiDisplay
+    private var availableItems: [Equipment] = []    // inventory minus original & equipped
+
 
     // The item we swiped "Craft" on
     var originalItem: Equipment!
@@ -18,40 +22,49 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
     // The second item the user selects from the table
     var selectedItem: Equipment?
 
-    // We store the entire inventory except the original item
-    private var availableItems: [Equipment] = []
-
     // Callback to refresh UI in the presenting controller
     var onCraftComplete: (() -> Void)?
-
+    
     // UI
     private let tableView = UITableView()
     private let craftButton = UIButton(type: .system)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = .white
         preferredContentSize = CGSize(width: 320, height: 400)
-        
+
+        // 1) Ensure we have a valid TokiDisplay
         guard let tokiDisplay = tokiDisplay else {
-            return
+            fatalError("CraftingPopupViewController.tokiDisplay was not set")
         }
 
-        // 1) Build a table of all inventory items except the original
-        let component = tokiDisplay.equipmentFacade.equipmentComponent
-        availableItems = component.inventory.filter { $0.id != originalItem.id }
+        // 2) Grab all Tokis for cross‐Toki filtering
+        allTokis = tokiDisplay.allTokis
 
-        // 2) Set up table
+        // 3) Build a set of every equipped‐item ID across all Tokis
+        let allEquippedIDs = Set(allTokis.flatMap { $0.equipments.map(\.id) })
+
+        // 4) Filter inventory: remove originalItem plus any equipped anywhere
+        let component = tokiDisplay.equipmentFacade.equipmentComponent
+        availableItems = component.inventory.filter { inv in
+            inv.id != originalItem.id
+            && !allEquippedIDs.contains(inv.id)
+        }
+
+        // 5) Table setup
         tableView.frame = CGRect(x: 0, y: 0, width: 320, height: 320)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.register(UITableViewCell.self,
+                           forCellReuseIdentifier: "Cell")
         view.addSubview(tableView)
 
-        // 3) Add a Craft button
+        // 6) Craft button
         craftButton.setTitle("Craft", for: .normal)
-        craftButton.addTarget(self, action: #selector(craftButtonTapped), for: .touchUpInside)
+        craftButton.addTarget(self,
+                              action: #selector(craftButtonTapped),
+                              for: .touchUpInside)
         craftButton.frame = CGRect(x: 0, y: 330, width: 320, height: 44)
         view.addSubview(craftButton)
     }
@@ -112,10 +125,16 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         // Crafting succeeded. Now remove the old items from Toki's equipment (the facade already removed them from inventory).
         if let eqIdx1 = tokiDisplay.toki.equipments.firstIndex(where: { $0.id == original.id }) {
             tokiDisplay.toki.equipments.remove(at: eqIdx1)
+            PlayerManager.shared.getEquipmentComponent()
+                .inventory.removeAll(where: { $0.id == original.id })
         }
         if let eqIdx2 = tokiDisplay.toki.equipments.firstIndex(where: { $0.id == secondItem.id }) {
             tokiDisplay.toki.equipments.remove(at: eqIdx2)
         }
+        PlayerManager.shared.getEquipmentComponent()
+            .inventory.removeAll(where: { $0.id == original.id })
+        PlayerManager.shared.getEquipmentComponent()
+            .inventory.removeAll(where: { $0.id == secondItem.id })
 
         // Also insert in Toki's equipment array
         if originalItemIndex >= tokiDisplay.toki.equipments.count {
@@ -123,6 +142,8 @@ class CraftingPopupViewController: UIViewController, UITableViewDelegate, UITabl
         } else {
             tokiDisplay.toki.equipments.insert(craftedItem, at: originalItemIndex)
         }
+        PlayerManager.shared.getEquipmentComponent()
+            .inventory.append(craftedItem)
 
         // Save + refresh UI
         tokiDisplay.equipmentFacade.equipmentComponent = component

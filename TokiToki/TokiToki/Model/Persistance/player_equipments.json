@@ -10,9 +10,11 @@
       "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "isEquipped": true,
       "slot": "weapon",
-      "buffValue": 5,
+      "buffValue": 10,
       "buffDescription": "Basic attack boost",
-      "affectedStat": "attack"
+      "affectedStats": [
+        "attack"
+      ]
     }
   },
   {
@@ -26,9 +28,11 @@
       "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "isEquipped": false,
       "slot": "accessory",
-      "buffValue": 5,
+      "buffValue": 10,
       "buffDescription": "Basic speed boost",
-      "affectedStat": "speed"
+      "affectedStats": [
+        "speed"
+      ]
     }
   },
   {
@@ -84,7 +88,9 @@
       "slot": "weapon",
       "buffValue": 5,
       "buffDescription": "Basic attack boost",
-      "affectedStat": "attack"
+      "affectedStats": [
+        "attack"
+      ]
     }
   },
   {
