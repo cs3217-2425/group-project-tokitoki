@@ -8,11 +8,9 @@
 import Foundation
 
 class BattleEventManager {
-    static let shared = BattleEventManager()
-
     private let effectResultTranslator = EffectResultTranslator()
 
-    private init() {}
+    init() {}
 
     func publishEffectResult(_ result: EffectResult, sourceId: UUID) {
         let events = effectResultTranslator.translate(result, sourceId: sourceId)
@@ -30,5 +28,8 @@ class BattleEventManager {
         EventBus.shared.post(event)
     }
 
-    // Add other event publication methods as needed
+    func publishBattleEndedEvents(isWin: Bool) {
+        let event = BattleEndedEvent(isWin: isWin)
+        EventBus.shared.post(event)
+    }
 }

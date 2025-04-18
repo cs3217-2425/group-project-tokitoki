@@ -14,16 +14,17 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal var currentGameStateEntity: GameStateEntity?
     internal var mostRecentSkillSelected: Skill?
     internal var pendingActions: [Action] = []
-    internal var battleLog: [String] = [] {
-        didSet {
-            battleLogObserver?.update(log: battleLog)
-        }
-    }
     internal var elementsSystem = ElementsSystem()
     internal let targetSelectionFactory = TargetSelectionFactory()
     internal var statusEffectStrategyFactory = StatusEffectStrategyFactory()
-    internal var battleLogObserver: BattleLogObserver?
     internal var battleEffectsDelegate: BattleEffectsDelegate?
+    internal var battleEventManager = BattleEventManager()
+    private let logManager = BattleLogManager()
+    var battleLogObserver: BattleLogObserver? {
+        didSet {
+            logManager.observer = battleLogObserver
+        }
+    }
 
     internal let MAX_ACTION_BAR: Float = 100
     internal let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
@@ -94,37 +95,35 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
 //    internal func saveEquipments() {
 //        self.savedEquipments = playerEquipmentComponent.inventory
 //    }
-    
-    func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity) -> Bool {
-        let result = effect.apply(to: entity, strategyFactory: statusEffectStrategyFactory)
-        logMessage(result.description)
-        battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
-                                               statsSystem.getMaxHealth(entity)) { [weak self] in
-            self?.handleDeadBodiesInSequence()
-        }
 
-        BattleEventManager.shared.publishEffectResult(result, sourceId: effect.sourceId)
+    func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity) -> Bool {
+        let results = effect.apply(to: entity, strategyFactory: statusEffectStrategyFactory)
+        for result in results {
+            logMessage(result.description)
+            battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
+                                                   statsSystem.getMaxHealth(entity)) { [weak self] in
+                self?.handleDeadBodiesInSequence()
+            }
+
+            battleEventManager.publishEffectResult(result, sourceId: effect.sourceId)
+        }
         return isBattleOver()
     }
 
-    
-
     internal func isBattleOver() -> Bool {
-        if playerTeam.isEmpty {
-            logMessage("Battle ended! You lost!")
-        } else if opponentTeam.isEmpty {
-            logMessage("Battle ended! You won!")
+        if playerTeam.isEmpty || opponentTeam.isEmpty {
+            let isWin = opponentTeam.isEmpty
+            logMessage("Battle ended! You \(isWin ? "won" : "lost")!")
+            battleEventManager.publishBattleEndedEvents(isWin: isWin)
+            return true
         }
-        return playerTeam.isEmpty || opponentTeam.isEmpty
+        return false
     }
 
     internal func logMessage(_ message: String) {
-        if message.isEmpty {
-            return
-        }
-        self.battleLog.append(message)
+        logManager.addLogMessage(message)
     }
-    
+
     internal func logMultipleResults(_ results: [EffectResult]) {
         for result in results {
             logMessage(result.description)
@@ -139,11 +138,11 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     }
 
     func getBattleLog() -> [String] {
-        battleLog
+        logManager.getLogMessages()
     }
 
     func restart() {
-        battleLog = []
+        logManager.clearLogs()
         resetAll()
         globalStatusEffectsManager.reset()
         playersPlusOpponents = savedPlayersPlusOpponents

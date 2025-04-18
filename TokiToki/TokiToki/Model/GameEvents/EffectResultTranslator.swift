@@ -9,7 +9,7 @@ import Foundation
 
 class EffectResultTranslator: EffectResultVisitor {
     private let logger = Logger(subsystem: "EffectResultTranslator")
-    
+
     func visit(damageResult: DamageEffectResult, sourceId: UUID) -> [BattleEvent] {
         [DamageDealtEvent(
             sourceId: sourceId,

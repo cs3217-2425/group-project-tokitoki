@@ -26,15 +26,8 @@ extension BattleScreenViewController {
         let originalPosition = tokiView.frame.origin.x
         let rightPosition = tokiView.frame.origin.x + 50
         let leftPosition = tokiView.frame.origin.x - 50
-        let delay: TimeInterval = 0.4
 
-        if isAlly {
-            moveTokiView(tokiView, isAlly, leftPosition, rightPosition, originalPosition, completion)
-        } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.moveTokiView(tokiView, isAlly, leftPosition, rightPosition, originalPosition, completion)
-            }
-        }
+        moveTokiView(tokiView, isAlly, leftPosition, rightPosition, originalPosition, completion)
     }
 
     func showUseSkill(_ id: UUID, _ isAlly: Bool, completion: @escaping () -> Void = {}) {

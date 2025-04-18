@@ -94,3 +94,12 @@ struct SkillUiInfo {
     var iconImgString: String
     var cooldown: Int
 }
+
+extension BattleScreenViewController {
+    @objc func testBattleEndOverlay() {
+        let effect = BattleEndVisualFX(parentViewController: self)
+        effect.play(isWin: true) { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+    }
+}

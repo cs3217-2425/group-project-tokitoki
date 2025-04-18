@@ -8,7 +8,7 @@
 class BurnStrategy: StatusEffectStrategy {
     private let statsSystem = StatsSystem()
 
-    func apply(to entity: GameStateEntity, effect: StatusEffect) -> EffectResult {
+    func apply(to entity: GameStateEntity, effect: StatusEffect) -> [EffectResult] {
         let damage = Int(Double(statsSystem.getMaxHealth(entity)) * 0.07 * effect.strength)
         statsSystem.inflictDamage(amount: damage, [entity])
 
@@ -29,8 +29,6 @@ class BurnStrategy: StatusEffectStrategy {
             description: "\(entity.getName()) is burning!"
         )
 
-        // TODO: Need to return both result
-        // (figure out a way to make a generic StatusEffect for all cases)
-        return statusResult
+        return [damageResult, statusResult]
     }
 }

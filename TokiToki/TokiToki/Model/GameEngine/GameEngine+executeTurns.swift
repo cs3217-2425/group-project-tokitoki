@@ -11,7 +11,7 @@ extension GameEngine {
     internal func createBattleEventAndPublishToEventBus(_ currentGameStateEntity: GameStateEntity,
                                                            _ skillSelected: any Skill,
                                                            _ targets: [GameStateEntity]) {
-        BattleEventManager.shared.publishSkillUsedEvent(
+        battleEventManager.publishSkillUsedEvent(
             user: currentGameStateEntity,
             skill: skillSelected,
             targets: targets
@@ -55,7 +55,7 @@ extension GameEngine {
         }
 
         for result in results {
-            BattleEventManager.shared.publishEffectResult(result, sourceId: sourceId)
+            battleEventManager.publishEffectResult(result, sourceId: sourceId)
         }
 
         return results
@@ -65,13 +65,20 @@ extension GameEngine {
         battleEffectsDelegate?.showWhoseTurn(entity.id)
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
             let action = aiComponent.determineAction(entity, playerTeam, opponentTeam, effectContext)
+
             let results = action.execute()
 
+            let targets = results.compactMap { $0.entity as? GameStateEntity }
+
+            if let skillAction = action as? UseSkillAction {
+                createBattleEventAndPublishToEventBus(entity, skillAction.skill, targets)
+            }
+
+            for result in results {
+                battleEventManager.publishEffectResult(result, sourceId: entity.id)
+            }
+
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
-                for result in results {
-                    BattleEventManager.shared.publishEffectResult(result,
-                                                                  sourceId: self?.currentGameStateEntity?.id ?? UUID())
-                }
                 self?.logMultipleResults(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
             }

@@ -8,7 +8,7 @@
 // EffectComponent.swift
 import UIKit
 
-class VisualFXComponent<E: BattleEvent> {
+class VisualFXComponent<E: BattleEvent>: EntityViewProvider {
     private let viewProvider: ((UUID) -> UIView?)
     internal let logger = Logger(subsystem: "VisualFXComponent")
 
@@ -31,4 +31,8 @@ class VisualFXComponent<E: BattleEvent> {
     func getView(for entityId: UUID) -> UIView? {
         viewProvider(entityId)
     }
+}
+
+protocol EntityViewProvider {
+    func getView(for entityId: UUID) -> UIView?
 }

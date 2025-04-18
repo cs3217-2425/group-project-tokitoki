@@ -37,7 +37,7 @@ enum TargetType {
     case singleAlly
 }
 
-enum StatusEffectType: Codable {
+enum StatusEffectType: String, CaseIterable, Codable {
     case stun
     case poison
     case burn
