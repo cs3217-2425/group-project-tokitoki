@@ -44,4 +44,11 @@ class ReviveCalculator: EffectCalculator {
                             description: "\(source.getName()) used \(moveName) "
                             + "to revive \(target.getName()) and regain \(percentageString) HP")
     }
+    
+    func merge(_ effectCalculator: EffectCalculator) -> EffectCalculator {
+        guard let reviveCalculator = effectCalculator as? ReviveCalculator else {
+            return self
+        }
+        return ReviveCalculator(revivePower: self.revivePower + reviveCalculator.revivePower)
+    }
 }

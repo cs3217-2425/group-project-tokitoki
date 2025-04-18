@@ -46,62 +46,73 @@ extension JsonPersistenceManager {
             allEntries = existing.filter { $0.equipment.ownerId != playerId }
         }
 
-        // 2) Gather unique items (inventory + equipped)
-        let combined: [Equipment] = equipmentComponent.inventory
-            + equipmentComponent.equipped.values
+        // 2) Generate new entries from this player’s equipment
+        let newEntries = buildPlayerEquipmentEntries(
+            from: equipmentComponent,
+            playerId: playerId
+        )
+
+        // 3) Append only brand‑new entries
+        let filtered = newEntries.filter { new in
+            !allEntries.contains { $0.equipment.id == new.equipment.id }
+        }
+        allEntries.append(contentsOf: filtered)
+
+        return saveToJson(allEntries, filename: playerEquipmentsFileName)
+    }
+    
+    private func buildPlayerEquipmentEntries(from component: EquipmentComponent,
+                                             playerId: UUID) -> [PlayerEquipmentEntry] {
+        // Combine and deduplicate
+        let combined = component.inventory + component.equipped.values
         let uniqueEquipment = combined.reduce(into: [Equipment]()) { acc, eq in
             if !acc.contains(where: { $0.id == eq.id }) {
                 acc.append(eq)
             }
         }
 
-        // 2.5) Build a lookup: equipment‐ID → its slot (if equipped)
-        let slotMap: [UUID: EquipmentSlot] = equipmentComponent.equipped
-            .reduce(into: [:]) { dict, pair in
-                dict[pair.value.id] = pair.key
-            }
+        // EquipmentID → Slot map
+        let slotMap = component.equipped.reduce(into: [UUID: EquipmentSlot]()) { dict, pair in
+            dict[pair.value.id] = pair.key
+        }
 
-        // 3) Turn each into a JSON entry
-        let newEntries: [PlayerEquipmentEntry] = uniqueEquipment.map { eq in
-            // NON‐CONSUMABLE
+        return uniqueEquipment.map { eq in
             if let nc = eq as? NonConsumableEquipment {
-                let isEq = equipmentComponent.equipped[nc.slot]?.id == nc.id
+                let isEquipped = component.equipped[nc.slot]?.id == nc.id
                 return .init(
                     type: "nonConsumable",
                     equipment: .init(
-                        id:            nc.id,
-                        name:          nc.name,
-                        description:   nc.description,
-                        rarity:        nc.rarity,
+                        id: nc.id,
+                        name: nc.name,
+                        description: nc.description,
+                        rarity: nc.rarity,
                         equipmentType: "nonConsumable",
-                        ownerId:       playerId,
+                        ownerId: playerId,
 
-                        isEquipped:    isEq,
-                        slot:          nc.slot.rawValue,
-                        buffValue:     nc.buff.value,
+                        isEquipped: isEquipped,
+                        slot: nc.slot.rawValue,
+                        buffValue: nc.buff.value,
                         buffDescription: nc.buff.description,
                         affectedStats: nc.buff.affectedStats.map { $0.rawValue },
 
                         consumableType: nil,
-                        usageContext:   nil,
-                        bonusExp:       nil
+                        usageContext: nil,
+                        bonusExp: nil
                     )
                 )
-
-            // CONSUMABLE
             } else if let c = eq as? ConsumableEquipment {
                 let equippedSlot = slotMap[c.id]?.rawValue
-                let isEq         = slotMap[c.id] != nil
+                let isEquipped = slotMap[c.id] != nil
 
-                var typeString    = "consumable"
+                var typeString = "consumable"
                 var consumableType = "potion"
                 var bonusExp: Int?
 
                 if c.name.lowercased().contains("candy"),
                    let strat = c.effectStrategy as? UpgradeCandyEffectStrategy {
-                    typeString     = "candy"
+                    typeString = "candy"
                     consumableType = "candy"
-                    bonusExp       = strat.bonusExp
+                    bonusExp = strat.bonusExp
                 }
 
                 let usageCtxString: String = {
@@ -116,58 +127,51 @@ extension JsonPersistenceManager {
                 return .init(
                     type: typeString,
                     equipment: .init(
-                        id:              c.id,
-                        name:            c.name,
-                        description:     c.description,
-                        rarity:          c.rarity,
-                        equipmentType:   "consumable",
-                        ownerId:         playerId,
+                        id: c.id,
+                        name: c.name,
+                        description: c.description,
+                        rarity: c.rarity,
+                        equipmentType: "consumable",
+                        ownerId: playerId,
 
-                        isEquipped:      isEq,
-                        slot:            equippedSlot,
-                        buffValue:       nil,
+                        isEquipped: isEquipped,
+                        slot: equippedSlot,
+                        buffValue: nil,
                         buffDescription: nil,
-                        affectedStats:   nil,
+                        affectedStats: nil,
 
-                        consumableType:  consumableType,
-                        usageContext:    usageCtxString,
-                        bonusExp:        bonusExp
+                        consumableType: consumableType,
+                        usageContext: usageCtxString,
+                        bonusExp: bonusExp
                     )
                 )
             }
 
-            // FALLBACK (should not occur)
+            // Fallback case
             return .init(
                 type: "nonConsumable",
                 equipment: .init(
-                    id:            eq.id,
-                    name:          eq.name,
-                    description:   eq.description,
-                    rarity:        eq.rarity,
+                    id: eq.id,
+                    name: eq.name,
+                    description: eq.description,
+                    rarity: eq.rarity,
                     equipmentType: "nonConsumable",
-                    ownerId:       playerId,
+                    ownerId: playerId,
 
-                    isEquipped:    false,
-                    slot:          EquipmentSlot.weapon.rawValue,
-                    buffValue:     0,
+                    isEquipped: false,
+                    slot: EquipmentSlot.weapon.rawValue,
+                    buffValue: 0,
                     buffDescription: "Unknown",
                     affectedStats: ["attack"],
 
                     consumableType: nil,
-                    usageContext:   nil,
-                    bonusExp:       nil
+                    usageContext: nil,
+                    bonusExp: nil
                 )
             )
         }
-
-        // 4) Append only brand‑new entries
-        let filtered = newEntries.filter { new in
-            !allEntries.contains { $0.equipment.id == new.equipment.id }
-        }
-        allEntries.append(contentsOf: filtered)
-
-        return saveToJson(allEntries, filename: playerEquipmentsFileName)
     }
+
 
     /// Reconstruct this player's EquipmentComponent from disk.
     func loadPlayerEquipment(playerId: UUID) -> EquipmentComponent {
@@ -224,11 +228,13 @@ extension JsonPersistenceManager {
                 let strategy: ConsumableEffectStrategy
                 if info.consumableType == "candy" {
                     strategy = UpgradeCandyEffectStrategy(bonusExp: info.bonusExp ?? 100)
-                } else {
+                } else if info.consumableType == "potion" {
                     strategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
+                } else {
+                    strategy = UpgradeCandyEffectStrategy(bonusExp: info.bonusExp ?? 100)
                 }
 
-                let con = ConsumableEquipment(
+                var con = ConsumableEquipment(
                     id:             info.id,
                     name:           info.name,
                     description:    info.description,
@@ -236,6 +242,8 @@ extension JsonPersistenceManager {
                     effectStrategy: strategy,
                     usageContext:   usage
                 )
+                
+               
 
                 if info.isEquipped == true,
                    let rawSlot = info.slot,

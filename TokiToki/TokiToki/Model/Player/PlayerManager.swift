@@ -35,19 +35,19 @@ class PlayerManager {
         getOrCreatePlayer().ownedEquipments
     }
 
-    func countConsumables() -> [ConsumableGroupings] {
-        let countsDict = getEquipmentComponent().inventory
-            .filter { item in
-                guard item.equipmentType == .consumable,
-                      let consumable = item as? ConsumableEquipment else { return false }
-                return consumable.usageContext == .battleOnly || consumable.usageContext == .anywhere
-            }
-            .reduce(into: [String: Int]()) { counts, item in
-                counts[item.name, default: 0] += 1
-            }
-
-       return countsDict.map { ConsumableGroupings(name: $0.key, quantity: $0.value) }
-    }
+//    func countConsumables() -> [ConsumableGroupings] {
+//        let countsDict = getEquipmentComponent().inventory
+//            .filter { item in
+//                guard item.equipmentType == .consumable,
+//                      let consumable = item as? ConsumableEquipment else { return false }
+//                return consumable.usageContext == .battleOnly || consumable.usageContext == .anywhere
+//            }
+//            .reduce(into: [String: Int]()) { counts, item in
+//                counts[item.name, default: 0] += 1
+//            }
+//
+//       return countsDict.map { ConsumableGroupings(name: $0.key, quantity: $0.value) }
+//    }
     // MARK: - Player Access
 
     func getPlayer() -> Player? {
@@ -286,7 +286,3 @@ class PlayerManager {
     }
 }
 
-struct ConsumableGroupings {
-    let name: String
-    let quantity: Int
-}

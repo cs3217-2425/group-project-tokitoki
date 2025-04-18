@@ -15,6 +15,7 @@ class TokiSelection {
     let tokis: [Toki]
     // Array to hold the tokis selected for battle.
     var selectedTokis: [Toki] = []
+    let MAX_SELECTED_TOKIS = 3
     
     init() {
         // Initialize the TokiDisplay to load all Tokis.
@@ -28,6 +29,24 @@ class TokiSelection {
         for toki in selectedTokis {
             PlayerManager.shared.addTokiToBattle(toki)
             logger.log("Added Toki: \(toki.name) to PlayerManager")
+        }
+        
+        if selectedTokis.isEmpty {
+            let alert = UIAlertController(title: "No Tokis Selected",
+                                          message: "Please select at least one Toki to start the battle.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            vcont.present(alert, animated: true)
+            return
+        }
+
+        if selectedTokis.count > MAX_SELECTED_TOKIS {
+            let alert = UIAlertController(title: "Too Many Tokis",
+                                          message: "You can only bring up to \(MAX_SELECTED_TOKIS) Tokis into battle.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            vcont.present(alert, animated: true)
+            return
         }
         
         // Switch to the BattleScreen storyboard.

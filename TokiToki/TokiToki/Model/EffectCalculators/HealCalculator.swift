@@ -33,4 +33,11 @@ class HealCalculator: EffectCalculator {
                             description: "\(source.getName()) used \(moveName) "
                             + "to heal \(target.getName()) for \(healAmount) HP")
     }
+    
+    func merge(_ effectCalculator: EffectCalculator) -> EffectCalculator {
+        guard let healCalculator = effectCalculator as? HealCalculator else {
+            return self
+        }
+        return HealCalculator(healPower: self.healPower + healCalculator.healPower)
+    }
 }

@@ -6,5 +6,5 @@
 //
 
 protocol StatusEffectApplierAndPublisherDelegate {
-    func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity)
+    func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity) -> Bool
 }

@@ -8,7 +8,11 @@
 extension GameEngine {
     func startGameLoop() {
         while !isBattleOver() {
-            globalStatusEffectsManager.applyGlobalStatusEffects(playersPlusOpponents)
+            let isBattleOver = globalStatusEffectsManager
+                .applyGlobalStatusEffectsAndCheckIsBattleOver(playersPlusOpponents)
+            if isBattleOver {
+                return
+            }
             currentGameStateEntity = getNextReadyCharacter()
 
             guard let currentGameStateEntity = currentGameStateEntity else {

@@ -61,11 +61,11 @@ class Toki {
         let skillsComponent = SkillsComponent(entity: entity, skills: skills)
         let statusEffectsComponent = StatusEffectsComponent(entity: entity)
         let statsModifiersComponent = StatsModifiersComponent(entity: entity)
-        let passiveEquipments = equipments.filter { equipment in
+        let equipments = equipments.filter { equipment in
             guard let equipment = equipment as? ConsumableEquipment else { return false }
-            return equipment.usageContext == .battleOnlyPassive
+            return equipment.usageContext == .battleOnlyPassive || equipment.usageContext == .battleOnly
         }
-        let equipmentComponent = EquipmentComponent(inventory: passiveEquipments, entity: entity)
+        let equipmentComponent = EquipmentComponent(inventory: equipments, entity: entity)
 
         // TODO: Why does equipment not have the method
 //        for equipment in equipments {

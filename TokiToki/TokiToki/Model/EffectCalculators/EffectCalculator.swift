@@ -9,6 +9,7 @@ protocol EffectCalculator: Codable {
     var type: EffectCalculatorType { get }
     func calculate(moveName: String, source: GameStateEntity, target: GameStateEntity,
                    context: EffectCalculationContext) -> EffectResult?
+    func merge(_ effectCalculator: EffectCalculator) -> EffectCalculator
     func encodeAdditionalProperties(to container: inout KeyedEncodingContainer<EffectCalculatorCodingKeys>) throws
 }
 
