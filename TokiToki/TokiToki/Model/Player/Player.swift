@@ -84,7 +84,7 @@ struct Player {
         case let equipment as EquipmentGachaItem:
             ownedEquipments.inventory.append(equipment.getEquipment())
         default:
-            print("Unknown item type: \(type(of: item))")
+            Logger(subsystem: "Player").log("Unknown item type: \(type(of: item))")
         }
     }
 

@@ -16,6 +16,8 @@ class ItemRepository {
     // Factory objects
     private let skillFactory = SkillsFactory()
     private let equipmentRepository = EquipmentRepository.shared
+    
+    private let logger = Logger(subsystem: "ItemRepository")
 
     init() {
         loadTemplatesFromJSON()
@@ -37,9 +39,9 @@ class ItemRepository {
                 tokiTemplates[tokiData.name] = tokiData
             }
 
-            print("Loaded \(tokiTemplates.count) Toki templates from JSON")
+            logger.log("Loaded \(tokiTemplates.count) Toki templates from JSON")
         } catch {
-            print("Error loading Toki templates: \(error)")
+            logger.logError("Error loading Toki templates: \(error)")
         }
     }
 
@@ -51,9 +53,9 @@ class ItemRepository {
                 skillTemplates[skillData.name] = skillData
             }
 
-            print("Loaded \(skillTemplates.count) Skill templates from JSON")
+            logger.log("Loaded \(skillTemplates.count) Skill templates from JSON")
         } catch {
-            print("Error loading Skill templates: \(error)")
+            logger.logError("Error loading Skill templates: \(error)")
         }
     }
 
@@ -65,9 +67,9 @@ class ItemRepository {
                 equipmentTemplates[equipmentData.name] = equipmentData
             }
 
-            print("Loaded \(equipmentTemplates.count) Equipment templates from JSON")
+            logger.log("Loaded \(equipmentTemplates.count) Equipment templates from JSON")
         } catch {
-            print("Error loading Equipment templates: \(error)")
+            logger.logError("Error loading Equipment templates: \(error)")
         }
     }
 
@@ -328,40 +330,42 @@ class ItemRepository {
 //                }()
 //            )
  //       } else {
-            // For non-consumable equipment
-            guard let buffData = template.buff, let slot = template.slot else {
-                // Fallback for non-consumable with no buff or slot
-                let defaultStatBuff = StatBuff(attack: 0, defense: 0, speed: 0, description: "No stat boost")
+            // For non-consumable equipment:
+            guard let buffData = template.buff,
+                  let slotRaw = template.slot else {
+                // Fallback: no buff info
+                let defaultBuff = EquipmentBuff(
+                    value: 0,
+                    description: "No stat boost",
+                    affectedStats: []
+                )
                 return equipmentRepository.createNonConsumableEquipment(
-                    name: template.name,
+                    name:        template.name,
                     description: template.description,
-                    rarity: template.rarity,
-                    buff: defaultStatBuff,
-                    slot: .weapon
+                    rarity:      template.rarity,
+                    buff:         defaultBuff,
+                    slot:         .weapon
                 )
             }
 
-            // Create StatBuff based on affected stat
-            let statBuff: StatBuff
-            switch buffData.affectedStat.lowercased() {
-            case "attack":
-                statBuff = StatBuff(attack: buffData.value, defense: 0, speed: 0, description: "Attack boost")
-            case "defense":
-                statBuff = StatBuff(attack: 0, defense: buffData.value, speed: 0, description: "Defense boost")
-            case "speed":
-                statBuff = StatBuff(attack: 0, defense: 0, speed: buffData.value, description: "Speed boost")
-            default:
-                statBuff = StatBuff(attack: 0, defense: 0, speed: 0, description: "No stat boost")
-            }
+            // Wrap the single JSON string into our new enum array
+            let statsArray: [EquipmentBuff.Stat] = [buffData.affectedStat]
+                .compactMap { EquipmentBuff.Stat(rawValue: $0.lowercased()) }
 
-            let equipmentSlot = convertStringToEquipmentSlot(slot)
+            let buff = EquipmentBuff(
+                value:         buffData.value,
+                description:   buffData.description,
+                affectedStats: statsArray
+            )
+
+            let equipmentSlot = convertStringToEquipmentSlot(slotRaw)
 
             return equipmentRepository.createNonConsumableEquipment(
-                name: template.name,
+                name:        template.name,
                 description: template.description,
-                rarity: template.rarity,
-                buff: statBuff,
-                slot: equipmentSlot
+                rarity:      template.rarity,
+                buff:         buff,
+                slot:         equipmentSlot
             )
      //  }
     }

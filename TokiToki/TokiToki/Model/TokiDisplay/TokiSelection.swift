@@ -9,11 +9,13 @@ import ObjectiveC
 import UIKit
 
 class TokiSelection {
+    let logger = Logger(subsystem: "TokiSelection")
     let tokiDisplay = TokiDisplay()
     // All available Tokis loaded from TokiDisplay.
     let tokis: [Toki]
     // Array to hold the tokis selected for battle.
     var selectedTokis: [Toki] = []
+    let MAX_SELECTED_TOKIS = 3
     
     init() {
         // Initialize the TokiDisplay to load all Tokis.
@@ -23,10 +25,28 @@ class TokiSelection {
     func startBattleTapped(_ vcont: UIViewController) {
         // Update the global player's toki list.
         PlayerManager.shared.resetTokisForBattle()
-        PlayerManager.shared.getTokisForBattle()
+        _ = PlayerManager.shared.getTokisForBattle()
         for toki in selectedTokis {
             PlayerManager.shared.addTokiToBattle(toki)
-            print("[TokiSelection] Added Toki: \(toki.name) to PlayerManager")
+            logger.log("Added Toki: \(toki.name) to PlayerManager")
+        }
+        
+        if selectedTokis.isEmpty {
+            let alert = UIAlertController(title: "No Tokis Selected",
+                                          message: "Please select at least one Toki to start the battle.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            vcont.present(alert, animated: true)
+            return
+        }
+
+        if selectedTokis.count > MAX_SELECTED_TOKIS {
+            let alert = UIAlertController(title: "Too Many Tokis",
+                                          message: "You can only bring up to \(MAX_SELECTED_TOKIS) Tokis into battle.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            vcont.present(alert, animated: true)
+            return
         }
         
         // Switch to the BattleScreen storyboard.
@@ -73,12 +93,12 @@ extension TokiSelection {
             if isOn {
                 if !self.selectedTokis.contains(where: { $0.id == toki.id }) {
                     self.selectedTokis.append(toki)
-                    print("[TokiSelection] Added Toki: \(toki.name) to selectedTokis")
+                    logger.log("Added Toki: \(toki.name) to selectedTokis")
                 }
             } else {
                 if let index = self.selectedTokis.firstIndex(where: { $0.id == toki.id }) {
                     self.selectedTokis.remove(at: index)
-                    print("[TokiSelection] Removed Toki: \(toki.name) from selectedTokis")
+                    logger.log("Removed Toki: \(toki.name) from selectedTokis")
                 }
             }
         }

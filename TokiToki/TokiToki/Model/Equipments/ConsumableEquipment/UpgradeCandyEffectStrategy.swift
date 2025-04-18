@@ -12,7 +12,7 @@ struct UpgradeCandyEffectStrategy: ConsumableEffectStrategy {
                      _ context: EffectCalculationContext,
                      completion: (() -> Void)? = nil)
     -> [EffectResult]? {
-        print("Applying Upgrade Candy: +\(bonusExp) EXP permanently")
+        DefaultEquipmentLogger.shared.log("Applying Upgrade Candy: +\(bonusExp) EXP permanently")
         toki?.gainExperience(bonusExp)
         completion?()
         return nil

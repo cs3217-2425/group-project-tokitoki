@@ -26,15 +26,6 @@ class AdvancedEquipmentFacade {
         serviceLocator.dataStore.save()
     }
 
-    func equipItem(item: NonConsumableEquipment) {
-        let command = EquipCommand(item: item,
-                                   component: equipmentComponent,
-                                   system: serviceLocator.equipmentSystem,
-                                   logger: serviceLocator.equipmentLogger)
-        commandInvoker.execute(command: command)
-        serviceLocator.dataStore.save()
-    }
-
     func craftItems(items: [Equipment]) -> Equipment? {
         let command = CraftCommand(items: items,
                                    component: equipmentComponent,
@@ -52,3 +43,24 @@ class AdvancedEquipmentFacade {
         serviceLocator.dataStore.save()
     }
 }
+
+// AdvancedEquipmentFacade.swift
+extension AdvancedEquipmentFacade {
+    
+    /// Equip any Equipment into a specific slot
+    func equipItem(_ item: Equipment, to slot: EquipmentSlot) {
+        // Directly call the system (no command pattern here for simplicity)
+        serviceLocator.equipmentSystem.equipItem(item, slot: slot, in: equipmentComponent)
+        // persist updated component
+        serviceLocator.dataStore.equipmentComponent = equipmentComponent
+    }
+    
+    /// Unequip whatever’s in `slot` and return it to inventory.
+    func unequipItem(slot: EquipmentSlot) {
+        let component = equipmentComponent
+        serviceLocator.equipmentSystem.unequipItem(from: slot, in: component)
+        // write back into the store
+        serviceLocator.dataStore.equipmentComponent = component
+    }
+}
+

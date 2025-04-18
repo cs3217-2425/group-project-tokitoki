@@ -11,16 +11,17 @@ import CoreData
 class EventService {
     private var events: [String: any IGachaEvent] = [:]  // Using name as the key
     private let itemRepository: ItemRepository
+    private let logger = Logger(subsystem: "EventService")
 
     init(itemRepository: ItemRepository) {
         self.itemRepository = itemRepository
-        print("LOADING EVENTS")
+        logger.log("LOADING EVENTS")
         loadEvents()
         // print active events
         let activeEvents = getActiveEvents()
-        print("Active Gacha Events:")
+        logger.log("Active Gacha Events:")
         for event in activeEvents {
-            print(" - \(event.name): \(event.description) (from \(event.startDate) to \(event.endDate))")
+            logger.log("\(event.name): \(event.description) (from \(event.startDate) to \(event.endDate))")
         }
     }
 
@@ -34,7 +35,7 @@ class EventService {
 
                 guard let startDate = dateFormatter.date(from: eventData.startDate),
                       let endDate = dateFormatter.date(from: eventData.endDate) else {
-                    print("Invalid date format for event: \(eventData.name)")
+                    logger.logError("Invalid date format for event: \(eventData.name)")
                     continue
                 }
 
@@ -44,7 +45,7 @@ class EventService {
                 case "element":
                     guard let elementTypeStr = eventData.targetElement,
                           let elementType = ElementType.fromString(elementTypeStr) else {
-                        print("Invalid element type for event: \(eventData.name)")
+                        logger.logError("Invalid element type for event: \(eventData.name)")
                         continue
                     }
 
@@ -60,7 +61,7 @@ class EventService {
 
                 case "item":
                     guard let targetItemNames = eventData.targetItemNames else {
-                        print("No item names specified for item boost event: \(eventData.name)")
+                        logger.logError("No item names specified for item boost event: \(eventData.name)")
                         continue
                     }
 
@@ -74,17 +75,17 @@ class EventService {
                     )
 
                 default:
-                    print("Unknown event type: \(eventData.eventType)")
+                    logger.log("Unknown event type: \(eventData.eventType)")
                     continue
                 }
 
                 events[eventData.name] = event
             }
 
-            print("Loaded \(events.count) events")
+            logger.log("Loaded \(events.count) events")
 
         } catch {
-            print("Error loading events: \(error)")
+            logger.logError("Error loading events: \(error)")
         }
     }
 

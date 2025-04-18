@@ -33,53 +33,68 @@ extension TokiDisplay {
         self.updateUI(control)
     }
 
-    func changeEquipmentTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
-        guard let indexPath = control.equipmentTableView?.indexPathForSelectedRow else {
-            let noSelectionAlert = UIAlertController(title: "No Selection",
-                                                     message: "Please select an equipment cell to change.",
-                                                     preferredStyle: .alert)
-            noSelectionAlert.addAction(UIAlertAction(title: "OK", style: .default))
-            control.present(noSelectionAlert, animated: true)
-            return
-        }
+    func changeEquipmentTapped(_ sender: UIButton,
+                                _ control: TokiDisplayViewController) {
+         // 1) Ensure a slot is selected
+         guard let indexPath = control.equipmentTableView?.indexPathForSelectedRow else {
+             let alert = UIAlertController(
+                 title: "No Selection",
+                 message: "Please select an equipment cell to change.",
+                 preferredStyle: .alert
+             )
+             alert.addAction(UIAlertAction(title: "OK", style: .default))
+             control.present(alert, animated: true)
+             return
+         }
 
-        let component = self.equipmentFacade.equipmentComponent
+         // 2) Determine which slot the user wants to change
+         let slotOrder: [EquipmentSlot] = [.weapon, .armor, .accessory, .custom]
+         let targetSlot = indexPath.row < slotOrder.count
+                        ? slotOrder[indexPath.row]
+                        : .custom
 
-        // Build an action sheet using all equipment loaded from JSON.
-        let alert = UIAlertController(title: "Change Equipment", message: "Select a new equipment", preferredStyle: .actionSheet)
+         // 3) Grab the up‑to‑date inventory
+         let component = self.equipmentFacade.equipmentComponent
 
-        for equipment in component.inventory {
-            alert.addAction(UIAlertAction(title: equipment.name, style: .default, handler: { _ in
-                // Check if this equipment is already part of the Toki's equipment.
-                if self.toki.equipments.contains(where: { $0.id == equipment.id }) {
-                    let existsAlert = UIAlertController(title: "Already Exists",
-                                                        message: "Equipment \(equipment.name) already exists.",
-                                                        preferredStyle: .alert)
-                    existsAlert.addAction(UIAlertAction(title: "OK", style: .default))
-                    control.present(existsAlert, animated: true)
-                } else {
-                    // Update the Toki model.
-                    if indexPath.row < self.toki.equipments.count {
-                        self.toki.equipments[indexPath.row] = equipment
-                    } else {
-                        self.toki.equipments.append(equipment)
-                    }
-                    // Now update the facade's inventory to reflect this change.
-                    let component = self.equipmentFacade.equipmentComponent
-                    self.equipmentFacade.equipmentComponent = component
-                    self.updateUI(control)
-                }
-            }))
-        }
+         // 4) Build a set of every equipped‐item ID across ALL Tokis
+         let allEquippedIDs = Set(self.allTokis.flatMap { $0.equipments.map(\.id) })
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+         // 5) Filter inventory to only those _not_ in any Toki’s equipments
+         let available = component.inventory.filter { inv in
+             !allEquippedIDs.contains(inv.id)
+         }
 
-        if let popoverController = alert.popoverPresentationController {
-            popoverController.sourceView = sender
-            popoverController.sourceRect = sender.bounds
-        }
-        control.present(alert, animated: true)
-    }
+         // 6) Build and present the action sheet
+         let alert = UIAlertController(
+             title: "Change Equipment",
+             message: "Select a new equipment",
+             preferredStyle: .actionSheet
+         )
+
+         for equipment in available {
+             alert.addAction(UIAlertAction(title: equipment.name, style: .default) { _ in
+                 // Equip it (handles inventory removal + old‑slot return)
+                 self.equipmentFacade.equipItem(equipment, to: targetSlot)
+
+                 // Sync the Toki model in slot order
+                 let updatedEquipped = self.equipmentFacade.equipmentComponent.equipped
+                 self.toki.equipments = slotOrder.compactMap { updatedEquipped[$0] }
+
+                 // Persist & refresh
+                 self.saveTokiState()
+                 self.updateUI(control)
+             })
+         }
+
+         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+         if let pop = alert.popoverPresentationController {
+             pop.sourceView = sender
+             pop.sourceRect = sender.bounds
+         }
+         control.present(alert, animated: true)
+     }
+
 
     func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {

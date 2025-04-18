@@ -34,7 +34,7 @@ extension JsonPersistenceManager {
                     currentPlayerTokiDict[newToki.id] = newToki
                 }
                 
-                print("[JsonPersistenceManager] Saved toki \(newToki.name)")
+                logger.log("Saved toki \(newToki.name)")
             }
 
             // Combine tokis from other players with the updated/current player's tokis
@@ -56,10 +56,7 @@ extension JsonPersistenceManager {
         let playerTokisCodable = allTokisCodable.filter { $0.ownerId == playerId }
 
         // Load the player's equipment component.
-        guard let equipmentComponent = loadPlayerEquipment(playerId: playerId) else {
-            print("No equipment component found for player \(playerId)")
-            return nil
-        }
+        let equipmentComponent = loadPlayerEquipment(playerId: playerId)
 
         // Build a lookup dictionary keyed by UUID.
 //        let equipmentLookup = Dictionary(uniqueKeysWithValues: equipmentComponent.inventory.map { ($0.id, $0) })
@@ -82,7 +79,7 @@ extension JsonPersistenceManager {
             // Load the matching skills from the stored skill names.
             let skillsForThisToki: [Skill] = tokiCodable.skillNames.compactMap { skillName in
                 guard let skillData = skillTemplates[skillName] else {
-                    print("Skill template not found for name: \(skillName)")
+                    logger.logError("Skill template not found for name: \(skillName)")
                     return nil
                 }
                 return skillsFactory.createSkill(from: skillData)
@@ -94,7 +91,7 @@ extension JsonPersistenceManager {
                 equipmentLookup[equipmentId]
             }
             toki.equipments = equipmentsForThisToki
-            print("[JsonPersistentManager] Loaded Toki: \(toki.name) with \(toki.equipments.count) equipments and \(toki.skills.count) skills.")
+            logger.log("Loaded Toki: \(toki.name) with \(toki.equipments.count) equipments and \(toki.skills.count) skills.")
 
             tokis.append(toki)
         }

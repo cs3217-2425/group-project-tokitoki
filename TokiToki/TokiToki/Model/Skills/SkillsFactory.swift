@@ -6,6 +6,7 @@
 //
 
 class SkillsFactory {
+    private let logger = Logger(subsystem: "SkillsFactory")
     func createBasicSingleTargetDmgSkill(name: String,
                                          description: String,
                                          cooldown: Int,
@@ -222,7 +223,7 @@ class SkillsFactory {
                     effectCalculators.append(HealCalculator(healPower: healPower))
 
                 default:
-                    print("Unknown calculator type: \(calcData.calculatorType)")
+                    logger.log("Unknown calculator type: \(calcData.calculatorType)")
                 }
             }
 

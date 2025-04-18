@@ -8,11 +8,15 @@
 import UIKit
 
 extension TokiDisplay {
-    // TableView DataSource Methods
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int, _ control: TokiDisplayViewController) -> Int {
+    // MARK: - TableView DataSource
+
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int,
+                   _ control: TokiDisplayViewController) -> Int {
         let baseSlots = 1
         let extraSlots = toki.level / 5
         let totalSlots = baseSlots + extraSlots
+
         if tableView == control.equipmentTableView {
             return max(totalSlots, toki.equipments.count)
         } else {
@@ -20,8 +24,11 @@ extension TokiDisplay {
         }
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, _ control: TokiDisplayViewController) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TokiTableCell", for: indexPath) as? TokiTableCell else {
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath,
+                   _ control: TokiDisplayViewController) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TokiTableCell",
+                                                       for: indexPath) as? TokiTableCell else {
             return UITableViewCell()
         }
 
@@ -30,12 +37,18 @@ extension TokiDisplay {
                 let equipmentItem = toki.equipments[indexPath.row]
                 cell.nameLabel.text = equipmentItem.name
                 cell.itemImageView.image = UIImage(named: equipmentItem.name)
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleEquipmentLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(
+                    target: control,
+                    action: #selector(control.handleEquipmentLongPress(_:))
+                )
                 cell.addGestureRecognizer(longPress)
             } else {
                 cell.nameLabel.text = "Empty Slot"
                 cell.itemImageView.image = UIImage(named: "empty")
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleEquipmentLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(
+                    target: control,
+                    action: #selector(control.handleEquipmentLongPress(_:))
+                )
                 cell.addGestureRecognizer(longPress)
             }
         } else {
@@ -43,12 +56,18 @@ extension TokiDisplay {
                 let skillItem = toki.skills[indexPath.row]
                 cell.nameLabel.text = skillItem.name
                 cell.itemImageView.image = UIImage(named: skillItem.name)
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleSkillLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(
+                    target: control,
+                    action: #selector(control.handleSkillLongPress(_:))
+                )
                 cell.addGestureRecognizer(longPress)
             } else {
                 cell.nameLabel.text = "Empty Slot"
                 cell.itemImageView.image = UIImage(named: "empty")
-                let longPress = UILongPressGestureRecognizer(target: control, action: #selector(control.handleSkillLongPress(_:)))
+                let longPress = UILongPressGestureRecognizer(
+                    target: control,
+                    action: #selector(control.handleSkillLongPress(_:))
+                )
                 cell.addGestureRecognizer(longPress)
             }
         }
@@ -56,31 +75,58 @@ extension TokiDisplay {
         return cell
     }
 
-    // Provide the trailing swipe configuration.
+    // MARK: - TableView Swipe Actions
+
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath,
                    _ control: TokiDisplayViewController) -> UISwipeActionsConfiguration? {
-
-        let inventory = self.toki.equipments
-
-        // Make sure the row is valid for the current inventory
-        guard indexPath.row < inventory.count else {
+        // Only show swipe actions on the equipment table
+        guard tableView == control.equipmentTableView else {
             return nil
         }
 
-        let item = inventory[indexPath.row]
-        var actions = [UIContextualAction]()
+        // If there's no actual equipment in this row, skip
+        let equippedItems = toki.equipments
+        guard indexPath.row < equippedItems.count else {
+            return nil
+        }
 
-        // If item is consumable, check usage context
+        let item = equippedItems[indexPath.row]
+        var actions: [UIContextualAction] = []
+
+        // 1) Unequip action
+        let slotOrder: [EquipmentSlot] = [.weapon, .armor, .accessory, .custom]
+        let targetSlot = indexPath.row < slotOrder.count
+                       ? slotOrder[indexPath.row]
+                       : .custom
+
+        let unequipAction = UIContextualAction(style: .destructive,
+                                               title: "Unequip") { _, _, completion in
+            // Remove from slot → back to inventory
+            self.equipmentFacade.unequipItem(slot: targetSlot)
+            // Sync Toki.equipments in slot order
+            self.toki.equipments = slotOrder.compactMap {
+                self.equipmentFacade.equipmentComponent.equipped[$0]
+            }
+            // Persist and refresh UI
+            self.saveTokiState()
+            self.updateUI(control)
+            completion(true)
+        }
+        actions.append(unequipAction)
+
+        // 2) Use (if consumable and allowed out of battle)
         if let consumable = item as? ConsumableEquipment {
             switch consumable.usageContext {
             case .battleOnly, .battleOnlyPassive:
-                // Do NOT show the "Use" action if it's only for battle
                 break
-
             case .outOfBattleOnly, .anywhere:
-                let useAction = UIContextualAction(style: .normal, title: "Use") { _, _, completion in
-                    self.useConsumable(consumable, at: indexPath, equipmentTableView: tableView, control: control)
+                let useAction = UIContextualAction(style: .normal,
+                                                   title: "Use") { _, _, completion in
+                    self.useConsumable(consumable,
+                                       at: indexPath,
+                                       equipmentTableView: tableView,
+                                       control: control)
                     completion(true)
                 }
                 useAction.backgroundColor = .systemGreen
@@ -88,8 +134,11 @@ extension TokiDisplay {
             }
         }
 
-        let craftAction = UIContextualAction(style: .normal, title: "Craft") { _, _, completion in
-            control.showCraftingPopup(for: item, at: indexPath.row)
+        // 3) Craft
+        let craftAction = UIContextualAction(style: .normal,
+                                             title: "Craft") { _, _, completion in
+            control.showCraftingPopup(for: item,
+                                      at: indexPath.row)
             completion(true)
             tableView.reloadData()
         }
@@ -99,3 +148,4 @@ extension TokiDisplay {
         return UISwipeActionsConfiguration(actions: actions)
     }
 }
+

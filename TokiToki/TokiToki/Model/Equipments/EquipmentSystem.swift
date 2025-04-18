@@ -67,12 +67,12 @@ class EquipmentSystem: System {
         equipments.remove(at: index)
     }
 
-    func equipItem(_ item: NonConsumableEquipment, in component: EquipmentComponent) {
+    func equipItem(_ item: Equipment, slot: EquipmentSlot, in component: EquipmentComponent) {
         // Replace any existing item in the same slot.
-        if let existing = component.equipped[item.slot] {
+        if let existing = component.equipped[slot] {
             component.inventory.append(existing)
         }
-        component.equipped[item.slot] = item
+        component.equipped[slot] = item
         if let index = component.inventory.firstIndex(where: { $0.id == item.id }) {
             component.inventory.remove(at: index)
         }

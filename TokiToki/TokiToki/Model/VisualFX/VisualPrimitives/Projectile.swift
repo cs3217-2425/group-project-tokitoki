@@ -14,6 +14,7 @@ class Projectile {
     private let parameters: ProjectileParameters
     private var projectileView: UIView?
     private var trailEmitter: CAEmitterLayer?
+    private let logger = Logger(subsystem: "Projectile")
 
     init(sourceView: UIView, targetView: UIView, parameters: ProjectileParameters) {
         self.sourceView = sourceView
@@ -24,7 +25,7 @@ class Projectile {
     func launch(completion: @escaping () -> Void) {
         // Find the key window to add our projectile to
         guard let window = UIApplication.shared.keyWindow ?? UIApplication.shared.windows.first else {
-            print("Could not find window")
+            logger.logError("Could not find window")
             completion()
             return
         }

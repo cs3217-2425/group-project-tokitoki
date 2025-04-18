@@ -164,13 +164,15 @@ struct NonConsumableEquipmentCodable: EquipmentCodable {
     let slot: String
     let buffValue: Int
     let buffDescription: String
-    let affectedStat: String
+    let affectedStats: [String]
 
     func toDomainModel() -> Equipment {
+        let statsArray = affectedStats
+                .compactMap { EquipmentBuff.Stat(rawValue: $0) }
         let buff = EquipmentBuff(
-            value: buffValue,
-            description: buffDescription,
-            affectedStat: affectedStat
+                value:       buffValue,
+                description: buffDescription,
+                affectedStats: statsArray
         )
         let eqSlot = EquipmentSlot(rawValue: slot) ?? .weapon
 

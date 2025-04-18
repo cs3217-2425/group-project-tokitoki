@@ -133,7 +133,7 @@ struct EquipmentJSON: Codable {
 struct BuffJSON: Codable {
     let value: Int
     let description: String
-    let affectedStat: String
+    let affectedStats: [String]
 }
 
 struct CraftingRecipeJSON: Decodable {
@@ -161,6 +161,7 @@ class TokiDisplay {
     // We need some Toki to attach to the UI, but we’re no longer
     // constructing a test Toki. Instead, we’ll pick one from JSON.
     private var _toki: Toki
+    internal let logger = Logger(subsystem: "TokiDisplay")
 
     // Expose the “current” Toki.
     var toki: Toki {
@@ -219,22 +220,20 @@ class TokiDisplay {
     private func totalEquipmentBuff(for stat: String) -> Float {
         var total: Float = 0
         for equip in toki.equipments {
-            // Use the extension property 'components' from NonConsumableEquipment
-            if let comp = (equip as? NonConsumableEquipment)?.components.first as? CombinedBuffComponent {
-                switch stat {
-                case "attack":
-                    total += Float(comp.buff.attack)
-                case "defense":
-                    total += Float(comp.buff.defense)
-                case "speed":
-                    total += Float(comp.buff.speed)
-                default:
-                    break
-                }
+            // components now holds an EquipmentBuffComponent
+            guard let buffComp = (equip as? NonConsumableEquipment)?
+                    .components
+                    .compactMap({ $0 as? EquipmentBuffComponent })
+                    .first else { continue }
+
+            // If this buff targets the requested stat, add its value
+            if buffComp.buff.affectedStats.contains(where: { $0.rawValue == stat }) {
+                total += Float(buffComp.buff.value)
             }
         }
         return total
     }
+
 
     private func updateProgressBar(_ progressView: UIProgressView, baseValue: Float,
                                    buffValue: Float, maxValue: Float, baseColor: UIColor, buffColor: UIColor) {
