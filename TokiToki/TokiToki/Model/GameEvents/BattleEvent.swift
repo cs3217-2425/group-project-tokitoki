@@ -7,14 +7,7 @@
 
 import Foundation
 
-protocol BattleEvent {
-    var timestamp: Date { get }
-}
-
-extension BattleEvent {
-    var timestamp: Date {
-        Date()
-    }
+protocol BattleEvent: GameEvent {
 }
 
 struct DamageDealtEvent: BattleEvent {
