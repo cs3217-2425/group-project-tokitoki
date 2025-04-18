@@ -12,7 +12,9 @@ extension TokiDisplay {
         if gesture.state == .began {
             guard let cell = gesture.view as? UITableViewCell,
                   let indexPath = control.equipmentTableView?.indexPath(for: cell) else { return }
-
+            
+            guard !toki.equipments.isEmpty else { return }
+            
             let equipment = toki.equipments[indexPath.row]
             var message = equipment.description
             
