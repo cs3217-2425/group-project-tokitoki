@@ -48,6 +48,15 @@ class StatsSystem: System {
             statsComponent.actionMeter = 0
         }
     }
+    
+    func resetOnlyActionBar(_ entities: [GameStateEntity]) {
+        for entity in entities {
+            guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
+                return
+            }
+            statsComponent.actionMeter = 0
+        }
+    }
 
     private func getStatValue(for keyPath: KeyPath<TokiBaseStats, Int>,
                               modifierKeyPath: KeyPath<StatsModifier, Double>,

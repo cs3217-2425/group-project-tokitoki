@@ -80,6 +80,12 @@ class Toki {
 
         return entity
     }
+    
+    func createMonsterEntity(_ aiComponent: AIComponent) -> GameStateEntity {
+        let entity = createBattleEntity()
+        entity.addComponent(aiComponent)
+        return entity
+    }
 
     func levelUp(stat: TokiBaseStats) {
         self.baseStats = TokiBaseStats(

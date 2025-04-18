@@ -108,6 +108,9 @@ extension BattleScreenViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             emitter.birthRate = 0
             emitter.removeFromSuperlayer()
+            view.layer.shadowOpacity = 0.0
+            view.layer.shadowRadius = 0.0
+            view.layer.shadowColor = nil
         }
     }
 }

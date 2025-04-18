@@ -146,6 +146,10 @@ extension GameEngine {
     }
     
     func handleRevive(_ entity: GameStateEntity) {
+        statusEffectsSystem.reset([entity])
+        statsSystem.resetOnlyActionBar([entity])
+        skillsSystem.reset([entity])
+        statsModifiersSystem.reset([entity])
         if !playersPlusOpponents.contains(where: { $0.id == entity.id }) {
             playersPlusOpponents.append(entity)
         }

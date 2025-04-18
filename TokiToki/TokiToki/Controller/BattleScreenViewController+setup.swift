@@ -31,22 +31,29 @@ extension BattleScreenViewController {
 
     private func resetBattleState() {
         // Put all the initialization code here
-        configureSkillIcons()
-        configureViews()
-        configureLogBackground()
-        addGestureRecognisers()
-        effectsManager = BattleEffectsManager(viewController: self)
+        self.configureSkillIcons()
+        self.configureViews()
+        self.configureLogBackground()
+        self.addGestureRecognisers()
+        self.effectsManager = BattleEffectsManager(viewController: self)
+        
         var tokis = PlayerManager.shared.getTokisForBattle()
         if tokis.isEmpty {
             tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
         }
-        configure(tokis, [necro, rhino, golem])
+        
+        configure(tokis, [electricFoxMonsterToki, totemMonsterToki, golemMonsterToki])
     }
     
-    func configure(_ playerTokis: [Toki], _ opponentEntities: [GameStateEntity]) {
-        let opponentTokis = opponentEntities.map { $0.toki }
-        setupNameAndLevelCircle(opponentTokis, opponentTokisViews, false)
+    func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
+        setupNameAndLevelCircle(enemyTokis, opponentTokisViews, false)
         setupNameAndLevelCircle(playerTokis, playerTokisViews, true)
+        let opponentEntities = enemyTokis.map { toki in
+            guard let createFunction = mappingOfTokiToCreationFunction[toki.name] else {
+                return createMonsterEntity(toki)
+            }
+            return createFunction(toki)
+        }
         let playerEntities = createPlayerEntitiesAndAddMappingToView(playerTokis)
         hideTokisIfNoTokiInThatSlot(playerEntities, playerTokisViews)
         hideTokisIfNoTokiInThatSlot(opponentEntities, opponentTokisViews)
@@ -56,6 +63,7 @@ extension BattleScreenViewController {
         self.gameEngine = GameEngine(playerTeam: playerEntities, opponentTeam: opponentEntities)
         self.gameEngine?.addObserver(self)
         self.gameEngine?.addDelegate(self)
+        
         self.gameEngine?.startBattle()
     }
 

@@ -16,5 +16,7 @@ let tokiToIconImage: [String: String] = [
     "Golem": "golem.png",
     "Sky Phoenix": "skyPhoenix.png",
     "Earth Dragon": "earthDragon.png",
-    "Necromancer": "necromancer.png"
+    "Necromancer": "necromancer.png",
+    "Totem": "totem.png",
+    "Lightning Fox": "electricFox.png"
 ]

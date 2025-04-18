@@ -13,7 +13,7 @@ let basicSpell = BaseSkill(
     cooldown: 0,
     effectDefinitions: [
         EffectDefinition(targetType: .singleEnemy, effectCalculators: [
-            AttackCalculator(elementType: .neutral, basePower: 20)
+            AttackCalculator(elementType: .neutral, basePower: 40)
         ])
     ]
 ).clone()
@@ -144,3 +144,97 @@ let soulRevive = BaseSkill(
         ])
     ]
 ).clone()
+
+let acidSpray = BaseSkill(
+    name: "Acid Spray",
+    description: "A spray of acid that deals damage to all enemies.",
+    cooldown: 3,
+    effectDefinitions: [
+        EffectDefinition(targetType: .allEnemies, effectCalculators: [
+            AttackCalculator(elementType: .dark, basePower: 40),
+            StatusEffectCalculator(statusEffectChance: 0.75, statusEffect: .poison,
+                                   statusEffectDuration: 2, statusEffectStrength: 2)
+        ])
+    ]
+).clone()
+
+let aoeBuff = BaseSkill(
+    name: "AOE Buff",
+    description: "Buff all allies",
+    cooldown: 3,
+    effectDefinitions: [
+        EffectDefinition(targetType: .allAllies, effectCalculators: [
+            StatsModifiersCalculator(statsModifiers: [
+                StatsModifier(remainingDuration: 2, attack: 1.5, defense: 1.5, speed: 1.5, heal: 1.5)
+            ])
+        ])
+    ]
+).clone()
+
+let singleHeal = BaseSkill(
+    name: "Single Heal",
+    description: "Heals one ally",
+    cooldown: 2,
+    effectDefinitions: [
+        EffectDefinition(targetType: .singleAlly, effectCalculators: [
+            HealCalculator(healPower: 50)
+        ])
+    ]
+).clone()
+
+let meteorShower = BaseSkill(
+    name: "Meteor Shower",
+    description: "A barrage of meteorites that deal damage to all enemies and chance to burn.",
+    cooldown: 4,
+    effectDefinitions: [
+        EffectDefinition(targetType: .allEnemies, effectCalculators: [
+            AttackCalculator(elementType: .fire, basePower: 50),
+            StatusEffectCalculator(statusEffectChance: 0.5, statusEffect: .burn,
+                                   statusEffectDuration: 2, statusEffectStrength: 1)
+        ])
+    ]
+).clone()
+
+let lifeLeech = BaseSkill(
+    name: "Life Leech",
+    description: "Steals a portion of the damage dealt to enemies.",
+    cooldown: 0,
+    effectDefinitions: [
+        EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+            AttackCalculator(elementType: .dark, basePower: 20),
+        ]),
+        EffectDefinition(targetType: .ownself, effectCalculators: [
+            HealCalculator(healPower: 0),
+        ])
+    ]
+).clone()
+
+let flash = BaseSkill(
+    name: "Flash",
+    description: "Deals damage to single enemy and buff speed.",
+    cooldown: 3,
+    effectDefinitions: [
+        EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+            AttackCalculator(elementType: .lightning, basePower: 50)
+        ]),
+        EffectDefinition(targetType: .ownself, effectCalculators: [
+            StatsModifiersCalculator(statsModifiers: [
+                StatsModifier(remainingDuration: 2, attack: 1.0, defense: 1.0, speed: 1.5, heal: 1)
+            ])
+        ])
+    ]
+).clone()
+
+let thunderClap = BaseSkill(
+    name: "Thunder Clap",
+    description: "Deals single enemy and chance to paralyse",
+    cooldown: 5,
+    effectDefinitions: [
+        EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+            AttackCalculator(elementType: .lightning, basePower: 70),
+            StatusEffectCalculator(statusEffectChance: 0.5, statusEffect: .paralysis,
+                                   statusEffectDuration: 2, statusEffectStrength: 1)
+    ])
+]).clone()
+
+        

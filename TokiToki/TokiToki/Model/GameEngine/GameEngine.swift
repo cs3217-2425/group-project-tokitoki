@@ -58,7 +58,8 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
                                                                      MULTIPLIER_FOR_ACTION_METER)
         self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
                                                       battleEffectsDelegate: battleEffectsDelegate,
-                                                      reviverDelegate: self)
+                                                      reviverDelegate: self,
+                                                      allOpponentEntities: savedOpponentTeam)
         self.globalStatusEffectsManager.setDelegate(self)
         self.statusEffectsSystem.setDelegate(self)
         
@@ -88,7 +89,8 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         self.battleEffectsDelegate = battleEffectsDelegate
         self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
                                                       battleEffectsDelegate: self.battleEffectsDelegate,
-                                                      reviverDelegate: self)
+                                                      reviverDelegate: self,
+                                                      allOpponentEntities: savedOpponentTeam)
     }
 
     internal func saveEquipments() {
