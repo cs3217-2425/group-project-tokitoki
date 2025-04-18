@@ -9,12 +9,12 @@ import Foundation
 
 class EquipmentComponent: Component {
     var inventory: [Equipment] = []
-    var equipped: [EquipmentSlot: NonConsumableEquipment] = [:]
+    var equipped: [EquipmentSlot: Equipment] = [:]
     var entity: Entity
     var savedInventory: [Equipment] = []
 
     init(inventory: [Equipment] = [],
-         equipped: [EquipmentSlot: NonConsumableEquipment] = [:], entity: Entity = BaseEntity()) {
+         equipped: [EquipmentSlot: Equipment] = [:], entity: Entity = BaseEntity()) {
         self.inventory = inventory
         self.equipped = equipped
         self.entity = entity

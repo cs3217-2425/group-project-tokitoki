@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// A simple struct matching the layout in player_equipments.json
+/// Mirrors the structure of player_equipments.json
 struct PlayerEquipmentEntry: Codable {
     let type: String  // e.g., "nonConsumable", "potion", "candy"
     let equipment: EquipmentInfo
@@ -25,8 +25,8 @@ struct PlayerEquipmentEntry: Codable {
         let slot: String?
         let buffValue: Int?
         let buffDescription: String?
-        let affectedStat: String?
-
+        let affectedStats: [String]?
+        
         // For consumable
         let consumableType: String?
         let usageContext: String?
@@ -35,229 +35,229 @@ struct PlayerEquipmentEntry: Codable {
 }
 
 extension JsonPersistenceManager {
-    /// Save player's equipment to JSON
-    func savePlayerEquipment(_ equipmentComponent: EquipmentComponent, playerId: UUID) -> Bool {
-        // 1) Load existing equipment from player_equipments.json
-        var allEquipment: [PlayerEquipmentEntry] = []
+    /// Persist this player's current equipment state.
+    @discardableResult
+    func savePlayerEquipment(_ equipmentComponent: EquipmentComponent,
+                             playerId: UUID) -> Bool {
+        // 1) Load others’ gear
+        var allEntries: [PlayerEquipmentEntry] = []
         if fileExists(filename: playerEquipmentsFileName),
            let existing: [PlayerEquipmentEntry] = loadFromJson(filename: playerEquipmentsFileName) {
-            // Keep equipment owned by other players
-            allEquipment = existing.filter { $0.equipment.ownerId != playerId }
+            allEntries = existing.filter { $0.equipment.ownerId != playerId }
         }
 
-        // 2) Combine inventory and equipped items, removing duplicates
-        let combinedEquipment = equipmentComponent.inventory + equipmentComponent.equipped.values.map { $0 as Equipment }
-        let allPlayerEquipment = combinedEquipment.reduce(into: [Equipment]()) { result, eq in
-            if !result.contains(where: { $0.id == eq.id }) {
-                result.append(eq)
+        // 2) Gather unique items (inventory + equipped)
+        let combined: [Equipment] = equipmentComponent.inventory
+            + equipmentComponent.equipped.values
+        let uniqueEquipment = combined.reduce(into: [Equipment]()) { acc, eq in
+            if !acc.contains(where: { $0.id == eq.id }) {
+                acc.append(eq)
             }
         }
 
-        // 3) Convert each to PlayerEquipmentEntry
-        let newEntries: [PlayerEquipmentEntry] = allPlayerEquipment.map { eq in
-            // We treat NonConsumable vs Consumable
+        // 2.5) Build a lookup: equipment‐ID → its slot (if equipped)
+        let slotMap: [UUID: EquipmentSlot] = equipmentComponent.equipped
+            .reduce(into: [:]) { dict, pair in
+                dict[pair.value.id] = pair.key
+            }
+
+        // 3) Turn each into a JSON entry
+        let newEntries: [PlayerEquipmentEntry] = uniqueEquipment.map { eq in
+            // NON‐CONSUMABLE
             if let nc = eq as? NonConsumableEquipment {
-                return PlayerEquipmentEntry(
+                let isEq = equipmentComponent.equipped[nc.slot]?.id == nc.id
+                return .init(
                     type: "nonConsumable",
                     equipment: .init(
-                        id: nc.id,
-                        name: nc.name,
-                        description: nc.description,
-                        rarity: nc.rarity,
+                        id:            nc.id,
+                        name:          nc.name,
+                        description:   nc.description,
+                        rarity:        nc.rarity,
                         equipmentType: "nonConsumable",
-                        ownerId: playerId,
+                        ownerId:       playerId,
 
-                        isEquipped: equipmentComponent.equipped[nc.slot]?.id == nc.id,
-                        slot: nc.slot.rawValue,
-                        buffValue: nc.buff.value,
+                        isEquipped:    isEq,
+                        slot:          nc.slot.rawValue,
+                        buffValue:     nc.buff.value,
                         buffDescription: nc.buff.description,
-                        affectedStat: nc.buff.affectedStat,
+                        affectedStats: nc.buff.affectedStats.map { $0.rawValue },
 
                         consumableType: nil,
-                        usageContext: nil,
-                        bonusExp: nil
+                        usageContext:   nil,
+                        bonusExp:       nil
                     )
                 )
 
+            // CONSUMABLE
             } else if let c = eq as? ConsumableEquipment {
-                // Distinguish if it’s a “potion” or “candy” (based on name or effect strategy)
-                var typeString = "consumable"
-                var consumableType = "potion"  // default
+                let equippedSlot = slotMap[c.id]?.rawValue
+                let isEq         = slotMap[c.id] != nil
+
+                var typeString    = "consumable"
+                var consumableType = "potion"
                 var bonusExp: Int?
 
-                if c.name.lowercased().contains("candy") {
-                    typeString = "candy"
+                if c.name.lowercased().contains("candy"),
+                   let strat = c.effectStrategy as? UpgradeCandyEffectStrategy {
+                    typeString     = "candy"
                     consumableType = "candy"
-                } else if c.name.lowercased().contains("potion") {
-                    typeString = "potion"
-                    consumableType = "potion"
+                    bonusExp       = strat.bonusExp
                 }
 
-                // If the effectStrategy is an UpgradeCandyEffectStrategy, capture its bonusExp
-                if let candyStrategy = c.effectStrategy as? UpgradeCandyEffectStrategy {
-                    bonusExp = candyStrategy.bonusExp
-                    typeString = "candy"
-                    consumableType = "candy"
-                }
+                let usageCtxString: String = {
+                    switch c.usageContext {
+                    case .battleOnly:        return "battleOnly"
+                    case .outOfBattleOnly:   return "outOfBattleOnly"
+                    case .battleOnlyPassive: return "battleOnlyPassive"
+                    case .anywhere:          return "anywhere"
+                    }
+                }()
 
-                // usageContext as a string
-                let usageCtxString: String
-                switch c.usageContext {
-                case .battleOnly: usageCtxString = "battleOnly"
-                case .outOfBattleOnly: usageCtxString = "outOfBattleOnly"
-                case .anywhere: usageCtxString = "anywhere"
-                case .battleOnlyPassive: usageCtxString = "battleOnlyPassive"
-                }
-
-                return PlayerEquipmentEntry(
+                return .init(
                     type: typeString,
                     equipment: .init(
-                        id: c.id,
-                        name: c.name,
-                        description: c.description,
-                        rarity: c.rarity,
-                        equipmentType: "consumable",
-                        ownerId: playerId,
+                        id:              c.id,
+                        name:            c.name,
+                        description:     c.description,
+                        rarity:          c.rarity,
+                        equipmentType:   "consumable",
+                        ownerId:         playerId,
 
-                        isEquipped: nil, // Not used for consumables
-                        slot: nil,
-                        buffValue: nil,
+                        isEquipped:      isEq,
+                        slot:            equippedSlot,
+                        buffValue:       nil,
                         buffDescription: nil,
-                        affectedStat: nil,
+                        affectedStats:   nil,
 
-                        consumableType: consumableType,
-                        usageContext: usageCtxString,
-                        bonusExp: bonusExp
+                        consumableType:  consumableType,
+                        usageContext:    usageCtxString,
+                        bonusExp:        bonusExp
                     )
                 )
             }
 
-            // Fallback, though in practice we only have these two types
-            return PlayerEquipmentEntry(
+            // FALLBACK (should not occur)
+            return .init(
                 type: "nonConsumable",
                 equipment: .init(
-                    id: eq.id,
-                    name: eq.name,
-                    description: eq.description,
-                    rarity: eq.rarity,
+                    id:            eq.id,
+                    name:          eq.name,
+                    description:   eq.description,
+                    rarity:        eq.rarity,
                     equipmentType: "nonConsumable",
-                    ownerId: playerId,
+                    ownerId:       playerId,
 
-                    isEquipped: false,
-                    slot: "weapon",
-                    buffValue: 0,
+                    isEquipped:    false,
+                    slot:          EquipmentSlot.weapon.rawValue,
+                    buffValue:     0,
                     buffDescription: "Unknown",
-                    affectedStat: "attack",
+                    affectedStats: ["attack"],
 
                     consumableType: nil,
-                    usageContext: nil,
-                    bonusExp: nil
+                    usageContext:   nil,
+                    bonusExp:       nil
                 )
             )
         }
 
-        // 4) Filter duplicate entries based on equipment id
-        let filteredNewEntries = newEntries.filter { newEntry in
-            return !allEquipment.contains(where: { $0.equipment.id == newEntry.equipment.id })
+        // 4) Append only brand‑new entries
+        let filtered = newEntries.filter { new in
+            !allEntries.contains { $0.equipment.id == new.equipment.id }
         }
-        allEquipment.append(contentsOf: filteredNewEntries)
-        return saveToJson(allEquipment, filename: playerEquipmentsFileName)
+        allEntries.append(contentsOf: filtered)
+
+        return saveToJson(allEntries, filename: playerEquipmentsFileName)
     }
 
-    /// Load player's equipment from JSON
-    func loadPlayerEquipment(playerId: UUID) -> EquipmentComponent? {
-        guard let allEquipEntries: [PlayerEquipmentEntry] = loadFromJson(filename: playerEquipmentsFileName) else {
+    /// Reconstruct this player's EquipmentComponent from disk.
+    func loadPlayerEquipment(playerId: UUID) -> EquipmentComponent {
+        guard let allEntries: [PlayerEquipmentEntry] =
+                loadFromJson(filename: playerEquipmentsFileName) else {
             return EquipmentComponent()
         }
 
-        let playerEntries = allEquipEntries.filter { $0.equipment.ownerId == playerId }
-
+        let mine = allEntries.filter { $0.equipment.ownerId == playerId }
         var inventory: [Equipment] = []
-        var equipped: [EquipmentSlot: NonConsumableEquipment] = [:]
+        var equipped:   [EquipmentSlot: Equipment] = [:]
 
-        // 2) Convert each entry to the actual Equipment object
-        for entry in playerEntries {
-            let eqInfo = entry.equipment
+        for entry in mine {
+            let info = entry.equipment
 
             if entry.type == "nonConsumable" {
-                // Build NonConsumableEquipment
+                // Decode buff
+                let stats = info.affectedStats?
+                    .compactMap { EquipmentBuff.Stat(rawValue: $0) }
+                    ?? []
                 let buff = EquipmentBuff(
-                    value: eqInfo.buffValue ?? 0,
-                    description: eqInfo.buffDescription ?? "",
-                    affectedStat: eqInfo.affectedStat ?? "attack"
+                    value:         info.buffValue ?? 0,
+                    description:   info.buffDescription ?? "",
+                    affectedStats: stats
                 )
-                let slotEnum = EquipmentSlot(rawValue: eqInfo.slot ?? "weapon") ?? .weapon
-
+                let slotEnum = EquipmentSlot(rawValue: info.slot ?? "") ?? .weapon
                 let nc = NonConsumableEquipment(
-                    id: eqInfo.id,
-                    name: eqInfo.name,
-                    description: eqInfo.description,
-                    rarity: eqInfo.rarity,
-                    buff: buff,
-                    slot: slotEnum
+                    id:          info.id,
+                    name:        info.name,
+                    description: info.description,
+                    rarity:      info.rarity,
+                    buff:        buff,
+                    slot:        slotEnum
                 )
 
-                // We want the same UUID
-                // Because NonConsumableEquipment’s `id` is let id = UUID() in the struct,
-                // you can’t set it from outside.
-                // (One approach is to keep an internal dictionary if you must track exact IDs.)
-                // If you truly need to preserve the original UUID,
-                // you’d have to update NonConsumableEquipment to accept an ID in init.
-                // But the user said “do not change the equipment system,” so we skip that.
-                //
-                // If isEquipped = true, put it in equipped. Otherwise, inventory.
-                if eqInfo.isEquipped == true {
+                // ONLY append to equipped _or_ inventory — never both
+                if info.isEquipped == true {
                     equipped[slotEnum] = nc
-                    inventory.append(nc) // still part of inventory
-                    logger.log("Equipped: \(nc.name) in slot \(slotEnum)")
                 } else {
                     inventory.append(nc)
-                    logger.log("Added to inventory: \(nc.name)")
                 }
 
             } else {
-                // type is “potion” or “candy” => ConsumableEquipment
-                let usage: ConsumableUsageContext
-                switch eqInfo.usageContext?.lowercased() {
-                case "battleonly": usage = .battleOnly
-                case "outofbattleonly": usage = .outOfBattleOnly
-                default: usage = .anywhere
+                // Consumable path
+                let usage: ConsumableUsageContext = {
+                    switch info.usageContext?.lowercased() {
+                    case "battleonly":       return .battleOnly
+                    case "outofbattleonly":  return .outOfBattleOnly
+                    case "battleonlypassive":return .battleOnlyPassive
+                    default:                 return .anywhere
+                    }
+                }()
+
+                let strategy: ConsumableEffectStrategy
+                if info.consumableType == "candy" {
+                    strategy = UpgradeCandyEffectStrategy(bonusExp: info.bonusExp ?? 100)
+                } else {
+                    strategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
                 }
 
-                // Provide a default effect strategy
-                // For candy, read bonusExp
-                var strategy: ConsumableEffectStrategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
-                if eqInfo.consumableType == "candy" {
-                    let bonus = eqInfo.bonusExp ?? 100
-                    strategy = UpgradeCandyEffectStrategy(bonusExp: bonus)
-                }
-
-                var con = ConsumableEquipment(
-                    id: eqInfo.id,
-                    name: eqInfo.name,
-                    description: eqInfo.description,
-                    rarity: eqInfo.rarity,
+                let con = ConsumableEquipment(
+                    id:             info.id,
+                    name:           info.name,
+                    description:    info.description,
+                    rarity:         info.rarity,
                     effectStrategy: strategy,
-                    usageContext: usage
+                    usageContext:   usage
                 )
-                // Consumables always go to inventory (no concept of “equipped”)
-                inventory.append(con)
-                logger.log("Added to inventory: \(con.name)")
+
+                if info.isEquipped == true,
+                   let rawSlot = info.slot,
+                   let slotEnum = EquipmentSlot(rawValue: rawSlot) {
+                    equipped[slotEnum] = con
+                } else {
+                    inventory.append(con)
+                }
             }
         }
 
         return EquipmentComponent(inventory: inventory, equipped: equipped)
     }
 
-    /// Delete player's equipment
+    /// Remove all entries for this player
+    @discardableResult
     func deletePlayerEquipment(playerId: UUID) -> Bool {
-        guard let allEquipEntries: [PlayerEquipmentEntry] = loadFromJson(filename: playerEquipmentsFileName) else {
+        guard let allEntries: [PlayerEquipmentEntry] =
+                loadFromJson(filename: playerEquipmentsFileName) else {
             return true
         }
-
-        // Keep only equipment not belonging to this player
-        let updated = allEquipEntries.filter { $0.equipment.ownerId != playerId }
-
-        return saveToJson(updated, filename: playerEquipmentsFileName)
+        let filtered = allEntries.filter { $0.equipment.ownerId != playerId }
+        return saveToJson(filtered, filename: playerEquipmentsFileName)
     }
 }
