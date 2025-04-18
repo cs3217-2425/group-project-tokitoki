@@ -243,6 +243,32 @@
           ]
         }
       ]
+    },
+    {
+      "id": "healingWave",
+      "name": "Healing Wave",
+      "description": "Heals an ally generously and heals all allies",
+      "cooldown": 3,
+      "effectDefinitions": [
+        {
+          "targetType": "singleAlly",
+          "calculators": [
+            {
+              "calculatorType": "heal",
+              "healPower": 65
+            }
+          ]
+        },
+        {
+          "targetType": "allAllies",
+          "calculators": [
+            {
+              "calculatorType": "heal",
+              "healPower": 25
+            }
+          ]
+        }
+      ]
     }
   ]
 }

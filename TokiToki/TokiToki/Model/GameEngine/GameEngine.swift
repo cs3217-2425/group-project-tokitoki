@@ -107,13 +107,14 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         return isBattleOver()
     }
 
-    
-
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty {
             logMessage("Battle ended! You lost!")
         } else if opponentTeam.isEmpty {
             logMessage("Battle ended! You won!")
+            savedPlayerTeam.forEach {
+                $0.toki.baseStats.exp += 10
+            }
         }
         return playerTeam.isEmpty || opponentTeam.isEmpty
     }

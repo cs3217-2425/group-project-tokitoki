@@ -24,7 +24,7 @@
         "baseHeal": 80,
         "baseExp": 100,
         "elementType": "water",
-        "skills": []
+        "skills": ["Basic Spell", "Water Blast", "Healing Wave"]
       },
       {
         "id": "earth-dragon",

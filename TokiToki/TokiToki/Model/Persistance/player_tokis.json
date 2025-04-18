@@ -101,6 +101,32 @@
     ]
   },
   {
+    "id": "c4e6b9a2-1d3f-5e6d-9f8a-135792468bcd",
+    "name": "Water Serpent",
+    "level": 1,
+    "rarity": 2,
+    "elementType": ["water"],
+    "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "baseStats": {
+      "hp": 80,
+      "attack": 60,
+      "defense": 30,
+      "speed": 120,
+      "heal": 0,
+      "exp": 0,
+      "critHitChance": 15,
+      "critHitDamage": 150
+    },
+    "skillNames": [
+      "Basic Spell",
+      "Healing Wave",
+      "Flame Dance"
+    ],
+    "equipmentIds": [
+      "b8d6c4a2-3e1f-4a7b-8c5d-7e8f9a0b1c2d"
+    ]
+  },
+  {
     "id": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
     "name": "WaterSerpent",
     "level": 3,
