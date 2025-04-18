@@ -72,7 +72,7 @@ class PlayerManager {
         return player
     }
 
-    private func savePlayer() {
+    func savePlayer() {
         if let player = currentPlayer {
             playerRepository.savePlayer(player)
         }
@@ -80,6 +80,10 @@ class PlayerManager {
     
     func getTokisForBattle() -> [Toki] {
         getOrCreatePlayer().tokisForBattle
+    }
+    
+    func getFirstThreeOwnedTokis() -> [Toki] {
+        Array(getOrCreatePlayer().ownedTokis.prefix(3))
     }
     
     func resetTokisForBattle() {

@@ -62,6 +62,7 @@ extension GameEngine {
     }
 
     internal func executeOpponentTurn(_ entity: GameStateEntity) {
+        battleEffectsDelegate?.showWhoseTurn(entity.id)
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
             let action = aiComponent.determineAction(entity, playerTeam, opponentTeam, effectContext)
             let results = action.execute()
