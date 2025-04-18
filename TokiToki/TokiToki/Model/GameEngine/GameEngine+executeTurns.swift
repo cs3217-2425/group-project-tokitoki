@@ -65,12 +65,19 @@ extension GameEngine {
         battleEffectsDelegate?.showWhoseTurn(entity.id)
         if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
             let action = aiComponent.determineAction(entity, playerTeam, opponentTeam, effectContext)
+
             let results = action.execute()
+
+            let targets = results.compactMap { $0.entity as? GameStateEntity }
+
+            if let skillAction = action as? UseSkillAction {
+                createBattleEventAndPublishToEventBus(entity, skillAction.skill, targets)
+            }
 
             battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
                 for result in results {
                     self?.battleEventManager.publishEffectResult(result,
-                                                                  sourceId: self?.currentGameStateEntity?.id ?? UUID())
+                                                                 sourceId: self?.currentGameStateEntity?.id ?? UUID())
                 }
                 self?.logMultipleResults(results)
                 self?.updateEntityForNewTurnAndAllEntities(entity)
