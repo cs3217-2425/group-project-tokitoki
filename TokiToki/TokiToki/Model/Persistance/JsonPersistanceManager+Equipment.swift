@@ -224,14 +224,13 @@ extension JsonPersistenceManager {
                     default:                 return .anywhere
                     }
                 }()
-
-                let strategy: ConsumableEffectStrategy
+                
+                let defaultStrategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
+                var strategy: ConsumableEffectStrategy
                 if info.consumableType == "candy" {
                     strategy = UpgradeCandyEffectStrategy(bonusExp: info.bonusExp ?? 100)
-                } else if info.consumableType == "potion" {
-                    strategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
                 } else {
-                    strategy = UpgradeCandyEffectStrategy(bonusExp: info.bonusExp ?? 100)
+                    strategy = consumableToEffectStrategy[info.consumableType ?? ""] ?? defaultStrategy
                 }
 
                 var con = ConsumableEquipment(
@@ -243,8 +242,6 @@ extension JsonPersistenceManager {
                     usageContext:   usage
                 )
                 
-               
-
                 if info.isEquipped == true,
                    let rawSlot = info.slot,
                    let slotEnum = EquipmentSlot(rawValue: rawSlot) {

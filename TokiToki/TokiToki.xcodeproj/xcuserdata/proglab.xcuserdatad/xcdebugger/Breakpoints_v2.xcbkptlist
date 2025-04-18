@@ -238,8 +238,8 @@
             filePath = "TokiToki/Model/Persistance/JsonPersistanceManager+Equipment.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "249"
-            endingLineNumber = "249"
+            startingLineNumber = "246"
+            endingLineNumber = "246"
             landmarkName = "loadPlayerEquipment(playerId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -472,7 +472,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "CA8B9957-1CCE-4F82-A834-87F5A086604C"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TokiToki/Model/GameEngine/GameEngine.swift"
@@ -481,6 +481,54 @@
             startingLineNumber = "99"
             endingLineNumber = "99"
             landmarkName = "applyStatusEffectAndPublishResult(_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9CEDB5E2-0F99-463F-8F99-D8D32CFCF8AF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TokiToki/Model/Equipments/EquipmentSystem.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "useConsumable(_:on:orOn:in:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3BF08650-9361-490A-967B-1AE1219C8553"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TokiToki/Model/Equipments/EquipmentSystem.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "useConsumable(_:on:orOn:in:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "32E458C0-2697-4287-8341-716B11F4E311"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TokiToki/Model/GameEngine/GameEngine+executeTurns.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "createAndExecuteSkillAction(_:_:_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

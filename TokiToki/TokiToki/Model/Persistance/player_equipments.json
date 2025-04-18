@@ -105,5 +105,18 @@
       "consumableType": "potion",
       "usageContext": "battleOnly"
     }
+  },
+  {
+    "type": "revivalRing",
+    "equipment": {
+      "id": "d0f1e1c3-b4a5-4a6b-8c7d-0e1f2a3b4c5d",
+      "name": "Revival Ring",
+      "description": "Revives Toki upon death",
+      "rarity": 2,
+      "equipmentType": "consumable",
+      "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "consumableType": "revivalRing",
+      "usageContext": "battleOnlyPassive"
+    }
   }
 ]

@@ -20,9 +20,6 @@ extension GameEngine {
 
     internal func createAndExecuteSkillAction(_ currentGameStateEntity: GameStateEntity,
                                               _ skillSelected: any Skill, _ targets: [GameStateEntity]) {
-//        let context = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
-//                                               battleEffectsDelegate: battleEffectsDelegate,
-//                                               reviverDelegate: self)
         let action = UseSkillAction(user: currentGameStateEntity, skill: skillSelected, playerTeam,
                                     opponentTeam, targets, effectContext)
         queueAction(action)

@@ -28,7 +28,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal let MAX_ACTION_BAR: Float = 100
     internal let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
 
-    //internal let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
+    internal let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
     internal var globalStatusEffectsManager: GlobalStatusEffectsManaging
     internal var effectContext = EffectCalculationContext()
 
@@ -63,7 +63,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         self.statusEffectsSystem.setDelegate(self)
         
         appendToSystemsForResetting()
-        //saveEquipments()
+        saveEquipments()
     }
 
     fileprivate func appendToSystemsForResetting() {
@@ -91,9 +91,9 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
                                                       reviverDelegate: self)
     }
 
-//    internal func saveEquipments() {
-//        self.savedEquipments = playerEquipmentComponent.inventory
-//    }
+    internal func saveEquipments() {
+        self.savedEquipments = playerEquipmentComponent.inventory
+    }
     
     func applyStatusEffectAndPublishResult(_ effect: StatusEffect, _ entity: GameStateEntity) -> Bool {
         let result = effect.apply(to: entity, strategyFactory: statusEffectStrategyFactory)
@@ -149,7 +149,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         playersPlusOpponents = savedPlayersPlusOpponents
         playerTeam = savedPlayerTeam
         opponentTeam = savedOpponentTeam
-        //playerEquipmentComponent.inventory = savedEquipments
+        playerEquipmentComponent.inventory = savedEquipments
         mostRecentSkillSelected = nil
         pendingActions = []
         updateHealthBars()
