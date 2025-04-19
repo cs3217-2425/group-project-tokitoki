@@ -114,20 +114,25 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         return isBattleOver()
     }
 
-    fileprivate func addExp() {
+    fileprivate func addExpAndGold(_ exp: Int, _ gold: Int) {
         savedPlayerTeam.forEach {
-            $0.toki.baseStats.exp += levelManager.getExp()
+            $0.toki.baseStats.exp += exp
         }
+        PlayerManager.shared.updateAfterBattle(exp: exp, gold: gold, isWin: true)
     }
     
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty || opponentTeam.isEmpty {
             let isWin = opponentTeam.isEmpty
+            let exp = levelManager.getExp()
+            let gold = levelManager.getGold()
             if isWin {
-                addExp()
+                addExpAndGold(exp, gold)
+            } else {
+                PlayerManager.shared.updateBattleStatistics(isWin: false)
             }
             logMessage("Battle ended! You \(isWin ? "won" : "lost")!")
-            battleEventManager.publishBattleEndedEvents(isWin: isWin)
+            battleEventManager.publishBattleEndedEvents(isWin: isWin, exp: exp, gold: gold)
             return true
         }
         return false

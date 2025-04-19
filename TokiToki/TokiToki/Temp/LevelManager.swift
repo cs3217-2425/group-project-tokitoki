@@ -42,6 +42,10 @@ class LevelManager {
     func getExp() -> Int {
         return level.expReward
     }
+    
+    func getGold() -> Int {
+        return level.goldReward
+    }
 }
 
 enum Level: Int, CaseIterable {
@@ -55,6 +59,13 @@ enum Level: Int, CaseIterable {
         .normal: 1500,
         .hard: 3000,
         .hell: 6000
+    ]
+    
+    private static let levelToGold: [Level: Int] = [
+        .easy: 50,
+        .normal: 150,
+        .hard: 300,
+        .hell: 600
     ]
     
     var statModifier: TokiBaseStats {
@@ -71,6 +82,11 @@ enum Level: Int, CaseIterable {
     
     var expReward: Int {
         let base = Level.levelToExp[self] ?? 0
+        return Int.random(in: Int(Double(base) * 0.9)...Int(Double(base) * 1.1))
+    }
+    
+    var goldReward: Int {
+        let base = Level.levelToGold[self] ?? 0
         return Int.random(in: Int(Double(base) * 0.9)...Int(Double(base) * 1.1))
     }
 }

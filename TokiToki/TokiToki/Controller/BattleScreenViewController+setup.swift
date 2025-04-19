@@ -12,6 +12,7 @@ extension BattleScreenViewController {
         super.viewDidLoad()
         // One-time setup that should only happen once
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        view.bringSubviewToFront(logBackground)
         resetBattleState()
     }
 
