@@ -18,7 +18,7 @@ class BattleEndComponent: ScreenwideVisualFXComponent<BattleEndedEvent> {
         let visualFX = BattleEndVisualFX(parentViewController: viewController)
         self.effect = visualFX
 
-        let customMessage = getCustomMessage(isWin: event.isWin)
+        let customMessage = getCustomMessage(event)
 
         visualFX.play(isWin: event.isWin, autoNavigateAfter: 5, message: customMessage) {
             // Navigate back when timer completes
@@ -26,11 +26,13 @@ class BattleEndComponent: ScreenwideVisualFXComponent<BattleEndedEvent> {
         }
     }
 
-    private func getCustomMessage(isWin: Bool) -> String {
-        if isWin {
-            return "Congratulations! Your team has triumphed over the enemy. You received 100 gold and 50 XP."
+    private func getCustomMessage(_ event: BattleEndedEvent) -> String {
+        if event.isWin {
+            return "Congratulations! Your team has triumphed over the enemy. You received " +
+            "\(event.gold) gold and each toki received \(event.exp) XP."
         } else {
-            return "Your team has been defeated. Better luck next time! You can retry this battle or train your team further."
+            return "Your team has been defeated. Better luck next time! Don’t give up " +
+            "— train harder and come back stronger!"
         }
     }
 }

@@ -11,16 +11,17 @@ extension BattleScreenViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // One-time setup that should only happen once
-        
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        view.bringSubviewToFront(logBackground)
         resetBattleState()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Reset the battle state when returning to this screen
-        resetBattleState()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        
+//        // Reset the battle state when returning to this screen
+//        resetBattleState()
+//    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -31,7 +32,6 @@ extension BattleScreenViewController {
 
     private func resetBattleState() {
         // Put all the initialization code here
-
         configureSkillIcons()
         configureViews()
         addGestureRecognisers()
@@ -41,8 +41,13 @@ extension BattleScreenViewController {
         if tokis.isEmpty {
             tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
         }
-        
-        configure(tokis, [necroMonsterToki, rhinoMonsterToki, golemMonsterToki])
+        let defaultEnemies = [dragonMonsterToki, rhinoMonsterToki, golemMonsterToki]
+        let enemies = self.levelManager?.getEnemies() ?? defaultEnemies
+        configure(tokis, enemies)
+    }
+    
+    func configureDifficulty(_ level: Level) {
+        self.levelManager = LevelManager(level: level)
     }
     
     func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
@@ -59,8 +64,12 @@ extension BattleScreenViewController {
         hideTokisIfNoTokiInThatSlot(opponentEntities, opponentTokisViews)
         addMappingOfOpponentEntitiesToImageView(opponentEntities)
         addMappingOfPlayerEntitiesToImageView(playerEntities)
-
-        self.gameEngine = GameEngine(playerTeam: playerEntities, opponentTeam: opponentEntities)
+        
+        guard let levelManager = levelManager else {
+            return
+        }
+        self.gameEngine = GameEngine(playerTeam: playerEntities, opponentTeam: opponentEntities,
+                                     levelManager: levelManager)
         self.gameEngine?.addObserver(self)
         self.gameEngine?.addDelegate(self)
         

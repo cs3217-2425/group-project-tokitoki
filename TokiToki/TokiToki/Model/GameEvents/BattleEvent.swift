@@ -47,4 +47,6 @@ struct EntityDefeatedEvent: BattleEvent {
 
 struct BattleEndedEvent: BattleEvent {
     let isWin: Bool
+    let exp: Int
+    let gold: Int
 }

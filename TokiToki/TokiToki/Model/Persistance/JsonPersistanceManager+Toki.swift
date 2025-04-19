@@ -35,6 +35,7 @@ extension JsonPersistenceManager {
                 }
                 
                 logger.log("Saved toki \(newToki.name)")
+                logger.log("Saved toki equipments\(newToki.equipmentIds)")
             }
 
             // Combine tokis from other players with the updated/current player's tokis

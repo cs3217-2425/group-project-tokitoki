@@ -92,7 +92,10 @@ extension TokiDisplay {
                         else {
                             return nil
                         }
-                        let newCalc = strat1.effectCalculators + strat2.effectCalculators
+                        var newCalc: [EffectCalculator] = []
+                        for i in 0..<min(strat1.effectCalculators.count, strat2.effectCalculators.count) {
+                            newCalc.append(strat1.effectCalculators[i].merge(strat2.effectCalculators[i]))
+                        }
                         let newStrat = PotionEffectStrategy(effectCalculators: newCalc)
                         let usage: ConsumableUsageContext = {
                             if let raw = recipeJson.usageContext,

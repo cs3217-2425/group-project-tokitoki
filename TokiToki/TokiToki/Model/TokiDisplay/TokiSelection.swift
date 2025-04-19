@@ -49,13 +49,41 @@ class TokiSelection {
             return
         }
         
-        // Switch to the BattleScreen storyboard.
-        let battleStoryboard = UIStoryboard(name: "BattleScreen", bundle: nil)
-        if let battleVC = battleStoryboard.instantiateInitialViewController() {
-            battleVC.modalPresentationStyle = .fullScreen
-            vcont.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-            vcont.navigationController?.pushViewController(battleVC, animated: true)
+        let alertController = UIAlertController(title: "Select Difficulty", message: "Choose your difficulty level.", preferredStyle: .alert)
+        
+        let easyAction = UIAlertAction(title: "Easy", style: .default) { _ in
+            self.navigateToBattle(difficulty: .easy, vcont)
         }
+        let normalAction = UIAlertAction(title: "Normal", style: .default) { _ in
+            self.navigateToBattle(difficulty: .normal, vcont)
+        }
+        let hardAction = UIAlertAction(title: "Hard", style: .default) { _ in
+            self.navigateToBattle(difficulty: .hard, vcont)
+        }
+        let hellAction = UIAlertAction(title: "Hell", style: .default) { _ in
+            self.navigateToBattle(difficulty: .hell, vcont)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alertController.addAction(easyAction)
+        alertController.addAction(normalAction)
+        alertController.addAction(hardAction)
+        alertController.addAction(hellAction)
+        alertController.addAction(cancelAction)
+        
+        vcont.present(alertController, animated: true, completion: nil)
+    }
+    
+    private func navigateToBattle(difficulty: Level, _ controller: UIViewController) {
+        let storyboard = UIStoryboard(name: "BattleScreen", bundle: nil)
+        guard let viewController = storyboard.instantiateViewController(withIdentifier: "BattleVC")
+                as? BattleScreenViewController else {
+            return
+        }
+        viewController.configureDifficulty(difficulty)
+        viewController.modalPresentationStyle = .fullScreen
+        controller.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func prepare(for segue: UIStoryboardSegue, sender: Any?) {

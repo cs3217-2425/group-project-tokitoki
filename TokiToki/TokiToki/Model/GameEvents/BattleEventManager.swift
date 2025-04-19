@@ -28,8 +28,8 @@ class BattleEventManager {
         EventBus.shared.post(event)
     }
 
-    func publishBattleEndedEvents(isWin: Bool) {
-        let event = BattleEndedEvent(isWin: isWin)
+    func publishBattleEndedEvents(isWin: Bool, exp: Int, gold: Int) {
+        let event = BattleEndedEvent(isWin: isWin, exp: exp, gold: gold)
         EventBus.shared.post(event)
     }
 }

@@ -25,6 +25,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
             logManager.observer = battleLogObserver
         }
     }
+    internal var levelManager: LevelManager
 
     internal let MAX_ACTION_BAR: Float = 100
     internal let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
@@ -40,13 +41,14 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal let statusEffectsSystem = StatusEffectsSystem()
     internal let statsModifiersSystem = StatsModifiersSystem()
     internal let equipmentSystem = EquipmentSystem()
+    internal let aiSystem = AiSystem()
 
     internal var savedPlayersPlusOpponents: [GameStateEntity] = []
     internal var savedPlayerTeam: [GameStateEntity] = []
     internal var savedOpponentTeam: [GameStateEntity] = []
     internal var savedEquipments: [Equipment] = []
 
-    init(playerTeam: [GameStateEntity], opponentTeam: [GameStateEntity]) {
+    init(playerTeam: [GameStateEntity], opponentTeam: [GameStateEntity], levelManager: LevelManager) {
         self.playerTeam = playerTeam
         self.opponentTeam = opponentTeam
         self.playersPlusOpponents = playerTeam + opponentTeam
@@ -54,6 +56,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
         self.turnSystem = TurnSystem(statsSystem, MAX_ACTION_BAR, MULTIPLIER_FOR_ACTION_METER)
+        self.levelManager = levelManager
         
         self.globalStatusEffectsManager = GlobalStatusEffectsManager(statusEffectsSystem, MAX_ACTION_BAR,
                                                                      MULTIPLIER_FOR_ACTION_METER)
@@ -112,16 +115,25 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         return isBattleOver()
     }
 
+    fileprivate func addExpAndGold(_ exp: Int, _ gold: Int) {
+        savedPlayerTeam.forEach {
+            $0.toki.baseStats.exp += exp
+        }
+        PlayerManager.shared.updateAfterBattle(exp: exp, gold: gold, isWin: true)
+    }
+    
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty || opponentTeam.isEmpty {
             let isWin = opponentTeam.isEmpty
+            let exp = levelManager.getExp()
+            let gold = levelManager.getGold()
             if isWin {
-                savedPlayerTeam.forEach {
-                    $0.toki.baseStats.exp += 10
-                }
+                addExpAndGold(exp, gold)
+            } else {
+                PlayerManager.shared.updateBattleStatistics(isWin: false)
             }
             logMessage("Battle ended! You \(isWin ? "won" : "lost")!")
-            battleEventManager.publishBattleEndedEvents(isWin: isWin)
+            battleEventManager.publishBattleEndedEvents(isWin: isWin, exp: exp, gold: gold)
             return true
         }
         return false

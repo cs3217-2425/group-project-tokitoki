@@ -21,7 +21,8 @@ class StatusEffectsSystem: System {
             }
 
             for effect in statusComponent.activeEffects {
-                statusEffectApplierAndPublisherDelegate?.applyStatusEffectAndPublishResult(effect, entity)
+                statusEffectApplierAndPublisherDelegate?
+                    .applyStatusEffectAndPublishResult(effect, entity)
             }
 
             updateEffects(statusComponent)

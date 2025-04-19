@@ -35,19 +35,6 @@ class PlayerManager {
         getOrCreatePlayer().ownedEquipments
     }
 
-//    func countConsumables() -> [ConsumableGroupings] {
-//        let countsDict = getEquipmentComponent().inventory
-//            .filter { item in
-//                guard item.equipmentType == .consumable,
-//                      let consumable = item as? ConsumableEquipment else { return false }
-//                return consumable.usageContext == .battleOnly || consumable.usageContext == .anywhere
-//            }
-//            .reduce(into: [String: Int]()) { counts, item in
-//                counts[item.name, default: 0] += 1
-//            }
-//
-//       return countsDict.map { ConsumableGroupings(name: $0.key, quantity: $0.value) }
-//    }
     // MARK: - Player Access
 
     func getPlayer() -> Player? {
@@ -125,12 +112,25 @@ class PlayerManager {
         let stats = player.statistics
         return (stats.totalBattles, stats.battlesWon, stats.winRate)
     }
+    
+    func updateBattleStatistics(isWin: Bool) {
+        var player = getOrCreatePlayer()
+        player.recordBattleResult(won: isWin)
+        currentPlayer = player
+        savePlayer()
+    }
 
     func updatePlayerName(_ newName: String) {
         var player = getOrCreatePlayer()
         player.name = newName
         currentPlayer = player
         savePlayer()
+    }
+    
+    func updateAfterBattle(exp: Int, gold: Int, isWin: Bool) {
+        addCurrency(gold)
+        addExperience(exp)
+        updateBattleStatistics(isWin: isWin)
     }
 
     // MARK: - Daily Pull Limit Management

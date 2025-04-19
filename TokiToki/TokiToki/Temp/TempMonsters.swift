@@ -34,8 +34,9 @@ func createTotemEntity(_ totem: Toki) -> GameStateEntity {
     guard let skillsComponent = entity.getComponent(ofType: SkillsComponent.self) else {
         return entity
     }
-    let rule: AIRule = TeamHealthBelowPercentageRule(priority: 3, action: skillsComponent.skills[0], percentage: 50)
-    entity.addComponent(AIComponent(entity: entity, rules: [rule], skills: [skillsComponent.skills[1]]))
+    let rule: AIRule = TeamHealthBelowPercentageRule(priority: 3, action: skillsComponent.skills[1], percentage: 50)
+    entity.addComponent(AIComponent(entity: entity, rules: [rule], skills:
+                                        [skillsComponent.skills[0], skillsComponent.skills[2]]))
     return entity
 }
 
@@ -47,7 +48,7 @@ let necro = createNecroEntity(necroMonsterToki)
 let monsterBaseStats = TokiBaseStats(hp: 100, attack: 70, defense: 10, speed: 90, heal: 0, exp: 0)
 let dragonBaseStats = TokiBaseStats(hp: 200, attack: 100, defense: 10, speed: 90, heal: 0, exp: 0)
 let necroBaseStats = TokiBaseStats(hp: 180, attack: 80, defense: 15, speed: 90, heal: 30, exp: 0)
-let electricFoxBaseStats = TokiBaseStats(hp: 150, attack: 70, defense: 10, speed: 180, heal: 30, exp: 0)
+let electricFoxBaseStats = TokiBaseStats(hp: 150, attack: 70, defense: 10, speed: 150, heal: 30, exp: 0)
 
 let dragonMonsterToki = Toki(
     name: "Dragon",
@@ -93,7 +94,7 @@ let totemMonsterToki = Toki(
     name: "Totem",
     rarity: .rare,
     baseStats: monsterBaseStats,
-    skills: [singleHeal, aoeBuff],
+    skills: [basicAttack, singleHeal, aoeBuff],
     equipments: [],
     elementType: [.air],
     level: 1
@@ -108,6 +109,3 @@ let electricFoxMonsterToki = Toki(
     elementType: [.lightning],
     level: 5
 )
-
-
-
