@@ -239,6 +239,13 @@ class GachaViewController: UIViewController {
             return
         }
 
+        let item = drawnItems[0]
+        let event = GachaPullEvent(
+            itemName: item.name,
+            rarity: item.rarity
+        )
+        EventBus.shared.post(event)
+
         // Update currency display immediately after purchase
         updatePlayerCurrencyLabel()
 

@@ -18,7 +18,6 @@ extension GameEvent {
 }
 
 struct GachaPullEvent: GameEvent {
-    let userId: UUID
-    let itemId: String
     let itemName: String
+    let rarity: ItemRarity
 }

@@ -11,8 +11,6 @@ import Foundation
 struct SoundConfiguration: Codable {
     // Battle related sound effects
     var skillSounds: [String: String]
-    var elementSounds: [String: String]
-    var statusEffectSounds: [String: String]
 
     var defeatSound: String
     var victorySound: String
@@ -27,19 +25,13 @@ struct SoundConfiguration: Codable {
         SoundConfiguration(
             skillSounds: [
                 "Fireball": "fire_skill",
-                "Ice Shard": "ice_skill",
-                "Lightning Bolt": "lightning_skill"
-            ],
-            elementSounds: [
-                "fire": "fire_impact",
-                "water": "water_impact",
-                "earth": "earth_impact",
-                "air": "air_impact"
-            ],
-            statusEffectSounds: [
-                "poison": "poison_effect",
-                "burn": "burn_effect",
-                "freeze": "freeze_effect"
+                "Flame Dance": "fire_skill",
+                "Excalibur": "slash",
+                "Ice Shot": "ice_skill",
+                "Arrow Rain": "soft_aoe",
+                "Lightning Storm": "soft_aoe",
+                "Earthquake": "earthquake",
+                "Acid Spray": "soft_aoe"
             ],
             defeatSound: "defeat",
             victorySound: "victory",

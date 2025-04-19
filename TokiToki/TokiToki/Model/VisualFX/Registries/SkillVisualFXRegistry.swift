@@ -64,5 +64,24 @@ class SkillVisualFXRegistry {
         register(skillVisual: .lightningStorm) { sourceView, targetView in
             SkillVisualFXFactory.createLightningStorm(sourceView: sourceView, targetView: targetView)
         }
-    }
+
+        register(skillVisual: .earthquake) { sourceView, targetView in
+            SkillVisualFXFactory.createEarthquake(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .flameDance) { sourceView, targetView in
+            SkillVisualFXFactory.createFlameDance(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .healingWave) { sourceView, targetView in
+            SkillVisualFXFactory.createHealingWave(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .earthShield) { sourceView, targetView in
+            SkillVisualFXFactory.createEarthShield(sourceView: sourceView, targetView: targetView)
+        }
+
+        register(skillVisual: .acidSpray) { sourceView, targetView in
+            SkillVisualFXFactory.createAcidSpray(sourceView: sourceView, targetView: targetView)
+        }    }
 }
