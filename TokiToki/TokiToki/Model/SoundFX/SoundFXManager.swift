@@ -51,7 +51,7 @@ class SoundFXManager {
 
     private func setupGachaSoundComponents() {
         soundComponents.append(contentsOf: [
-//            GachaPullSoundFXComponent(soundPlayer: soundPlayer)
+            GachaPullSoundFXComponent(soundPlayer: soundPlayer)
         ])
     }
 
