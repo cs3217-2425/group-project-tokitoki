@@ -12,7 +12,7 @@ protocol GachaViewControllerDelegate: AnyObject {
 }
 
 class GachaViewController: UIViewController {
-    let DEFAULT_DAILY_PULL_LIMIT = 99
+    let DEFAULT_DAILY_PULL_LIMIT = 3
     @IBOutlet private var gachaPackLabel: UILabel!
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var playerCurrencyLabel: UILabel!

@@ -47,7 +47,7 @@ let necro = createNecroEntity(necroMonsterToki)
 let monsterBaseStats = TokiBaseStats(hp: 100, attack: 70, defense: 10, speed: 90, heal: 0, exp: 0)
 let dragonBaseStats = TokiBaseStats(hp: 200, attack: 100, defense: 10, speed: 90, heal: 0, exp: 0)
 let necroBaseStats = TokiBaseStats(hp: 180, attack: 80, defense: 15, speed: 90, heal: 30, exp: 0)
-let electricFoxBaseStats = TokiBaseStats(hp: 150, attack: 70, defense: 10, speed: 180, heal: 30, exp: 0)
+let electricFoxBaseStats = TokiBaseStats(hp: 150, attack: 70, defense: 10, speed: 150, heal: 30, exp: 0)
 
 let dragonMonsterToki = Toki(
     name: "Dragon",
