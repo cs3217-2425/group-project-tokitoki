@@ -34,16 +34,16 @@ class SoundFXManager {
     // MARK: - Component Setup
 
     private func setupBattleSoundComponents() {
-        var statusSoundMap: [StatusEffectType: String] = [:]
-        for (statusString, soundName) in configManager.configuration.statusEffectSounds {
-            if let statusType = StatusEffectType(rawValue: statusString) {
-                statusSoundMap[statusType] = soundName
-            }
-        }
+//        var statusSoundMap: [StatusEffectType: String] = [:]
+//        for (statusString, soundName) in configManager.configuration.statusEffectSounds {
+//            if let statusType = StatusEffectType(rawValue: statusString) {
+//                statusSoundMap[statusType] = soundName
+//            }
+//        }
 
         soundComponents.append(contentsOf: [
-//            SkillSoundFXComponent(soundPlayer: soundPlayer,
-//                                 skillSoundMap: configManager.configuration.skillSounds),
+            SkillSoundFXComponent(soundPlayer: soundPlayer,
+                                 skillSoundMap: configManager.configuration.skillSounds),
             DamageSoundFXComponent(soundPlayer: soundPlayer),
             BattleEndSoundFXComponent(soundPlayer: soundPlayer)
         ])
