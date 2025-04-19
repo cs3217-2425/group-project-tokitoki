@@ -165,7 +165,7 @@ let aoeBuff = BaseSkill(
     effectDefinitions: [
         EffectDefinition(targetType: .allAllies, effectCalculators: [
             StatsModifiersCalculator(statsModifiers: [
-                StatsModifier(remainingDuration: 2, attack: 1.5, defense: 1.5, speed: 1.5, heal: 1.5)
+                StatsModifier(remainingDuration: 2, attack: 1.5, defense: 1.5, speed: 1.0, heal: 1.5)
             ])
         ])
     ]
@@ -214,13 +214,13 @@ let flash = BaseSkill(
     description: "Deals damage to single enemy and buff speed.",
     cooldown: 3,
     effectDefinitions: [
-        EffectDefinition(targetType: .singleEnemy, effectCalculators: [
-            AttackCalculator(elementType: .lightning, basePower: 50)
-        ]),
         EffectDefinition(targetType: .ownself, effectCalculators: [
             StatsModifiersCalculator(statsModifiers: [
-                StatsModifier(remainingDuration: 2, attack: 1.0, defense: 1.0, speed: 1.5, heal: 1)
+                StatsModifier(remainingDuration: 1, attack: 1.0, defense: 1.0, speed: 1.5, heal: 1)
             ])
+        ]),
+        EffectDefinition(targetType: .singleEnemy, effectCalculators: [
+            AttackCalculator(elementType: .lightning, basePower: 50)
         ])
     ]
 ).clone()

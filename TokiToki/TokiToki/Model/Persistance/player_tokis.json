@@ -18,10 +18,10 @@
     },
     "skillNames": [
       "Basic Attack",
-      "Excalibur"
+      "Excalibur",
+      "Final Judgement"
     ],
     "equipmentIds": [
-      "a7c5e913-d4f8-4e0a-92c7-7d8b9e5a7e3d"
     ]
   },
   {
@@ -71,7 +71,6 @@
       "Arrow Rain"
     ],
     "equipmentIds": [
-      "b8d6c4a2-3e1f-4a7b-8c5d-7e8f9a0b1c2d"
     ]
   },
   {

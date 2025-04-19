@@ -20,5 +20,6 @@ let skillsToIconImage: [String: String] = [
     "Earthquake": "earthquake.jpeg",
     "Earth Shield" : "earthShield.jpeg",
     "Hurricane": "hurricane.jpeg",
-    "Hail Storm": "hailStorm.jpeg"
+    "Hail Storm": "hailStorm.jpeg",
+    "Final Judgement": "finalJudgement.jpeg"
 ]

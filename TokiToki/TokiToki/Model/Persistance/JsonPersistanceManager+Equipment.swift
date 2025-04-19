@@ -114,6 +114,10 @@ extension JsonPersistenceManager {
                     consumableType = "candy"
                     bonusExp = strat.bonusExp
                 }
+                else if c.name.lowercased().contains("revival ring") {
+                    typeString = "revivalRing"
+                    consumableType = "revivalRing"
+                }
 
                 let usageCtxString: String = {
                     switch c.usageContext {

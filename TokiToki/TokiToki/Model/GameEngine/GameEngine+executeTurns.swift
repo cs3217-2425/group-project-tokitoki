@@ -31,7 +31,7 @@ extension GameEngine {
 
     internal func updateLogAndEntityAfterActionTaken(_ results: [EffectResult], _ currentGameStateEntity: GameStateEntity) {
         logMultipleResults(results)
-        updateEntityForNewTurnAndAllEntities(currentGameStateEntity)
+        updateAllEntities(currentGameStateEntity)
     }
 
     func queueAction(_ action: Action) {
@@ -60,34 +60,34 @@ extension GameEngine {
 
     internal func executeOpponentTurn(_ entity: GameStateEntity) {
         battleEffectsDelegate?.showWhoseTurn(entity.id)
-        if let aiComponent = entity.getComponent(ofType: AIComponent.self) {
-            let action = aiComponent.determineAction(entity, playerTeam, opponentTeam, effectContext)
 
-            let results = action.execute()
-            if let noAction = action as? NoAction {
-                logMultipleResults(results)
-                updateEntityForNewTurnAndAllEntities(entity)
-                return
-            }
+        let action = aiSystem.determineAction(entity, playerTeam, opponentTeam, effectContext)
+        updateSkillCooldowns(entity)
 
-            let targets = results.compactMap { $0.entity as? GameStateEntity }
+        let results = action.execute()
+        if let noAction = action as? NoAction {
+            logMultipleResults(results)
+            updateAllEntities(entity)
+            return
+        }
 
-            if let skillAction = action as? UseSkillAction {
-                createBattleEventAndPublishToEventBus(entity, skillAction.skill, targets)
-            }
+        let targets = results.compactMap { $0.entity as? GameStateEntity }
 
-            for result in results {
-                battleEventManager.publishEffectResult(result, sourceId: entity.id)
-            }
+        if let skillAction = action as? UseSkillAction {
+            createBattleEventAndPublishToEventBus(entity, skillAction.skill, targets)
+        }
 
-            battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
-                self?.logMultipleResults(results)
-                self?.updateEntityForNewTurnAndAllEntities(entity)
-            }
+        for result in results {
+            battleEventManager.publishEffectResult(result, sourceId: entity.id)
+        }
+
+        battleEffectsDelegate?.showUseSkill(entity.id, false) { [weak self] in
+            self?.logMultipleResults(results)
+            self?.updateAllEntities(entity)
         }
     }
 
-    func updateEntityForNewTurnAndAllEntities(_ entity: GameStateEntity) {
+    func updateAllEntities(_ entity: GameStateEntity) {
         updateEntityForNewTurn(entity)
         updateHealthBars { [weak self] in
             self?.handleDeadBodiesInSequence()
@@ -98,7 +98,7 @@ extension GameEngine {
     // Assume that this function which is only called in isolation when toki is immobilised, will not
     // activate any passives of passive equipments equipped on a toki
     internal func updateEntityForNewTurn(_ entity: GameStateEntity) {
-        updateSkillCooldowns(entity)
+        //updateSkillCooldowns(entity)
         statusEffectsSystem.update([entity])
         statsModifiersSystem.update([entity])
         turnSystem.endTurn(for: entity)

@@ -21,6 +21,7 @@ extension GameEngine {
             }
 
             if statusEffectsSystem.checkIfImmobilised(currentGameStateEntity) {
+                updateSkillCooldowns(currentGameStateEntity)
                 updateEntityForNewTurn(currentGameStateEntity)
                 continue
             }
@@ -56,5 +57,6 @@ extension GameEngine {
         }
         battleEffectsDelegate?.updateSkillIcons(skillIcons, currentGameStateEntity)
         battleEffectsDelegate?.showWhoseTurn(currentGameStateEntity.id)
+        updateSkillCooldowns(currentGameStateEntity)
     }
 }

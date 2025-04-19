@@ -77,8 +77,9 @@ extension TokiDisplay {
                  self.equipmentFacade.equipItem(equipment, to: targetSlot)
 
                  // Sync the Toki model in slot order
-                 let updatedEquipped = self.equipmentFacade.equipmentComponent.equipped
-                 self.toki.equipments = slotOrder.compactMap { updatedEquipped[$0] }
+//                 let updatedEquipped = self.equipmentFacade.equipmentComponent.equipped
+//                 self.toki.equipments = [slotOrder.compactMap { updatedEquipped[$0] }]
+                 self.toki.equipments = [equipment]
 
                  // Persist & refresh
                  self.saveTokiState()
@@ -152,7 +153,6 @@ extension TokiDisplay {
                 self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: statIncrease, defense: 0, speed: 0,
                                                       heal: 0, exp: 0))
                 self.updateUI(control)
-//                PlayerManager.shared.savePlayer()
             }))
             alert.addAction(UIAlertAction(title: "Defense", style: .default, handler: { _ in
                 self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: 0, defense: statIncrease, speed: 0,

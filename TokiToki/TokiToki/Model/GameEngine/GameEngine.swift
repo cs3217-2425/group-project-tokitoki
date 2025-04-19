@@ -41,6 +41,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal let statusEffectsSystem = StatusEffectsSystem()
     internal let statsModifiersSystem = StatsModifiersSystem()
     internal let equipmentSystem = EquipmentSystem()
+    internal let aiSystem = AiSystem()
 
     internal var savedPlayersPlusOpponents: [GameStateEntity] = []
     internal var savedPlayerTeam: [GameStateEntity] = []
