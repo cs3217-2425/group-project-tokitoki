@@ -63,6 +63,11 @@ enum SkillVisual: String, CaseIterable {
     case iceShot = "ice shot"
     case arrowRain = "arrow rain"
     case lightningStorm = "lightning storm"
+    case earthquake = "earthquake"
+    case earthShield = "earth shield"
+    case flameDance = "flame dance"
+    case healingWave = "healing wave"
+    case acidSpray = "acid spray"
 
     // Fallback for string-based lookup when needed
     static func fromString(_ string: String) -> SkillVisual? {
