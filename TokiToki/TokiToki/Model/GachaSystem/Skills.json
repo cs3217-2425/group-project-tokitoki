@@ -209,7 +209,7 @@
       "id": "water-blast",
       "name": "Water Blast",
       "description": "Blasts the enemy with a jet of water.",
-      "cooldown": 1,
+      "cooldown": 3,
       "effectDefinitions": [
         {
           "targetType": "singleEnemy",
