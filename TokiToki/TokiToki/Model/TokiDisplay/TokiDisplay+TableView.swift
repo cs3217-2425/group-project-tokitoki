@@ -108,8 +108,6 @@ extension TokiDisplay {
             self.toki.equipments = slotOrder.compactMap {
                 self.equipmentFacade.equipmentComponent.equipped[$0]
             }
-            // Persist and refresh UI
-            self.saveTokiState()
             self.updateUI(control)
             completion(true)
         }
