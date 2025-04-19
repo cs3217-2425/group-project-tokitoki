@@ -51,17 +51,34 @@ class CraftingModel {
     }
 
     private func updateState(with craftedItem: Equipment) {
-        [originalItem, selectedItem].compactMap { $0 }.forEach { item in
-            if let idx = toki.equipments.firstIndex(where: { $0.id == item.id }) {
-                toki.equipments.remove(at: idx)
-            }
+
+        // Collect the two source items
+        let ingredients = [originalItem, selectedItem].compactMap { $0 }
+
+        // 1. Remove from every place they might live
+        for item in ingredients {
+
+            // ‑‑ inventory
             equipmentComponent.inventory.removeAll { $0.id == item.id }
+
+            // ‑‑ equipped slots
+            equipmentComponent.equipped = equipmentComponent.equipped
+                .filter { $0.value.id != item.id }
+
+            // ‑‑ the Toki’s local array (buff calculations, etc.)
+            toki.equipments.removeAll { $0.id == item.id }
         }
+
+        // 2. Add the crafted item back to the Toki (same visual position)
         if originalItemIndex >= toki.equipments.count {
             toki.equipments.append(craftedItem)
         } else {
             toki.equipments.insert(craftedItem, at: originalItemIndex)
         }
-        equipmentComponent.inventory.append(craftedItem)
+
+        // 3. Ensure it’s present exactly once in inventory
+        if !equipmentComponent.inventory.contains(where: { $0.id == craftedItem.id }) {
+            equipmentComponent.inventory.append(craftedItem)
+        }
     }
 }

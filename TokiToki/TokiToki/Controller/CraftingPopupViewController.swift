@@ -16,7 +16,6 @@ class CraftingPopupViewController: UIViewController {
     private var model: CraftingModel!
     private var popupView: CraftingPopupView!
 
-    // Use loadView to set the popupView as the controller's root view
     override func loadView() {
         popupView = CraftingPopupView()
         popupView.delegate = self
@@ -49,7 +48,7 @@ class CraftingPopupViewController: UIViewController {
 extension CraftingPopupViewController: CraftingPopupViewDelegate {
     func popupViewDidTapCraft(_ popupView: CraftingPopupView) {
         do {
-            let crafted = try model.craft(withFacade: tokiDisplay.equipmentFacade)
+            _ = try model.craft(withFacade: tokiDisplay.equipmentFacade)
             ServiceLocator.shared.dataStore.save()
             onCraftComplete?()
             dismiss(animated: true)
