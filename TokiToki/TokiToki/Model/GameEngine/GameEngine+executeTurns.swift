@@ -64,6 +64,11 @@ extension GameEngine {
             let action = aiComponent.determineAction(entity, playerTeam, opponentTeam, effectContext)
 
             let results = action.execute()
+            if let noAction = action as? NoAction {
+                logMultipleResults(results)
+                updateEntityForNewTurnAndAllEntities(entity)
+                return
+            }
 
             let targets = results.compactMap { $0.entity as? GameStateEntity }
 

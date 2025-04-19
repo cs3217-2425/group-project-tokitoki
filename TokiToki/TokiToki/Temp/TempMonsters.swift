@@ -93,7 +93,7 @@ let totemMonsterToki = Toki(
     name: "Totem",
     rarity: .rare,
     baseStats: monsterBaseStats,
-    skills: [singleHeal, aoeBuff],
+    skills: [basicAttack, singleHeal, aoeBuff],
     equipments: [],
     elementType: [.air],
     level: 1
@@ -108,6 +108,3 @@ let electricFoxMonsterToki = Toki(
     elementType: [.lightning],
     level: 5
 )
-
-
-

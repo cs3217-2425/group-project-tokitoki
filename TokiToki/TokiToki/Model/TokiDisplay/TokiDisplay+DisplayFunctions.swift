@@ -144,7 +144,7 @@ extension TokiDisplay {
             return
         }
         let statIncrease = 5
-        let hpIncrease = 30
+        let hpIncrease = 10
         let tokiLevel = toki.level
         if toki.baseStats.exp >= levelInfo[tokiLevel] {
             let alert = UIAlertController(title: "Level Up", message: "Choose a stat to increase", preferredStyle: .actionSheet)
@@ -152,7 +152,7 @@ extension TokiDisplay {
                 self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: statIncrease, defense: 0, speed: 0,
                                                       heal: 0, exp: 0))
                 self.updateUI(control)
-                PlayerManager.shared.savePlayer()
+//                PlayerManager.shared.savePlayer()
             }))
             alert.addAction(UIAlertAction(title: "Defense", style: .default, handler: { _ in
                 self.toki.levelUp(stat: TokiBaseStats(hp: hpIncrease, attack: 0, defense: statIncrease, speed: 0,

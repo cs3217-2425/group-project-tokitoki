@@ -37,7 +37,7 @@ class AttackCalculator: EffectCalculator {
 
         // Base formula
         var damage = (statsSystem.getAttack(source) * basePower / 100)
-        - (statsSystem.getDefense(target) / 4)
+        - (100 / (100 + statsSystem.getDefense(target)))
 
         let elementMultiplier = elementsSystem.getEffectiveness(of: elementType,
                                                                 against: targetStats.elementType)

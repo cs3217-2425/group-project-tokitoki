@@ -25,6 +25,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
             logManager.observer = battleLogObserver
         }
     }
+    internal var levelManager: LevelManager
 
     internal let MAX_ACTION_BAR: Float = 100
     internal let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
@@ -46,7 +47,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal var savedOpponentTeam: [GameStateEntity] = []
     internal var savedEquipments: [Equipment] = []
 
-    init(playerTeam: [GameStateEntity], opponentTeam: [GameStateEntity]) {
+    init(playerTeam: [GameStateEntity], opponentTeam: [GameStateEntity], levelManager: LevelManager) {
         self.playerTeam = playerTeam
         self.opponentTeam = opponentTeam
         self.playersPlusOpponents = playerTeam + opponentTeam
@@ -54,6 +55,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         self.savedOpponentTeam = opponentTeam
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
         self.turnSystem = TurnSystem(statsSystem, MAX_ACTION_BAR, MULTIPLIER_FOR_ACTION_METER)
+        self.levelManager = levelManager
         
         self.globalStatusEffectsManager = GlobalStatusEffectsManager(statusEffectsSystem, MAX_ACTION_BAR,
                                                                      MULTIPLIER_FOR_ACTION_METER)
@@ -112,13 +114,17 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         return isBattleOver()
     }
 
+    fileprivate func addExp() {
+        savedPlayerTeam.forEach {
+            $0.toki.baseStats.exp += levelManager.getExp()
+        }
+    }
+    
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty || opponentTeam.isEmpty {
             let isWin = opponentTeam.isEmpty
             if isWin {
-                savedPlayerTeam.forEach {
-                    $0.toki.baseStats.exp += 10
-                }
+                addExp()
             }
             logMessage("Battle ended! You \(isWin ? "won" : "lost")!")
             battleEventManager.publishBattleEndedEvents(isWin: isWin)
