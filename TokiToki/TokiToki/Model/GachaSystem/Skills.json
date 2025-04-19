@@ -279,6 +279,57 @@
       ]
     },
     {
+      "id": "HailStorm",
+      "name": "Hail Storm",
+      "description": "Creates a hail that damages all enemies with a chance to freeze",
+      "cooldown": 4,
+      "effectDefinitions": [
+          {
+            "targetType": "allEnemies",
+            "calculators": [
+              {
+                "calculatorType": "attack",
+                "elementType": "ice",
+                "basePower": 45
+              },
+              {
+                "calculatorType": "statusEffect",
+                "statusEffectChance": 0.70,
+                "statusEffect": "frozen",
+                "statusEffectDuration": 1,
+                "statusEffectStrength": 1.0
+              }
+            ]
+          }
+      ]
+    },
+    {
+      "id": "Hurricane",
+      "name": "Hurricane",
+      "description": "Creates a hurricane to attack all enemies and slow them down",
+      "cooldown": 4,
+      "effectDefinitions": [
+          {
+            "targetType": "allEnemies",
+            "calculators": [
+              {
+                "calculatorType": "attack",
+                "elementType": "air",
+                "basePower": 60
+              },
+              {
+                "calculatorType": "statsModifier",
+                "statsModifierDuration": 2,
+                "attackModifier": 1.0,
+                "defenseModifier": 1.0,
+                "speedModifier": 0.5,
+                "healModifier": 1.0
+              }
+            ]
+          }
+      ]
+    },
+    {
       "id": "healingWave",
       "name": "Healing Wave",
       "description": "Heals an ally generously and heals all allies",

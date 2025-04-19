@@ -2,16 +2,16 @@
   {
     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "name": "Ash",
-    "level": 5,
-    "experience": 4250,
-    "currency": 3750,
-    "pullsSinceRare": 2,
-    "dailyPullsCount": 1,
+    "level": 1,
+    "experience": 0,
+    "currency": 1200,
+    "pullsSinceRare": 0,
+    "dailyPullsCount": 0,
     "lastLoginDate": 1712625841.12453,
     "dailyPullsLastReset": 1712604235.48932,
     "statistics": {
-      "totalBattles": 18,
-      "battlesWon": 15
+      "totalBattles": 0,
+      "battlesWon": 0
     }
   },
   {

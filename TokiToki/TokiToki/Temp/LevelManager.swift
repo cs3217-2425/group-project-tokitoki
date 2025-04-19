@@ -35,8 +35,7 @@ class LevelManager {
             return []
         }
         
-        return [boss]
-        //+ Array(minions.shuffled().prefix(2))
+        return [boss] + Array(minions.shuffled().prefix(2))
     }
     
     func getExp() -> Int {

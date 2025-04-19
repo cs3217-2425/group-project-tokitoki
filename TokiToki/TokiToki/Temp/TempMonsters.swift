@@ -34,8 +34,9 @@ func createTotemEntity(_ totem: Toki) -> GameStateEntity {
     guard let skillsComponent = entity.getComponent(ofType: SkillsComponent.self) else {
         return entity
     }
-    let rule: AIRule = TeamHealthBelowPercentageRule(priority: 3, action: skillsComponent.skills[0], percentage: 50)
-    entity.addComponent(AIComponent(entity: entity, rules: [rule], skills: [skillsComponent.skills[1]]))
+    let rule: AIRule = TeamHealthBelowPercentageRule(priority: 3, action: skillsComponent.skills[1], percentage: 50)
+    entity.addComponent(AIComponent(entity: entity, rules: [rule], skills:
+                                        [skillsComponent.skills[0], skillsComponent.skills[2]]))
     return entity
 }
 

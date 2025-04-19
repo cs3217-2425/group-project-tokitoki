@@ -50,7 +50,7 @@
         "baseHeal": 80,
         "baseExp": 0,
         "elementType": "air",
-        "skills": ["Basic Attack"]
+        "skills": ["Basic Attack", "Hurricane", "Hail Storm"]
       }
     ]
 }
