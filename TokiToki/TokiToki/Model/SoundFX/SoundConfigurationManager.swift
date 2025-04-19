@@ -43,15 +43,10 @@ class SoundConfigurationManager {
         configuration.skillSounds[skillName] ?? configuration.defaultSkillSound
     }
 
-    func getElementSound(for elementType: ElementType) -> String {
-        let elementName = String(describing: elementType).lowercased()
-        return configuration.elementSounds[elementName] ?? configuration.defaultDamageSound
-    }
-
-    func getStatusEffectSound(for effectType: StatusEffectType) -> String {
-        let effectName = String(describing: effectType).lowercased()
-        return configuration.statusEffectSounds[effectName] ?? configuration.defaultStatusSound
-    }
+//    func getStatusEffectSound(for effectType: StatusEffectType) -> String {
+//        let effectName = String(describing: effectType).lowercased()
+//        return configuration.statusEffectSounds[effectName] ?? configuration.defaultStatusSound
+//    }
 
     func getHealingSound() -> String {
         configuration.healingSound

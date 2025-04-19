@@ -108,6 +108,80 @@ class SkillVisualFXFactory {
             .build()
     }
 
+    static func createFlameDance(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        let fireColor = UIColor.orange
+
+        return builder
+            .addParticles(type: .smoke, count: 20, size: 15, speed: 20,
+                          lifetime: 0.4, spreadRadius: 400, color: fireColor, isTargetEffect: true)
+            .addParticles(type: .spark, count: 30, size: 10, speed: 30,
+                          lifetime: 0.4, spreadRadius: 400, color: fireColor, isTargetEffect: false)
+            .build()
+    }
+
+    static func createHealingWave(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addColorFlash(color: .green, intensity: 0.2, fade: true, isTargetEffect: true)
+            .addParticles(type: .spark, count: 50, size: 2, speed: 30,
+                          lifetime: 0.4, spreadRadius: 200, isTargetEffect: true)
+            .build()
+    }
+
+    static func createEarthquake(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addColorFlash(color: .red, intensity: 0.2, fade: true, isTargetEffect: true)
+            .addParticles(type: .circle, count: 50, size: 4, speed: 50,
+                          lifetime: 0.2, spreadRadius: 200, color: .brown, isTargetEffect: true)
+            .beginConcurrentGroup()
+            .addColorFlash(color: .brown, intensity: 0.5, fade: true, isTargetEffect: true)
+            .addParticles(type: .circle, count: 50, size: 2, speed: 50,
+                          lifetime: 0.3, spreadRadius: 200, color: .brown, isTargetEffect: true)
+            .beginConcurrentGroup()
+            .addColorFlash(color: .red, intensity: 0.3, fade: true, isTargetEffect: true)
+            .addParticles(type: .circle, count: 70, size: 1, speed: 50,
+                          lifetime: 0.5, spreadRadius: 200, color: .brown, isTargetEffect: true)
+            .build()
+    }
+
+    static func createEarthShield(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addShape(type: .circle, size: 150, color: .brown, filled: true)
+            .addParticles(type: .circle, count: 70, size: 1, speed: 50,
+                          lifetime: 0.5, spreadRadius: 200, color: .brown, isTargetEffect: true)
+            .beginConcurrentGroup()
+            .addColorFlash(color: .green)
+            .build()
+    }
+
+    static func createAcidSpray(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
+        let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
+
+        return builder
+            .addProjectile(
+                shape: .circle,
+                size: 0,
+                color: .purple,
+                filled: true,
+                motionType: .linear,
+                duration: 0.8,
+                trailType: .circle,
+                trailDensity: 20,
+                trailColor: .purple,
+                impactParticleType: .bubble,
+                impactParticleCount: 20,
+                impactFlashColor: .purple
+            )
+            .build()
+    }
+
     // Method to create default effect
     static func createDefaultSkillVisualFX(
         sourceView: UIView,
@@ -117,7 +191,6 @@ class SkillVisualFXFactory {
 
         return builder
             .addColorFlash(color: .red, intensity: 0.5, isTargetEffect: true)
-            .addShape(type: .x, size: 100, color: .white)
             .build()
     }
 }
