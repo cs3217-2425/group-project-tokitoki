@@ -18,7 +18,7 @@ class GachaService: GachaServiceProtocol {
     // MARK: - Properties
 
     private let tokiFactory: TokiFactoryProtocol
-    private let equipmentFactory: EquipmentFactoryProtocol
+    private let equipmentRepository: EquipmentRepositoryProtocol
     private let skillsFactory: SkillsFactoryProtocol
     private let eventService: EventServiceProtocol
     private var gachaPacks: [String: GachaPack] = [:]
@@ -27,11 +27,11 @@ class GachaService: GachaServiceProtocol {
     // MARK: - Initialization
 
     init(tokiFactory: TokiFactoryProtocol,
-         equipmentFactory: EquipmentFactoryProtocol,
+         equipmentRepository: EquipmentRepositoryProtocol,
          skillsFactory: SkillsFactoryProtocol,
          eventService: EventServiceProtocol) {
         self.tokiFactory = tokiFactory
-        self.equipmentFactory = equipmentFactory
+        self.equipmentRepository = equipmentRepository
         self.skillsFactory = skillsFactory
         self.eventService = eventService
         loadGachaPacks()
@@ -139,8 +139,8 @@ class GachaService: GachaServiceProtocol {
                     gachaItem = GachaItemFactory.createTokiGachaItem(template: tokiTemplate, factory: tokiFactory)
                 }
             case .equipment:
-                if let equipmentTemplate = equipmentFactory.getTemplate(named: itemName) {
-                    gachaItem = GachaItemFactory.createEquipmentGachaItem(template: equipmentTemplate, factory: equipmentFactory)
+                if let equipmentTemplate = equipmentRepository.getTemplate(named: itemName) {
+                    gachaItem = GachaItemFactory.createEquipmentGachaItem(template: equipmentTemplate, factory: equipmentRepository)
                 }
             }
 

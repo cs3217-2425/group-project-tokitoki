@@ -41,19 +41,19 @@ class EquipmentGachaItem: IGachaItem {
     let rarity: ItemRarity
     let elementType: [ElementType] = []
     private let template: EquipmentData
-    private let equipmentFactory: EquipmentFactoryProtocol
+    private let equipmentRepository: EquipmentRepositoryProtocol
 
     var ownerId: UUID?
     var dateAcquired: Date?
 
-    init(template: EquipmentData, equipmentFactory: EquipmentFactoryProtocol) {
+    init(template: EquipmentData, equipmentRepository: EquipmentRepositoryProtocol) {
         self.template = template
-        self.equipmentFactory = equipmentFactory
+        self.equipmentRepository = equipmentRepository
         self.name = template.name
         self.rarity = ItemRarity(intValue: template.rarity) ?? .common
     }
 
     func createInstance() -> Any {
-        equipmentFactory.createEquipment(from: template)
+        equipmentRepository.createEquipment(from: template)
     }
 }

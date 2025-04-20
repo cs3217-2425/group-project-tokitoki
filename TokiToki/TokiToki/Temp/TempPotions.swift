@@ -7,7 +7,7 @@
 
 let healCalculator = HealCalculator(healPower: 100)
 
-let healthPotion = EquipmentFactory().createConsumableEquipment(name: "Health Potion",
+let healthPotion = EquipmentRepository().createConsumableEquipment(name: "Health Potion",
                                                                         description: "Restores health",
                                                                         rarity: 1,
                                                                         effectStrategy:
