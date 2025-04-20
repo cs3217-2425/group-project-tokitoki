@@ -76,7 +76,7 @@ extension TokiDisplay {
         do {
             let data = try Data(contentsOf: url)
             let wrapper = try JSONDecoder().decode(CraftingRecipesWrapper.self, from: data)
-            let repo = EquipmentFactory()
+            let repo = EquipmentRepository()
 
             for recipeJson in wrapper.recipes {
                 var recipe: CraftingRecipe?
@@ -186,7 +186,7 @@ extension TokiDisplay {
     }
 
     private func convertToEquipment(_ json: EquipmentJSON) -> Equipment? {
-        let repo = EquipmentFactory()
+        let repo = EquipmentRepository()
         if json.equipmentType == "consumable",
            let stratInfo = json.effectStrategy {
             let strategy: ConsumableEffectStrategy

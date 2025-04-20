@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol EquipmentFactoryProtocol {
+protocol EquipmentRepositoryProtocol {
     func getAllTemplates() -> [EquipmentData]
     func getTemplate(named name: String) -> EquipmentData?
     func createEquipment(from template: EquipmentData) -> Equipment
@@ -27,8 +27,8 @@ protocol EquipmentFactoryProtocol {
     ) -> NonConsumableEquipment
 }
 
-class EquipmentFactory: EquipmentFactoryProtocol {
-    private let logger = Logger(subsystem: "EquipmentFactory")
+class EquipmentRepository: EquipmentRepositoryProtocol {
+    private let logger = Logger(subsystem: "EquipmentRespository")
     private var templates: [String: EquipmentData] = [:]
 
     init() {

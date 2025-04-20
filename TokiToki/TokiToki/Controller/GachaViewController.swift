@@ -34,7 +34,7 @@ class GachaViewController: UIViewController {
     // Factory dependencies
     private var tokiFactory: TokiFactoryProtocol?
     private var skillsFactory: SkillsFactoryProtocol?
-    private var equipmentFactory: EquipmentFactoryProtocol?
+    private var equipmentRepository: EquipmentRepositoryProtocol?
 
     // MARK: - UI Properties
 
@@ -78,8 +78,8 @@ class GachaViewController: UIViewController {
     }
 
     /// Inject the equipment factory dependency
-    func injectEquipmentFactory(_ factory: EquipmentFactoryProtocol) {
-        self.equipmentFactory = factory
+    func injectEquipmentRepository(_ factory: EquipmentRepositoryProtocol) {
+        self.equipmentRepository = factory
     }
 
     // MARK: - Lifecycle Methods
@@ -152,26 +152,26 @@ class GachaViewController: UIViewController {
             tokiFactory = TokiFactory(skillsFactory: skillsFactory!)
         }
 
-        if equipmentFactory == nil {
-            equipmentFactory = EquipmentFactory()
+        if equipmentRepository == nil {
+            equipmentRepository = EquipmentRepository()
         }
 
         // Then set up services that depend on factories
-        if eventService == nil && tokiFactory != nil && equipmentFactory != nil {
+        if eventService == nil && tokiFactory != nil && equipmentRepository != nil {
             eventService = EventService(
                 tokiFactory: tokiFactory!,
-                equipmentFactory: equipmentFactory!
+                equipmentRepository: equipmentRepository!
             )
         }
 
         if gachaService == nil &&
            tokiFactory != nil &&
-           equipmentFactory != nil &&
+            equipmentRepository != nil &&
            skillsFactory != nil &&
            eventService != nil {
             gachaService = GachaService(
                 tokiFactory: tokiFactory!,
-                equipmentFactory: equipmentFactory!,
+                equipmentRepository: equipmentRepository!,
                 skillsFactory: skillsFactory!,
                 eventService: eventService!
             )

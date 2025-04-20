@@ -21,16 +21,16 @@ class EventService: EventServiceProtocol {
 
     private var events: [String: any IGachaEvent] = [:]  // Using name as the key
     private let tokiFactory: TokiFactoryProtocol
-    private let equipmentFactory: EquipmentFactoryProtocol
+    private let equipmentRepository: EquipmentRepositoryProtocol
     private let logger = Logger(subsystem: "EventService")
 
     // MARK: - Initialization
 
     init(tokiFactory: TokiFactoryProtocol,
-         equipmentFactory: EquipmentFactoryProtocol
+         equipmentRepository: EquipmentRepositoryProtocol
          ) {
         self.tokiFactory = tokiFactory
-        self.equipmentFactory = equipmentFactory
+        self.equipmentRepository = equipmentRepository
 
         logger.log("LOADING EVENTS")
         loadEvents()
@@ -140,7 +140,7 @@ class EventService: EventServiceProtocol {
             elementType: elementType,
             rateMultiplier: eventData.rateMultiplier,
             tokiFactory: tokiFactory,
-            equipmentFactory: equipmentFactory
+            equipmentRepository: equipmentRepository
         )
     }
 

@@ -17,8 +17,8 @@ class GachaItemFactory {
 
     static func createEquipmentGachaItem(
         template: EquipmentData,
-        factory: EquipmentFactoryProtocol
+        factory: EquipmentRepositoryProtocol
     ) -> EquipmentGachaItem {
-        EquipmentGachaItem(template: template, equipmentFactory: factory)
+        EquipmentGachaItem(template: template, equipmentRepository: factory)
     }
 }

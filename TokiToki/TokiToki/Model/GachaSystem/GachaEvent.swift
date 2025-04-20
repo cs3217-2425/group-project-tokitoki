@@ -46,15 +46,15 @@ class ElementEvent: GachaEvent {
     let elementType: ElementType
     let rateMultiplier: Double
     private let tokiFactory: TokiFactoryProtocol
-    private let equipmentFactory: EquipmentFactoryProtocol
+    private let equipmentRepository: EquipmentRepositoryProtocol
 
     init(name: String, description: String, startDate: Date, endDate: Date,
          elementType: ElementType, rateMultiplier: Double,
-         tokiFactory: TokiFactoryProtocol, equipmentFactory: EquipmentFactoryProtocol) {
+         tokiFactory: TokiFactoryProtocol, equipmentRepository: EquipmentRepositoryProtocol) {
         self.elementType = elementType
         self.rateMultiplier = rateMultiplier
         self.tokiFactory = tokiFactory
-        self.equipmentFactory = equipmentFactory
+        self.equipmentRepository = equipmentRepository
         super.init(name: name, description: description, startDate: startDate, endDate: endDate)
     }
 
@@ -72,7 +72,7 @@ class ElementEvent: GachaEvent {
         }
 
         // Apply modifiers to all Equipment with matching element
-        for equipmentTemplate in equipmentFactory.getAllTemplates() {
+        for equipmentTemplate in equipmentRepository.getAllTemplates() {
             if let equipmentElementType = ElementType.fromString(equipmentTemplate.elementType),
                equipmentElementType == elementType {
                 modifiers[equipmentTemplate.name] = rateMultiplier
@@ -110,15 +110,15 @@ class RarityEvent: GachaEvent {
     let targetRarity: ItemRarity
     let rateMultiplier: Double
     private let tokiFactory: TokiFactoryProtocol
-    private let equipmentFactory: EquipmentFactoryProtocol
+    private let equipmentRepository: EquipmentRepositoryProtocol
 
     init(name: String, description: String, startDate: Date, endDate: Date,
          targetRarity: ItemRarity, rateMultiplier: Double,
-         tokiFactory: TokiFactoryProtocol, equipmentFactory: EquipmentFactoryProtocol) {
+         tokiFactory: TokiFactoryProtocol, equipmentRepository: EquipmentRepositoryProtocol) {
         self.targetRarity = targetRarity
         self.rateMultiplier = rateMultiplier
         self.tokiFactory = tokiFactory
-        self.equipmentFactory = equipmentFactory
+        self.equipmentRepository = equipmentRepository
         super.init(name: name, description: description, startDate: startDate, endDate: endDate)
     }
 
@@ -136,7 +136,7 @@ class RarityEvent: GachaEvent {
         }
 
         // Apply modifiers to all Equipment with matching rarity
-        for equipmentTemplate in equipmentFactory.getAllTemplates() {
+        for equipmentTemplate in equipmentRepository.getAllTemplates() {
             let rarityValue = ItemRarity(intValue: equipmentTemplate.rarity) ?? .common
             if rarityValue == targetRarity {
                 modifiers[equipmentTemplate.name] = rateMultiplier
