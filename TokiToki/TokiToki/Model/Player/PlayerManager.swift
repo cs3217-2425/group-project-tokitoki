@@ -8,18 +8,65 @@
 import Foundation
 import CoreData
 
-class PlayerManager {
-    static let shared = PlayerManager()
+protocol PlayerManagerProtocol {
+    // Player access
+    func getPlayer() -> Player?
+    func getOrCreatePlayer(name: String) -> Player
+    func savePlayer()
+    func getTokisForBattle() -> [Toki]
+    func getFirstThreeOwnedTokis() -> [Toki]
+    func resetTokisForBattle()
+    func getEquipmentComponent() -> EquipmentComponent
+
+    // Player operations
+    func addExperience(_ amount: Int)
+    func addCurrency(_ amount: Int)
+    func spendCurrency(_ amount: Int) -> Bool
+    func getCurrentCurrency() -> Int
+    func getBattleStatistics() -> (total: Int, won: Int, winRate: Double)
+    func updateBattleStatistics(isWin: Bool)
+    func updatePlayerName(_ newName: String)
+    func updateAfterBattle(exp: Int, gold: Int, isWin: Bool)
+
+    // Daily pull limit
+    func hasReachedDailyPullLimit() -> Bool
+    func getRemainingDailyPulls() -> Int
+
+    // Item management
+    func addItem(_ item: any IGachaItem)
+    func addItems(_ items: [any IGachaItem])
+    func addSkill(_ skill: Skill)
+    func addToki(_ toki: Toki)
+    func addTokiToBattle(_ toki: Toki)
+    func addEquipment(_ equipment: Equipment)
+
+    // Gacha operations
+    func drawFromGachaPack(packName: String, count: Int, gachaService: GachaService) -> [any IGachaItem]
+
+    // Data management
+    func resetPlayerData() -> Bool
+    func savePlayerData()
+    func refreshPlayerData()
+    func buyGachaPull() -> Bool
+}
+
+class PlayerManager: PlayerManagerProtocol {
+    // MARK: - Constants
+
     static let DEFAULT_DAILY_PULL_LIMIT = 3
 
-    private let persistanceManager: JsonPersistenceManager
+    // MARK: - Properties
+
+    private let persistenceManager: JsonPersistenceManager
     private let playerRepository: PlayerRepository
     private let logger = Logger(subsystem: "PlayerManager")
     private var currentPlayer: Player?
 
-    private init() {
-        persistanceManager = JsonPersistenceManager()
-        playerRepository = PlayerRepository(persistenceManager: persistanceManager)
+    // MARK: - Initialization
+
+    init(persistenceManager: JsonPersistenceManager? = nil, playerRepository: PlayerRepository? = nil) {
+        self.persistenceManager = persistenceManager ?? JsonPersistenceManager()
+        self.playerRepository = playerRepository ?? PlayerRepository(persistenceManager: self.persistenceManager)
         loadPlayerData()
     }
 
@@ -31,11 +78,11 @@ class PlayerManager {
         }
     }
 
+    // MARK: - Player Access
+
     func getEquipmentComponent() -> EquipmentComponent {
         getOrCreatePlayer().ownedEquipments
     }
-
-    // MARK: - Player Access
 
     func getPlayer() -> Player? {
         if let player = currentPlayer {
@@ -65,18 +112,19 @@ class PlayerManager {
             playerRepository.savePlayer(player)
         }
     }
-    
+
     func getTokisForBattle() -> [Toki] {
         getOrCreatePlayer().tokisForBattle
     }
-    
+
     func getFirstThreeOwnedTokis() -> [Toki] {
         Array(getOrCreatePlayer().ownedTokis.prefix(3))
     }
-    
+
     func resetTokisForBattle() {
         currentPlayer?.resetTokisForBattle()
     }
+
     // MARK: - Player Operations
 
     func addExperience(_ amount: Int) {
@@ -112,7 +160,7 @@ class PlayerManager {
         let stats = player.statistics
         return (stats.totalBattles, stats.battlesWon, stats.winRate)
     }
-    
+
     func updateBattleStatistics(isWin: Bool) {
         var player = getOrCreatePlayer()
         player.recordBattleResult(won: isWin)
@@ -126,7 +174,7 @@ class PlayerManager {
         currentPlayer = player
         savePlayer()
     }
-    
+
     func updateAfterBattle(exp: Int, gold: Int, isWin: Bool) {
         addCurrency(gold)
         addExperience(exp)
@@ -200,7 +248,7 @@ class PlayerManager {
         currentPlayer = player
         savePlayer()
     }
-    
+
     /// Adds a toki to be used for battle
     func addTokiToBattle(_ toki: Toki) {
         var player = getOrCreatePlayer()
@@ -211,7 +259,7 @@ class PlayerManager {
 
     /// Adds equipment directly to the player's collection
     func addEquipment(_ equipment: Equipment) {
-        let player = getOrCreatePlayer()
+        var player = getOrCreatePlayer()
         player.ownedEquipments.inventory.append(equipment)
         currentPlayer = player
         savePlayer()
@@ -258,7 +306,7 @@ class PlayerManager {
 
         currentPlayer = player
 
-        // Save player to Core Data
+        // Save player
         savePlayer()
 
         return drawnItems
@@ -284,5 +332,23 @@ class PlayerManager {
     func refreshPlayerData() {
         currentPlayer = playerRepository.getPlayer()
     }
-}
 
+    func buyGachaPull() -> Bool {
+        let cost = 100
+        var player = getOrCreatePlayer()
+        print("Player currency before purchase: \(player.currency)")
+        if player.canSpendCurrency(cost) {
+            _ = player.spendCurrency(cost)
+            print("Player currency after purchase: \(player.currency)")
+            player.incrementDailyPullsCount(by: -1)
+            currentPlayer = player
+            savePlayer()
+            print("Player currency after increment: \(player.currency)")
+            print("Player daily pulls count after increment: \(player.dailyPullsCount)")
+            logger.log("Player bought a gacha pull for \(cost) currency.")
+            return true
+        } else {
+            return false
+        }
+    }
+}

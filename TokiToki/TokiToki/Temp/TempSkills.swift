@@ -201,10 +201,10 @@ let lifeLeech = BaseSkill(
     cooldown: 0,
     effectDefinitions: [
         EffectDefinition(targetType: .singleEnemy, effectCalculators: [
-            AttackCalculator(elementType: .dark, basePower: 20),
+            AttackCalculator(elementType: .dark, basePower: 20)
         ]),
         EffectDefinition(targetType: .ownself, effectCalculators: [
-            HealCalculator(healPower: 0),
+            HealCalculator(healPower: 0)
         ])
     ]
 ).clone()
@@ -236,5 +236,3 @@ let thunderClap = BaseSkill(
                                    statusEffectDuration: 2, statusEffectStrength: 1)
     ])
 ]).clone()
-
-        

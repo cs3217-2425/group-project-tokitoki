@@ -6,6 +6,17 @@
 //
 import Foundation
 
+protocol IGachaEvent: Identifiable {
+    var name: String { get }
+    var description: String { get }
+    var startDate: Date { get }
+    var endDate: Date { get }
+    var isActive: Bool { get }
+
+    // Returns rate modifiers for specific items
+    func getRateModifiers() -> [String: Double]
+}
+
 class GachaEvent: IGachaEvent {
     let id = UUID()
     let name: String
@@ -34,13 +45,16 @@ class GachaEvent: IGachaEvent {
 class ElementEvent: GachaEvent {
     let elementType: ElementType
     let rateMultiplier: Double
-    let itemRepository: ItemRepository
+    private let tokiFactory: TokiFactoryProtocol
+    private let equipmentFactory: EquipmentFactoryProtocol
 
     init(name: String, description: String, startDate: Date, endDate: Date,
-         elementType: ElementType, rateMultiplier: Double, itemRepository: ItemRepository) {
+         elementType: ElementType, rateMultiplier: Double,
+         tokiFactory: TokiFactoryProtocol, equipmentFactory: EquipmentFactoryProtocol) {
         self.elementType = elementType
         self.rateMultiplier = rateMultiplier
-        self.itemRepository = itemRepository
+        self.tokiFactory = tokiFactory
+        self.equipmentFactory = equipmentFactory
         super.init(name: name, description: description, startDate: startDate, endDate: endDate)
     }
 
@@ -49,50 +63,25 @@ class ElementEvent: GachaEvent {
 
         var modifiers: [String: Double] = [:]
 
-        // Apply boost to all items of the target element type
-        let tokiTemplates = itemRepository.getAllTokiTemplates()
-//        let skillTemplates = itemRepository.getAllSkillTemplates()
-        let equipmentTemplates = itemRepository.getAllEquipmentTemplates()
-
-        // Tokis
-        let tokiModifiers = tokiTemplates
-            .filter { convertStringToElement($0.elementType) == elementType }
-            .reduce(into: [String: Double]()) { result, toki in
-                result[toki.name] = rateMultiplier
+        // Apply modifiers to all Tokis with matching element
+        for tokiTemplate in tokiFactory.getAllTemplates() {
+            if let tokiElementType = ElementType.fromString(tokiTemplate.elementType),
+               tokiElementType == elementType {
+                modifiers[tokiTemplate.name] = rateMultiplier
             }
+        }
 
-        // Skills
-//        let skillModifiers = skillTemplates
-//            .filter { convertStringToElement($0.elementType) == elementType }
-//            .reduce(into: [String: Double]()) { result, skill in
-//                result[skill.name] = rateMultiplier
-//            }
-
-        // Equipment
-        let equipmentModifiers = equipmentTemplates
-            .filter { convertStringToElement($0.elementType) == elementType }
-            .reduce(into: [String: Double]()) { result, equipment in
-                result[equipment.name] = rateMultiplier
+        // Apply modifiers to all Equipment with matching element
+        for equipmentTemplate in equipmentFactory.getAllTemplates() {
+            if let equipmentElementType = ElementType.fromString(equipmentTemplate.elementType),
+               equipmentElementType == elementType {
+                modifiers[equipmentTemplate.name] = rateMultiplier
             }
+        }
 
-        modifiers.merge(tokiModifiers) { _, new in new }
-//        modifiers.merge(skillModifiers) { (_, new) in new }
-        modifiers.merge(equipmentModifiers) { _, new in new }
+        print("Modifiers for \(elementType): \(modifiers)")
 
         return modifiers
-    }
-
-    // Helper method to convert string to ElementType
-    private func convertStringToElement(_ str: String) -> ElementType {
-        switch str.lowercased() {
-        case "fire": return .fire
-        case "water": return .water
-        case "earth": return .earth
-        case "air": return .air
-        case "light": return .light
-        case "dark": return .dark
-        default: return .neutral
-        }
     }
 }
 
@@ -111,11 +100,47 @@ class ItemBoostEvent: GachaEvent {
     override func getRateModifiers() -> [String: Double] {
         guard isActive else { return [:] }
 
+        // Apply boost to specific items by name
+        return Dictionary(uniqueKeysWithValues: targetItemNames.map { ($0, rateMultiplier) })
+    }
+}
+
+// Rarity-based event
+class RarityEvent: GachaEvent {
+    let targetRarity: ItemRarity
+    let rateMultiplier: Double
+    private let tokiFactory: TokiFactoryProtocol
+    private let equipmentFactory: EquipmentFactoryProtocol
+
+    init(name: String, description: String, startDate: Date, endDate: Date,
+         targetRarity: ItemRarity, rateMultiplier: Double,
+         tokiFactory: TokiFactoryProtocol, equipmentFactory: EquipmentFactoryProtocol) {
+        self.targetRarity = targetRarity
+        self.rateMultiplier = rateMultiplier
+        self.tokiFactory = tokiFactory
+        self.equipmentFactory = equipmentFactory
+        super.init(name: name, description: description, startDate: startDate, endDate: endDate)
+    }
+
+    override func getRateModifiers() -> [String: Double] {
+        guard isActive else { return [:] }
+
         var modifiers: [String: Double] = [:]
 
-        // Apply boost to specific items by name
-        for itemName in targetItemNames {
-            modifiers[itemName] = rateMultiplier
+        // Apply modifiers to all Tokis with matching rarity
+        for tokiTemplate in tokiFactory.getAllTemplates() {
+            let rarityValue = ItemRarity(intValue: tokiTemplate.rarity) ?? .common
+            if rarityValue == targetRarity {
+                modifiers[tokiTemplate.name] = rateMultiplier
+            }
+        }
+
+        // Apply modifiers to all Equipment with matching rarity
+        for equipmentTemplate in equipmentFactory.getAllTemplates() {
+            let rarityValue = ItemRarity(intValue: equipmentTemplate.rarity) ?? .common
+            if rarityValue == targetRarity {
+                modifiers[equipmentTemplate.name] = rateMultiplier
+            }
         }
 
         return modifiers

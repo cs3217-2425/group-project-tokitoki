@@ -5,7 +5,6 @@
 //  Created by Wh Kang on 18/4/25.
 //
 
-
 // JsonPersistenceManagerLogger.swift
 import Foundation
 

@@ -9,16 +9,15 @@ struct EquipmentsData: Codable {
     let equipment: [EquipmentData]
 }
 
-// Data model for event configuration
 struct EventData: Codable {
-    let name: String              // Used as the unique identifier
+    let name: String
     let description: String
-    let startDate: String         // ISO format
-    let endDate: String           // ISO format
+    let startDate: String
+    let endDate: String
     let eventType: String
     let targetElement: String?
     let targetRarity: String?
-    let targetItemNames: [String]?  // Changed from targetItemIds
+    let targetItemNames: [String]?
     let rateMultiplier: Double
 }
 
@@ -26,7 +25,6 @@ struct EventsData: Codable {
     let events: [EventData]
 }
 
-// Toki Data for loading from JSON
 struct TokiData: Codable {
     let id: String
     let name: String
@@ -45,7 +43,6 @@ struct TokisData: Codable {
     let tokis: [TokiData]
 }
 
-// Updated Skill Data for loading from JSON
 struct SkillData: Codable {
     let id: String
     let name: String
@@ -80,7 +77,7 @@ struct CalculatorData: Codable {
     let healModifier: Double?
     let critChanceModifier: Double?
     let critDmgModifier: Double?
-    
+
     let healPower: Int?
 }
 
@@ -88,16 +85,14 @@ struct SkillsData: Codable {
     let skills: [SkillData]
 }
 
-// Gacha Item Data within a pack
 struct GachaItemData: Codable {
     let itemId: String
-    let itemType: String // "toki", "skill", "equipment"
+    let itemType: String // "toki", "equipment"
     let baseRate: Double // Base probability (0.0 to 1.0)
     let rarity: Int?
     let elementType: String?
 }
 
-// Gacha Pack Data for loading from JSON
 struct GachaPackData: Codable {
     let packName: String
     let description: String
@@ -109,7 +104,6 @@ struct GachaPacksData: Codable {
     let packs: [GachaPackData]
 }
 
-// Gacha Pack
 struct GachaPack {
     let name: String
     let description: String
@@ -123,7 +117,6 @@ struct GachaPackItem {
     let baseRate: Double
 }
 
-// Equipment Data for loading from JSON
 struct EquipmentData: Codable {
     let id: String
     let name: String
@@ -145,7 +138,7 @@ struct EquipmentData: Codable {
 }
 
 struct EffectStrategyData: Codable {
-    let type: String                  // "potion", "upgradeCandy"
+    let type: String
     let effectCalculators: [CalculatorData]? // for potions / mixed effects
     let healAmount: Int?              // convenience for pure‑heal items
     let bonusExp: Int?                // for candies

@@ -19,10 +19,9 @@ enum ElementType: String, CaseIterable, Codable {
     case ice = "ice"
 
     static func fromString(_ string: String) -> ElementType? {
-        return ElementType(rawValue: string.lowercased())
+        ElementType(rawValue: string.lowercased())
     }
-    
-    
+
     var description: String {
         switch self {
         case .fire: return "Fire"

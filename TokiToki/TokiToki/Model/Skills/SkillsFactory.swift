@@ -5,8 +5,44 @@
 //  Created by proglab on 15/3/25.
 //
 
-class SkillsFactory {
+protocol SkillsFactoryProtocol {
+    func getAllTemplates() -> [SkillData]
+    func getTemplate(named name: String) -> SkillData?
+    func createSkill(from skillData: SkillData) -> Skill?
+    func createBasicSingleTargetDmgSkill(
+        name: String,
+        description: String,
+        cooldown: Int,
+        elementType: ElementType,
+        basePower: Int
+    ) -> Skill
+    // Other skill creation methods...
+}
+
+class SkillsFactory: SkillsFactoryProtocol {
+    // MARK: - Properties
+
     private let logger = Logger(subsystem: "SkillsFactory")
+    private var templates: [String: SkillData] = [:]
+
+    // MARK: - Initialization
+
+    init() {
+        loadTemplates()
+    }
+
+    // MARK: - Public Methods
+
+    func getAllTemplates() -> [SkillData] {
+        Array(templates.values)
+    }
+
+    func getTemplate(named name: String) -> SkillData? {
+        templates[name]
+    }
+
+    // MARK: - Skill Creation Methods
+
     func createBasicSingleTargetDmgSkill(name: String,
                                          description: String,
                                          cooldown: Int,
@@ -161,83 +197,34 @@ class SkillsFactory {
         )
     }
 
+    /// Create a skill from a template
     func createSkill(from skillData: SkillData) -> Skill? {
-        // Create an array to hold effect definitions
         var effectDefinitions: [EffectDefinition] = []
 
-        // Process each effect definition in the skill data
         for effectDefData in skillData.effectDefinitions {
-            // Determine the target type
             let targetType = convertStringToTargetType(effectDefData.targetType)
-
-            // Array to hold effect calculators for this definition
             var effectCalculators: [EffectCalculator] = []
 
-            // Process each calculator in the effect definition
             for calcData in effectDefData.calculators {
                 switch calcData.calculatorType.lowercased() {
                 case "attack":
-                    // Handle attack calculator
-                    if let elementTypeStr = calcData.elementType,
-                       let basePower = calcData.basePower,
-                       let elementType = ElementType(rawValue: elementTypeStr) {
-                        effectCalculators.append(AttackCalculator(elementType: elementType, basePower: basePower))
-                    }
-
+                    addAttackCalculator(calcData: calcData, to: &effectCalculators)
                 case "statuseffect":
-                    // Handle status effect calculator
-                    if let statusEffectChance = calcData.statusEffectChance,
-                       let statusEffectStr = calcData.statusEffect,
-                       let statusEffect = convertStringToStatusEffect(statusEffectStr),
-                       let duration = calcData.statusEffectDuration,
-                       let strength = calcData.statusEffectStrength {
-                        effectCalculators.append(StatusEffectCalculator(
-                            statusEffectChance: statusEffectChance,
-                            statusEffect: statusEffect,
-                            statusEffectDuration: duration,
-                            statusEffectStrength: strength
-                        ))
-                    }
-
+                    addStatusEffectCalculator(calcData: calcData, to: &effectCalculators)
                 case "statsmodifier":
-                    // Handle stats modifier calculator
-                    let duration = calcData.statsModifierDuration ?? 1
-                    let attackMod = calcData.attackModifier ?? 1.0
-                    let defenseMod = calcData.defenseModifier ?? 1.0
-                    let speedMod = calcData.speedModifier ?? 1.0
-                    let healMod = calcData.healModifier ?? 1.0
-                    let critChanceMod = calcData.critChanceModifier ?? 1.0
-                    let critDmgModifier = calcData.critDmgModifier ?? 1.0
-
-                    effectCalculators.append(StatsModifiersCalculator(statsModifiers: [
-                        StatsModifier(
-                            remainingDuration: duration,
-                            attack: attackMod,
-                            defense: defenseMod,
-                            speed: speedMod,
-                            heal: healMod,
-                            criticalHitChance: critChanceMod,
-                            criticalHitDmg: critDmgModifier
-                        )
-                    ]))
-
+                    addStatsModifierCalculator(calcData: calcData, to: &effectCalculators)
                 case "heal":
-                    // Handle heal calculator
-                    let healPower = calcData.healPower ?? 10
-                    effectCalculators.append(HealCalculator(healPower: healPower))
-
+                    addHealCalculator(calcData: calcData, to: &effectCalculators)
                 default:
                     logger.log("Unknown calculator type: \(calcData.calculatorType)")
                 }
             }
 
-            // Add the completed effect definition if we have calculators
             if !effectCalculators.isEmpty {
                 effectDefinitions.append(EffectDefinition(targetType: targetType, effectCalculators: effectCalculators))
             }
         }
 
-        // Create and return the skill if we have at least one effect definition
         if !effectDefinitions.isEmpty {
             return BaseSkill(
                 name: skillData.name,
@@ -250,7 +237,72 @@ class SkillsFactory {
         return nil
     }
 
-    // Helper function to convert string to TargetType
+    // MARK: - Private Helper Methods
+
+    private func loadTemplates() {
+        do {
+            let skillsData: SkillsData = try ResourceLoader.loadJSON(fromFile: "Skills")
+            for skill in skillsData.skills {
+                templates[skill.name] = skill
+            }
+            logger.log("Loaded \(templates.count) skill templates")
+        } catch {
+            logger.logError("Failed to load skill templates: \(error)")
+        }
+    }
+
+    private func addAttackCalculator(calcData: CalculatorData, to calculators: inout [EffectCalculator]) {
+        if let elementTypeStr = calcData.elementType,
+           let basePower = calcData.basePower,
+           let elementType = ElementType(rawValue: elementTypeStr) {
+            calculators.append(AttackCalculator(elementType: elementType, basePower: basePower))
+        }
+    }
+
+    private func addStatusEffectCalculator(calcData: CalculatorData, to calculators: inout [EffectCalculator]) {
+        if let statusEffectChance = calcData.statusEffectChance,
+           let statusEffectStr = calcData.statusEffect,
+           let statusEffect = convertStringToStatusEffect(statusEffectStr),
+           let duration = calcData.statusEffectDuration,
+           let strength = calcData.statusEffectStrength {
+            calculators.append(StatusEffectCalculator(
+                statusEffectChance: statusEffectChance,
+                statusEffect: statusEffect,
+                statusEffectDuration: duration,
+                statusEffectStrength: strength
+            ))
+        }
+    }
+
+    private func addStatsModifierCalculator(calcData: CalculatorData, to calculators: inout [EffectCalculator]) {
+        let duration = calcData.statsModifierDuration ?? 1
+        let attackMod = calcData.attackModifier ?? 1.0
+        let defenseMod = calcData.defenseModifier ?? 1.0
+        let speedMod = calcData.speedModifier ?? 1.0
+        let healMod = calcData.healModifier ?? 1.0
+        let critChanceMod = calcData.critChanceModifier ?? 1.0
+        let critDmgModifier = calcData.critDmgModifier ?? 1.0
+
+        calculators.append(StatsModifiersCalculator(statsModifiers: [
+            StatsModifier(
+                remainingDuration: duration,
+                attack: attackMod,
+                defense: defenseMod,
+                speed: speedMod,
+                heal: healMod,
+                criticalHitChance: critChanceMod,
+                criticalHitDmg: critDmgModifier
+            )
+        ]))
+    }
+
+    private func addHealCalculator(calcData: CalculatorData, to calculators: inout [EffectCalculator]) {
+        let healPower = calcData.healPower ?? 10
+        calculators.append(HealCalculator(healPower: healPower))
+    }
+
+    // MARK: - Type Conversion Helpers
+
     private func convertStringToTargetType(_ string: String) -> TargetType {
         switch string.lowercased() {
         case "singleenemy": return .singleEnemy
@@ -263,7 +315,6 @@ class SkillsFactory {
         }
     }
 
-    // Helper function to convert string to StatusEffectType
     private func convertStringToStatusEffect(_ string: String) -> StatusEffectType? {
         switch string.lowercased() {
         case "stun": return .stun

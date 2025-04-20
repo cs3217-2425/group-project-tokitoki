@@ -170,7 +170,7 @@ struct NonConsumableEquipmentCodable: EquipmentCodable {
         let statsArray = affectedStats
                 .compactMap { EquipmentBuff.Stat(rawValue: $0) }
         let buff = EquipmentBuff(
-                value:       buffValue,
+                value: buffValue,
                 description: buffDescription,
                 affectedStats: statsArray
         )

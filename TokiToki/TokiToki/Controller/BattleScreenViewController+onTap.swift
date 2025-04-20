@@ -62,7 +62,7 @@ extension BattleScreenViewController {
             imageView.isUserInteractionEnabled = true
         }
     }
-    
+
     @IBAction func onRestart(_ sender: Any) {
         self.gameEngine?.restart()
         for imageView in skillImageViews {
@@ -77,7 +77,7 @@ extension BattleScreenViewController {
         guard let tappedView = sender.view else { return }
 
         let items = gameEngine?.countConsumables() ?? []
- 
+
         let alert = UIAlertController(title: "Use Consumable", message: "Choose an item to use:", preferredStyle: .actionSheet)
 
         for item in items where item.quantity > 0 {

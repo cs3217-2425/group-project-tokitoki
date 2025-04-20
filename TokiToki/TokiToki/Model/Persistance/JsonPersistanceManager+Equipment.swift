@@ -26,7 +26,7 @@ struct PlayerEquipmentEntry: Codable {
         let buffValue: Int?
         let buffDescription: String?
         let affectedStats: [String]?
-        
+
         // For consumable
         let consumableType: String?
         let usageContext: String?
@@ -60,7 +60,7 @@ extension JsonPersistenceManager {
 
         return saveToJson(allEntries, filename: playerEquipmentsFileName)
     }
-    
+
     private func buildPlayerEquipmentEntries(from component: EquipmentComponent,
                                              playerId: UUID) -> [PlayerEquipmentEntry] {
         // Combine and deduplicate
@@ -113,8 +113,7 @@ extension JsonPersistenceManager {
                     typeString = "candy"
                     consumableType = "candy"
                     bonusExp = strat.bonusExp
-                }
-                else if c.name.lowercased().contains("revival ring") {
+                } else if c.name.lowercased().contains("revival ring") {
                     typeString = "revivalRing"
                     consumableType = "revivalRing"
                 }
@@ -176,7 +175,6 @@ extension JsonPersistenceManager {
         }
     }
 
-
     /// Reconstruct this player's EquipmentComponent from disk.
     func loadPlayerEquipment(playerId: UUID) -> EquipmentComponent {
         guard let allEntries: [PlayerEquipmentEntry] =
@@ -186,7 +184,7 @@ extension JsonPersistenceManager {
 
         let mine = allEntries.filter { $0.equipment.ownerId == playerId }
         var inventory: [Equipment] = []
-        var equipped:   [EquipmentSlot: Equipment] = [:]
+        var equipped: [EquipmentSlot: Equipment] = [:]
 
         for entry in mine {
             let info = entry.equipment
@@ -197,18 +195,18 @@ extension JsonPersistenceManager {
                     .compactMap { EquipmentBuff.Stat(rawValue: $0) }
                     ?? []
                 let buff = EquipmentBuff(
-                    value:         info.buffValue ?? 0,
-                    description:   info.buffDescription ?? "",
+                    value: info.buffValue ?? 0,
+                    description: info.buffDescription ?? "",
                     affectedStats: stats
                 )
                 let slotEnum = EquipmentSlot(rawValue: info.slot ?? "") ?? .weapon
                 let nc = NonConsumableEquipment(
-                    id:          info.id,
-                    name:        info.name,
+                    id: info.id,
+                    name: info.name,
                     description: info.description,
-                    rarity:      info.rarity,
-                    buff:        buff,
-                    slot:        slotEnum
+                    rarity: info.rarity,
+                    buff: buff,
+                    slot: slotEnum
                 )
 
                 // ONLY append to equipped _or_ inventory — never both
@@ -224,11 +222,11 @@ extension JsonPersistenceManager {
                     switch info.usageContext?.lowercased() {
                     case "battleonly":       return .battleOnly
                     case "outofbattleonly":  return .outOfBattleOnly
-                    case "battleonlypassive":return .battleOnlyPassive
+                    case "battleonlypassive": return .battleOnlyPassive
                     default:                 return .anywhere
                     }
                 }()
-                
+
                 let defaultStrategy = PotionEffectStrategy(effectCalculators: [HealCalculator(healPower: 100)])
                 var strategy: ConsumableEffectStrategy
                 if info.consumableType == "candy" {
@@ -238,14 +236,14 @@ extension JsonPersistenceManager {
                 }
 
                 var con = ConsumableEquipment(
-                    id:             info.id,
-                    name:           info.name,
-                    description:    info.description,
-                    rarity:         info.rarity,
+                    id: info.id,
+                    name: info.name,
+                    description: info.description,
+                    rarity: info.rarity,
                     effectStrategy: strategy,
-                    usageContext:   usage
+                    usageContext: usage
                 )
-                
+
                 if info.isEquipped == true,
                    let rawSlot = info.slot,
                    let slotEnum = EquipmentSlot(rawValue: rawSlot) {

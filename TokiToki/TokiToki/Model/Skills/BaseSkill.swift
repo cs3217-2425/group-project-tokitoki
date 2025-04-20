@@ -26,9 +26,9 @@ class BaseSkill: Skill {
     func canUse() -> Bool {
         currentCooldown == 0
     }
-    
+
     func clone() -> Skill {
-        return BaseSkill(name: name, description: description, cooldown: cooldown,
+        BaseSkill(name: name, description: description, cooldown: cooldown,
                          effectDefinitions: effectDefinitions)
     }
 

@@ -73,7 +73,7 @@ class AttackCalculator: EffectCalculator {
             elementType: elementType
         )
     }
-    
+
     func merge(_ effectCalculator: EffectCalculator) -> EffectCalculator {
         guard let attackCalculator = effectCalculator as? AttackCalculator else {
             return self

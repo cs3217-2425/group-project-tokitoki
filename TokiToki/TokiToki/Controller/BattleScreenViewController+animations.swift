@@ -39,7 +39,7 @@ extension BattleScreenViewController {
 
         animateMovement(tokiView.overallView, completion, isAlly)
     }
-    
+
     func showRevive(_ id: UUID) {
         guard let view = gameStateIdToViews[id]?.overallView else { return }
 

@@ -18,7 +18,7 @@ class GlobalStatusEffectsManager: GlobalStatusEffectsManaging {
         self.MAX_ACTION_BAR = max_action_bar
         self.MULTIPLIER_FOR_ACTION_METER = multiplier_for_action_meter
     }
-    
+
     func setDelegate(_ delegate: StatusEffectApplierAndPublisherDelegate) {
         self.statusEffectApplierAndPublisherDelegate = delegate
     }
@@ -30,11 +30,11 @@ class GlobalStatusEffectsManager: GlobalStatusEffectsManaging {
             statusEffectsSystem.addEffect(statusEffect, entity, renewExistingEffectElseAddEffect(_:_:_:))
         }
     }
-    
+
     private func addGlobalStatusEffect(_ statusEffect: StatusEffect, _ entity: GameStateEntity) {
         renewExistingEffectElseAddEffect(statusEffect, entity, &globalStatusEffects)
     }
-    
+
     func renewExistingEffectElseAddEffect(_ statusEffect: StatusEffect, _ entity: GameStateEntity,
                                                   _ statusEffects: inout [StatusEffect]) {
         guard let index = statusEffects.firstIndex(where: {
@@ -47,15 +47,15 @@ class GlobalStatusEffectsManager: GlobalStatusEffectsManaging {
         sameEffect.remainingDuration = statusEffect.remainingDuration // renew the duration
         statusEffects[index] = sameEffect
     }
-    
+
     func removeGlobalStatusEffectsOfDeadEntity(_ entity: GameStateEntity) {
-        globalStatusEffects.removeAll() { $0.targetId == entity.id }
+        globalStatusEffects.removeAll { $0.targetId == entity.id }
     }
-    
+
     private func checkIfStatusEffectIsGlobal(_ effect: StatusEffect) -> Bool {
         allGlobalStatusEffects.contains(effect.type)
     }
-    
+
     func updateGlobalStatusEffectsActionMeter() {
         for i in globalStatusEffects.indices {
             globalStatusEffects[i].updateActionMeter(by: MULTIPLIER_FOR_ACTION_METER)
@@ -87,7 +87,7 @@ class GlobalStatusEffectsManager: GlobalStatusEffectsManaging {
             .map { $0.type == updatedEffect.type ? updatedEffect : $0 }
             .filter { $0.remainingDuration > 0 }
     }
-    
+
     func reset() {
         globalStatusEffects = []
     }

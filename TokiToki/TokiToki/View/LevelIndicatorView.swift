@@ -37,5 +37,3 @@ class LevelIndicatorView: UIView {
         addSubview(levelLabel)
     }
 }
-
-

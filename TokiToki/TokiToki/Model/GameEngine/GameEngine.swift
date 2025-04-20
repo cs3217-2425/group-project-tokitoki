@@ -30,7 +30,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
     internal let MAX_ACTION_BAR: Float = 100
     internal let MULTIPLIER_FOR_ACTION_METER: Float = 0.1
 
-    internal let playerEquipmentComponent = PlayerManager.shared.getEquipmentComponent()
+    internal let playerEquipmentComponent = PlayerManager().getEquipmentComponent()
     internal var globalStatusEffectsManager: GlobalStatusEffectsManaging
     internal var effectContext = EffectCalculationContext()
 
@@ -57,7 +57,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
         self.turnSystem = TurnSystem(statsSystem, MAX_ACTION_BAR, MULTIPLIER_FOR_ACTION_METER)
         self.levelManager = levelManager
-        
+
         self.globalStatusEffectsManager = GlobalStatusEffectsManager(statusEffectsSystem, MAX_ACTION_BAR,
                                                                      MULTIPLIER_FOR_ACTION_METER)
         self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
@@ -66,7 +66,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
                                                       allOpponentEntities: savedOpponentTeam)
         self.globalStatusEffectsManager.setDelegate(self)
         self.statusEffectsSystem.setDelegate(self)
-        
+
         appendToSystemsForResetting()
         saveEquipments()
     }
@@ -110,7 +110,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
                                                statsSystem.getMaxHealth(entity)) { [weak self] in
             self?.handleDeadBodiesInSequence()
-            
+
         }
         return isBattleOver()
     }
@@ -119,9 +119,9 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         savedPlayerTeam.forEach {
             $0.toki.baseStats.exp += exp
         }
-        PlayerManager.shared.updateAfterBattle(exp: exp, gold: gold, isWin: true)
+        PlayerManager().updateAfterBattle(exp: exp, gold: gold, isWin: true)
     }
-    
+
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty || opponentTeam.isEmpty {
             let isWin = opponentTeam.isEmpty
@@ -130,7 +130,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
             if isWin {
                 addExpAndGold(exp, gold)
             } else {
-                PlayerManager.shared.updateBattleStatistics(isWin: false)
+                PlayerManager().updateBattleStatistics(isWin: false)
             }
             logMessage("Battle ended! You \(isWin ? "won" : "lost")!")
             battleEventManager.publishBattleEndedEvents(isWin: isWin, exp: exp, gold: gold)
@@ -148,7 +148,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
             logMessage(result.description)
         }
     }
-    
+
     func countConsumables() -> [ConsumableGroupings] {
         guard let currentGameStateEntity = currentGameStateEntity else {
             return []

@@ -52,5 +52,3 @@ let fireFoxToki = Toki(
     elementType: [.fire],
     level: 0
 )
-
-                

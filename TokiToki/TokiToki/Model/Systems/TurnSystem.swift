@@ -9,7 +9,7 @@ class TurnSystem: System {
     let MAX_ACTION_BAR: Float
     let MULTIPLIER_FOR_ACTION_METER: Float
     let statsSystem: StatsSystem
-    
+
     init(_ statsSystem: StatsSystem, _ max_action_bar: Float, _ multiplier_for_action_meter: Float) {
         self.statsSystem = statsSystem
         self.MAX_ACTION_BAR = max_action_bar

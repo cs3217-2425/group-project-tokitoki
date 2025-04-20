@@ -17,12 +17,4 @@ struct EquipmentBuff {
     let value: Int
     let description: String
     let affectedStats: [Stat]
-
-    init(value: Int,
-                description: String,
-                affectedStats: [Stat]) {
-        self.value = value
-        self.description = description
-        self.affectedStats = affectedStats
-    }
 }

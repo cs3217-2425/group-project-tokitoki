@@ -46,7 +46,7 @@ class AdvancedEquipmentFacade {
 
 // AdvancedEquipmentFacade.swift
 extension AdvancedEquipmentFacade {
-    
+
     /// Equip any Equipment into a specific slot
     func equipItem(_ item: Equipment, to slot: EquipmentSlot) {
         // Directly call the system (no command pattern here for simplicity)
@@ -54,7 +54,7 @@ extension AdvancedEquipmentFacade {
         // persist updated component
         serviceLocator.dataStore.equipmentComponent = equipmentComponent
     }
-    
+
     /// Unequip whatever’s in `slot` and return it to inventory.
     func unequipItem(slot: EquipmentSlot) {
         let component = equipmentComponent
@@ -63,4 +63,3 @@ extension AdvancedEquipmentFacade {
         serviceLocator.dataStore.equipmentComponent = component
     }
 }
-

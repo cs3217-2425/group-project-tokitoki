@@ -80,15 +80,15 @@ class SkillVisualFXRegistry {
         register(skillVisual: .earthShield) { sourceView, targetView in
             SkillVisualFXFactory.createEarthShield(sourceView: sourceView, targetView: targetView)
         }
-        
+
         register(skillVisual: .singleHeal) { sourceView, targetView in
             SkillVisualFXFactory.createHealingWave(sourceView: sourceView, targetView: targetView)
         }
-        
+
         register(skillVisual: .waterBlast) { sourceView, targetView in
             SkillVisualFXFactory.createWaterBlastFX(sourceView: sourceView, targetView: targetView)
         }
-        
+
         register(skillVisual: .finalJudgement) { sourceView, targetView in
             SkillVisualFXFactory.createFinalJudgementFX(sourceView: sourceView, targetView: targetView)
         }

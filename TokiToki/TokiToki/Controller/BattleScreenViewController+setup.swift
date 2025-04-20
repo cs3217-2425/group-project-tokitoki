@@ -22,10 +22,10 @@ extension BattleScreenViewController {
 //        // Reset the battle state when returning to this screen
 //        resetBattleState()
 //    }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         // Re-enable the interactive pop gesture when leaving this screen
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
@@ -37,19 +37,19 @@ extension BattleScreenViewController {
         addGestureRecognisers()
         effectsManager = BattleEffectsManager(viewController: self)
 
-        var tokis = PlayerManager.shared.getTokisForBattle()
+        var tokis = PlayerManager().getTokisForBattle()
         if tokis.isEmpty {
-            tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
+            tokis = PlayerManager().getFirstThreeOwnedTokis()
         }
         let defaultEnemies = [dragonMonsterToki, rhinoMonsterToki, golemMonsterToki]
         let enemies = self.levelManager?.getEnemies() ?? defaultEnemies
         configure(tokis, enemies)
     }
-    
+
     func configureDifficulty(_ level: Level) {
         self.levelManager = LevelManager(level: level)
     }
-    
+
     func configure(_ playerTokis: [Toki], _ enemyTokis: [Toki]) {
         setupNameAndLevelCircle(enemyTokis, opponentTokisViews, false)
         setupNameAndLevelCircle(playerTokis, playerTokisViews, true)
@@ -64,7 +64,7 @@ extension BattleScreenViewController {
         hideTokisIfNoTokiInThatSlot(opponentEntities, opponentTokisViews)
         addMappingOfOpponentEntitiesToImageView(opponentEntities)
         addMappingOfPlayerEntitiesToImageView(playerEntities)
-        
+
         guard let levelManager = levelManager else {
             return
         }
@@ -72,7 +72,7 @@ extension BattleScreenViewController {
                                      levelManager: levelManager)
         self.gameEngine?.addObserver(self)
         self.gameEngine?.addDelegate(self)
-        
+
         self.gameEngine?.startBattle()
     }
 
@@ -113,14 +113,14 @@ extension BattleScreenViewController {
             name.shadowOffset = CGSize(width: 1, height: 1)
             name.sizeToFit()
             view.bringSubviewToFront(name)
-            
+
             let currentY = name.frame.origin.y
             name.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 name.centerXAnchor.constraint(equalTo: views[index].overallView.centerXAnchor),
                 name.topAnchor.constraint(equalTo: views[index].overallView.topAnchor, constant: currentY)
             ])
-            
+
             if index == 0 && !isPlayerTokis {
                 name.font = UIFont.boldSystemFont(ofSize: 24)
                 let verticalAdjustment: CGFloat = 8
@@ -229,7 +229,7 @@ let elementToColour: [ElementType: UIColor] = [
     .lightning: .systemYellow,
     .earth: .systemBrown,
     .air: .systemGray,
-    .light: UIColor(red: 255/255, green: 259/255, blue: 253/255, alpha: 1.0),
+    .light: UIColor(red: 255 / 255, green: 259 / 255, blue: 253 / 255, alpha: 1.0),
     .dark: .systemPurple,
     .neutral: .systemPink
 ]

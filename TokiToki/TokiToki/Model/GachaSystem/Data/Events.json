@@ -4,7 +4,7 @@
       "name": "Fire Festival",
       "description": "Increased drop rates for all fire element items!",
       "startDate": "2025-04-04T00:00:00Z",
-      "endDate": "2025-04-16T23:59:59Z",
+      "endDate": "2025-04-25T23:59:59Z",
       "eventType": "element",
       "targetElement": "fire",
       "rateMultiplier": 2.0

@@ -71,7 +71,7 @@ extension BattleScreenViewController {
             }
         }
     }
-    
+
     func showWhoseTurn(_ id: UUID) {
         guard let view = gameStateIdToViews[id] else {
             return

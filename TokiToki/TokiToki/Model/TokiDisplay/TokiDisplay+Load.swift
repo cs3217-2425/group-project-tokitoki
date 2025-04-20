@@ -15,7 +15,7 @@ struct PlayerEquipmentWrapper: Decodable {
 extension TokiDisplay {
     func saveTokiState() {
         let persistence = JsonPersistenceManager()
-        let player = PlayerManager.shared.getOrCreatePlayer()
+        let player = PlayerManager().getOrCreatePlayer()
         _ = persistence.savePlayerTokis(self.allTokis, playerId: player.id)
         _ = persistence.savePlayerEquipment(self.equipmentFacade.equipmentComponent, playerId: player.id)
     }
@@ -76,7 +76,7 @@ extension TokiDisplay {
         do {
             let data = try Data(contentsOf: url)
             let wrapper = try JSONDecoder().decode(CraftingRecipesWrapper.self, from: data)
-            let repo = EquipmentRepository.shared
+            let repo = EquipmentFactory()
 
             for recipeJson in wrapper.recipes {
                 var recipe: CraftingRecipe?
@@ -186,7 +186,7 @@ extension TokiDisplay {
     }
 
     private func convertToEquipment(_ json: EquipmentJSON) -> Equipment? {
-        let repo = EquipmentRepository.shared
+        let repo = EquipmentFactory()
         if json.equipmentType == "consumable",
            let stratInfo = json.effectStrategy {
             let strategy: ConsumableEffectStrategy

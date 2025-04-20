@@ -60,7 +60,7 @@ extension GameEngine {
               let equipmentComponent = currentGameStateEntity.getComponent(ofType: EquipmentComponent.self) else {
             return
         }
-        
+
         let consumable = equipmentComponent.inventory.first { $0.equipmentType == .consumable && $0.name == consumableName }
         guard let consumable = consumable as? ConsumableEquipment else {
             return

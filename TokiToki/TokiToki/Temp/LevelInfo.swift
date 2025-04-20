@@ -17,4 +17,3 @@ let levelInfo: [Int] = (0...maxLevel).map { level in
     }
     return Int(Double(baseExp) * pow(Double(level), curveFactor))
 }
-
