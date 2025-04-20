@@ -78,11 +78,11 @@ struct Player {
     mutating func addItem(_ item: any IGachaItem) {
         switch item {
         case let toki as TokiGachaItem:
-            ownedTokis.append(toki.getToki())
+            ownedTokis.append(toki.createInstance() as! Toki)
 //        case let skill as SkillGachaItem:
 //            ownedSkills.append(skill.getSkill())
         case let equipment as EquipmentGachaItem:
-            ownedEquipments.inventory.append(equipment.getEquipment())
+            ownedEquipments.inventory.append(equipment.createInstance() as! Equipment)
         default:
             Logger(subsystem: "Player").log("Unknown item type: \(type(of: item))")
         }

@@ -8,215 +8,247 @@
 import Foundation
 import CoreData
 
-class GachaService {
-    private let itemRepository: ItemRepository
-    private let eventService: EventService
+protocol GachaServiceProtocol {
+    func findPack(byName name: String) -> GachaPack?
+    func getAllPacks() -> [GachaPack]
+    func drawFromPack(packName: String, count: Int, for player: inout Player) -> [any IGachaItem]
+}
+
+class GachaService: GachaServiceProtocol {
+    // MARK: - Properties
+    
+    private let tokiFactory: TokiFactoryProtocol
+    private let equipmentFactory: EquipmentFactoryProtocol
+    private let skillsFactory: SkillsFactoryProtocol
+    private let eventService: EventServiceProtocol
     private var gachaPacks: [String: GachaPack] = [:]
     private let logger = Logger(subsystem: "GachaService")
-
-    init(itemRepository: ItemRepository, eventService: EventService) {
-        self.itemRepository = itemRepository
+    
+    // MARK: - Initialization
+    
+    init(tokiFactory: TokiFactoryProtocol,
+         equipmentFactory: EquipmentFactoryProtocol,
+         skillsFactory: SkillsFactoryProtocol,
+         eventService: EventServiceProtocol) {
+        self.tokiFactory = tokiFactory
+        self.equipmentFactory = equipmentFactory
+        self.skillsFactory = skillsFactory
         self.eventService = eventService
         loadGachaPacks()
-        
     }
-
-    // Load gacha packs directly from JSON
-    private func loadGachaPacks() {
-        do {
-            let packsData: GachaPacksData = try ResourceLoader.loadJSON(fromFile: "GachaPacks")
-
-            for packData in packsData.packs {
-                var packItems: [GachaPackItem] = []
-
-                // Process each item in the pack
-                for itemData in packData.items {
-                    let itemName = itemData.itemId
-                    let baseRate = itemData.baseRate
-
-                    // Find the template based on item type and name
-                    var gachaItem: (any IGachaItem)?
-
-                    switch itemData.itemType {
-                    case "toki":
-                        if let toki = itemRepository.getTokiTemplate(name: itemName) {
-                            let createdToki = itemRepository.createToki(from: toki)
-                            gachaItem = GachaItemFactory.createTokiGachaItem(toki: createdToki)
-                        }
-                    case "equipment":
-                        if let equipment = itemRepository.getEquipmentTemplate(name: itemName) {
-                            let createdEquipment = itemRepository.createEquipment(from: equipment)
-                            let elementType = itemData.elementType != nil ?
-                                convertStringToElementType(itemData.elementType!) : .neutral
-                            gachaItem = GachaItemFactory.createEquipmentGachaItem(equipment: createdEquipment, elementType: elementType)
-                        }
-                    default:
-                        continue
-                    }
-
-                    if let gachaItem = gachaItem {
-                        let packItem = GachaPackItem(item: gachaItem, itemName: itemName, baseRate: baseRate)
-                        packItems.append(packItem)
-                    }
-                }
-
-                // Create gacha pack with name as identifier
-                let gachaPack = GachaPack(
-                    name: packData.packName,
-                    description: packData.description,
-                    cost: packData.cost,
-                    items: packItems
-                )
-
-                gachaPacks[packData.packName] = gachaPack
-            }
-
-            logger.log("Loaded \(gachaPacks.count) gacha packs from JSON")
-        } catch {
-            logger.log("Error loading gacha packs: \(error)")
-        }
-    }
-
-    // Find pack by name
+    
+    // MARK: - Public Methods
+    
+    /// Find a gacha pack by name
     func findPack(byName name: String) -> GachaPack? {
-        gachaPacks[name]
+        return gachaPacks[name]
     }
-
-    // Get all available packs
+    
+    /// Get all available gacha packs
     func getAllPacks() -> [GachaPack] {
-        Array(gachaPacks.values)
+        return Array(gachaPacks.values)
     }
-
-    // Pull from a gacha pack (now just handles the draw logic, not player state)
+    
+    /// Draw items from a gacha pack
+    /// - Parameters:
+    ///   - packName: Name of the pack to draw from
+    ///   - count: Number of draws to perform
+    ///   - player: Player who is drawing (will be modified to reflect currency changes, etc.)
+    /// - Returns: Array of drawn items
     func drawFromPack(packName: String, count: Int, for player: inout Player) -> [any IGachaItem] {
         guard let pack = findPack(byName: packName) else {
             logger.log("No pack found with name \(packName)")
             return []
         }
-
+        
         // Check if player has enough currency
         let totalCost = pack.cost * count
         guard player.canSpendCurrency(totalCost) else {
             logger.log("Player doesn't have enough currency to draw")
             return []
         }
-
+        
         // Get event rate modifiers
         let rateModifiers = eventService.getRateModifiers(packName: packName)
-
+        
         // Draw items
         var drawnItems: [any IGachaItem] = []
         for _ in 0..<count {
             if let drawnItem = drawSingleItem(from: pack, with: rateModifiers, for: &player) {
+                // Set ownership metadata
                 var itemWithOwnership = drawnItem
                 itemWithOwnership.ownerId = player.id
                 itemWithOwnership.dateAcquired = Date()
-
+                
                 drawnItems.append(itemWithOwnership)
-
+                
                 // Add the drawn item to player's inventory
-                // Note: This modifies the passed player reference
-                if let tokiGachaItem = itemWithOwnership as? TokiGachaItem {
-                    if player.ownedTokis.contains(where: { $0.name == tokiGachaItem.getToki().name }) {
-                        logger.log("Player already owns Toki \(tokiGachaItem.getToki().name)")
-                        continue
-                    }
-                    player.ownedTokis.append(tokiGachaItem.getToki())
-                } else if let equipmentGachaItem = itemWithOwnership as? EquipmentGachaItem {
-                    if player.ownedEquipments.inventory.contains(where: { $0.name == equipmentGachaItem.getEquipment().name }) {
-                        logger.log("Player already owns Equipment \(equipmentGachaItem.getEquipment().name)")
-                        continue
-                    }
-                    player.ownedEquipments.inventory.append(equipmentGachaItem.getEquipment())
-                }
+                addItemToPlayerInventory(item: itemWithOwnership, for: &player)
             }
         }
-
+        
         // Deduct currency
         _ = player.spendCurrency(totalCost)
-
-        // The modified player instance is returned via the inout parameter
+        
         return drawnItems
     }
+    
+    // MARK: - Private Methods
+    
+    /// Load gacha packs from JSON
+    private func loadGachaPacks() {
+        do {
+            let packsData: GachaPacksData = try ResourceLoader.loadJSON(fromFile: "GachaPacks")
+            
+            for packData in packsData.packs {
+                let packItems = createPackItems(from: packData.items)
+                
+                // Create gacha pack
+                let gachaPack = GachaPack(
+                    name: packData.packName,
+                    description: packData.description,
+                    cost: packData.cost,
+                    items: packItems
+                )
+                
+                gachaPacks[packData.packName] = gachaPack
+            }
+            
+            logger.log("Loaded \(gachaPacks.count) gacha packs from JSON")
+        } catch {
+            logger.log("Error loading gacha packs: \(error)")
+        }
+    }
+    
+    /// Create pack items from item data
+    private func createPackItems(from itemsData: [GachaItemData]) -> [GachaPackItem] {
+        return itemsData.compactMap { itemData in
+            let itemName = itemData.itemId
+            let baseRate = itemData.baseRate
 
-    // Draw a single item template with rate modifiers applied
-    private func drawSingleItem(from pack: GachaPack, with rateModifiers: [String: Double], for player: inout Player) -> (any IGachaItem)? {
-        var totalWeight: Double = 0
+            guard let itemType = GachaItemType.fromString(itemData.itemType) else {
+                logger.logError("Unknown item type: \(itemData.itemType)")
+                return nil
+            }
+
+            var gachaItem: (any IGachaItem)?
+
+            switch itemType {
+            case .toki:
+                if let tokiTemplate = tokiFactory.getTemplate(named: itemName) {
+                    gachaItem = GachaItemFactory.createTokiGachaItem(template: tokiTemplate, factory: tokiFactory)
+                }
+            case .equipment:
+                if let equipmentTemplate = equipmentFactory.getTemplate(named: itemName) {
+                    gachaItem = GachaItemFactory.createEquipmentGachaItem(template: equipmentTemplate, factory: equipmentFactory)
+                }
+            }
+
+            guard let item = gachaItem else { return nil }
+            return GachaPackItem(item: item, itemName: itemName, baseRate: baseRate)
+        }
+    }
+    
+    /// Draw a single item with rate modifiers applied
+    private func drawSingleItem(
+        from pack: GachaPack,
+        with rateModifiers: [String: Double],
+        for player: inout Player
+    ) -> (any IGachaItem)? {
+        // Build weighted items array
+        let weightedItems = buildWeightedItems(from: pack, with: rateModifiers, for: player)
+        
+        guard !weightedItems.isEmpty else {
+            logger.logError("No valid items in pack or all rates are zero")
+            return pack.items.first?.item
+        }
+        
+        let totalWeight = weightedItems.reduce(0) { $0 + $1.weight }
+        
+        // Normalize weights if they sum to more than 1.0
+        let normalizedItems = totalWeight > 1.0 ?
+            weightedItems.map { (item: $0.item, weight: $0.weight / totalWeight) } :
+            weightedItems
+        
+        // Perform the roll
+        let roll = Double.random(in: 0..<min(totalWeight, 1.0))
+        var cumulativeWeight: Double = 0
+        
+        for (item, weight) in normalizedItems {
+            cumulativeWeight += weight
+            if roll < cumulativeWeight {
+                // Update pity counter
+                updatePityCounter(for: item, player: &player)
+                return item
+            }
+        }
+        
+        return normalizedItems.first?.item
+    }
+    
+    /// Build weighted items for the gacha roll
+    private func buildWeightedItems(
+        from pack: GachaPack,
+        with rateModifiers: [String: Double],
+        for player: Player
+    ) -> [(item: any IGachaItem, weight: Double)] {
         var weightedItems: [(item: any IGachaItem, weight: Double)] = []
-
+        
         for packItem in pack.items {
             let item = packItem.item
             let itemName = packItem.itemName
             var rate = packItem.baseRate
-
+            
+            // Apply event modifiers
             if let modifier = rateModifiers[itemName] {
                 rate *= modifier
             }
-
+            
             // Apply pity system for rare items
             if isRare(item) && player.pullsSinceRare >= 20 {
                 rate *= 5.0 // Significant boost for pity
             }
-
+            
             if rate > 0 {
                 weightedItems.append((item: item, weight: rate))
-                totalWeight += rate
             }
         }
-
-        guard !weightedItems.isEmpty, totalWeight > 0 else {
-            logger.logError("No valid items in pack or all rates are zero")
-            return pack.items.first?.item
+        
+        return weightedItems
+    }
+    
+    /// Update the pity counter based on the drawn item
+    private func updatePityCounter(for item: any IGachaItem, player: inout Player) {
+        if isRare(item) {
+            player.pullsSinceRare = 0
+        } else {
+            player.pullsSinceRare += 1
         }
-
-        if totalWeight > 1.0 {
-            weightedItems = weightedItems.map { (item: $0.item, weight: $0.weight / totalWeight) }
-            totalWeight = 1.0
-        }
-
-        let roll = Double.random(in: 0..<totalWeight)
-        var cumulativeWeight: Double = 0
-
-        for (item, weight) in weightedItems {
-            cumulativeWeight += weight
-            if roll < cumulativeWeight {
-                // Update pity counter
-                if isRare(item) {
-                    player.pullsSinceRare = 0
-                } else {
-                    player.pullsSinceRare += 1
-                }
-
-                return item
+    }
+    
+    /// Add an item to the player's inventory
+    private func addItemToPlayerInventory(item: any IGachaItem, for player: inout Player) {
+        switch item {
+        case let tokiAdapter as TokiGachaItem:
+            if let toki = tokiAdapter.createInstance() as? Toki,
+               !player.ownedTokis.contains(where: { $0.name == toki.name }) {
+                player.ownedTokis.append(toki)
             }
-        }
 
-        return weightedItems.first?.item
+        case let eqAdapter as EquipmentGachaItem:
+            if let equipment = eqAdapter.createInstance() as? Equipment,
+               !player.ownedEquipments.inventory.contains(where: { $0.name == equipment.name }) {
+                player.ownedEquipments.inventory.append(equipment)
+            }
+
+        default:
+            logger.logError("Unknown gacha adapter type")
+        }
     }
 
-    // Check if item is considered "rare" for pity system
+    
+    /// Check if an item is considered "rare" for pity system
     private func isRare(_ item: any IGachaItem) -> Bool {
-        item.rarity == .rare || item.rarity == .epic
-    }
-
-    // Helper methods
-    private func convertIntToItemRarity(_ value: Int) -> ItemRarity {
-        switch value {
-        case 0: return .common
-        case 1: return .rare
-        case 2: return .epic
-        default: return .common
-        }
-    }
-
-    private func convertStringToElementType(_ str: String) -> ElementType {
-        switch str.lowercased() {
-        case "fire": return .fire
-        case "water": return .water
-        case "earth": return .earth
-        case "air": return .air
-        case "light": return .light
-        default: return .neutral
-        }
+        return item.rarity == .rare || item.rarity == .epic
     }
 }

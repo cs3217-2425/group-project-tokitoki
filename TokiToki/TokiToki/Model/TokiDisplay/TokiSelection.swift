@@ -24,10 +24,10 @@ class TokiSelection {
     
     func startBattleTapped(_ vcont: UIViewController) {
         // Update the global player's toki list.
-        PlayerManager.shared.resetTokisForBattle()
-        _ = PlayerManager.shared.getTokisForBattle()
+        PlayerManager().resetTokisForBattle()
+        _ = PlayerManager().getTokisForBattle()
         for toki in selectedTokis {
-            PlayerManager.shared.addTokiToBattle(toki)
+            PlayerManager().addTokiToBattle(toki)
             logger.log("Added Toki: \(toki.name) to PlayerManager")
         }
         

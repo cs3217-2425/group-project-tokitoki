@@ -12,11 +12,31 @@ protocol GachaViewControllerDelegate: AnyObject {
 }
 
 class GachaViewController: UIViewController {
-    let DEFAULT_DAILY_PULL_LIMIT = 3
+    // MARK: - Constants
+    
+    static let DEFAULT_DAILY_PULL_LIMIT = 3
+    
+    // MARK: - Outlets
+    
     @IBOutlet private var gachaPackLabel: UILabel!
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var playerCurrencyLabel: UILabel!
     @IBOutlet private var dailyPullsCountLabel: UILabel!
+    
+    // MARK: - Dependencies
+    
+    // These properties can be injected
+    private var playerManager: PlayerManagerProtocol!
+    private var eventService: EventServiceProtocol?
+    private var gachaService: GachaServiceProtocol?
+    
+    // Factory dependencies
+    private var tokiFactory: TokiFactoryProtocol?
+    private var skillsFactory: SkillsFactoryProtocol?
+    private var equipmentFactory: EquipmentFactoryProtocol?
+    
+    // MARK: - UI Properties
+    
     private var gachaPackCollectionViewController: CollectionViewController!
     private let logger = Logger(subsystem: "GachaViewController")
     
@@ -26,42 +46,52 @@ class GachaViewController: UIViewController {
     private var eventsHeaderLabel: UILabel!
     private var eventsRefreshTimer: Timer?
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let collectionVC = segue.destination as? CollectionViewController {
-            self.gachaPackCollectionViewController = collectionVC
-            collectionVC.delegate = self
-
-            // If packs already loaded, update the collection view
-            if let packs = gachaService?.getAllPacks(), !packs.isEmpty {
-                collectionVC.packs = packs
-            }
-        }
-    }
-
-    private let itemRepository = ItemRepository()
-    private let playerManager = PlayerManager.shared
-    private var eventService: EventService?
-    private var gachaService: GachaService?
-
+    // State
     private var selectedGachaPack: GachaPack?
+    
+    // MARK: - Dependency Injection Methods
+    
+    /// Inject the player manager dependency
+    func injectPlayerManager(_ manager: PlayerManagerProtocol) {
+        self.playerManager = manager
+    }
+    
+    /// Inject the event service dependency
+    func injectEventService(_ service: EventServiceProtocol) {
+        self.eventService = service
+    }
+    
+    /// Inject the gacha service dependency
+    func injectGachaService(_ service: GachaServiceProtocol) {
+        self.gachaService = service
+    }
+    
+    /// Inject the toki factory dependency
+    func injectTokiFactory(_ factory: TokiFactoryProtocol) {
+        self.tokiFactory = factory
+    }
+    
+    /// Inject the skills factory dependency
+    func injectSkillsFactory(_ factory: SkillsFactoryProtocol) {
+        self.skillsFactory = factory
+    }
+    
+    /// Inject the equipment factory dependency
+    func injectEquipmentFactory(_ factory: EquipmentFactoryProtocol) {
+        self.equipmentFactory = factory
+    }
+    
+    // MARK: - Lifecycle Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let itemRepository = ItemRepository()
-        let eventService = EventService(itemRepository: itemRepository)
-        self.eventService = eventService
-
-        // Initialize Gacha Service
-        gachaService = GachaService(
-            itemRepository: itemRepository,
-            eventService: eventService
-        )
+        
+        // If dependencies haven't been injected yet, use the default approach temporarily
+        // This allows backwards compatibility during the refactoring period
+        setupDependenciesIfNeeded()
         
         // Style the labels
-        packSelectorLabel.textAlignment = .center
-        playerCurrencyLabel.textAlignment = .center
-        dailyPullsCountLabel.textAlignment = .center
+        setupLabels()
         
         // Setup events UI
         setupEventsUI()
@@ -80,6 +110,83 @@ class GachaViewController: UIViewController {
         
         // Setup refresh timer for events (every minute)
         setupEventsRefreshTimer()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updatePlayerCurrencyLabel()
+        updateDailyPullsLabel()
+        updateEventsDisplay()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        eventsRefreshTimer?.invalidate()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let collectionVC = segue.destination as? CollectionViewController {
+            self.gachaPackCollectionViewController = collectionVC
+            collectionVC.delegate = self
+
+            // If packs already loaded, update the collection view
+            if let packs = gachaService?.getAllPacks(), !packs.isEmpty {
+                collectionVC.packs = packs
+            }
+        }
+    }
+    
+    // MARK: - Setup Methods
+    
+    private func setupDependenciesIfNeeded() {
+        // Only create dependencies if they weren't injected
+        // This is a temporary solution during the refactoring phase
+        
+        // Set up factories first if they weren't injected
+        if skillsFactory == nil {
+            skillsFactory = SkillsFactory()
+        }
+        
+        if tokiFactory == nil && skillsFactory != nil {
+            tokiFactory = TokiFactory(skillsFactory: skillsFactory!)
+        }
+        
+        if equipmentFactory == nil {
+            equipmentFactory = EquipmentFactory()
+        }
+        
+        // Then set up services that depend on factories
+        if eventService == nil && tokiFactory != nil && equipmentFactory != nil {
+            eventService = EventService(
+                tokiFactory: tokiFactory!,
+                equipmentFactory: equipmentFactory!
+            )
+        }
+        
+        if gachaService == nil &&
+           tokiFactory != nil &&
+           equipmentFactory != nil &&
+           skillsFactory != nil &&
+           eventService != nil {
+            gachaService = GachaService(
+                tokiFactory: tokiFactory!,
+                equipmentFactory: equipmentFactory!,
+                skillsFactory: skillsFactory!,
+                eventService: eventService!
+            )
+        }
+        
+        // For player manager, use the shared instance if not injected
+        // This will be removed once all view controllers use DI
+        if playerManager == nil {
+            self.playerManager = PlayerManager()
+        }
+    }
+    
+    private func setupLabels() {
+        packSelectorLabel.textAlignment = .center
+        playerCurrencyLabel.textAlignment = .center
+        dailyPullsCountLabel.textAlignment = .center
     }
     
     private func setupEventsUI() {
@@ -102,6 +209,7 @@ class GachaViewController: UIViewController {
         
         // Events stack view
         eventsStackView = EventsStackView()
+        eventsStackView.translatesAutoresizingMaskIntoConstraints = false
         eventsContainerView.addSubview(eventsStackView)
         
         // Position the events container at the bottom of the screen
@@ -129,6 +237,39 @@ class GachaViewController: UIViewController {
         eventsRefreshTimer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [weak self] _ in
             self?.updateEventsDisplay()
         }
+    }
+    
+    // MARK: - Data Loading and UI Updates
+    
+    private func loadGachaPacks() {
+        if let packs = gachaService?.getAllPacks(), !packs.isEmpty {
+            // Update collection view with packs
+            gachaPackCollectionViewController?.packs = packs
+        }
+    }
+    
+    private func updatePackSelectorLabel() {
+        // This is now handled by the collection view
+    }
+    
+    private func updatePlayerCurrencyLabel() {
+        let player = playerManager.getOrCreatePlayer(name: "Player")
+        playerCurrencyLabel.text = "\(player.currency)"
+        
+        if let selectedPack = selectedGachaPack {
+            if player.canSpendCurrency(selectedPack.cost) {
+                playerCurrencyLabel.textColor = .white
+            } else {
+                playerCurrencyLabel.textColor = .systemRed
+            }
+        } else {
+            playerCurrencyLabel.textColor = .white
+        }
+    }
+    
+    private func updateDailyPullsLabel() {
+        let remainingPulls = playerManager.getRemainingDailyPulls()
+        dailyPullsCountLabel.text = "\(remainingPulls) / \(GachaViewController.DEFAULT_DAILY_PULL_LIMIT) DAILY PULLS"
     }
     
     private func updateEventsDisplay() {
@@ -162,54 +303,13 @@ class GachaViewController: UIViewController {
         // Update layout
         view.layoutIfNeeded()
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updatePlayerCurrencyLabel()
-        updateDailyPullsLabel()
-        updateEventsDisplay()
-    }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        eventsRefreshTimer?.invalidate()
-    }
-
-    private func loadGachaPacks() {
-        if let packs = gachaService?.getAllPacks(), !packs.isEmpty {
-            // Update collection view with packs
-            gachaPackCollectionViewController?.packs = packs
-        }
-    }
-
-    private func updatePackSelectorLabel() {
-        // This is now handled by the collection view
-    }
-
-    private func updatePlayerCurrencyLabel() {
-        let player = playerManager.getOrCreatePlayer()
-        playerCurrencyLabel.text = "\(player.currency)"
-
-        if let selectedPack = selectedGachaPack {
-            if player.canSpendCurrency(selectedPack.cost) {
-                playerCurrencyLabel.textColor = .white
-            } else {
-                playerCurrencyLabel.textColor = .systemRed
-            }
-        } else {
-            playerCurrencyLabel.textColor = .white
-        }
-    }
-
-    private func updateDailyPullsLabel() {
-        let remainingPulls = playerManager.getRemainingDailyPulls()
-        dailyPullsCountLabel.text = "\(remainingPulls) / \(DEFAULT_DAILY_PULL_LIMIT) DAILY PULLS"
-    }
+    // MARK: - Gacha Functionality
     
-    // Make this method public so it can be called from the collection view
+    /// Perform a gacha draw for the given pack
     func performDraw(for pack: GachaPack) {
-        guard let gachaService = gachaService else {
-            showErrorMessage("Gacha Service not initialized")
+        guard let gachaService = gachaService as? GachaService else {
+            showErrorMessage("Gacha Service not initialized or not correct type")
             return
         }
         
@@ -218,37 +318,38 @@ class GachaViewController: UIViewController {
             showErrorMessage("Daily pull limit reached. Try again tomorrow!")
             return
         }
-
+        
         // Get current player state to check if they can afford the pack
-        let player = playerManager.getOrCreatePlayer()
-
+        let player = playerManager.getOrCreatePlayer(name: "Player")
+        
         // Check if player has enough currency
         if !player.canSpendCurrency(pack.cost) {
             showErrorMessage("Not enough currency. Need \(pack.cost)")
             return
         }
-
+        
+        // Call the PlayerManager's drawFromGachaPack method which handles all player updates
         let drawnItems = playerManager.drawFromGachaPack(
             packName: pack.name,
             count: 1,
             gachaService: gachaService
         )
-
+        
         if drawnItems.isEmpty {
             showErrorMessage("No items drawn. Daily limit may have been reached.")
             return
         }
-
+        
         let item = drawnItems[0]
         let event = GachaPullEvent(
             itemName: item.name,
             rarity: item.rarity
         )
         EventBus.shared.post(event)
-
+        
         // Update currency display immediately after purchase
         updatePlayerCurrencyLabel()
-
+        
         // Update daily pulls display
         updateDailyPullsLabel()
         
@@ -258,12 +359,14 @@ class GachaViewController: UIViewController {
         // Display drawn items
         displayDrawnItems(drawnItems)
     }
-
+    
+    // MARK: - UI Feedback
+    
     private func showErrorMessage(_ message: String) {
         packSelectorLabel.text = message
         packSelectorLabel.textColor = .systemRed
         logger.log(message)
-
+        
         // Animate the label to draw attention
         UIView.animate(withDuration: 0.1, animations: {
             self.packSelectorLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
@@ -279,55 +382,19 @@ class GachaViewController: UIViewController {
             self.updatePackSelectorLabel()
         }
     }
-
+    
     private func displayDrawnItems(_ items: [any IGachaItem]) {
         guard !items.isEmpty else {
             packSelectorLabel.text = "No items drawn."
             return
         }
-
-        let itemDescriptions = items.map { item in
-            let itemType: String
-            let itemElementType: String
-            
-            switch item {
-            case let toki as TokiGachaItem:
-                itemType = "Toki"
-            case let equipment as EquipmentGachaItem:
-                itemType = "Equipment"
-            default:
-                itemType = "Unknown"
-            }
-            
-            switch item.elementType.first {
-            case .fire:
-                itemElementType = "🔥"
-            case .water:
-                itemElementType = "💧"
-            case .earth:
-                itemElementType = "🌍"
-            case .air:
-                itemElementType = "🌬️"
-            case .light:
-                itemElementType = "✨"
-            case .dark:
-                itemElementType = "🌑"
-            case .neutral:
-                itemElementType = "⚪️"
-            case .lightning:
-                itemElementType = "⚡️"
-            case .ice:
-                itemElementType = "❄️"
-            case .none:
-                itemElementType = "⚪️"
-            }
-                
         
-            return "\(item.rarity.rawValue.capitalized) \(itemType): \(item.name) \(itemElementType) "
+        let itemDescriptions = items.map { item in
+            formatItemDescription(item)
         }.joined(separator: ", ")
         
         // Show drawn item with animation
-        packSelectorLabel.text = "\(itemDescriptions)"
+        packSelectorLabel.text = itemDescriptions
         
         // Reset color after delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
@@ -337,14 +404,47 @@ class GachaViewController: UIViewController {
         // Play a celebration animation for the drawn item
         playCelebrationAnimation()
     }
-
+    
+    private func formatItemDescription(_ item: any IGachaItem) -> String {
+        let itemType: String
+        
+        switch item {
+        case let toki as TokiGachaItem:
+            itemType = "Toki"
+        case let equipment as EquipmentGachaItem:
+            itemType = "Equipment"
+        default:
+            itemType = "Unknown"
+        }
+        
+        let elementEmoji = getElementEmoji(for: item.elementType.first)
+        
+        return "\(item.rarity.rawValue.capitalized) \(itemType): \(item.name) \(elementEmoji)"
+    }
+    
+    private func getElementEmoji(for elementType: ElementType?) -> String {
+        guard let elementType = elementType else { return "⚪️" }
+        
+        switch elementType {
+        case .fire: return "🔥"
+        case .water: return "💧"
+        case .earth: return "🌍"
+        case .air: return "🌬️"
+        case .light: return "✨"
+        case .dark: return "🌑"
+        case .neutral: return "⚪️"
+        case .lightning: return "⚡️"
+        case .ice: return "❄️"
+        }
+    }
+    
     private func playCelebrationAnimation() {
         // Create a simple particle effect for celebration
         let emitterLayer = CAEmitterLayer()
         emitterLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2)
         emitterLayer.emitterShape = .point
         emitterLayer.emitterSize = CGSize(width: 1, height: 1)
-
+        
         let cell = CAEmitterCell()
         cell.birthRate = 20
         cell.lifetime = 1.5
@@ -355,10 +455,10 @@ class GachaViewController: UIViewController {
         cell.scaleRange = 0.1
         cell.contents = UIImage(systemName: "star.fill")?.cgImage
         cell.color = UIColor.systemYellow.cgColor
-
+        
         emitterLayer.emitterCells = [cell]
         view.layer.addSublayer(emitterLayer)
-
+        
         // Remove the emitter after animation completes
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             emitterLayer.removeFromSuperlayer()

@@ -14,7 +14,7 @@ class ProfileViewController: UIViewController {
     @IBOutlet private var currencyLabel: UILabel!
     @IBOutlet private var battleStatsLabel: UILabel!
 
-    private let playerManager = PlayerManager.shared
+    private let playerManager = PlayerManager()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

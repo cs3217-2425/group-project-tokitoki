@@ -37,9 +37,9 @@ extension BattleScreenViewController {
         addGestureRecognisers()
         effectsManager = BattleEffectsManager(viewController: self)
 
-        var tokis = PlayerManager.shared.getTokisForBattle()
+        var tokis = PlayerManager().getTokisForBattle()
         if tokis.isEmpty {
-            tokis = PlayerManager.shared.getFirstThreeOwnedTokis()
+            tokis = PlayerManager().getFirstThreeOwnedTokis()
         }
         let defaultEnemies = [dragonMonsterToki, rhinoMonsterToki, golemMonsterToki]
         let enemies = self.levelManager?.getEnemies() ?? defaultEnemies

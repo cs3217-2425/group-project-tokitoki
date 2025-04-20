@@ -8,101 +8,52 @@
 import Foundation
 
 // MARK: - Toki Adapter
-
-/// Adapter to make Toki conform to IGachaItem
+/// Wraps a Toki template and defers instantiation.
 class TokiGachaItem: IGachaItem {
-    private let toki: Toki
+    let id = UUID()
+    let name: String
+    let rarity: ItemRarity
+    let elementType: [ElementType]
+    private let template: TokiData
+    private let tokiFactory: TokiFactoryProtocol
 
-    // IGachaItem properties
-    var id: UUID { toki.id }
-    var name: String { toki.name }
-    var rarity: ItemRarity { toki.rarity }
-    var elementType: [ElementType] { toki.elementType }
     var ownerId: UUID?
     var dateAcquired: Date?
 
-    init(toki: Toki, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
-        self.toki = toki
-        self.ownerId = ownerId
-        self.dateAcquired = dateAcquired
+    init(template: TokiData, tokiFactory: TokiFactoryProtocol) {
+        self.template = template
+        self.tokiFactory = tokiFactory
+        self.name = template.name
+        self.rarity = ItemRarity(intValue: template.rarity) ?? .common
+        self.elementType = [ElementType(rawValue: template.elementType) ?? .neutral]
     }
 
-    /// Get the wrapped Toki object
-    func getToki() -> Toki {
-        toki
+    func createInstance() -> Any {
+        return tokiFactory.createToki(from: template)
     }
-
 }
 
 // MARK: - Equipment Adapter
-
-/// Adapter to make Equipment conform to IGachaItem
+/// Wraps an Equipment template and defers instantiation.
 class EquipmentGachaItem: IGachaItem {
-    private let equipment: Equipment
+    let id = UUID()
+    let name: String
+    let rarity: ItemRarity
+    let elementType: [ElementType] = []
+    private let template: EquipmentData
+    private let equipmentFactory: EquipmentFactoryProtocol 
 
-    // IGachaItem properties
-    var id: UUID { equipment.id }
-    var name: String { equipment.name }
-    var rarity: ItemRarity
-    var elementType: [ElementType]
     var ownerId: UUID?
     var dateAcquired: Date?
 
-    init(equipment: Equipment, elementType: ElementType = .neutral, ownerId: UUID? = nil, dateAcquired: Date? = nil) {
-        self.equipment = equipment
-        self.rarity = .common
-        self.elementType = [elementType]
-        self.ownerId = ownerId
-        self.dateAcquired = dateAcquired
-        self.rarity = convertEquipmentRarityToItemRarity(equipment.rarity)
+    init(template: EquipmentData, equipmentFactory: EquipmentFactoryProtocol) {
+        self.template = template
+        self.equipmentFactory = equipmentFactory
+        self.name = template.name
+        self.rarity = ItemRarity(intValue: template.rarity) ?? .common
     }
 
-    /// Get the wrapped Equipment object
-    func getEquipment() -> Equipment {
-        equipment
-    }
-
-    /// Get as consumable equipment if applicable
-    func getConsumableEquipment() -> ConsumableEquipment? {
-        equipment as? ConsumableEquipment
-    }
-
-    /// Get as non-consumable equipment if applicable
-    func getNonConsumableEquipment() -> NonConsumableEquipment? {
-        equipment as? NonConsumableEquipment
-    }
-
-    /// Convert from Equipment's integer rarity to IGachaItem's rarity
-    private func convertEquipmentRarityToItemRarity(_ equipmentRarity: Int) -> ItemRarity {
-        switch equipmentRarity {
-        case 0: return .common
-        case 1: return .rare
-        case 2: return .epic
-        default: return .common
-        }
-    }
-}
-
-// MARK: - Factory Methods
-
-/// Factory to create various GachaItem adapters
-class GachaItemFactory {
-
-    /// Create a GachaItem adapter for a Toki
-    static func createTokiGachaItem(toki: Toki, ownerId: UUID? = nil,
-                                    dateAcquired: Date? = nil) -> TokiGachaItem {
-        TokiGachaItem(toki: toki, ownerId: ownerId, dateAcquired: dateAcquired)
-    }
-
-    /// Create a GachaItem adapter for a Skill
-//    static func createSkillGachaItem(skill: Skill, rarity: ItemRarity = .common,
-//                                     ownerId: UUID? = nil, dateAcquired: Date? = nil) -> SkillGachaItem {
-//        SkillGachaItem(skill: skill, rarity: rarity, ownerId: ownerId, dateAcquired: dateAcquired)
-//    }
-
-    /// Create a GachaItem adapter for Equipment
-    static func createEquipmentGachaItem(equipment: Equipment, elementType: ElementType = .neutral,
-                                         ownerId: UUID? = nil, dateAcquired: Date? = nil) -> EquipmentGachaItem {
-        EquipmentGachaItem(equipment: equipment, elementType: elementType, ownerId: ownerId, dateAcquired: dateAcquired)
+    func createInstance() -> Any {
+        return equipmentFactory.createEquipment(from: template)
     }
 }
