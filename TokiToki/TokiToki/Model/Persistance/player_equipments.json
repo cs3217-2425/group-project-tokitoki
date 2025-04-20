@@ -76,24 +76,6 @@
     }
   },
   {
-    "type": "nonConsumable",
-    "equipment": {
-      "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
-      "name": "Wooden Sword",
-      "description": "A simple wooden sword for training",
-      "rarity": 0,
-      "equipmentType": "nonConsumable",
-      "ownerId": "a81bc23d-45ef-67ab-89cd-ef0123456789",
-      "isEquipped": true,
-      "slot": "weapon",
-      "buffValue": 5,
-      "buffDescription": "Basic attack boost",
-      "affectedStats": [
-        "attack"
-      ]
-    }
-  },
-  {
     "type": "potion",
     "equipment": {
       "id": "b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e",

@@ -67,11 +67,6 @@ class Toki {
         }
         let equipmentComponent = EquipmentComponent(inventory: equipments, entity: entity)
 
-        // TODO: Why does equipment not have the method
-//        for equipment in equipments {
-//            equipment.applyBuffs(to: &statsComponent)
-//        }
-
         entity.addComponent(statsComponent)
         entity.addComponent(skillsComponent)
         entity.addComponent(statusEffectsComponent)
@@ -100,6 +95,13 @@ class Toki {
         )
         self.level += 1
     }
+    
+    func clone() -> Toki {
+        return Toki(id: self.id, name: self.name, rarity: self.rarity,
+                    baseStats: self.baseStats, skills: self.skills,
+                    equipments: equipments, elementType: self.elementType,
+                    level: self.level)
+    }
 }
 
 struct TokiBaseStats {
@@ -111,4 +113,15 @@ struct TokiBaseStats {
     var exp: Int
     var critHitChance: Int = 15
     var critHitDamage: Int = 150
+    
+    func addStats(_ stats: TokiBaseStats) -> TokiBaseStats {
+        return TokiBaseStats(
+            hp: hp + stats.hp,
+            attack: attack + stats.attack,
+            defense: defense + stats.defense,
+            speed: speed + stats.speed,
+            heal: heal + stats.heal,
+            exp: exp + stats.exp
+        )
+    }
 }

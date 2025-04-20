@@ -9,6 +9,7 @@ import UIKit
 
 class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEffectsDelegate {
     internal var gameEngine: GameEngine?
+    internal var levelManager: LevelManager?
     internal var skillImageViews: [UIImageView] = []
     internal var playerActionImageViews: [UIImageView] = []
     internal var playerTokisViews: [Views] = []
@@ -19,7 +20,6 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     internal var opponentImageViewsToId: [UIImageView: UUID] = [:]
     internal var playerImageViewsToId: [UIImageView: UUID] = [:]
 
-    
     @IBOutlet weak var toki1Name: UILabel!
     @IBOutlet weak var toki1LevelCircle: UIView!
     @IBOutlet var toki1HealthBarContainer: UIView!

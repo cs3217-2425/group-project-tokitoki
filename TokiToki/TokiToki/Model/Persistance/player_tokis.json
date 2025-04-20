@@ -12,16 +12,16 @@
       "defense": 30,
       "speed": 100,
       "heal": 0,
-      "exp": 50,
+      "exp": 0,
       "critHitChance": 15,
       "critHitDamage": 150
     },
     "skillNames": [
       "Basic Attack",
-      "Excalibur"
+      "Excalibur",
+      "Final Judgement"
     ],
     "equipmentIds": [
-      "a7c5e913-d4f8-4e0a-92c7-7d8b9e5a7e3d"
     ]
   },
   {
@@ -37,7 +37,7 @@
       "defense": 30,
       "speed": 100,
       "heal": 0,
-      "exp": 100,
+      "exp": 0,
       "critHitChance": 15,
       "critHitDamage": 150
     },
@@ -61,7 +61,7 @@
       "defense": 30,
       "speed": 120,
       "heal": 0,
-      "exp": 150,
+      "exp": 0,
       "critHitChance": 15,
       "critHitDamage": 150
     },
@@ -71,33 +71,6 @@
       "Arrow Rain"
     ],
     "equipmentIds": [
-      "b8d6c4a2-3e1f-4a7b-8c5d-7e8f9a0b1c2d"
-    ]
-  },
-  {
-    "id": "c4e7b9a2-1d3f-5e6d-9f8a-135792468bcd",
-    "name": "FireFox",
-    "level": 1,
-    "rarity": 2,
-    "elementType": ["fire"],
-    "ownerId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-    "baseStats": {
-      "hp": 80,
-      "attack": 60,
-      "defense": 30,
-      "speed": 120,
-      "heal": 0,
-      "exp": 0,
-      "critHitChance": 15,
-      "critHitDamage": 150
-    },
-    "skillNames": [
-      "Basic Spell",
-      "Fireball",
-      "Flame Dance"
-    ],
-    "equipmentIds": [
-      "b8d6c4a2-3e1f-4a7b-8c5d-7e8f9a0b1c2d"
     ]
   },
   {
@@ -113,7 +86,7 @@
       "defense": 7,
       "speed": 13,
       "heal": 80,
-      "exp": 160,
+      "exp": 0,
       "critHitChance": 15,
       "critHitDamage": 150
     },

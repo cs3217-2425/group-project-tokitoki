@@ -291,47 +291,7 @@ class ItemRepository {
 
     // Create an Equipment object from template
     func createEquipment(from template: EquipmentData) -> Equipment {
-        // Check equipment type
-
-//        if template.equipmentType.lowercased() == "consumable" {
-//            if template.equipmentType.lowercased() == "consumable" {
-//                guard let effectData = template.effectStrategy else {
-//                    // fallback – basic heal potion
-//                    let defaultStrat = PotionEffectStrategy(
-//                        effectCalculators: [HealCalculator(healPower: 100)]
-//                    )
-//                    return equipmentRepository.createConsumableEquipment(
-//                        name: template.name,
-//                        description: template.description,
-//                        rarity: template.rarity,
-//                        effectStrategy: defaultStrat,
-//                        usageContext: usageContext(from: template.inBattleOnly)
-//                    )
-//                }
-//
-//                let strategy: ConsumableEffectStrategy
-//                switch effectData.type.lowercased() {
-//                case "potion":
-//                    let calcs = effectData.effectCalculators?
-//                                    .map { $0.toEffectCalculator() } ?? []
-//                    strategy = PotionEffectStrategy(effectCalculators: calcs)
-//                case "upgradecandy":
-//                    strategy = UpgradeCandyEffectStrategy(
-//                                  bonusExp: effectData.bonusExp ?? 100)
-//                default:
-//                    strategy = PotionEffectStrategy(
-//                                  effectCalculators: [HealCalculator(healPower: 100)])
-//                }
-//
-//                return equipmentRepository.createConsumableEquipment(
-//                    name: template.name,
-//                    description: template.description,
-//                    rarity: template.rarity,
-//                    effectStrategy: strategy,
-//                    usageContext: usageContext(from: template.inBattleOnly)
-//                )
-//            }
-//        } else {
+  
             // For non-consumable equipment:
             guard let buffData = template.buff,
                   let slotRaw = template.slot else {
@@ -428,19 +388,6 @@ class ItemRepository {
         return selectedEquipment
     }
 
-    // Helper to create consumable effect strategy
-//    private func createEffectStrategy(from effectData: EquipmentData.EffectStrategyData) -> ConsumableEffectStrategy {
-//        switch effectData.type.lowercased() {
-//        case "potion":
-//            let buffValue = effectData.buffValue ?? 10
-//            let duration = effectData.duration ?? 30.0
-//            return PotionEffectStrategy(buffValue: buffValue, duration: duration)
-//        case "upgradecandy":
-//            let bonusExp = effectData.bonusExp ?? 100
-//            return UpgradeCandyEffectStrategy(bonusExp: bonusExp)
-//        default: return PotionEffectStrategy(buffValue: 10, duration: 30.0)
-//        }
-//    }
 
     // MARK: - Type Conversion Helpers
 

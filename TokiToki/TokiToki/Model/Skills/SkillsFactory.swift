@@ -206,6 +206,8 @@ class SkillsFactory {
                     let defenseMod = calcData.defenseModifier ?? 1.0
                     let speedMod = calcData.speedModifier ?? 1.0
                     let healMod = calcData.healModifier ?? 1.0
+                    let critChanceMod = calcData.critChanceModifier ?? 1.0
+                    let critDmgModifier = calcData.critDmgModifier ?? 1.0
 
                     effectCalculators.append(StatsModifiersCalculator(statsModifiers: [
                         StatsModifier(
@@ -213,7 +215,9 @@ class SkillsFactory {
                             attack: attackMod,
                             defense: defenseMod,
                             speed: speedMod,
-                            heal: healMod
+                            heal: healMod,
+                            criticalHitChance: critChanceMod,
+                            criticalHitDmg: critDmgModifier
                         )
                     ]))
 

@@ -18,30 +18,4 @@ class AIComponent: Component {
         self.skills = skills
         self.entity = entity
     }
-
-    func determineAction(_ userEntity: GameStateEntity, _ playerEntities: [GameStateEntity],
-                         _ opponentEntities: [GameStateEntity],
-                         _ context: EffectCalculationContext) -> Action {
-        var actionToUse: Action?
-        rules.sort { $0.priority > $1.priority }
-        for rule in rules  {
-            actionToUse = rule.condition(userEntity, opponentEntities, playerEntities, context)
-            if actionToUse == nil {
-                continue
-            } else {
-                break
-            }
-        }
-
-        guard let actionToUse = actionToUse else {
-            let skillToUse = skills.filter { $0.canUse() }.randomElement()
-            guard let skillToUse = skillToUse else {
-                return NoAction(entity: userEntity)
-            }
-            return UseSkillAction(user: userEntity, skill: skillToUse, opponentEntities,
-                                         playerEntities, [], context)
-        }
-
-        return actionToUse
-    }
 }

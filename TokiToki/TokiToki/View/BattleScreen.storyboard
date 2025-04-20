@@ -19,14 +19,14 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="battle_background" translatesAutoresizingMaskIntoConstraints="NO" id="1Wq-mJ-nOD" userLabel="background">
                                 <rect key="frame" x="0.0" y="0.0" width="834" height="1210"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="2784769.png" translatesAutoresizingMaskIntoConstraints="NO" id="tvG-YM-tuH">
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="2784769.png" translatesAutoresizingMaskIntoConstraints="NO" id="tvG-YM-tuH">
                                 <rect key="frame" x="580" y="1050" width="100" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="c98-Fv-Z7c"/>
                                     <constraint firstAttribute="width" constant="100" id="njK-RQ-8pB"/>
                                 </constraints>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="8996200.png" translatesAutoresizingMaskIntoConstraints="NO" id="ka1-mp-Xsk">
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="8996200.png" translatesAutoresizingMaskIntoConstraints="NO" id="ka1-mp-Xsk">
                                 <rect key="frame" x="714" y="1050" width="100" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="E0B-Qv-rOL"/>
@@ -114,7 +114,7 @@
                                     <constraint firstAttribute="height" constant="198" id="VTj-Wm-FY0"/>
                                 </constraints>
                             </view>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="8996200.png" translatesAutoresizingMaskIntoConstraints="NO" id="cNq-Fy-XaA">
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="8996200.png" translatesAutoresizingMaskIntoConstraints="NO" id="cNq-Fy-XaA">
                                 <rect key="frame" x="98" y="1050" width="100" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="CbP-xt-X1C"/>
@@ -142,14 +142,14 @@
                                     <constraint firstAttribute="height" constant="160" id="epv-zQ-Lrf"/>
                                 </constraints>
                             </view>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="noAction-removebg-preview.png" translatesAutoresizingMaskIntoConstraints="NO" id="01F-Di-sOr">
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="noAction-removebg-preview.png" translatesAutoresizingMaskIntoConstraints="NO" id="01F-Di-sOr">
                                 <rect key="frame" x="0.0" y="1050" width="100" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="KUt-Vp-cSo"/>
                                     <constraint firstAttribute="height" constant="100" id="riw-Xb-Kmo"/>
                                 </constraints>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="4334081.png" translatesAutoresizingMaskIntoConstraints="NO" id="7gL-pb-t9X">
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="4334081.png" translatesAutoresizingMaskIntoConstraints="NO" id="7gL-pb-t9X">
                                 <rect key="frame" x="446" y="1050" width="100" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="5MU-HS-AeQ"/>
@@ -445,16 +445,16 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tableBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="tertiarySystemGroupedBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

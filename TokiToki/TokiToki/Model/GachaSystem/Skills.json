@@ -45,8 +45,8 @@
            "calculators": [
              {
                "calculatorType": "statsModifier",
-               "statsModifierDuration": 2,
-               "attackModifier": 1.0,
+               "statsModifierDuration": 3,
+               "attackModifier": 1.5,
                "defenseModifier": 1.0,
                "speedModifier": 1.5,
                "healModifier": 1.0
@@ -88,7 +88,7 @@
             },
             {
               "calculatorType": "statusEffect",
-              "statusEffectChance": 0.25,
+              "statusEffectChance": 0.5,
               "statusEffect": "paralysis",
               "statusEffectDuration": 2,
               "statusEffectStrength": 1.0
@@ -118,8 +118,8 @@
     {
       "id": "excalibur",
       "name": "Excalibur",
-      "description": "A strong attack that deals damage to a single enemy.",
-      "cooldown": 4,
+      "description": "A strong attack that deals damage to a single enemy and buffs self.",
+      "cooldown": 3,
       "effectDefinitions": [
         {
           "targetType": "singleEnemy",
@@ -135,13 +135,44 @@
            "calculators": [
              {
                "calculatorType": "statsModifier",
-               "statsModifierDuration": 2,
+               "statsModifierDuration": 3,
                "attackModifier": 1.5,
                "defenseModifier": 1.5,
                "speedModifier": 1.0,
-               "healModifier": 1.0
+               "healModifier": 1.0,
              }]
             }
+          ]
+        },
+    {
+      "id": "final judgement",
+      "name": "Final Judgement",
+      "description": "Applies a strong crit buff before dealing a fatal blow to the enemy.",
+      "cooldown": 3,
+      "effectDefinitions": [
+          {
+             "targetType": "ownself",
+             "calculators": [
+               {
+                 "calculatorType": "statsModifier",
+                 "statsModifierDuration": 2,
+                 "attackModifier": 1.0,
+                 "defenseModifier": 1.0,
+                 "speedModifier": 1.0,
+                 "healModifier": 1.0,
+                 "critChanceModifier": 4.0,
+                 "critDamageModifier": 1.5
+               }]
+              },
+        {
+          "targetType": "singleEnemy",
+          "calculators": [
+            {
+              "calculatorType": "attack",
+              "elementType": "light",
+              "basePower": 80
+            }]
+          }
           ]
         },
     {
@@ -166,7 +197,7 @@
       "id": "iceShot",
       "name": "Ice Shot",
       "description": "A magic arrow that deals damage to a single enemy with a chance to freeze.",
-      "cooldown": 3,
+      "cooldown": 2,
       "effectDefinitions": [
         {
           "targetType": "singleEnemy",
@@ -190,8 +221,8 @@
     {
       "id": "arrowRain",
       "name": "Arrow Rain",
-      "description": "Launches a ball of fire at the enemy.",
-      "cooldown": 2,
+      "description": "Launches a rain of arrows at all enemies.",
+      "cooldown": 3,
       "effectDefinitions": [
         {
           "targetType": "allEnemies",
@@ -199,7 +230,14 @@
             {
               "calculatorType": "attack",
               "elementType": "earth",
-              "basePower": 40
+              "basePower": 50
+            },
+            {
+              "calculatorType": "statusEffect",
+              "statusEffectChance": 0.35,
+              "statusEffect": "poison",
+              "statusEffectDuration": 2,
+              "statusEffectStrength": 1.0
             }
           ]
         }
@@ -209,7 +247,7 @@
       "id": "water-blast",
       "name": "Water Blast",
       "description": "Blasts the enemy with a jet of water.",
-      "cooldown": 1,
+      "cooldown": 2,
       "effectDefinitions": [
         {
           "targetType": "singleEnemy",
@@ -273,6 +311,57 @@
                 "statusEffect": "stun",
                 "statusEffectDuration": 1,
                 "statusEffectStrength": 1.0
+              }
+            ]
+          }
+      ]
+    },
+    {
+      "id": "HailStorm",
+      "name": "Hail Storm",
+      "description": "Creates a hail that damages all enemies with a chance to freeze",
+      "cooldown": 4,
+      "effectDefinitions": [
+          {
+            "targetType": "allEnemies",
+            "calculators": [
+              {
+                "calculatorType": "attack",
+                "elementType": "ice",
+                "basePower": 45
+              },
+              {
+                "calculatorType": "statusEffect",
+                "statusEffectChance": 0.70,
+                "statusEffect": "frozen",
+                "statusEffectDuration": 1,
+                "statusEffectStrength": 1.0
+              }
+            ]
+          }
+      ]
+    },
+    {
+      "id": "Hurricane",
+      "name": "Hurricane",
+      "description": "Creates a hurricane to attack all enemies and slow them down",
+      "cooldown": 4,
+      "effectDefinitions": [
+          {
+            "targetType": "allEnemies",
+            "calculators": [
+              {
+                "calculatorType": "attack",
+                "elementType": "air",
+                "basePower": 60
+              },
+              {
+                "calculatorType": "statsModifier",
+                "statsModifierDuration": 2,
+                "attackModifier": 1.0,
+                "defenseModifier": 1.0,
+                "speedModifier": 0.5,
+                "healModifier": 1.0
               }
             ]
           }
