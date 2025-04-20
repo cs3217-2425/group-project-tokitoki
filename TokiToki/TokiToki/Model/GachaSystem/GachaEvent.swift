@@ -78,7 +78,7 @@ class ElementEvent: GachaEvent {
                 modifiers[equipmentTemplate.name] = rateMultiplier
             }
         }
-        
+
         print("Modifiers for \(elementType): \(modifiers)")
 
         return modifiers

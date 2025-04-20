@@ -20,38 +20,38 @@ class BattleScreenViewController: UIViewController, BattleLogObserver, BattleEff
     internal var opponentImageViewsToId: [UIImageView: UUID] = [:]
     internal var playerImageViewsToId: [UIImageView: UUID] = [:]
 
-    @IBOutlet weak var toki1Name: UILabel!
-    @IBOutlet weak var toki1LevelCircle: UIView!
+    @IBOutlet var toki1Name: UILabel!
+    @IBOutlet var toki1LevelCircle: UIView!
     @IBOutlet var toki1HealthBarContainer: UIView!
     @IBOutlet var toki1HealthBar: UIView!
     @IBOutlet var toki1View: UIView!
 
-    @IBOutlet weak var toki2Name: UILabel!
-    @IBOutlet weak var toki2LevelCircle: UIView!
+    @IBOutlet var toki2Name: UILabel!
+    @IBOutlet var toki2LevelCircle: UIView!
     @IBOutlet var toki2HealthBarContainer: UIView!
     @IBOutlet var toki2HealthBar: UIView!
     @IBOutlet var toki2View: UIView!
 
-    @IBOutlet weak var toki3Name: UILabel!
-    @IBOutlet weak var toki3LevelCircle: UIView!
+    @IBOutlet var toki3Name: UILabel!
+    @IBOutlet var toki3LevelCircle: UIView!
     @IBOutlet var toki3HealthBar: UIView!
     @IBOutlet var toki3HealthBarContainer: UIView!
     @IBOutlet var toki3View: UIView!
 
-    @IBOutlet weak var mainOppLevelCircle: UIView!
-    @IBOutlet weak var mainOppName: UILabel!
+    @IBOutlet var mainOppLevelCircle: UIView!
+    @IBOutlet var mainOppName: UILabel!
     @IBOutlet var mainOppHealthBarContainer: UIView!
     @IBOutlet var mainOppHealthBar: UIView!
     @IBOutlet var mainOpponentView: UIView!
 
-    @IBOutlet weak var opp2LevelCircle: UIView!
-    @IBOutlet weak var opp2Name: UILabel!
+    @IBOutlet var opp2LevelCircle: UIView!
+    @IBOutlet var opp2Name: UILabel!
     @IBOutlet var opponent2HealthBar: UIView!
     @IBOutlet var opponent2HealthBarContainer: UIView!
     @IBOutlet var opponent2View: UIView!
 
-    @IBOutlet weak var opp3LevelCircle: UIView!
-    @IBOutlet weak var opp3Name: UILabel!
+    @IBOutlet var opp3LevelCircle: UIView!
+    @IBOutlet var opp3Name: UILabel!
     @IBOutlet var opponent3HealthBar: UIView!
     @IBOutlet var opponent3HealthBarContainer: UIView!
     @IBOutlet var opponent3View: UIView!

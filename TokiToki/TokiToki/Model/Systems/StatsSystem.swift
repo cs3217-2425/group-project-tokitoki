@@ -24,7 +24,7 @@ class StatsSystem: System {
 
         }
     }
-    
+
     func revive(amount: Float, _ entities: [GameStateEntity]) {
         for entity in entities {
             guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {
@@ -48,7 +48,7 @@ class StatsSystem: System {
             statsComponent.actionMeter = 0
         }
     }
-    
+
     func resetOnlyActionBar(_ entities: [GameStateEntity]) {
         for entity in entities {
             guard let statsComponent = entity.getComponent(ofType: StatsComponent.self) else {

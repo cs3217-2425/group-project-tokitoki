@@ -9,7 +9,6 @@ struct EquipmentsData: Codable {
     let equipment: [EquipmentData]
 }
 
-
 struct EventData: Codable {
     let name: String
     let description: String
@@ -25,7 +24,6 @@ struct EventData: Codable {
 struct EventsData: Codable {
     let events: [EventData]
 }
-
 
 struct TokiData: Codable {
     let id: String
@@ -44,7 +42,6 @@ struct TokiData: Codable {
 struct TokisData: Codable {
     let tokis: [TokiData]
 }
-
 
 struct SkillData: Codable {
     let id: String
@@ -80,7 +77,7 @@ struct CalculatorData: Codable {
     let healModifier: Double?
     let critChanceModifier: Double?
     let critDmgModifier: Double?
-    
+
     let healPower: Int?
 }
 

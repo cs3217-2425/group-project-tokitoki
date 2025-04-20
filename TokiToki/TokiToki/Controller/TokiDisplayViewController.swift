@@ -32,7 +32,7 @@ class TokiDisplayViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet var speedProgressView: UIProgressView?
 
     @IBOutlet var levelUpButton: UIButton?
-    
+
     var tokiDisplay: TokiDisplay?
 
     override func viewDidLoad() {

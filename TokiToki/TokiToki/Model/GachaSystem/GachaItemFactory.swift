@@ -12,13 +12,13 @@ class GachaItemFactory {
         template: TokiData,
         factory: TokiFactoryProtocol
     ) -> TokiGachaItem {
-        return TokiGachaItem(template: template, tokiFactory: factory)
+        TokiGachaItem(template: template, tokiFactory: factory)
     }
 
     static func createEquipmentGachaItem(
         template: EquipmentData,
         factory: EquipmentFactoryProtocol
     ) -> EquipmentGachaItem {
-        return EquipmentGachaItem(template: template, equipmentFactory: factory)
+        EquipmentGachaItem(template: template, equipmentFactory: factory)
     }
 }

@@ -57,7 +57,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         self.savedPlayersPlusOpponents = self.playersPlusOpponents
         self.turnSystem = TurnSystem(statsSystem, MAX_ACTION_BAR, MULTIPLIER_FOR_ACTION_METER)
         self.levelManager = levelManager
-        
+
         self.globalStatusEffectsManager = GlobalStatusEffectsManager(statusEffectsSystem, MAX_ACTION_BAR,
                                                                      MULTIPLIER_FOR_ACTION_METER)
         self.effectContext = EffectCalculationContext(globalStatusEffectsManager: globalStatusEffectsManager,
@@ -66,7 +66,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
                                                       allOpponentEntities: savedOpponentTeam)
         self.globalStatusEffectsManager.setDelegate(self)
         self.statusEffectsSystem.setDelegate(self)
-        
+
         appendToSystemsForResetting()
         saveEquipments()
     }
@@ -110,7 +110,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         battleEffectsDelegate?.updateHealthBar(entity.id, statsSystem.getCurrentHealth(entity),
                                                statsSystem.getMaxHealth(entity)) { [weak self] in
             self?.handleDeadBodiesInSequence()
-            
+
         }
         return isBattleOver()
     }
@@ -121,7 +121,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
         }
         PlayerManager().updateAfterBattle(exp: exp, gold: gold, isWin: true)
     }
-    
+
     internal func isBattleOver() -> Bool {
         if playerTeam.isEmpty || opponentTeam.isEmpty {
             let isWin = opponentTeam.isEmpty
@@ -148,7 +148,7 @@ class GameEngine: StatusEffectApplierAndPublisherDelegate, ReviverDelegate {
             logMessage(result.description)
         }
     }
-    
+
     func countConsumables() -> [ConsumableGroupings] {
         guard let currentGameStateEntity = currentGameStateEntity else {
             return []

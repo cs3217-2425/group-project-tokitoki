@@ -75,7 +75,7 @@ class Toki {
 
         return entity
     }
-    
+
     func createMonsterEntity(_ aiComponent: AIComponent) -> GameStateEntity {
         let entity = createBattleEntity()
         entity.addComponent(aiComponent)
@@ -95,9 +95,9 @@ class Toki {
         )
         self.level += 1
     }
-    
+
     func clone() -> Toki {
-        return Toki(id: self.id, name: self.name, rarity: self.rarity,
+        Toki(id: self.id, name: self.name, rarity: self.rarity,
                     baseStats: self.baseStats, skills: self.skills,
                     equipments: equipments, elementType: self.elementType,
                     level: self.level)
@@ -113,9 +113,9 @@ struct TokiBaseStats {
     var exp: Int
     var critHitChance: Int = 15
     var critHitDamage: Int = 150
-    
+
     func addStats(_ stats: TokiBaseStats) -> TokiBaseStats {
-        return TokiBaseStats(
+        TokiBaseStats(
             hp: hp + stats.hp,
             attack: attack + stats.attack,
             defense: defense + stats.defense,

@@ -91,7 +91,7 @@ class BattleEndVisualFX {
             // Countdown label
             countdown.topAnchor.constraint(equalTo: messageText.bottomAnchor, constant: 30),
             countdown.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-            countdown.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            countdown.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20)
         ])
 
         // Start timer for countdown

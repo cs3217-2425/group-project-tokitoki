@@ -11,7 +11,7 @@ extension JsonPersistenceManager {
     func savePlayerTokis(_ tokis: [Toki], playerId: UUID) -> Bool {
         let tokisCodable = tokis.map { TokiCodable(from: $0, ownerId: playerId) }
         var allTokis: [TokiCodable] = []
-        
+
         if fileExists(filename: playerTokisFileName),
            let existingTokis: [TokiCodable] = loadFromJson(filename: playerTokisFileName) {
             // Keep tokis from other players
@@ -33,7 +33,7 @@ extension JsonPersistenceManager {
                 } else {
                     currentPlayerTokiDict[newToki.id] = newToki
                 }
-                
+
                 logger.log("Saved toki \(newToki.name)")
                 logger.log("Saved toki equipments\(newToki.equipmentIds)")
             }
@@ -61,7 +61,7 @@ extension JsonPersistenceManager {
 
         // Build a lookup dictionary keyed by UUID.
 //        let equipmentLookup = Dictionary(uniqueKeysWithValues: equipmentComponent.inventory.map { ($0.id, $0) })
-        
+
         var equipmentLookup = equipmentComponent.inventory.reduce(into: [UUID: Equipment]()) { dict, equipment in
            dict[equipment.id] = equipment
         }
@@ -70,7 +70,7 @@ extension JsonPersistenceManager {
         for (_, equipment) in equipmentComponent.equipped {
            equipmentLookup[equipment.id] = equipment
         }
-        
+
         var tokis: [Toki] = []
 
         for tokiCodable in playerTokisCodable {

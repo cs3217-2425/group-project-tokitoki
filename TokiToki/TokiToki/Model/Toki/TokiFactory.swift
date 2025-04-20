@@ -17,28 +17,28 @@ protocol TokiFactoryProtocol {
 /// Loads Toki templates from JSON and builds `Toki` instances.
 class TokiFactory: TokiFactoryProtocol {
     // MARK: - Properties
-    
+
     private var templates: [String: TokiData] = [:]
     private let logger = Logger(subsystem: "TokiFactory")
     private let skillsFactory: SkillsFactoryProtocol
-    
+
     // MARK: - Initialization
-    
+
     init(skillsFactory: SkillsFactoryProtocol) {
         self.skillsFactory = skillsFactory
         loadTemplates()
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// All available Toki templates.
     func getAllTemplates() -> [TokiData] {
-        return Array(templates.values)
+        Array(templates.values)
     }
 
     /// Template by name, or nil if none.
     func getTemplate(named name: String) -> TokiData? {
-        return templates[name]
+        templates[name]
     }
 
     /// Build a concrete `Toki` from its template.
@@ -51,10 +51,10 @@ class TokiFactory: TokiFactoryProtocol {
             heal: data.baseHeal,
             exp: data.baseExp
         )
-        
+
         let skills = createSkillsFromNames(data.skills)
         let elementType = ElementType.fromString(data.elementType) ?? .neutral
-        
+
         return Toki(
             name: data.name,
             rarity: convertIntToItemRarity(data.rarity),
@@ -65,7 +65,7 @@ class TokiFactory: TokiFactoryProtocol {
             level: 1
         )
     }
-    
+
     /// Create a random Toki (useful for testing/demo purposes)
     func createRandomToki() -> Toki? {
         guard let template = templates.values.randomElement() else {
@@ -73,9 +73,9 @@ class TokiFactory: TokiFactoryProtocol {
         }
         return createToki(from: template)
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func loadTemplates() {
         do {
             let tokisData: TokisData = try ResourceLoader.loadJSON(fromFile: "Tokis")
@@ -87,17 +87,17 @@ class TokiFactory: TokiFactoryProtocol {
             logger.logError("Failed to load Toki templates: \(error)")
         }
     }
-    
+
     private func createSkillsFromNames(_ names: [String]) -> [Skill] {
-        return names.compactMap { name in
+        names.compactMap { name in
             guard let skillData = skillsFactory.getTemplate(named: name) else {
                 return nil
             }
             return skillsFactory.createSkill(from: skillData)
         }
     }
-    
+
     private func convertIntToItemRarity(_ value: Int) -> ItemRarity {
-        return ItemRarity(intValue: value) ?? .common
+        ItemRarity(intValue: value) ?? .common
     }
 }

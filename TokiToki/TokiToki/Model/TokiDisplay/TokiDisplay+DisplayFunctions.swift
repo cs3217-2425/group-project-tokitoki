@@ -96,7 +96,6 @@ extension TokiDisplay {
          control.present(alert, animated: true)
      }
 
-
     func changeSkillsTapped(_ sender: UIButton, _ control: TokiDisplayViewController) {
         guard let indexPath = control.skillsTableView?.indexPathForSelectedRow else {
             let noSelectionAlert = UIAlertController(title: "No Selection",
@@ -177,14 +176,14 @@ extension TokiDisplay {
             control.present(alert, animated: true, completion: nil)
         }
     }
-    
+
     func showCraftingPopup(for item: Equipment, at originalIndex: Int, _ vcont: TokiDisplayViewController) {
         let craftVC = CraftingPopupViewController()
 
         // Pass along the original item and its index in the inventory.
         craftVC.originalItem = item
         craftVC.originalItemIndex = originalIndex
-        
+
         // Pass the TokiDisplay instance (or any other dependency) from the parent view controller.
         craftVC.tokiDisplay = vcont.tokiDisplay
 

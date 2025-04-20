@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 class CollectionViewController: HorizontalScrollViewController {
 
     var packs: [GachaPack] = [] {
@@ -30,7 +29,7 @@ class CollectionViewController: HorizontalScrollViewController {
 
         // Register for cell reuse
         collectionView.register(GachaPackCell.self, forCellWithReuseIdentifier: "cell")
-        
+
         // Add a bit of spacing between cells
         collectionViewFlowLayout.minimumLineSpacing = 50
     }
@@ -60,7 +59,7 @@ class CollectionViewController: HorizontalScrollViewController {
         if !packs.isEmpty && indexPath.item < packs.count {
             let selectedPack = packs[indexPath.item]
             delegate?.didSelectPack(pack: selectedPack)
-            
+
             // Add a subtle animation on selection
             if let cell = collectionView.cellForItem(at: indexPath) {
                 UIView.animate(withDuration: 0.1, animations: {
@@ -73,15 +72,15 @@ class CollectionViewController: HorizontalScrollViewController {
             }
         }
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
+
         // Recalculate layout when orientation changes
         coordinator.animate(alongsideTransition: { [weak self] _ in
             self?.collectionViewFlowLayout.invalidateLayout()
             self?.configureCollectionViewLayoutItemSize()
-            
+
             // Keep the current pack centered
             let indexPath = IndexPath(item: self?.indexOfMajorCell() ?? 0, section: 0)
             self?.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
@@ -95,7 +94,7 @@ extension CollectionViewController: GachaPackCellDelegate {
         // Find the pack that matches this name
         if let selectedPack = packs.first(where: { $0.name == packName }) {
             delegate?.didSelectPack(pack: selectedPack)
-            
+
             // Also trigger draw action in parent view controller
             if let gachaVC = self.parent as? GachaViewController {
                 gachaVC.performDraw(for: selectedPack)
@@ -105,7 +104,7 @@ extension CollectionViewController: GachaPackCellDelegate {
 }
 
 // MARK: - GachaPackCell
-//class GachaPackCell: UICollectionViewCell {
+// class GachaPackCell: UICollectionViewCell {
 //    private let packNameLabel = UILabel()
 //    private let packCostLabel = UILabel()
 //    private let containerView = UIView()
@@ -187,4 +186,4 @@ extension CollectionViewController: GachaPackCellDelegate {
 //            containerView.backgroundColor = .systemGray
 //        }
 //    }
-//}
+// }

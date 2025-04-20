@@ -5,7 +5,6 @@
 //  Created by Wh Kang on 18/4/25.
 //
 
-
 import Foundation
 
 /// A component that applies/removes an EquipmentBuff on a StatsComponent.

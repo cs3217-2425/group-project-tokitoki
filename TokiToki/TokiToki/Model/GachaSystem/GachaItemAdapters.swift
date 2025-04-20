@@ -29,7 +29,7 @@ class TokiGachaItem: IGachaItem {
     }
 
     func createInstance() -> Any {
-        return tokiFactory.createToki(from: template)
+        tokiFactory.createToki(from: template)
     }
 }
 
@@ -41,7 +41,7 @@ class EquipmentGachaItem: IGachaItem {
     let rarity: ItemRarity
     let elementType: [ElementType] = []
     private let template: EquipmentData
-    private let equipmentFactory: EquipmentFactoryProtocol 
+    private let equipmentFactory: EquipmentFactoryProtocol
 
     var ownerId: UUID?
     var dateAcquired: Date?
@@ -54,6 +54,6 @@ class EquipmentGachaItem: IGachaItem {
     }
 
     func createInstance() -> Any {
-        return equipmentFactory.createEquipment(from: template)
+        equipmentFactory.createEquipment(from: template)
     }
 }

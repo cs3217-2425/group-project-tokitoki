@@ -31,7 +31,7 @@ class EquipmentSystem: System {
 
         return results
     }
-    
+
     func applyPassiveConsumable(_ entity: GameStateEntity,
                                 _ context: EffectCalculationContext) -> [EffectResult] {
         guard let equipmentComponent = entity.getComponent(ofType: EquipmentComponent.self) else {
@@ -48,7 +48,7 @@ class EquipmentSystem: System {
                                                                        context) {
                 NotificationCenter.default.post(name: .EquipmentConsumed, object: passiveConsumable)
             }
-            
+
             // passive did not activate
             guard let results = results else {
                 return []
@@ -59,7 +59,7 @@ class EquipmentSystem: System {
         }
         return overallResults
     }
-    
+
     private func removeEquipment(_ equipments: inout [Equipment], _ equipment: Equipment) {
         guard let index = equipments.firstIndex(where: { $0.id == equipment.id }) else {
             return
@@ -94,12 +94,12 @@ class EquipmentSystem: System {
             entity.toki.equipments = entity.toki.savedEquipments
         }
     }
-    
+
     func countConsumables(_ entity: GameStateEntity) -> [ConsumableGroupings] {
         guard let equipmentComponent = entity.getComponent(ofType: EquipmentComponent.self) else {
             return []
         }
-        
+
         let countsDict = equipmentComponent.inventory
             .filter { item in
                 guard item.equipmentType == .consumable,

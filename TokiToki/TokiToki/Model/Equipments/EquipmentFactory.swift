@@ -30,19 +30,19 @@ protocol EquipmentFactoryProtocol {
 class EquipmentFactory: EquipmentFactoryProtocol {
     private let logger = Logger(subsystem: "EquipmentFactory")
     private var templates: [String: EquipmentData] = [:]
-    
+
     init() {
         loadTemplates()
     }
-    
+
     /// All EquipmentData templates
     func getAllTemplates() -> [EquipmentData] {
-        return Array(templates.values)
+        Array(templates.values)
     }
-    
+
     /// Template by name
     func getTemplate(named name: String) -> EquipmentData? {
-        return templates[name]
+        templates[name]
     }
 
     func createConsumableEquipment(
@@ -52,7 +52,7 @@ class EquipmentFactory: EquipmentFactoryProtocol {
         effectStrategy: ConsumableEffectStrategy,
         usageContext: ConsumableUsageContext
     ) -> ConsumableEquipment {
-        return ConsumableEquipment(
+        ConsumableEquipment(
             id: UUID(),
             name: name,
             description: description,
@@ -69,7 +69,7 @@ class EquipmentFactory: EquipmentFactoryProtocol {
         buff: EquipmentBuff,
         slot: EquipmentSlot
     ) -> NonConsumableEquipment {
-        return NonConsumableEquipment(
+        NonConsumableEquipment(
             id: UUID(),
             name: name,
             description: description,
@@ -78,7 +78,7 @@ class EquipmentFactory: EquipmentFactoryProtocol {
             slot: slot
         )
     }
-    
+
     func createEquipment(from template: EquipmentData) -> Equipment {
         // For non-consumable equipment:
         guard let buffData = template.buff,
@@ -90,11 +90,11 @@ class EquipmentFactory: EquipmentFactoryProtocol {
                 affectedStats: []
             )
             return createNonConsumableEquipment(
-                name:        template.name,
+                name: template.name,
                 description: template.description,
-                rarity:      template.rarity,
-                buff:        defaultBuff,
-                slot:        .weapon
+                rarity: template.rarity,
+                buff: defaultBuff,
+                slot: .weapon
             )
         }
 
@@ -104,24 +104,24 @@ class EquipmentFactory: EquipmentFactoryProtocol {
                     .compactMap { EquipmentBuff.Stat(rawValue: $0.lowercased()) }
 
         let buff = EquipmentBuff(
-            value:         buffData.value,
-            description:   buffData.description,
+            value: buffData.value,
+            description: buffData.description,
             affectedStats: statsArray
         )
 
         let equipmentSlot = convertStringToEquipmentSlot(slotRaw)
 
         return createNonConsumableEquipment(
-            name:        template.name,
+            name: template.name,
             description: template.description,
-            rarity:      template.rarity,
-            buff:        buff,
-            slot:        equipmentSlot
+            rarity: template.rarity,
+            buff: buff,
+            slot: equipmentSlot
         )
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func loadTemplates() {
         do {
             let data: EquipmentsData = try ResourceLoader.loadJSON(fromFile: "Equipments")
@@ -133,12 +133,12 @@ class EquipmentFactory: EquipmentFactoryProtocol {
             logger.logError("Failed to load equipment templates: \(error)")
         }
     }
-    
+
     private func usageContext(from inBattleOnly: Bool?) -> ConsumableUsageContext {
         guard let flag = inBattleOnly else { return .anywhere }
         return flag ? .battleOnly : .outOfBattleOnly
     }
-    
+
     private func convertStringToEquipmentSlot(_ str: String) -> EquipmentSlot {
         switch str.lowercased() {
         case "weapon": return .weapon

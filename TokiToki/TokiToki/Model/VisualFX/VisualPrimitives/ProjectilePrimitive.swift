@@ -9,7 +9,7 @@ import UIKit
 
 class ProjectilePrimitive: VisualFXPrimitive {
     private let logger = Logger(subsystem: "ProjectilePrimitive")
-    
+
     func apply(to view: UIView, with parameters: [String: Any], completion: @escaping () -> Void) {
         guard let projectileParams = parameters["parameters"] as? ProjectileParameters else {
             completion()

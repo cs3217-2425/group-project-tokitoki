@@ -113,7 +113,7 @@ struct DecodableEffectCalculator: Codable {
             return ReviveCalculator(revivePower: revivePower)
         }
         }
-    
+
 }
 
 struct EquipmentJSON: Codable {
@@ -234,7 +234,6 @@ class TokiDisplay {
         return total
     }
 
-
     private func updateProgressBar(_ progressView: UIProgressView, baseValue: Float,
                                    buffValue: Float, maxValue: Float, baseColor: UIColor, buffColor: UIColor) {
         progressView.subviews.forEach { $0.removeFromSuperview() }
@@ -268,7 +267,7 @@ class TokiDisplay {
         control.elementLabel?.text = "Element: \(toki.elementType.map(\.description).joined(separator: ", "))"
 
         let hpMax: Float = 420.0
-        let expMax: Float = Float(levelInfo[toki.level])
+        let expMax = Float(levelInfo[toki.level])
         let statMax: Float = 200.0
 
         control.hpProgressView?.progress = Float(toki.baseStats.hp) / hpMax

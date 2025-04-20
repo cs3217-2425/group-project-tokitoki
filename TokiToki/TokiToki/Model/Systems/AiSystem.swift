@@ -7,13 +7,13 @@
 
 class AiSystem: System {
     func update(_ entities: [GameStateEntity]) {
-        
+
     }
 
     func reset(_ entities: [GameStateEntity]) {
-        
+
     }
-    
+
     func determineAction(_ userEntity: GameStateEntity, _ playerEntities: [GameStateEntity],
                          _ opponentEntities: [GameStateEntity],
                          _ context: EffectCalculationContext) -> Action {
@@ -24,7 +24,7 @@ class AiSystem: System {
         let skills = aiComponent.skills
         var actionToUse: Action?
         rules.sort { $0.priority > $1.priority }
-        for rule in rules  {
+        for rule in rules {
             actionToUse = rule.condition(userEntity, opponentEntities, playerEntities, context)
             if actionToUse == nil {
                 continue
@@ -45,4 +45,3 @@ class AiSystem: System {
         return actionToUse
     }
 }
-

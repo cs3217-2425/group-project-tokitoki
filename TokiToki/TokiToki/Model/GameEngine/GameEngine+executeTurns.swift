@@ -94,11 +94,11 @@ extension GameEngine {
             self?.startGameLoop()
         }
     }
-    
+
     // Assume that this function which is only called in isolation when toki is immobilised, will not
     // activate any passives of passive equipments equipped on a toki
     internal func updateEntityForNewTurn(_ entity: GameStateEntity) {
-        //updateSkillCooldowns(entity)
+        // updateSkillCooldowns(entity)
         statusEffectsSystem.update([entity])
         statsModifiersSystem.update([entity])
         turnSystem.endTurn(for: entity)
@@ -124,13 +124,13 @@ extension GameEngine {
             }
         }
     }
-    
+
     internal func handleDeadBodiesInSequence() {
         removeDeadBodies()
         applyPassiveEquipmentEffects()
         removeDeadEntitiesFromModel()
     }
-    
+
     internal func removeDeadBodies() {
         for entity in playersPlusOpponents {
             if statsSystem.checkIsEntityDead(entity) {
@@ -139,7 +139,7 @@ extension GameEngine {
             }
         }
     }
-    
+
     internal func removeDeadEntitiesFromModel() {
         for entity in playersPlusOpponents {
             if statsSystem.checkIsEntityDead(entity) {
@@ -149,14 +149,14 @@ extension GameEngine {
             }
         }
     }
-    
+
     internal func applyPassiveEquipmentEffects() {
         playersPlusOpponents.forEach { entity in
             let results = equipmentSystem.applyPassiveConsumable(entity, effectContext)
             logMultipleResults(results)
         }
     }
-    
+
     func handleRevive(_ entity: GameStateEntity) {
         statusEffectsSystem.reset([entity])
         statsSystem.resetOnlyActionBar([entity])

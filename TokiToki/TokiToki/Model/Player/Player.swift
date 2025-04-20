@@ -69,7 +69,7 @@ struct Player {
             statistics.battlesWon += 1
         }
     }
-    
+
     mutating func resetTokisForBattle() {
         tokisForBattle = []
     }

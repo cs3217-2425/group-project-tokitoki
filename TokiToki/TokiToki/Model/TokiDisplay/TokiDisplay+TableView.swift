@@ -146,4 +146,3 @@ extension TokiDisplay {
         return UISwipeActionsConfiguration(actions: actions)
     }
 }
-

@@ -16,12 +16,12 @@ class TokiSelection {
     // Array to hold the tokis selected for battle.
     var selectedTokis: [Toki] = []
     let MAX_SELECTED_TOKIS = 3
-    
+
     init() {
         // Initialize the TokiDisplay to load all Tokis.
         tokis = tokiDisplay.allTokis
     }
-    
+
     func startBattleTapped(_ vcont: UIViewController) {
         // Update the global player's toki list.
         PlayerManager().resetTokisForBattle()
@@ -30,7 +30,7 @@ class TokiSelection {
             PlayerManager().addTokiToBattle(toki)
             logger.log("Added Toki: \(toki.name) to PlayerManager")
         }
-        
+
         if selectedTokis.isEmpty {
             let alert = UIAlertController(title: "No Tokis Selected",
                                           message: "Please select at least one Toki to start the battle.",
@@ -48,9 +48,9 @@ class TokiSelection {
             vcont.present(alert, animated: true)
             return
         }
-        
+
         let alertController = UIAlertController(title: "Select Difficulty", message: "Choose your difficulty level.", preferredStyle: .alert)
-        
+
         let easyAction = UIAlertAction(title: "Easy", style: .default) { _ in
             self.navigateToBattle(difficulty: .easy, vcont)
         }
@@ -63,18 +63,18 @@ class TokiSelection {
         let hellAction = UIAlertAction(title: "Hell", style: .default) { _ in
             self.navigateToBattle(difficulty: .hell, vcont)
         }
-        
+
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
+
         alertController.addAction(easyAction)
         alertController.addAction(normalAction)
         alertController.addAction(hardAction)
         alertController.addAction(hellAction)
         alertController.addAction(cancelAction)
-        
+
         vcont.present(alertController, animated: true, completion: nil)
     }
-    
+
     private func navigateToBattle(difficulty: Level, _ controller: UIViewController) {
         let storyboard = UIStoryboard(name: "BattleScreen", bundle: nil)
         guard let viewController = storyboard.instantiateViewController(withIdentifier: "BattleVC")
@@ -85,7 +85,7 @@ class TokiSelection {
         viewController.modalPresentationStyle = .fullScreen
         controller.navigationController?.pushViewController(viewController, animated: true)
     }
-    
+
     func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowTokiDisplay" {
             if let destVC = segue.destination as? TokiDisplayViewController {
@@ -99,9 +99,9 @@ class TokiSelection {
 extension TokiSelection {
     // Returns the total number of Tokis.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tokis.count
+        tokis.count
     }
-    
+
     // Dequeues and configures each cell.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       guard let cell = tableView.dequeueReusableCell(
@@ -154,7 +154,7 @@ extension TokiSelection {
 
       return cell
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, _ vcont: UIViewController) {
         let selectedToki = tokis[indexPath.row]
         // Set the toki for display using TokiDisplay.

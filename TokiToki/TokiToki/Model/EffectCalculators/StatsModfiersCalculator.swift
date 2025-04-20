@@ -35,7 +35,7 @@ class StatsModifiersCalculator: EffectCalculator {
         }
         return nil
     }
-    
+
     func merge(_ effectCalculator: EffectCalculator) -> EffectCalculator {
         guard let statsModifiersCalculator = effectCalculator as? StatsModifiersCalculator else {
             return self

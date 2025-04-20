@@ -181,14 +181,14 @@ class SkillVisualFXFactory {
             )
             .build()
     }
-    
+
     static func createWaterBlastFX(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
         let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
-        
+
         // Water colors
         let waterColor = UIColor.cyan.withAlphaComponent(0.8)
         let deepWaterColor = UIColor(red: 0, green: 0.4, blue: 0.8, alpha: 0.9)
-        
+
         return builder
             .addProjectile(
                 shape: .circle,
@@ -210,18 +210,18 @@ class SkillVisualFXFactory {
                           lifetime: 0.8, spreadRadius: 160, color: waterColor, isTargetEffect: true)
             .build()
     }
-    
+
     static func createFinalJudgementFX(sourceView: UIView, targetView: UIView) -> SkillVisualFX {
         let builder = VisualFXBuilder(sourceView: sourceView, targetView: targetView)
-            
+
         // Holy/judgment colors - gold with hints of blue to distinguish from Excalibur
         let goldColor = UIColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
         let blueGoldColor = UIColor(red: 0.9, green: 0.8, blue: 0.4, alpha: 1.0)
-        
+
         return builder
             // Initial effect - charging judgment power
             .addColorFlash(color: goldColor, intensity: 0.4, fade: true, isTargetEffect: false)
-            
+
             // Main sword strike effect - similar to Excalibur but with gold color
             .addParticles(type: .triangle, count: 60, size: 3, speed: 120,
                           lifetime: 0.5, spreadRadius: 220, color: goldColor, isTargetEffect: true)

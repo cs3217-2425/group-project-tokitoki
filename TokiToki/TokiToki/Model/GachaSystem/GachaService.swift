@@ -16,16 +16,16 @@ protocol GachaServiceProtocol {
 
 class GachaService: GachaServiceProtocol {
     // MARK: - Properties
-    
+
     private let tokiFactory: TokiFactoryProtocol
     private let equipmentFactory: EquipmentFactoryProtocol
     private let skillsFactory: SkillsFactoryProtocol
     private let eventService: EventServiceProtocol
     private var gachaPacks: [String: GachaPack] = [:]
     private let logger = Logger(subsystem: "GachaService")
-    
+
     // MARK: - Initialization
-    
+
     init(tokiFactory: TokiFactoryProtocol,
          equipmentFactory: EquipmentFactoryProtocol,
          skillsFactory: SkillsFactoryProtocol,
@@ -36,19 +36,19 @@ class GachaService: GachaServiceProtocol {
         self.eventService = eventService
         loadGachaPacks()
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Find a gacha pack by name
     func findPack(byName name: String) -> GachaPack? {
-        return gachaPacks[name]
+        gachaPacks[name]
     }
-    
+
     /// Get all available gacha packs
     func getAllPacks() -> [GachaPack] {
-        return Array(gachaPacks.values)
+        Array(gachaPacks.values)
     }
-    
+
     /// Draw items from a gacha pack
     /// - Parameters:
     ///   - packName: Name of the pack to draw from
@@ -60,17 +60,17 @@ class GachaService: GachaServiceProtocol {
             logger.log("No pack found with name \(packName)")
             return []
         }
-        
+
         // Check if player has enough currency
         let totalCost = pack.cost * count
         guard player.canSpendCurrency(totalCost) else {
             logger.log("Player doesn't have enough currency to draw")
             return []
         }
-        
+
         // Get event rate modifiers
         let rateModifiers = eventService.getRateModifiers(packName: packName)
-        
+
         // Draw items
         var drawnItems: [any IGachaItem] = []
         for _ in 0..<count {
@@ -79,30 +79,30 @@ class GachaService: GachaServiceProtocol {
                 var itemWithOwnership = drawnItem
                 itemWithOwnership.ownerId = player.id
                 itemWithOwnership.dateAcquired = Date()
-                
+
                 drawnItems.append(itemWithOwnership)
-                
+
                 // Add the drawn item to player's inventory
                 addItemToPlayerInventory(item: itemWithOwnership, for: &player)
             }
         }
-        
+
         // Deduct currency
         _ = player.spendCurrency(totalCost)
-        
+
         return drawnItems
     }
-    
+
     // MARK: - Private Methods
-    
+
     /// Load gacha packs from JSON
     private func loadGachaPacks() {
         do {
             let packsData: GachaPacksData = try ResourceLoader.loadJSON(fromFile: "GachaPacks")
-            
+
             for packData in packsData.packs {
                 let packItems = createPackItems(from: packData.items)
-                
+
                 // Create gacha pack
                 let gachaPack = GachaPack(
                     name: packData.packName,
@@ -110,19 +110,19 @@ class GachaService: GachaServiceProtocol {
                     cost: packData.cost,
                     items: packItems
                 )
-                
+
                 gachaPacks[packData.packName] = gachaPack
             }
-            
+
             logger.log("Loaded \(gachaPacks.count) gacha packs from JSON")
         } catch {
             logger.log("Error loading gacha packs: \(error)")
         }
     }
-    
+
     /// Create pack items from item data
     private func createPackItems(from itemsData: [GachaItemData]) -> [GachaPackItem] {
-        return itemsData.compactMap { itemData in
+        itemsData.compactMap { itemData in
             let itemName = itemData.itemId
             let baseRate = itemData.baseRate
 
@@ -148,7 +148,7 @@ class GachaService: GachaServiceProtocol {
             return GachaPackItem(item: item, itemName: itemName, baseRate: baseRate)
         }
     }
-    
+
     /// Draw a single item with rate modifiers applied
     private func drawSingleItem(
         from pack: GachaPack,
@@ -157,23 +157,23 @@ class GachaService: GachaServiceProtocol {
     ) -> (any IGachaItem)? {
         // Build weighted items array
         let weightedItems = buildWeightedItems(from: pack, with: rateModifiers, for: player)
-        
+
         guard !weightedItems.isEmpty else {
             logger.logError("No valid items in pack or all rates are zero")
             return pack.items.first?.item
         }
-        
+
         let totalWeight = weightedItems.reduce(0) { $0 + $1.weight }
-        
+
         // Normalize weights if they sum to more than 1.0
         let normalizedItems = totalWeight > 1.0 ?
             weightedItems.map { (item: $0.item, weight: $0.weight / totalWeight) } :
             weightedItems
-        
+
         // Perform the roll
         let roll = Double.random(in: 0..<min(totalWeight, 1.0))
         var cumulativeWeight: Double = 0
-        
+
         for (item, weight) in normalizedItems {
             cumulativeWeight += weight
             if roll < cumulativeWeight {
@@ -182,10 +182,10 @@ class GachaService: GachaServiceProtocol {
                 return item
             }
         }
-        
+
         return normalizedItems.first?.item
     }
-    
+
     /// Build weighted items for the gacha roll
     private func buildWeightedItems(
         from pack: GachaPack,
@@ -193,30 +193,30 @@ class GachaService: GachaServiceProtocol {
         for player: Player
     ) -> [(item: any IGachaItem, weight: Double)] {
         var weightedItems: [(item: any IGachaItem, weight: Double)] = []
-        
+
         for packItem in pack.items {
             let item = packItem.item
             let itemName = packItem.itemName
             var rate = packItem.baseRate
-            
+
             // Apply event modifiers
             if let modifier = rateModifiers[itemName] {
                 rate *= modifier
             }
-            
+
             // Apply pity system for rare items
             if isRare(item) && player.pullsSinceRare >= 20 {
                 rate *= 5.0 // Significant boost for pity
             }
-            
+
             if rate > 0 {
                 weightedItems.append((item: item, weight: rate))
             }
         }
-        
+
         return weightedItems
     }
-    
+
     /// Update the pity counter based on the drawn item
     private func updatePityCounter(for item: any IGachaItem, player: inout Player) {
         if isRare(item) {
@@ -225,7 +225,7 @@ class GachaService: GachaServiceProtocol {
             player.pullsSinceRare += 1
         }
     }
-    
+
     /// Add an item to the player's inventory
     private func addItemToPlayerInventory(item: any IGachaItem, for player: inout Player) {
         switch item {
@@ -246,9 +246,8 @@ class GachaService: GachaServiceProtocol {
         }
     }
 
-    
     /// Check if an item is considered "rare" for pity system
     private func isRare(_ item: any IGachaItem) -> Bool {
-        return item.rarity == .rare || item.rarity == .epic
+        item.rarity == .rare || item.rarity == .epic
     }
 }
