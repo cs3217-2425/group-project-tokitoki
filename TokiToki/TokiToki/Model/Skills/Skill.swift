@@ -71,7 +71,14 @@ enum SkillVisual: String, CaseIterable {
     case singleHeal = "single heal"
     case waterBlast = "water blast"
     case finalJudgement = "final judgement"
-
+    case aoeBuff = "aoe buff"
+    case meteorShower = "meteor shower"
+    case thunderFlash = "flash"
+    case thunderClap = "thunder clap"
+    case basicSpell = "basic spell"
+    case basicAttack = "basic attack"
+    case basicArrow = "basic arrow"
+    
     // Fallback for string-based lookup when needed
     static func fromString(_ string: String) -> SkillVisual? {
         SkillVisual(rawValue: string.lowercased())
