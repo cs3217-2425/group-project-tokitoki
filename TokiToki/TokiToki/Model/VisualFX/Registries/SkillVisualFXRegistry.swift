@@ -92,7 +92,34 @@ class SkillVisualFXRegistry {
         register(skillVisual: .finalJudgement) { sourceView, targetView in
             SkillVisualFXFactory.createFinalJudgementFX(sourceView: sourceView, targetView: targetView)
         }
-
+        
+        register(skillVisual: .aoeBuff) { sourceView, targetView in
+            SkillVisualFXFactory.createAoEBuffFX(sourceView: sourceView, targetView: targetView)
+        }
+        
+        register(skillVisual: .meteorShower) { sourceView, targetView in
+            SkillVisualFXFactory.createMeteorShowerFX(sourceView: sourceView, targetView: targetView)
+        }
+        
+        register(skillVisual: .thunderFlash) { sourceView, targetView in
+            SkillVisualFXFactory.createThunderFlashFX(sourceView: sourceView, targetView: targetView)
+        }
+        
+        register(skillVisual: .thunderClap) { sourceView, targetView in
+            SkillVisualFXFactory.createThunderClapFX(sourceView: sourceView, targetView: targetView)
+        }
+        
+        register(skillVisual: .basicSpell) { sourceView, targetView in
+            SkillVisualFXFactory.createBasicSpellProjectileFX(sourceView: sourceView, targetView: targetView)
+        }
+        
+        register(skillVisual: .basicAttack) { sourceView, targetView in
+            SkillVisualFXFactory.createBasicAttackFX(sourceView: sourceView, targetView: targetView)
+        }
+        
+        register(skillVisual: .basicArrow) { sourceView, targetView in
+            SkillVisualFXFactory.createBasicArrowFX(sourceView: sourceView, targetView: targetView)
+        }
 
         register(skillVisual: .acidSpray) { sourceView, targetView in
             SkillVisualFXFactory.createAcidSpray(sourceView: sourceView, targetView: targetView)
