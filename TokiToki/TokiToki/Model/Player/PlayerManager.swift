@@ -47,6 +47,7 @@ protocol PlayerManagerProtocol {
     func resetPlayerData() -> Bool
     func savePlayerData()
     func refreshPlayerData()
+    func buyGachaPull() -> Bool
 }
 
 class PlayerManager: PlayerManagerProtocol {
@@ -330,5 +331,24 @@ class PlayerManager: PlayerManagerProtocol {
     /// Force refresh player data from Core Data
     func refreshPlayerData() {
         currentPlayer = playerRepository.getPlayer()
+    }
+    
+    func buyGachaPull() -> Bool {
+        let cost = 100
+        var player = getOrCreatePlayer()
+        print("Player currency before purchase: \(player.currency)")
+        if player.canSpendCurrency(cost) {
+            _ = player.spendCurrency(cost)
+            print("Player currency after purchase: \(player.currency)")
+            player.incrementDailyPullsCount(by: -1)
+            currentPlayer = player
+            savePlayer()
+            print("Player currency after increment: \(player.currency)")
+            print("Player daily pulls count after increment: \(player.dailyPullsCount)")
+            logger.log("Player bought a gacha pull for \(cost) currency.")
+            return true
+        } else {
+            return false
+        }
     }
 }

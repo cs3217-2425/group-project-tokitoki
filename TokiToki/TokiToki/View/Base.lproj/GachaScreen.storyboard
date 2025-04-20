@@ -87,18 +87,27 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ArJ-pr-ZXc" userLabel="Result Label">
-                                <rect key="frame" x="417" y="931" width="0.0" height="0.0"/>
+                                <rect key="frame" x="417" y="965" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                 <color key="textColor" red="0.2852545326" green="0.24756924250000001" blue="0.1770770924" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="highlightedColor" systemColor="systemBackgroundColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3bz-CV-Scu">
+                                <rect key="frame" x="303" y="873" width="238" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" systemColor="labelColor"/>
+                                <buttonConfiguration key="configuration" style="tinted" title="Get an extra pull for 100 🟡 "/>
+                                <connections>
+                                    <action selector="buyPullButtonTapped:" destination="7dt-D5-NBw" eventType="touchUpInside" id="T6z-lA-nqw"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Cl7-eF-psp"/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Cl7-eF-psp" firstAttribute="trailing" secondItem="pNs-il-NeD" secondAttribute="trailing" id="10v-Ww-Wqc"/>
                             <constraint firstItem="ArJ-pr-ZXc" firstAttribute="centerX" secondItem="9Lc-7d-iiZ" secondAttribute="centerX" id="1YK-AC-zKB"/>
-                            <constraint firstItem="ArJ-pr-ZXc" firstAttribute="top" secondItem="KGe-4Y-YvU" secondAttribute="bottom" constant="66" id="4Pw-3L-5Ui"/>
+                            <constraint firstItem="ArJ-pr-ZXc" firstAttribute="top" secondItem="KGe-4Y-YvU" secondAttribute="bottom" constant="100" id="4Pw-3L-5Ui"/>
                             <constraint firstItem="pNs-il-NeD" firstAttribute="top" secondItem="Xe8-TX-3ER" secondAttribute="bottom" constant="71" id="IHQ-y1-zAj"/>
                             <constraint firstItem="Cl7-eF-psp" firstAttribute="trailing" secondItem="iLP-Vw-mzh" secondAttribute="trailing" constant="34" id="OKt-Fl-eQv"/>
                             <constraint firstItem="KGe-4Y-YvU" firstAttribute="top" secondItem="pNs-il-NeD" secondAttribute="bottom" constant="51" id="OoQ-Sl-c56"/>
@@ -114,6 +123,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="buyPullButton" destination="3bz-CV-Scu" id="AzR-nf-59R"/>
                         <outlet property="dailyPullsCountLabel" destination="KGe-4Y-YvU" id="xVf-v3-Hv6"/>
                         <outlet property="gachaPackLabel" destination="Xe8-TX-3ER" id="E3Q-Ht-0J4"/>
                         <outlet property="packSelectorLabel" destination="ArJ-pr-ZXc" id="LlY-c7-GUW"/>
@@ -187,6 +197,9 @@
     <resources>
         <image name="currency" width="1200" height="1200"/>
         <image name="gacha_background 1" width="1024" height="1366"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

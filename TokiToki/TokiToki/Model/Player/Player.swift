@@ -79,8 +79,6 @@ struct Player {
         switch item {
         case let toki as TokiGachaItem:
             ownedTokis.append(toki.createInstance() as! Toki)
-//        case let skill as SkillGachaItem:
-//            ownedSkills.append(skill.getSkill())
         case let equipment as EquipmentGachaItem:
             ownedEquipments.inventory.append(equipment.createInstance() as! Equipment)
         default:
@@ -100,16 +98,14 @@ struct Player {
         let calendar = Calendar.current
         let today = Date()
 
-        // If this is the first pull ever or we have a reset date
         if let lastReset = dailyPullsLastReset {
             // Check if the current date is a different day than the last reset
             if !calendar.isDate(today, inSameDayAs: lastReset) {
-                // It's a new day, reset the counter
                 dailyPullsCount = 0
                 dailyPullsLastReset = today
             }
         } else {
-            // First time pulling, initialize the reset date
+            // If there's no last reset date, set it to today
             dailyPullsLastReset = today
         }
     }

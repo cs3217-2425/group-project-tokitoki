@@ -22,6 +22,7 @@ class GachaViewController: UIViewController {
     @IBOutlet private var packSelectorLabel: UILabel!
     @IBOutlet private var playerCurrencyLabel: UILabel!
     @IBOutlet private var dailyPullsCountLabel: UILabel!
+    @IBOutlet private var buyPullButton: UIButton!
     
     // MARK: - Dependencies
     
@@ -187,6 +188,7 @@ class GachaViewController: UIViewController {
         packSelectorLabel.textAlignment = .center
         playerCurrencyLabel.textAlignment = .center
         dailyPullsCountLabel.textAlignment = .center
+        buyPullButton.isHidden = true
     }
     
     private func setupEventsUI() {
@@ -270,6 +272,7 @@ class GachaViewController: UIViewController {
     private func updateDailyPullsLabel() {
         let remainingPulls = playerManager.getRemainingDailyPulls()
         dailyPullsCountLabel.text = "\(remainingPulls) / \(GachaViewController.DEFAULT_DAILY_PULL_LIMIT) DAILY PULLS"
+        buyPullButton.isHidden = remainingPulls > 0
     }
     
     private func updateEventsDisplay() {
@@ -438,6 +441,21 @@ class GachaViewController: UIViewController {
         }
     }
     
+    
+    @IBAction func buyPullButtonTapped(_ sender: UIButton) {
+        if playerManager.buyGachaPull() {
+            print("Gacha pull purchased successfully.")
+            // Update currency display immediately after purchase
+            updatePlayerCurrencyLabel()
+            
+            // Update daily pulls display
+            updateDailyPullsLabel()
+        } else {
+            showErrorMessage("Failed to purchase gacha pull.")
+        }
+        
+    }
+
     private func playCelebrationAnimation() {
         // Create a simple particle effect for celebration
         let emitterLayer = CAEmitterLayer()
