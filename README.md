@@ -11,7 +11,7 @@ through challenges by optimizing their Tokis' abilities and synergies
 
 ---
 
-###Project Report
+### Project Report
 [Report](https://drive.google.com/file/d/1nTm72o61WquKhFUT133wd7zIeXuopV07/view?usp=sharing)
 
 ---
